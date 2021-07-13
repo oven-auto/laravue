@@ -1,0 +1,114 @@
+version: '2'
+services:
+
+  ####################
+  # SERVER
+  ###################
+  server-sshop:
+    container_name: server-sshop
+    build: 
+      context: ./
+      dockerfile: docker/nginx.docker
+    volumes: 
+      - ./app/:/var/www
+      - ./docker/nginx/ssl:/etc/nginx/ssl
+    ports: 
+      - "8280:80"
+    links: 
+      - php-f-sshop
+      - php-c-sshop
+  
+  ###################
+  # PHP-FPM
+  ###################
+  php-f-sshop:
+    container_name: php-f-sshop
+    build:
+      context: ./
+      dockerfile: docker/php-fpm.docker
+    volumes:
+      - ./app/:/var/www
+    links: 
+      - mysql-sshop
+      - redis-sshop
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=mysql-sshop"
+      - "REDIS_PORT=6379"
+      - "REDIS_HOST=redis-sshop"
+
+  ###################
+  # PHP-CLI
+  ###################
+  php-c-sshop:
+    container_name: php-c-sshop
+    build:
+      context: ./
+      dockerfile: docker/php-cli.docker
+    volumes:
+      - ./app/:/var/www
+    links: 
+      - mysql-sshop
+      - redis-sshop
+    environment:
+      - "DB_PORT=3306"
+      - "DB_HOST=mysql-sshop"
+      - "REDIS_PORT=6379"
+      - "REDIS_HOST=redis-sshop"
+    tty: true
+  
+  ###################
+  # MYSQL
+  ###################
+  mysql-sshop:
+    container_name: mysql-sshop
+    image: mysql:5.7
+    command: --sql_mode=""
+    volumes: 
+      - ./docker/images/mysql:/var/lib/mysql
+    environment:
+      
+
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=app
+      - MYSQL_HOST= mysql-sshop
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=secret
+      - MYSQL_PORT=3306
+    ports:
+      - "33061:3306"
+
+  ###################
+  # REDIS
+  ###################
+  redis-sshop:
+    container_name: redis-sshop
+    image: redis:3.0
+    ports:
+      - "63791:6379"
+
+  ###################
+  # NODE
+  ###################
+  node-sshop:
+    container_name: node-sshop
+    build:
+      context: ./
+      dockerfile: docker/node.docker
+    volumes:
+      - ./app/:/var/www
+    tty: true
+
+  ###################
+  # PHPMYADMIN
+  ###################
+  phpmyadmin-sshop:
+    container_name: phpmyadmin-sshop
+    image: corbinu/docker-phpmyadmin
+    ports:
+        - 8281:80
+    environment:
+        MYSQL_USERNAME: app
+        MYSQL_ROOT_PASSWORD: secret
+        MYSQL_PORT_3306_TCP_ADDR: mysql-sshop
+  
