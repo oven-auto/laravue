@@ -38,9 +38,14 @@ class BrandController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Brand $brand, Request $request)
     {
-        //
+        $brand->fill($request->input())->save();
+        return response()->json([
+            'status' => 1,
+            'brand' => $brand,
+            'message' => 'Новый бренд создан'
+        ]);
     }
 
     /**
@@ -60,13 +65,9 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(Brand $brand)
     {
-        $brand = Brand::find($id);
-        return response()->json([
-            'status' => 1,
-            'brand' => $brand
-        ]);
+        return $brand;
     }
 
     /**
@@ -76,9 +77,14 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Brand $brand, Request $request)
     {
-        //
+        $brand->update($request->input());
+        return response()->json([
+            'status' => 1,
+            'brand' => $brand,
+            'message' => 'Бренд изменен'
+        ]);
     }
 
     /**

@@ -1,20 +1,29 @@
 <template>
     <div id="brand-list">
-        <div class="h5">Список брендов</div>
-
-        <div v-if="loading" class="spinner-border" role="status">
-            <span class="sr-only">Loading...</span>
+        <div class="row pb-3">
+            <div class="col">
+                <div class="h5">Список брендов</div>
+            </div>
+            <div class="col text-right">
+                <router-link class="btn btn-primary" :to="'/brands/create'">Создать новый</router-link>
+            </div>
         </div>
+
+        <spin v-if="loading"></spin>
 
         <table v-else class="table">
             <tr>
-                <th>#</th>
+                <th style="width: 80px;">#</th>
                 <th>Название</th>
                 <th>Системное имя</th>
             </tr>
 
             <tr v-for="brand in brands">
-                <td></td>
+                <td>
+                    <router-link :to="toEdit + brand.id">
+                        Open
+                    </router-link>
+                </td>
                 <td>{{ brand.name }}</td>
                 <td>{{ brand.slug }}</td>
             </tr>
@@ -23,38 +32,40 @@
 </template>
 
 <script>
+import Spin from '../spinner/SpinComponent';
 
-    export default {
-        name: 'brand-list',
-        components: {
-
-        },
-        data() {
-            return {
-                loading: true,
-                brands: [],
-                notFound: false,
-            }
-        },
-        mounted() {
-            this.loadBrands()
-        },
-        methods: {
-            loadBrands() {
-                axios.get('/api/brands')
-                    .then(response => {
-                        if(response.data.status == 1)
-                        {
-                            this.brands = response.data.brands;
-                            this.loading = false;
-                        }
-                    })
-                    .catch(errors => {
+export default {
+    name: 'brand-list',
+    components: {
+        Spin
+    },
+    data() {
+        return {
+            toEdit: '/brands/',
+            loading: true,
+            brands: [],
+            notFound: false,
+        }
+    },
+    mounted() {
+        this.loadBrands()
+    },
+    methods: {
+        loadBrands() {
+            axios.get('/api/brands')
+                .then(response => {
+                    if(response.data.status == 1)
+                    {
+                        this.brands = response.data.brands;
                         this.loading = false;
-                        this.notFound = true;
-                    })
-            }
+                    }
+                })
+                .catch(errors => {
+                    this.loading = false;
+                    this.notFound = true;
+                })
         }
     }
+}
 </script>
 

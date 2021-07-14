@@ -1,6 +1,6 @@
 <template>
     <div class="alert alert-warning alert-dismissible fade show" role="alert">
-        <strong> Ошибка такой записи не существует </strong>
+        <strong> {{ message }} </strong>
         <button type="button" class="close" data-dismiss="alert" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -9,6 +9,12 @@
 
 <script>
 export default {
-    name: 'error',
+    name: 'message',
+    props: {
+        message: {
+            type: String,
+            default: null,
+        }
+    }
 }
 </script>
