@@ -33,6 +33,7 @@
             return {
                 loading: true,
                 brands: [],
+                notFound: false,
             }
         },
         mounted() {
@@ -49,7 +50,8 @@
                         }
                     })
                     .catch(errors => {
-
+                        this.loading = false;
+                        this.notFound = true;
                     })
             }
         }

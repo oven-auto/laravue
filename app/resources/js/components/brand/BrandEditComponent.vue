@@ -1,10 +1,10 @@
 <template>
     <div class="brand-edit">
-        <div class="h5">{{ title }}</div>
+        <div class="h5">{{ brand.name }}</div>
         <div class="row">
             <div class="col-6">
                 <label for="name">Название</label>
-                <input type="text" name="name" :value="name" class="form-control"/>
+                <input type="text" name="name" :value="brand.name" class="form-control"/>
             </div>
         </div>
     </div>
@@ -15,8 +15,23 @@ export default {
     name: 'brand-edit',
     data() {
         return {
-            title: 'Новый бренд',
-            name: null,
+            brand: [],
+            notFound: false,
+        }
+    },
+    mounted() {
+        //console.log(this.$route.params.id)
+        this.loadBrand(this.$route.params.id)
+    },
+    methods: {
+        loadBrand(id) {
+            axios.get('/api/brands/' + id + '/edit')
+                .then( response => {
+                    this.brand = response.data.brand;
+                })
+                .catch(errors => {
+                    this.notFound = true
+                })
         }
     }
 }

@@ -29,11 +29,11 @@ export default {
                 },
                 {
                     title: 'Моторы',
-                    href: '/motor/list'
+                    href: '/motors/list'
                 },
                 {
                     title: 'Бренды',
-                    href: '/brand/list'
+                    href: '/brands/list'
                 },
             ]
         }

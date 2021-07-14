@@ -1861,9 +1861,24 @@ __webpack_require__.r(__webpack_exports__);
   name: 'brand-edit',
   data: function data() {
     return {
-      title: 'Новый бренд',
-      name: null
+      brand: [],
+      notFound: false
     };
+  },
+  mounted: function mounted() {
+    //console.log(this.$route.params.id)
+    this.loadBrand(this.$route.params.id);
+  },
+  methods: {
+    loadBrand: function loadBrand(id) {
+      var _this = this;
+
+      axios.get('/api/brands/' + id + '/edit').then(function (response) {
+        _this.brand = response.data.brand;
+      })["catch"](function (errors) {
+        _this.notFound = true;
+      });
+    }
   }
 });
 
@@ -1910,7 +1925,8 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       loading: true,
-      brands: []
+      brands: [],
+      notFound: false
     };
   },
   mounted: function mounted() {
@@ -1925,7 +1941,10 @@ __webpack_require__.r(__webpack_exports__);
           _this.brands = response.data.brands;
           _this.loading = false;
         }
-      })["catch"](function (errors) {});
+      })["catch"](function (errors) {
+        _this.loading = false;
+        _this.notFound = true;
+      });
     }
   }
 });
@@ -1971,10 +1990,10 @@ __webpack_require__.r(__webpack_exports__);
         href: '/'
       }, {
         title: 'Моторы',
-        href: '/motor/list'
+        href: '/motors/list'
       }, {
         title: 'Бренды',
-        href: '/brand/list'
+        href: '/brands/list'
       }]
     };
   }
@@ -2122,13 +2141,13 @@ var routes = [{
   path: '/',
   component: _components_brand_BrandListComponent__WEBPACK_IMPORTED_MODULE_2__.default
 }, {
-  path: '/brand/list',
+  path: '/brands/list',
   component: _components_brand_BrandListComponent__WEBPACK_IMPORTED_MODULE_2__.default
 }, {
-  path: '/brand/:id',
+  path: '/brands/:id',
   component: _components_brand_BrandEditComponent__WEBPACK_IMPORTED_MODULE_3__.default
 }, {
-  path: '/motor/list',
+  path: '/motors/list',
   component: _components_motor_MotorListComponent__WEBPACK_IMPORTED_MODULE_4__.default
 }];
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (new vue_router__WEBPACK_IMPORTED_MODULE_1__.default({
@@ -37826,7 +37845,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "brand-edit" }, [
-    _c("div", { staticClass: "h5" }, [_vm._v(_vm._s(_vm.title))]),
+    _c("div", { staticClass: "h5" }, [_vm._v(_vm._s(_vm.brand.name))]),
     _vm._v(" "),
     _c("div", { staticClass: "row" }, [
       _c("div", { staticClass: "col-6" }, [
@@ -37835,7 +37854,7 @@ var render = function() {
         _c("input", {
           staticClass: "form-control",
           attrs: { type: "text", name: "name" },
-          domProps: { value: _vm.name }
+          domProps: { value: _vm.brand.name }
         })
       ])
     ])
