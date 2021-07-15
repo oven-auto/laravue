@@ -5,7 +5,6 @@ Vue.use(vueRouter);
 
 import brandList from './components/brand/BrandListComponent';
 import brandEdit from './components/brand/BrandEditComponent';
-import brandCreate from './components/brand/BrandCreateComponent';
 
 import motorList from './components/motor/MotorListComponent';
 
@@ -17,10 +16,10 @@ const routes = [
     },
     {
         path: '/brands/create',
-        component: brandCreate
+        component: brandEdit
     },
     {
-        path: '/brands/:id',
+        path: '/brands/edit/:id',
         component: brandEdit
     },
 

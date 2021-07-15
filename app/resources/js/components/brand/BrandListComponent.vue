@@ -41,7 +41,7 @@ export default {
     },
     data() {
         return {
-            toEdit: '/brands/',
+            toEdit: '/brands/edit/',
             loading: true,
             brands: [],
             notFound: false,

@@ -78,13 +78,13 @@ class BrandController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Brand $brand, Request $request)
-    {
-        $brand->update($request->input());
-        return response()->json([
-            'status' => 1,
-            'brand' => $brand,
-            'message' => 'Бренд изменен'
-        ]);
+    {   dd($request->all());
+        // $brand->update($request->input());
+        // return response()->json([
+        //     'status' => 1,
+        //     'brand' => $brand,
+        //     'message' => 'Бренд изменен'
+        // ]);
     }
 
     /**
