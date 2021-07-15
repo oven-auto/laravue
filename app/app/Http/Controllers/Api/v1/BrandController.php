@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Brand;
+use Storage;
 
 class BrandController extends Controller
 {
@@ -23,40 +24,26 @@ class BrandController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Brand $brand, Request $request)
+    public function store(Brand $brand, \App\Http\Requests\BrandCreateRequest $request)
     {
-        $brand->fill($request->input())->save();
+        $data = $request->only('name');
+        if($request->has('icon')) {
+            $iconName = date('Ymdhis').'.'.$request->icon->getClientOriginalExtension();
+            $data['icon'] = $request->icon
+                ->move(Storage::path('/public/brand/'), $iconName)
+                ->getFilename();
+        }
+    	$brand = $brand->create($data);
         return response()->json([
             'status' => 1,
             'brand' => $brand,
             'message' => 'Новый бренд создан'
         ]);
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
     }
 
     /**
@@ -67,7 +54,11 @@ class BrandController extends Controller
      */
     public function edit(Brand $brand)
     {
-        return $brand;
+        return response()->json([
+            'brand' => $brand,
+            'status' => 1,
+            'icon_src' => asset('storage/brand/'.$brand->icon)
+        ]);
     }
 
     /**
@@ -77,14 +68,21 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Brand $brand, Request $request)
-    {   dd($request->all());
-        // $brand->update($request->input());
-        // return response()->json([
-        //     'status' => 1,
-        //     'brand' => $brand,
-        //     'message' => 'Бренд изменен'
-        // ]);
+    public function update(Brand $brand,Request $request)
+    {
+        $data = $request->only('name');
+        if($request->hasFile('icon')) {
+            $iconName = date('Ymdhis').'.'.$request->icon->getClientOriginalExtension();
+            $data['icon'] = $request->icon
+                ->move(Storage::path('/public/brand/'), $iconName)
+                ->getFilename();
+        }
+    	$brand->update($data);
+        return response()->json([
+            'status' => 1,
+            'brand' => $brand,
+            'message' => 'Бренд изменен'
+        ]);
     }
 
     /**

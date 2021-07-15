@@ -21,8 +21,8 @@
                         <div class="pt-3">
                             <label for="icon">Иконка</label>
 
-                            <div v-if="brand.icon">
-                                <img src="">
+                            <div v-if="iconSrc" class="pb-3">
+                                <img :src="iconSrc" class="brand-icon">
                             </div>
 
                             <div class="custom-file">
@@ -66,7 +66,7 @@ export default {
                 name: null,
                 icon: null,
             },
-
+            iconSrc: null,
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
@@ -82,56 +82,75 @@ export default {
 
     methods: {
         onAttachmentChange (e) {
-            this.icon = e.target.files[0];
-            console.log(this.icon)
+            this.brand.icon = e.target.files[0];
         },
 
         loadBrand(id) {
             axios.get('/api/brands/' + id + '/edit')
-                .then( response => {
-                    this.loading = false;
-                    this.brand = response.data;
-                })
-                .catch(errors => {
-                    this.notFound = true;
-                    this.loading = false;
-                })
+            .then( response => {
+                this.loading = false;
+                this.brand.name = response.data.brand.name;
+                this.iconSrc = response.data.icon_src;
+            })
+            .catch(errors => {
+                this.notFound = true;
+                this.loading = false;
+            })
         },
 
         updateBrand(id) {
-            axios.patch('/api/brands/' + id, this.brand, {
-                headers: {
-                    'Content-type': 'application/json'
-                }
-            })
+            axios.post('/api/brands/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
+                    this.loadBrand(id);
                 }
             })
             .catch(errors => {
-
+                console.log(errors)
             })
         },
 
         storeBrand() {
-            axios.post('/api/brands/', this.brand, {
-                headers: {
-                    'Content-type': 'application/json'
-                }
-            })
+            axios.post('/api/brands/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
-                    this.$router.push('/brands/list')
+                    this.succes = true;
+                    this.succesMessage = res.data.message;
+                    this.loadBrand(res.data.brand.id);
                 }
             })
             .catch(errors => {
-
+                console.log(errors)
             })
-        }
+        },
+
+        getFormData(method = '') {
+            var formData = new FormData();
+
+            formData.append('name', this.brand.name);
+            formData.append('icon', this.brand.icon);
+
+            if(method == 'patch')
+                formData.append("_method", "PATCH");
+
+            return formData;
+        },
+
+        getConfig() {
+            return {
+                'content-type': 'multipart/form-data'
+            }
+        },
     }
 }
 </script>
+
+<style scoped>
+    .brand-icon{
+        height: 120px;
+    }
+</style>

@@ -19,3 +19,9 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::resource('brands', \App\Http\Controllers\Api\v1\BrandController::class);
+
+Route::resource('devices', \App\Http\Controllers\Api\v1\DeviceTypeController::class);
+
+Route::resource('devices', \App\Http\Controllers\Api\v1\DeviceFilterController::class);
+
+Route::resource('devices', \App\Http\Controllers\Api\v1\DeviceController::class);

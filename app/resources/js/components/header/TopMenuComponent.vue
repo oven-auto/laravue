@@ -28,12 +28,20 @@ export default {
                     href: '/'
                 },
                 {
-                    title: 'Моторы',
-                    href: '/motors/list'
-                },
-                {
                     title: 'Бренды',
                     href: '/brands/list'
+                },
+                {
+                    title: 'Типы оборудования',
+                    href: '/devicetypes/list'
+                },
+                {
+                    title: 'Фильтры оборудования',
+                    href: '/devicefilters/list'
+                },
+                {
+                    title: 'Оборудование',
+                    href: '/devices/list'
                 },
             ]
         }
