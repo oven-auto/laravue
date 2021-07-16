@@ -12,6 +12,9 @@ import deviceTypesEdit from './components/device/type/TypeEditComponent';
 import deviceFilterList from './components/device/filter/FilterListComponent';
 import deviceFilterEdit from './components/device/filter/FilterEditComponent';
 
+import deviceList from './components/device/DeviceListComponent';
+import deviceEdit from './components/device/DeviceEditComponent';
+
 import motorList from './components/motor/MotorListComponent';
 
 const routes = [
@@ -65,15 +68,15 @@ const routes = [
     ///////////
     {
         path: '/devices/list',
-        component: brandList
+        component: deviceList
     },
     {
         path: '/devices/create',
-        component: brandEdit
+        component: deviceEdit
     },
     {
         path: '/devices/edit/:id',
-        component: brandEdit
+        component: deviceEdit
     },
 
 

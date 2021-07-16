@@ -1,0 +1,193 @@
+<template>
+<div class="device-edit">
+
+    <message v-if="succes" :message="succesMessage"></message>
+
+    <spin v-if="loading && urlId"></spin>
+
+    <error v-if="notFound"></error>
+
+    <div v-else>
+        <form>
+            <div class="h5">{{ device.name ? device.name : 'Новое оборудование' }}</div>
+
+            <div class="row pb-3">
+                <div class="col-6">
+                    <div >
+                        <label for="name">Название</label>
+                        <input type="text" name="name" v-model="device.name" class="form-control"/>
+                    </div>
+
+                    <div class="pt-3">
+                        <label for="name">Бренд</label>
+                        <HtmlMultiSelect :value="device.brand_id" :name="'brand_id'" :data="brands" v-model="device.brand_id" :placeholder="'Не выбрано'"></HtmlMultiSelect>
+                    </div>
+
+                    <div class="pt-3">
+                        <label for="name">Тип</label>
+                        <HtmlSelect :name="'device_type_id'" :data="types" v-model="device.device_type_id" :placeholder="'Не выбрано'"></HtmlSelect>
+                    </div>
+
+                    <div class="pt-3">
+                        <label for="name">Фильтр</label>
+                        <HtmlSelect :name="'device_filter_id'" :data="filters" v-model="device.device_filter_id" :placeholder="'Не выбрано'"></HtmlSelect>
+                    </div>
+                </div>
+            </div>
+
+            <button v-if="urlId" @click.prevent="updateDevice(urlId)" type="button" class="btn btn-success">
+                Изменить
+            </button>
+
+            <button v-else @click.prevent="storeDevice()" type="button" class="btn btn-success">
+                Создать
+            </button>
+
+            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
+        </form>
+    </div>
+</div>
+</template>
+
+<script>
+
+import Error from '../alert/ErrorComponent';
+import Message from '../alert/MessageComponent';
+import Spin from '../spinner/SpinComponent';
+import HtmlSelect from '../html/HtmlSelect';
+import HtmlMultiSelect from '../html/HtmlMultiSelect';
+
+export default {
+    name: 'device-filter-edit',
+    components: {
+        Error, Message, Spin, HtmlSelect, HtmlMultiSelect
+    },
+    data() {
+        return {
+            device: {
+                name: null,
+                device_type_id: 3,
+                device_filter_id: 1,
+                brand_id: [15,17]
+            },
+            types: [],
+            filters: [],
+            brands: [],
+            notFound: false,
+            loading: true,
+            urlId: this.$route.params.id,
+            succes: false,
+            succesMessage: null,
+        }
+    },
+    mounted() {
+
+        this.loadTypes();
+        this.loadFilters();
+        this.loadBrands();
+        if(this.urlId)
+            this.loadDevice(this.urlId);
+    },
+
+    methods: {
+        loadDevice(id) {
+            axios.get('/api/devices/' + id + '/edit')
+            .then( response => {
+                this.loading = false;
+                this.device = response.data.device;
+                console.log(this.device)
+            })
+            .catch(errors => {
+                this.notFound = true;
+                this.loading = false;
+            })
+        },
+
+        updateDevice(id) {
+            axios.post('/api/devices/' + id, this.getFormData('patch'), this.getConfig())
+            .then(res => {
+                if(res.data.status)
+                {
+                    this.succes = true;
+                    this.succesMessage = res.data.message;
+                    this.loadDevice(id);
+                }
+            })
+            .catch(errors => {
+                console.log(errors)
+            })
+        },
+
+        storeDevice() {
+            axios.post('/api/devices/', this.getFormData(), this.getConfig())
+            .then(res => {
+                if(res.data.status)
+                {
+                    this.succes = true;
+                    this.succesMessage = res.data.message;
+                    this.loadBrand(res.data.filter.id);
+                }
+            })
+            .catch(errors => {
+                console.log(errors)
+            })
+        },
+
+        getFormData(method = '') {
+            console.log(Object.values(this.device.brand_id))
+
+            var formData = new FormData();
+            formData.append('name', this.device.name);
+            formData.append('device_type_id',       this.device.device_type_id);
+            formData.append('device_filter_id',     this.device.device_filter_id);
+
+            Object.values(this.device.brand_id).forEach(item => {
+                formData.append('brand_id[]', item)
+            })
+
+            if(method == 'patch')
+                formData.append("_method", "PATCH");
+            return formData;
+        },
+
+        getConfig() {
+            return {
+                'content-type': 'application/json'
+            }
+        },
+
+        loadTypes() {
+            axios.get('/api/devicetypes')
+            .then(res => {
+                if(res.data.status == 1)
+                    this.types = res.data.data;
+            })
+            .catch(errors => {
+                console.log(errors)
+            })
+        },
+
+        loadFilters() {
+            axios.get('/api/devicefilters')
+            .then(res => {
+                if(res.data.status == 1)
+                    this.filters = res.data.data;
+            })
+            .catch(errors => {
+                console.log(errors)
+            })
+        },
+
+        loadBrands() {
+            axios.get('/api/brands')
+            .then(response => {
+                if(response.data.status == 1)
+                    this.brands = response.data.brands;
+            })
+            .catch(errors => {
+                this.loading = false;
+            })
+        },
+    }
+}
+</script>

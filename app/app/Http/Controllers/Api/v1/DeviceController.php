@@ -4,80 +4,50 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Device;
 
 class DeviceController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        $devices = Device::fullData()->get();
+        if($devices->count())
+            return response()->json([
+                'status' => 1,
+                'data' => $devices,
+                'count' => $devices->count()
+            ]);
+        return response()->json([
+            'status' => 0,
+            'message' => 'Не нашлось ни одного оборудования'
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(Device $device, Request $request)
+    {
+        $device->fill($request->except('brand_id'))->save();
+        $device->brands()->attach($request->get('brand_id'));
+        return response()->json([
+            'status' => 1,
+            'device' => $device,
+            'message' => 'Новое оборудование создан'
+        ]);
+    }
+
+    public function edit(Device $device)
+    {
+        return response()->json([
+            'status' => 1,
+            'device' => $device
+        ]);
+    }
+
+    public function update(Device $device, Request $request)
     {
         //
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
