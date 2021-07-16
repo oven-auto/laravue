@@ -5,10 +5,10 @@
 
         <div class="row pb-3">
             <div class="col">
-                <div class="h5">Список типов оборудования</div>
+                <div class="h5">Список фильтров оборудования</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/devicetypes/create'">Создать новый тип</router-link>
+                <router-link class="btn btn-primary" :to="'/devicefilters/create'">Создать новый фильтр</router-link>
             </div>
         </div>
 
@@ -37,7 +37,7 @@ import Spin from '../../spinner/SpinComponent';
 import Message from '../../alert/MessageComponent';
 
 export default {
-    name: 'device-type-list',
+    name: 'device-filter-list',
     components: {
         Spin,
         Message
@@ -46,7 +46,7 @@ export default {
         return {
             types: [],
             loading: true,
-            toEdit: '/devicetypes/edit/',
+            toEdit: '/devicefilters/edit/',
             notFound: false,
             succes: false,
             succesMessage: null,
@@ -57,7 +57,7 @@ export default {
     },
     methods: {
         loadTypes() {
-            axios.get('/api/devicetypes')
+            axios.get('/api/devicefilters')
             .then(res => {
                 if(res.data.status == 1)
                     this.types = res.data.data;

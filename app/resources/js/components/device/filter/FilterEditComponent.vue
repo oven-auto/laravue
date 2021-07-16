@@ -9,13 +9,13 @@
 
     <div v-else>
         <form>
-            <div class="h5">{{ type.name ? type.name : 'Новый тип оборудования' }}</div>
+            <div class="h5">{{ filter.name ? filter.name : 'Новый фильтр оборудования' }}</div>
 
             <div class="row pb-3">
                 <div class="col-6">
                     <div >
                         <label for="name">Название</label>
-                        <input type="text" name="name" v-model="type.name" class="form-control"/>
+                        <input type="text" name="name" v-model="filter.name" class="form-control"/>
                     </div>
 
                     <!-- <div class="pt-3">
@@ -34,11 +34,11 @@
                 </div>
             </div>
 
-            <button v-if="urlId" @click.prevent="updateType(urlId)" type="button" class="btn btn-success">
+            <button v-if="urlId" @click.prevent="updateFilter(urlId)" type="button" class="btn btn-success">
                 Изменить
             </button>
 
-            <button v-else @click.prevent="storeType()" type="button" class="btn btn-success">
+            <button v-else @click.prevent="storeFilter()" type="button" class="btn btn-success">
                 Создать
             </button>
 
@@ -55,13 +55,13 @@ import Message from '../../alert/MessageComponent';
 import Spin from '../../spinner/SpinComponent';
 
 export default {
-    name: 'device-type-edit',
+    name: 'device-filter-edit',
     components: {
         Error, Message, Spin
     },
     data() {
         return {
-            type: {
+            filter: {
                 name: null,
                 //icon: null,
             },
@@ -75,14 +75,14 @@ export default {
     },
     mounted() {
         if(this.urlId)
-            this.loadType(this.urlId)
+            this.loadFilter(this.urlId)
     },
     methods: {
-        loadType(id) {
-            axios.get('/api/devicetypes/' + id + '/edit')
+        loadFilter(id) {
+            axios.get('/api/devicefilters/' + id + '/edit')
             .then( response => {
                 this.loading = false;
-                this.type.name = response.data.type.name;
+                this.filter.name = response.data.filter.name;
             })
             .catch(errors => {
                 this.notFound = true;
@@ -90,14 +90,14 @@ export default {
             })
         },
 
-        updateType(id) {
-            axios.post('/api/devicetypes/' + id, this.getFormData('patch'), this.getConfig())
+        updateFilter(id) {
+            axios.post('/api/devicefilters/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadType(id);
+                    this.loadFilter(id);
                 }
             })
             .catch(errors => {
@@ -105,14 +105,14 @@ export default {
             })
         },
 
-        storeType() {
-            axios.post('/api/devicetypes/', this.getFormData(), this.getConfig())
+        storeFilter() {
+            axios.post('/api/devicefilters/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.type.id);
+                    this.loadBrand(res.data.filter.id);
                 }
             })
             .catch(errors => {
@@ -123,7 +123,7 @@ export default {
         getFormData(method = '') {
             var formData = new FormData();
 
-            formData.append('name', this.type.name);
+            formData.append('name', this.filter.name);
             //formData.append('icon', this.type.icon);
 
             if(method == 'patch')

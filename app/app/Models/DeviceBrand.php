@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class DeviceBrand extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['brand_id', 'device_id'];
+
+    public $timestamps = false;
 }

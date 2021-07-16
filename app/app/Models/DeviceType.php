@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class DeviceType extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name'];
+
+    public $timestamps = false;
 }

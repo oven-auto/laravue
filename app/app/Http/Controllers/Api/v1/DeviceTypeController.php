@@ -4,80 +4,55 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\DeviceType;
 
 class DeviceTypeController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
+
     public function index()
     {
-        //
+        $types = DeviceType::get();
+        if($types->count())
+            return response()->json([
+                'status' => 1,
+                'count' => $types->count(),
+                'data' => $types
+            ]);
+        return response()->json([
+            'status' => 0,
+            'count' => $types->count(),
+            'message' => 'Не нашлось ни одного типа оборудования'
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function store(DeviceType $devicetype, Request $request)
     {
-        //
+        $devicetype->fill($request->input())->save();
+        return response()->json([
+            'status' => 1,
+            'type' => $devicetype,
+            'message' => 'Новый тип оборудования создан'
+        ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function edit(DeviceType $devicetype)
     {
-        //
+        return response()->json([
+            'status' => 1,
+            'type' => $devicetype
+        ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
+    public function update(DeviceType $devicetype, Request $request)
     {
-        //
+        $devicetype->fill($request->input())->save();
+        return response()->json([
+            'status' => 1,
+            'type' => $devicetype,
+            'message' => 'Тип оборудования изменен'
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //
