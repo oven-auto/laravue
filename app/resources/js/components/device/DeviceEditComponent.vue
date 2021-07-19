@@ -15,23 +15,44 @@
                 <div class="col-6">
                     <div >
                         <label for="name">Название</label>
-                        <input type="text" name="name" v-model="device.name" class="form-control"/>
+                        <input
+                            type="text"
+                            name="name"
+                            v-model="device.name"
+                            class="form-control"
+                        />
                     </div>
 
                     <div class="pt-3">
                         <label for="name">Бренд</label>
-                        <HtmlMultiSelect :value="device.brand_id" :name="'brand_id'" :data="brands" v-model="device.brand_id" :placeholder="'Не выбрано'"></HtmlMultiSelect>
+                        <HtmlMultiSelect
+                            :name="'brand_id'"
+                            :data="brands"
+                            v-model="device.brand_id"
+                            :placeholder="'Не выбрано'">
+                        </HtmlMultiSelect>
                     </div>
 
                     <div class="pt-3">
                         <label for="name">Тип</label>
-                        <HtmlSelect :name="'device_type_id'" :data="types" v-model="device.device_type_id" :placeholder="'Не выбрано'"></HtmlSelect>
+                        <HtmlSelect
+                            :name="'device_type_id'"
+                            :options="types"
+                            v-model="device.device_type_id"
+                            :selected="device.device_type_id">
+                        </HtmlSelect>
                     </div>
 
                     <div class="pt-3">
                         <label for="name">Фильтр</label>
-                        <HtmlSelect :name="'device_filter_id'" :data="filters" v-model="device.device_filter_id" :placeholder="'Не выбрано'"></HtmlSelect>
+                        <HtmlSelect
+                            :name="'device_filter_id'"
+                            :options="filters"
+                            v-model="device.device_filter_id"
+                            :selected="device.device_filter_id">
+                        </HtmlSelect>
                     </div>
+
                 </div>
             </div>
 
@@ -66,9 +87,9 @@ export default {
         return {
             device: {
                 name: null,
-                device_type_id: 3,
-                device_filter_id: 1,
-                brand_id: [15,17]
+                device_type_id: null,
+                device_filter_id: null,
+                brand_id: []
             },
             types: [],
             filters: [],
@@ -80,11 +101,13 @@ export default {
             succesMessage: null,
         }
     },
-    mounted() {
 
+
+    mounted() {
         this.loadTypes();
         this.loadFilters();
         this.loadBrands();
+
         if(this.urlId)
             this.loadDevice(this.urlId);
     },
@@ -93,8 +116,16 @@ export default {
         loadDevice(id) {
             axios.get('/api/devices/' + id + '/edit')
             .then( response => {
+
                 this.loading = false;
-                this.device = response.data.device;
+                this.device.name =              response.data.device.name;
+                this.device.device_type_id =    response.data.device.device_type_id;
+                this.device.device_filter_id =  response.data.device.device_filter_id;
+
+                response.data.device.brands.forEach( (item, i) => {
+                    this.device.brand_id.push(item.id)
+                })
+
                 console.log(this.device)
             })
             .catch(errors => {
@@ -102,6 +133,11 @@ export default {
                 this.loading = false;
             })
         },
+
+
+
+
+
 
         updateDevice(id) {
             axios.post('/api/devices/' + id, this.getFormData('patch'), this.getConfig())
@@ -133,6 +169,11 @@ export default {
             })
         },
 
+
+
+
+
+
         getFormData(method = '') {
             console.log(Object.values(this.device.brand_id))
 
@@ -155,6 +196,12 @@ export default {
                 'content-type': 'application/json'
             }
         },
+
+
+
+
+
+
 
         loadTypes() {
             axios.get('/api/devicetypes')

@@ -15,9 +15,24 @@ import deviceFilterEdit from './components/device/filter/FilterEditComponent';
 import deviceList from './components/device/DeviceListComponent';
 import deviceEdit from './components/device/DeviceEditComponent';
 
-import motorList from './components/motor/MotorListComponent';
+import propertyList from './components/property/PropertyListComponent';
+import propertyEdit from './components/property/PropertyEditComponent';
+
+import motorTypeList from './components/motor/type/TypeListComponent';
+import motorTypeEdit from './components/motor/type/TypeEditComponent';
+
+import motorTransmissionList from './components/motor/transmission/TransmissionListComponent';
+import motorTransmissionEdit from './components/motor/transmission/TransmissionEditComponent';
+
+import motorDriverList from './components/motor/driver/DriverListComponent';
+import motorDriverEdit from './components/motor/driver/DriverEditComponent';
 
 const routes = [
+    {
+        path: '/',
+        component: brandList
+    },
+
     //////////
     //BRANDS//////////////////////////////////////////////////////////////////
     //////////
@@ -78,20 +93,73 @@ const routes = [
         path: '/devices/edit/:id',
         component: deviceEdit
     },
-
-
-
-
-
-
+    ///////////
+    //PROPERTIES//////////////////////////////////////////////////////////////////////
+    ///////////
     {
-        path: '/',
-        component: brandList
+        path: '/properties/list',
+        component: propertyList
     },
     {
-        path: '/motors/list',
-        component: motorList
-    }
+        path: '/properties/create',
+        component: propertyEdit
+    },
+    {
+        path: '/properties/edit/:id',
+        component: propertyEdit
+    },
+    ///////////
+    //MOTOR TYPES//////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/motortypes/list',
+        component: motorTypeList
+    },
+    {
+        path: '/motortypes/create',
+        component: motorTypeEdit
+    },
+    {
+        path: '/motortypes/edit/:id',
+        component: motorTypeEdit
+    },
+    ///////////
+    //MOTOR TRANSMISSION//////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/motortransmissions/list',
+        component: motorTransmissionList
+    },
+    {
+        path: '/motortransmissions/create',
+        component: motorTransmissionEdit
+    },
+    {
+        path: '/motortransmissions/edit/:id',
+        component: motorTransmissionEdit
+    },
+    ///////////
+    //MOTOR DRIVER//////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/motordrivers/list',
+        component: motorDriverList
+    },
+    {
+        path: '/motordrivers/create',
+        component: motorDriverEdit
+    },
+    {
+        path: '/motordrivers/edit/:id',
+        component: motorDriverEdit
+    },
+
+
+
+
+
+
+
 ];
 
 export default new vueRouter({

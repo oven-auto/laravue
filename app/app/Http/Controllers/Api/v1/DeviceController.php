@@ -27,7 +27,7 @@ class DeviceController extends Controller
     public function store(Device $device, Request $request)
     {
         $device->fill($request->except('brand_id'))->save();
-        $device->brands()->attach($request->get('brand_id'));
+        $device->brands()->sync($request->get('brand_id'));
         return response()->json([
             'status' => 1,
             'device' => $device,
@@ -37,6 +37,7 @@ class DeviceController extends Controller
 
     public function edit(Device $device)
     {
+        $device->brands;
         return response()->json([
             'status' => 1,
             'device' => $device
@@ -45,7 +46,13 @@ class DeviceController extends Controller
 
     public function update(Device $device, Request $request)
     {
-        //
+        $device->fill($request->except('brand_id'))->save();
+        $device->brands()->sync($request->get('brand_id'));
+        return response()->json([
+            'status' => 1,
+            'device' => $device,
+            'message' => 'Оборудование изменено'
+        ]);
     }
 
     public function destroy($id)

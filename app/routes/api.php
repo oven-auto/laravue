@@ -25,3 +25,11 @@ Route::resource('devicetypes', \App\Http\Controllers\Api\v1\DeviceTypeController
 Route::resource('devicefilters', \App\Http\Controllers\Api\v1\DeviceFilterController::class);
 
 Route::resource('devices', \App\Http\Controllers\Api\v1\DeviceController::class);
+
+Route::resource('properties', \App\Http\Controllers\Api\v1\PropertyController::class);
+
+Route::resource('motortypes', \App\Http\Controllers\Api\v1\MotorTypeController::class);
+
+Route::resource('motortransmissions', \App\Http\Controllers\Api\v1\MotorTransmissionController::class);
+
+Route::resource('motordrivers', \App\Http\Controllers\Api\v1\MotorDriverController::class);

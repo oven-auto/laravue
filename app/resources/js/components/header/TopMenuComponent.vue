@@ -43,6 +43,22 @@ export default {
                     title: 'Оборудование',
                     href: '/devices/list'
                 },
+                {
+                    title: 'Характеристики',
+                    href: '/properties/list'
+                },
+                {
+                    title: 'Типы мотора',
+                    href: '/motortypes/list'
+                },
+                {
+                    title: 'Типы трансмиссий',
+                    href: '/motortransmissions/list'
+                },
+                {
+                    title: 'Типы привода',
+                    href: '/motordrivers/list'
+                },
             ]
         }
     }

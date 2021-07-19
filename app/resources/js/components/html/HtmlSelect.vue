@@ -1,7 +1,7 @@
 <template>
-    <select v-model="selected" :name="name" class="form-control">
-        <option v-if="placeholder" value="0" selected="selected">{{ placeholder }}</option>
-        <option v-for="item in data" :value="item.id">
+    <select v-model="selected" class="form-control">
+        <option value="" selected >Укажите параметр</option>
+        <option v-for="item in options" :value="item.id">
             {{ item.name }}
         </option>
     </select>
@@ -11,27 +11,15 @@
 
 export default {
     name: 'html-select',
-    data() {
-        return {
-            selected: this.value,
-        }
-    },
+
     props: {
-        value: {
+        options: {
             type: Array,
             default: []
         },
-        name: {
-            type: String,
-            default: null,
-        },
-        data: {
-            type: Array,
-            default: []
-        },
-        placeholder: {
-            type: String,
-            default: null
+        selected: {
+            type: Number,
+            default: 0
         }
     },
     watch: {
