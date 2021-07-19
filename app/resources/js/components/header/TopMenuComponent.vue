@@ -59,6 +59,10 @@ export default {
                     title: 'Типы привода',
                     href: '/motordrivers/list'
                 },
+                {
+                    title: 'Агрегаты',
+                    href: '/motors/list'
+                },
             ]
         }
     }

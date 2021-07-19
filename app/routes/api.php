@@ -33,3 +33,5 @@ Route::resource('motortypes', \App\Http\Controllers\Api\v1\MotorTypeController::
 Route::resource('motortransmissions', \App\Http\Controllers\Api\v1\MotorTransmissionController::class);
 
 Route::resource('motordrivers', \App\Http\Controllers\Api\v1\MotorDriverController::class);
+
+Route::resource('motors', \App\Http\Controllers\Api\v1\MotorController::class);

@@ -27,6 +27,9 @@ import motorTransmissionEdit from './components/motor/transmission/TransmissionE
 import motorDriverList from './components/motor/driver/DriverListComponent';
 import motorDriverEdit from './components/motor/driver/DriverEditComponent';
 
+import motorList from './components/motor/MotorListComponent';
+import motorEdit from './components/motor/MotorEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -152,6 +155,21 @@ const routes = [
     {
         path: '/motordrivers/edit/:id',
         component: motorDriverEdit
+    },
+    ///////////
+    //MOTOR ///////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/motors/list',
+        component: motorList
+    },
+    {
+        path: '/motors/create',
+        component: motorEdit
+    },
+    {
+        path: '/motors/edit/:id',
+        component: motorEdit
     },
 
 
