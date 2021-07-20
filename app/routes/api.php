@@ -35,3 +35,5 @@ Route::resource('motortransmissions', \App\Http\Controllers\Api\v1\MotorTransmis
 Route::resource('motordrivers', \App\Http\Controllers\Api\v1\MotorDriverController::class);
 
 Route::resource('motors', \App\Http\Controllers\Api\v1\MotorController::class);
+
+Route::resource('colors', \App\Http\Controllers\Api\v1\ColorController::class);

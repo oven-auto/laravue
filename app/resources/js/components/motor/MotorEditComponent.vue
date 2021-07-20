@@ -115,11 +115,11 @@ export default {
     data() {
         return {
             motor: {
-                name: null,
-                brand_id: null,
-                motor_transmission_id: null,
-                motor_driver_id: null,
-                motor_type_id: null,
+                name: '',
+                brand_id: '',
+                motor_transmission_id: '',
+                motor_driver_id: '',
+                motor_type_id: '',
                 size: 0,
                 power: 0,
                 valve: 0

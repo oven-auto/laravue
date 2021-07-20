@@ -30,6 +30,9 @@ import motorDriverEdit from './components/motor/driver/DriverEditComponent';
 import motorList from './components/motor/MotorListComponent';
 import motorEdit from './components/motor/MotorEditComponent';
 
+import colorList from './components/color/ColorListComponent';
+import colorEdit from './components/color/ColorEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -170,6 +173,21 @@ const routes = [
     {
         path: '/motors/edit/:id',
         component: motorEdit
+    },
+    ///////////
+    //COLOR ///////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/colors/list',
+        component: colorList
+    },
+    {
+        path: '/colors/create',
+        component: colorEdit
+    },
+    {
+        path: '/colors/edit/:id',
+        component: colorEdit
     },
 
 

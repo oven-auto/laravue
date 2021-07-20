@@ -63,6 +63,10 @@ export default {
                     title: 'Агрегаты',
                     href: '/motors/list'
                 },
+                {
+                    title: 'Палитра',
+                    href: '/colors/list'
+                },
             ]
         }
     }
