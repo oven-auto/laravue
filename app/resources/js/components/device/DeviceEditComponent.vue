@@ -39,7 +39,7 @@
                             :name="'device_type_id'"
                             :options="types"
                             v-model="device.device_type_id"
-                            :selected="device.device_type_id">
+                        >
                         </HtmlSelect>
                     </div>
 
@@ -49,7 +49,7 @@
                             :name="'device_filter_id'"
                             :options="filters"
                             v-model="device.device_filter_id"
-                            :selected="device.device_filter_id">
+                        >
                         </HtmlSelect>
                     </div>
 
@@ -126,7 +126,6 @@ export default {
                     this.device.brand_id.push(item.id)
                 })
 
-                console.log(this.device)
             })
             .catch(errors => {
                 this.notFound = true;
@@ -161,7 +160,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.filter.id);
+                    this.loadDevice(res.data.device.id);
                 }
             })
             .catch(errors => {
@@ -175,7 +174,6 @@ export default {
 
 
         getFormData(method = '') {
-            console.log(Object.values(this.device.brand_id))
 
             var formData = new FormData();
             formData.append('name', this.device.name);

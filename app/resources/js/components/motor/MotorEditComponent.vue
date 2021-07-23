@@ -61,25 +61,25 @@
                         <BrandSelect
                             :name="'brand_id'"
                             v-model="motor.brand_id"
-                            :selected="motor.brand_id">
+                        >
                         </BrandSelect>
 
                         <MotorTypeSelect
                             :name="'motor_type_id'"
                             v-model="motor.motor_type_id"
-                            :selected="motor.motor_type_id">
+                        >
                         </MotorTypeSelect>
 
                         <MotorTransmissionSelect
                             :name="'motor_transmission_id'"
                             v-model="motor.motor_transmission_id"
-                            :selected="motor.motor_transmission_id">
+                        >
                         </MotorTransmissionSelect>
 
                         <MotorDriverSelect
                             :name="'motor_driver_id'"
                             v-model="motor.motor_driver_id"
-                            :selected="motor.motor_driver_id">
+                        >
                         </MotorDriverSelect>
                     </div>
                 </div>
@@ -116,10 +116,10 @@ export default {
         return {
             motor: {
                 name: '',
-                brand_id: '',
-                motor_transmission_id: '',
-                motor_driver_id: '',
-                motor_type_id: '',
+                brand_id: 0,
+                motor_transmission_id: 0,
+                motor_driver_id: 0,
+                motor_type_id: 0,
                 size: 0,
                 power: 0,
                 valve: 0
@@ -156,7 +156,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadType(id);
+                    this.loadData(id);
                 }
             })
             .catch(errors => {
@@ -171,7 +171,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.motor.id);
+                    this.loadData(res.data.motor.id);
                 }
             })
             .catch(errors => {

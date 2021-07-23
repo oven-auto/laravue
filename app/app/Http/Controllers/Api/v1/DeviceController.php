@@ -9,9 +9,16 @@ use App\Models\Device;
 class DeviceController extends Controller
 {
 
-    public function index()
+    public function index(Request $request)
     {
-        $devices = Device::fullData()->get();
+        $query = Device::fullData();
+
+        if($request->has('brand_id'))
+            $query->leftJoin('device_brands', 'device_brands.device_id', '=', 'devices.id')
+                ->where('device_brands.brand_id', $request->get('brand_id'));
+
+        $devices = $query->orderBy('device_type_id')->orderBy('name')->get();
+
         if($devices->count())
             return response()->json([
                 'status' => 1,

@@ -17,15 +17,20 @@ export default {
             type: Array,
             default: []
         },
-        selected: {
+        value: {
             type: Number,
             default: 0
         }
     },
-    watch: {
-        selected(v){
-            this.$emit('input', v);
-        }
+    computed: {
+        selected: {
+            get() {
+                return this.value;
+            },
+            set(val) {
+                this.$emit('input', val);
+            },
+        },
     },
 }
 </script>

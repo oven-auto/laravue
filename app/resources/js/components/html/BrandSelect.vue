@@ -36,15 +36,25 @@ export default {
             type: String,
             default: null
         },
-        selected: {
+        value: {
             type: Number,
             default: 0
         }
     },
-    watch: {
-        selected(v){
-            this.$emit('input', v);
-        }
+    computed: {
+        selected: {
+            get() {
+                return this.value;
+            },
+            set(val) {
+                this.$emit('input', val);
+            },
+        },
     },
+    // watch: {
+    //     selected(v){
+    //         this.$emit('input', v);
+    //     }
+    // },
 }
 </script>

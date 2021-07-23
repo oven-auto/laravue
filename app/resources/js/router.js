@@ -33,6 +33,9 @@ import motorEdit from './components/motor/MotorEditComponent';
 import colorList from './components/color/ColorListComponent';
 import colorEdit from './components/color/ColorEditComponent';
 
+import packList from './components/pack/PackListComponent';
+import packEdit from './components/pack/PackEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -188,6 +191,21 @@ const routes = [
     {
         path: '/colors/edit/:id',
         component: colorEdit
+    },
+    ///////////
+    //PACK   ///////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/packs/list',
+        component: packList
+    },
+    {
+        path: '/packs/create',
+        component: packEdit
+    },
+    {
+        path: '/packs/edit/:id',
+        component: packEdit
     },
 
 

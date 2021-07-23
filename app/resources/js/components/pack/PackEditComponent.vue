@@ -8,44 +8,44 @@
 
         <div v-else>
             <form>
-                <div class="h5">{{ color.name ? color.name : 'Новый цвет' }}</div>
+                <div class="h5">{{ pack.code ? pack.code : 'Новая опция' }}</div>
 
                 <div class="row pb-3">
                     <div class="col-6">
                         <div >
                             <label for="name">Название</label>
-                            <input type="text" name="name" v-model="color.name" class="form-control"/>
+                            <input type="text" name="name" v-model="pack.name" class="form-control"/>
                         </div>
 
                         <div >
                             <label for="name">Код</label>
-                            <input type="text" name="name" v-model="color.code" class="form-control"/>
+                            <input type="text" name="code" v-model="pack.code" class="form-control"/>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <div >
+                            <label for="name">Цена</label>
+                            <input type="text" name="price" v-model="pack.price" class="form-control"/>
                         </div>
 
                         <BrandSelect
                             name="'brand_id'"
-                            v-model="color.brand_id"
+                            v-model="pack.brand_id"
                         >
                         </BrandSelect>
                     </div>
+                </div>
 
-                    <div class="col-6">
-                        <div class="main-color">
-                            <label>Основной цвет</label>
-                            <input type="color" v-model="color.web_main" class="form-control">
-                        </div>
-
-                        <div v-if="sub_color">
-                            <div class="sub_color">
-                                <label>Дополнительный цвет</label>
-                                <input type="color" v-model="color.web_sub" class="form-control" >
-                                <a class=" d-block text-right" @click="colorTrue(0)">Удалить дополнительный цвет</a>
-                            </div>
-                        </div>
-
-                        <div v-else>
-                            <label>&nbsp</label>
-                            <button type="button" class="btn btn-secondary btn-block" @click="colorTrue(1)">Дополнительный цвет</button>
+                <div class="row pb-3" v-if="devices.length > 0">
+                    <div class="col-4" v-for="chunk in chunkArray(devices, Math.ceil(devices.length/3))">
+                        <div v-for="itemDevice in chunk">
+                            <label class="checkbox d-flex align-items-center" :title="itemDevice.name">
+                                <input class="device-checkbox-toggle" type="checkbox" v-bind:value="itemDevice.id" v-model="pack.devices">
+                                <div class="checkbox__text" style="">
+                                    {{itemDevice.name}}
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -71,20 +71,21 @@ import Spin from '../spinner/SpinComponent';
 import BrandSelect from '../html/BrandSelect';
 
 export default {
-    name: 'device-driver-edit',
+    name: 'pack-edit',
     components: {
         Error, Message, Spin, BrandSelect
     },
     data() {
         return {
-            color: {
+            pack: {
                 name: '',
                 code: '',
-                web_main: '',
-                web_sub: '',
-                brand_id: 0
+                price: '',
+                colored: false,
+                brand_id: 0,
+                devices: []
             },
-            sub_color: false,
+            devices: [],
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
@@ -97,25 +98,29 @@ export default {
             this.loadData(this.urlId)
     },
     methods: {
-        colorTrue(status) {
-            if(status == 1)
-                this.sub_color = true;
-            else
-                this.sub_color = false
+        chunkArray(arr, chunk) {
+            var i, j, tmp = [];
+            for (i = 0, j = arr.length; i < j; i += chunk) {
+                tmp.push(arr.slice(i, i + chunk));
+            }
+            return tmp;
         },
-
         loadData(id) {
-            axios.get('/api/colors/' + id + '/edit')
+            axios.get('/api/packs/' + id + '/edit')
             .then( response => {
-                var colorsData = response.data.color.web.split(':');
+
                 this.loading = false;
-                this.color = response.data.color;
-                this.color.web_main = colorsData[0];
-                if(colorsData.length > 1)
-                {
-                    this.sub_color = true;
-                    this.color.web_sub = colorsData[1];
-                }
+
+                this.pack.name = response.data.pack.name;
+                this.pack.code = response.data.pack.code;
+                this.pack.price = response.data.pack.price;
+                this.pack.brand_id = response.data.pack.brand_id;
+
+                var arrayDev = [];
+                response.data.pack.devices.forEach(function(item,i){
+                    arrayDev.push(item.id);
+                })
+                this.pack.devices = arrayDev;
 
             })
             .catch(errors => {
@@ -125,7 +130,7 @@ export default {
         },
 
         updateData(id) {
-            axios.post('/api/colors/' + id, this.getFormData('patch'), this.getConfig())
+            axios.patch('/api/packs/' + id, this.pack, this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
@@ -140,13 +145,13 @@ export default {
         },
 
         storeData() {
-            axios.post('/api/colors/', this.getFormData(), this.getConfig())
+            axios.post('/api/packs/', this.pack, this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(res.data.motordriver.id);
+                    this.loadData(res.data.pack.id);
                 }
             })
             .catch(errors => {
@@ -154,29 +159,31 @@ export default {
             })
         },
 
-        getFormData(method = '') {
-            var formData = new FormData();
-
-            formData.append('name', this.color.name);
-            formData.append('code', this.color.code);
-            formData.append('brand_id', this.color.brand_id);
-
-            if(this.sub_color)
-                formData.append('web', this.color.web_main+':'+this.color.web_sub);
-            else
-                formData.append('web', this.color.web_main);
-
-            if(method == 'patch')
-                formData.append("_method", "PATCH");
-
-            return formData;
-        },
-
         getConfig() {
             return {
-                'content-type': 'multipart/form-data'
+                'content-type': 'application/json'
             }
         },
+
+        getDevices() {
+            var param = 'brand_id='+this.pack.brand_id
+            axios.get('/api/devices?' + param)
+            .then(res => {
+                this.devices = res.data.data
+            })
+            .catch(errors => {
+
+            })
+        }
+    },
+    watch: {
+        'pack.brand_id': {
+            immediate: true,
+            handler() {
+                if(this.pack.brand_id > 0)
+                    this.getDevices();
+            },
+        }
     }
 }
 </script>
