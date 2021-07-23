@@ -1,5 +1,5 @@
 <template>
-<div class="device-type-edit">
+<div class="country-factory-edit">
 
     <message v-if="succes" :message="succesMessage"></message>
 
@@ -9,22 +9,27 @@
 
     <div v-else>
         <form>
-            <div class="h5">{{ property.name ? property.name : 'Новый тип оборудования' }}</div>
+            <div class="h5">{{ countryfactory.country ? countryfactory.country : 'Новое происхождение' }}</div>
 
             <div class="row pb-3">
                 <div class="col-6">
                     <div >
-                        <label for="name">Название</label>
-                        <input type="text" name="name" v-model="property.name" class="form-control"/>
+                        <label for="name">Страна</label>
+                        <input type="text" name="name" v-model="countryfactory.country" class="form-control"/>
+                    </div>
+
+                    <div >
+                        <label for="name">Город</label>
+                        <input type="text" name="name" v-model="countryfactory.city" class="form-control"/>
                     </div>
                 </div>
             </div>
 
-            <button v-if="urlId" @click.prevent="updateProperty(urlId)" type="button" class="btn btn-success">
+            <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
                 Изменить
             </button>
 
-            <button v-else @click.prevent="storeProperty()" type="button" class="btn btn-success">
+            <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
                 Создать
             </button>
 
@@ -35,19 +40,20 @@
 </template>
 
 <script>
-import Error from '../alert/ErrorComponent';
-import Message from '../alert/MessageComponent';
-import Spin from '../spinner/SpinComponent';
+import Error from '../../alert/ErrorComponent';
+import Message from '../../alert/MessageComponent';
+import Spin from '../../spinner/SpinComponent';
 
 export default {
-    name: 'device-type-edit',
+    name: 'country-factory-edit',
     components: {
         Error, Message, Spin
     },
     data() {
         return {
-            property: {
-                name: null,
+            countryfactory: {
+                city: null,
+                country: null
             },
             notFound: false,
             loading: true,
@@ -58,14 +64,14 @@ export default {
     },
     mounted() {
         if(this.urlId)
-            this.loadProperty(this.urlId)
+            this.loadData(this.urlId)
     },
     methods: {
-        loadProperty(id) {
-            axios.get('/api/properties/' + id + '/edit')
+        loadData(id) {
+            axios.get('/api/countryfactories/' + id + '/edit')
             .then( response => {
                 this.loading = false;
-                this.property.name = response.data.property.name;
+                this.countryfactory = response.data.countryfactory;
             })
             .catch(errors => {
                 this.notFound = true;
@@ -73,14 +79,14 @@ export default {
             })
         },
 
-        updateProperty(id) {
-            axios.post('/api/properties/' + id, this.getFormData('patch'), this.getConfig())
+        updateData(id) {
+            axios.patch('/api/countryfactories/' + id, this.countryfactory, this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadProperty(id);
+                    this.loadData(id);
                 }
             })
             .catch(errors => {
@@ -88,30 +94,19 @@ export default {
             })
         },
 
-        storeProperty() {
-            axios.post('/api/properties/', this.getFormData(), this.getConfig())
+        storeData() {
+            axios.post('/api/countryfactories/', this.countryfactory, this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadProperty(res.data.property.id);
+                    this.loadData(res.data.countryfactory.id);
                 }
             })
             .catch(errors => {
                 console.log(errors)
             })
-        },
-
-        getFormData(method = '') {
-            var formData = new FormData();
-
-            formData.append('name', this.property.name);
-
-            if(method == 'patch')
-                formData.append("_method", "PATCH");
-
-            return formData;
         },
 
         getConfig() {

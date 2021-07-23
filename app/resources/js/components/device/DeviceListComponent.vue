@@ -18,8 +18,8 @@
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
-                <th>Тип</th>
                 <th>Фильтр</th>
+                <th>Тип</th>
                 <th>Бренд</th>
             </tr>
 
@@ -30,11 +30,11 @@
                     </router-link>
                 </td>
                 <td>{{ device.name }}</td>
-                <td>{{ device.type.name }}</td>
-                <td>{{ device.filter.name }}</td>
-                <td>
+                <td style="">{{ device.filter.name }}</td>
+                <td style="width:150px;">{{ device.type.name }}</td>
+                <td style="width:100px;">
                     <div v-for="brand in device.brands">
-                        {{ brand.name }}
+                        <span class="mr-1 badge badge-secondary">{{ brand.name }}</span>
                     </div>
                 </td>
             </tr>

@@ -39,3 +39,7 @@ Route::resource('motors', \App\Http\Controllers\Api\v1\MotorController::class);
 Route::resource('colors', \App\Http\Controllers\Api\v1\ColorController::class);
 
 Route::resource('packs', \App\Http\Controllers\Api\v1\PackController::class);
+
+Route::resource('bodyworks', \App\Http\Controllers\Api\v1\BodyWorkController::class);
+
+Route::resource('countryfactories', \App\Http\Controllers\Api\v1\CountryFactoryController::class);

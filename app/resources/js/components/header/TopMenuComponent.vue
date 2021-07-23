@@ -38,6 +38,14 @@
 
                         <router-link :to="'/colors/list'" class="dropdown-item">Палитра цветов</router-link>
 
+                        <div class="dropdown-divider"></div>
+
+                        <router-link :to="'/bodyworks/list'" class="dropdown-item">Типы кузовов</router-link>
+
+                         <div class="dropdown-divider"></div>
+
+                        <router-link :to="'/countryfactories/list'" class="dropdown-item">Места происхождения</router-link>
+
                     </div>
                 </li>
 

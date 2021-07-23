@@ -112,7 +112,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.filter.id);
+                    this.loadFilter(res.data.filter.id);
                 }
             })
             .catch(errors => {

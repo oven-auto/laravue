@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class BodyWork extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['name', 'sort'];
+
+    public $timestamps = false;
 }

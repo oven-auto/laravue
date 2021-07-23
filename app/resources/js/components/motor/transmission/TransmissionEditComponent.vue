@@ -101,7 +101,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.motortransmission.id);
+                    this.loadType(res.data.motortransmission.id);
                 }
             })
             .catch(errors => {

@@ -146,7 +146,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(res.data.motordriver.id);
+                    this.loadData(res.data.color.id);
                 }
             })
             .catch(errors => {

@@ -36,6 +36,12 @@ import colorEdit from './components/color/ColorEditComponent';
 import packList from './components/pack/PackListComponent';
 import packEdit from './components/pack/PackEditComponent';
 
+import bodyWorkList from './components/mark/bodywork/BodyWorkListComponent';
+import bodyWorkEdit from './components/mark/bodywork/BodyWorkEditComponent';
+
+import countryFactoryList from './components/mark/country/CountryFactoryListComponent';
+import countryFactoryEdit from './components/mark/country/CountryFactoryEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -206,6 +212,36 @@ const routes = [
     {
         path: '/packs/edit/:id',
         component: packEdit
+    },
+    ///////////
+    //BODY WORK   ///////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/bodyworks/list',
+        component: bodyWorkList
+    },
+    {
+        path: '/bodyworks/create',
+        component: bodyWorkEdit
+    },
+    {
+        path: '/bodyworks/edit/:id',
+        component: bodyWorkEdit
+    },
+    ///////////
+    //COUNTRY FACTORY ///////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/countryfactories/list',
+        component: countryFactoryList
+    },
+    {
+        path: '/countryfactories/create',
+        component: countryFactoryEdit
+    },
+    {
+        path: '/countryfactories/edit/:id',
+        component: countryFactoryEdit
     },
 
 

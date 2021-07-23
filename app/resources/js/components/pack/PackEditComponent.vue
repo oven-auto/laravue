@@ -37,7 +37,7 @@
                     </div>
                 </div>
 
-                <div class="row pb-3" v-if="devices.length > 0">
+                <div class="row pb-3" v-if="devices && devices.length > 0">
                     <div class="col-4" v-for="chunk in chunkArray(devices, Math.ceil(devices.length/3))">
                         <div v-for="itemDevice in chunk">
                             <label class="checkbox d-flex align-items-center" :title="itemDevice.name">

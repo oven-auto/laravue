@@ -16,7 +16,7 @@ class CreateBodyWorksTable extends Migration
         Schema::create('body_works', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->integer('sort');
+            $table->integer('sort')->default(0);
         });
     }
 

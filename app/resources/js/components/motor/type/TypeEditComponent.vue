@@ -101,7 +101,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.type.id);
+                    this.loadType(res.data.type.id);
                 }
             })
             .catch(errors => {
