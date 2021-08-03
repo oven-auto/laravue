@@ -17,7 +17,7 @@ class CreateMarkPropertiesTable extends Migration
             $table->id();
             $table->foreignId('mark_id')->constrained()->onDelete('cascade');
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
-            $table->string('name');
+            $table->string('value');
         });
     }
 

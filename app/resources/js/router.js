@@ -42,6 +42,9 @@ import bodyWorkEdit from './components/mark/bodywork/BodyWorkEditComponent';
 import countryFactoryList from './components/mark/country/CountryFactoryListComponent';
 import countryFactoryEdit from './components/mark/country/CountryFactoryEditComponent';
 
+import markList from './components/mark/MarkListComponent';
+import markEdit from './components/mark/MarkEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -243,7 +246,21 @@ const routes = [
         path: '/countryfactories/edit/:id',
         component: countryFactoryEdit
     },
-
+    ///////////
+    //MARK ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/marks/list',
+        component: markList
+    },
+    {
+        path: '/marks/create',
+        component: markEdit
+    },
+    {
+        path: '/marks/edit/:id',
+        component: markEdit
+    },
 
 
 

@@ -49,6 +49,10 @@
                     </div>
                 </li>
 
+                <li class="nav-item">
+                    <router-link :to="'/marks/list'" class="nav-link">Модели</router-link>
+                </li>
+
                 <!-- <li v-for="link in links" class="nav-item {{ item.href ? '' : 'dropdown' }}">
                     <router-link :to="link.href" class="nav-link"> {{ link.title }}</router-link>
                 </li> -->

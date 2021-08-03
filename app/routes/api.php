@@ -43,3 +43,5 @@ Route::resource('packs', \App\Http\Controllers\Api\v1\PackController::class);
 Route::resource('bodyworks', \App\Http\Controllers\Api\v1\BodyWorkController::class);
 
 Route::resource('countryfactories', \App\Http\Controllers\Api\v1\CountryFactoryController::class);
+
+Route::resource('marks', \App\Http\Controllers\Api\v1\MarkController::class);
