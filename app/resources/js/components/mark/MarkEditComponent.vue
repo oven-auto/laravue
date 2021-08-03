@@ -141,6 +141,36 @@
                 </div>
             </div>
 
+            <div class="row pb-2">
+                <div class="col-6 mb-3">
+                    <div class="h5">
+                        Иконка модели
+                    </div>
+                    <div v-if="mark.icon" class="pb-3">
+                        <img :src="mark.icon" class="brand-icon">
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentIcon">
+                        <label class="custom-file-label" for="accessory">Выберите фаил</label>
+                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                    </div>
+                </div>
+
+                 <div class="col-6 mb-3">
+                    <div class="h5">
+                        Банер модели
+                    </div>
+                    <div v-if="mark.banner" class="pb-3">
+                        <img :src="mark.banner" class="brand-icon">
+                    </div>
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentBanner">
+                        <label class="custom-file-label" for="accessory">Выберите фаил</label>
+                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                    </div>
+                </div>
+            </div>
+
             <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
                 Изменить
             </button>
@@ -174,7 +204,7 @@ export default {
         return {
             mark: {
                 name: '',
-                status: false,
+                status: 0,
                 prefix: '',
                 brand_id: 0,
                 body_work_id: 0,
@@ -189,7 +219,9 @@ export default {
                     manual: '',
                     price: '',
                 },
-                properties: []
+                properties: [],
+                icon: '',
+                banner: '',
             },
             properties: [],
             notFound: false,
@@ -222,6 +254,12 @@ export default {
         onAttachmentChange (e) {
             var fileProperty = e.target.getAttribute('id')
             this.mark.document[fileProperty] = e.target.files[0]
+        },
+        onAttachmentIcon (e) {
+            this.mark.icon= e.target.files[0]
+        },
+        onAttachmentBanner (e) {
+            this.mark.banner = e.target.files[0]
         },
 
         loadProperties() {
@@ -287,18 +325,24 @@ export default {
 
             formData.append('name',                 this.mark.name);
             formData.append('prefix',               this.mark.prefix);
-            formData.append('status',               this.mark.status);
+            formData.append('status',               Number(this.mark.status));
             formData.append('brand_id',             this.mark.brand_id);
             formData.append('country_factory_id',   this.mark.country_factory_id);
             formData.append('body_work_id',         this.mark.body_work_id);
-            formData.append('info.slogan',          this.mark.info.slogan);
-            formData.append('info.description',     this.mark.info.description);
+            formData.append('info[slogan]',          this.mark.info.slogan);
+            formData.append('info[description]',     this.mark.info.description);
+
             formData.append('document[brochure]',   this.mark.document.brochure);
+            formData.append('document[manual]',     this.mark.document.manual);
+            formData.append('document[price]',      this.mark.document.price);
+            formData.append('document[accessory]',  this.mark.document.accessory);
+
+            formData.append('icon', this.mark.icon);
+            formData.append('banner', this.mark.banner);
 
             this.transformedProperties.forEach(function(item, i){
                 formData.append('properties['+item.id+']',     item.value);
             })
-
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

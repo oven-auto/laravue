@@ -24,5 +24,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         \App\Models\Brand::observe(\App\Observers\BrandObserver::class);
+        \App\Models\Mark::observe(\App\Observers\MarkObserver::class);
     }
 }

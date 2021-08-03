@@ -4003,6 +4003,36 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -4023,7 +4053,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       mark: {
         name: '',
-        status: false,
+        status: 0,
         prefix: '',
         brand_id: 0,
         body_work_id: 0,
@@ -4038,7 +4068,9 @@ __webpack_require__.r(__webpack_exports__);
           manual: '',
           price: ''
         },
-        properties: []
+        properties: [],
+        icon: '',
+        banner: ''
       },
       properties: [],
       notFound: false,
@@ -4069,6 +4101,12 @@ __webpack_require__.r(__webpack_exports__);
     onAttachmentChange: function onAttachmentChange(e) {
       var fileProperty = e.target.getAttribute('id');
       this.mark.document[fileProperty] = e.target.files[0];
+    },
+    onAttachmentIcon: function onAttachmentIcon(e) {
+      this.mark.icon = e.target.files[0];
+    },
+    onAttachmentBanner: function onAttachmentBanner(e) {
+      this.mark.banner = e.target.files[0];
     },
     loadProperties: function loadProperties() {
       var _this = this;
@@ -4125,13 +4163,18 @@ __webpack_require__.r(__webpack_exports__);
       var formData = new FormData();
       formData.append('name', this.mark.name);
       formData.append('prefix', this.mark.prefix);
-      formData.append('status', this.mark.status);
+      formData.append('status', Number(this.mark.status));
       formData.append('brand_id', this.mark.brand_id);
       formData.append('country_factory_id', this.mark.country_factory_id);
       formData.append('body_work_id', this.mark.body_work_id);
-      formData.append('info.slogan', this.mark.info.slogan);
-      formData.append('info.description', this.mark.info.description);
+      formData.append('info[slogan]', this.mark.info.slogan);
+      formData.append('info[description]', this.mark.info.description);
       formData.append('document[brochure]', this.mark.document.brochure);
+      formData.append('document[manual]', this.mark.document.manual);
+      formData.append('document[price]', this.mark.document.price);
+      formData.append('document[accessory]', this.mark.document.accessory);
+      formData.append('icon', this.mark.icon);
+      formData.append('banner', this.mark.banner);
       this.transformedProperties.forEach(function (item, i) {
         formData.append('properties[' + item.id + ']', item.value);
       });
@@ -48234,6 +48277,92 @@ var render = function() {
                 ],
                 2
               ),
+              _vm._v(" "),
+              _c("div", { staticClass: "row pb-2" }, [
+                _c("div", { staticClass: "col-6 mb-3" }, [
+                  _c("div", { staticClass: "h5" }, [
+                    _vm._v(
+                      "\n                        Иконка модели\n                    "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm.mark.icon
+                    ? _c("div", { staticClass: "pb-3" }, [
+                        _c("img", {
+                          staticClass: "brand-icon",
+                          attrs: { src: _vm.mark.icon }
+                        })
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "custom-file" }, [
+                    _c("input", {
+                      staticClass: "custom-file-input",
+                      attrs: {
+                        type: "file",
+                        id: "accessory",
+                        name: "accessory"
+                      },
+                      on: { change: _vm.onAttachmentIcon }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "custom-file-label",
+                        attrs: { for: "accessory" }
+                      },
+                      [_vm._v("Выберите фаил")]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "invalid-feedback" }, [
+                      _vm._v("Example invalid custom file feedback")
+                    ])
+                  ])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-6 mb-3" }, [
+                  _c("div", { staticClass: "h5" }, [
+                    _vm._v(
+                      "\n                        Банер модели\n                    "
+                    )
+                  ]),
+                  _vm._v(" "),
+                  _vm.mark.banner
+                    ? _c("div", { staticClass: "pb-3" }, [
+                        _c("img", {
+                          staticClass: "brand-icon",
+                          attrs: { src: _vm.mark.banner }
+                        })
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "custom-file" }, [
+                    _c("input", {
+                      staticClass: "custom-file-input",
+                      attrs: {
+                        type: "file",
+                        id: "accessory",
+                        name: "accessory"
+                      },
+                      on: { change: _vm.onAttachmentBanner }
+                    }),
+                    _vm._v(" "),
+                    _c(
+                      "label",
+                      {
+                        staticClass: "custom-file-label",
+                        attrs: { for: "accessory" }
+                      },
+                      [_vm._v("Выберите фаил")]
+                    ),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "invalid-feedback" }, [
+                      _vm._v("Example invalid custom file feedback")
+                    ])
+                  ])
+                ])
+              ]),
               _vm._v(" "),
               _vm.urlId
                 ? _c(
