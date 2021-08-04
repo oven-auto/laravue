@@ -35,4 +35,14 @@ class Mark extends Model
     {
         return $this->hasOne(\App\Models\MarkDocument::class, 'mark_id', 'id')->withDefault();
     }
+
+    public function bodywork()
+    {
+        return $this->hasOne(\App\Models\BodyWork::class, 'id', 'body_work_id')->withDefault();
+    }
+
+    public function brand()
+    {
+        return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
+    }
 }

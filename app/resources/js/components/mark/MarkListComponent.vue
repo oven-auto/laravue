@@ -15,6 +15,7 @@
         <tr>
             <th style="width: 80px;">#</th>
             <th>Название</th>
+            <th>Статус</th>
         </tr>
 
         <tr v-for="mark in marks">
@@ -23,7 +24,18 @@
                     Open
                 </router-link>
             </td>
-            <td>{{ mark.name }}</td>
+            <td>
+                <span class="badge badge-secondary">{{ mark.brand.name }} </span>
+                {{ mark.prefix + ' ' + mark.name }}
+            </td>
+            <td>
+                <span class="badge badge-success" v-if="mark.status">
+                    Активна
+                </span>
+                <span v-else class="badge badge-danger">
+                    Отключена
+                </span>
+            </td>
         </tr>
     </table>
 

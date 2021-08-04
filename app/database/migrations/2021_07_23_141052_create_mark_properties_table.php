@@ -14,7 +14,6 @@ class CreateMarkPropertiesTable extends Migration
     public function up()
     {
         Schema::create('mark_properties', function (Blueprint $table) {
-            $table->id();
             $table->foreignId('mark_id')->constrained()->onDelete('cascade');
             $table->foreignId('property_id')->constrained()->onDelete('cascade');
             $table->string('value');

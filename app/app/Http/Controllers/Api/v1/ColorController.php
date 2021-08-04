@@ -8,9 +8,13 @@ use App\Models\Color;
 
 class ColorController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $colors = Color::with('brand')->get();
+        $query = Color::with('brand');
+        if($request->has('brand_id'))
+            $query->where('brand_id', $request->brand_id);
+        $colors = $query->get();
+
         if($colors->count())
             return response()->json([
                 'status' => 1,

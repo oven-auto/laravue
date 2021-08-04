@@ -15,7 +15,17 @@ class MarkController extends Controller
 
     public function index()
     {
-        echo 'index';
+        $marks = Mark::with(['icon', 'bodywork', 'brand'])->get();
+        if($marks->count())
+            return response()->json([
+                'status' => 1,
+                'data' => $marks,
+                'count' => $marks->count()
+            ]);
+        return response()->json([
+            'status' => 0,
+            'message' => 'Не нашлось ни одной модели'
+        ]);
     }
 
     public function edit(Mark $mark, Request $request)

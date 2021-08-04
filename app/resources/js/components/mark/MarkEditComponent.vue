@@ -131,7 +131,7 @@
                 </div>
             </div>
 
-            <div class="row pb-3">
+            <div class="row pb-5">
                 <div class="col-12 h5 mb-3">
                     Характеристики модели
                 </div>
@@ -141,7 +141,7 @@
                 </div>
             </div>
 
-            <div class="row pb-2">
+            <div class="row pb-5">
                 <div class="col-6 mb-3">
                     <div class="h5">
                         Иконка модели
@@ -171,6 +171,23 @@
                 </div>
             </div>
 
+            <div class="row pb-5">
+                <div class="col-12 mb-3">
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="h5">
+                                Палитра
+                            </div>
+                        </div>
+                        <div class="col-6 text-right">
+                            <button type="button" class="btn btn-success" @click="showModal" >
+                                Выбрать цвет
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
                 Изменить
             </button>
@@ -182,6 +199,8 @@
             <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
     </div>
+
+    <modal-window ref="modal"></modal-window>
 
 </div>
 </template>
@@ -195,13 +214,16 @@ import BrandSelect from '../html/BrandSelect';
 import BodySelect from '../html/BodySelect';
 import CountrySelect from '../html/CountrySelect';
 
+import ModalWindow from '../modal/Modal';
+
 export default {
     name: 'mark-edit',
     components: {
-        Error, Message, Spin, BrandSelect, BodySelect, CountrySelect
+        Error, Message, Spin, BrandSelect, BodySelect, CountrySelect, ModalWindow
     },
     data() {
         return {
+            show: true,
             mark: {
                 name: '',
                 status: 0,
@@ -251,6 +273,12 @@ export default {
         }
     },
     methods: {
+        showModal: function () {
+            this.$refs.modal.show = true
+            this.$refs.modal.brand = this.mark.brand_id
+            this.$refs.modal.loadData()
+        },
+
         onAttachmentChange (e) {
             var fileProperty = e.target.getAttribute('id')
             this.mark.document[fileProperty] = e.target.files[0]
@@ -318,6 +346,10 @@ export default {
             .catch(errors => {
                 console.log(errors)
             })
+        },
+
+        loadColor() {
+
         },
 
         getFormData(method = '') {
