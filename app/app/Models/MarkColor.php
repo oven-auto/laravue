@@ -12,4 +12,9 @@ class MarkColor extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function color()
+    {
+        return $this->hasOne(\App\Models\Color::class, 'id', 'color_id')->withDefault();
+    }
 }

@@ -185,6 +185,32 @@
                             </button>
                         </div>
                     </div>
+
+                    <div class="row">
+                        <div class="col-3" v-for="itemColor in mark.colors">
+                            <div class="item-color text-center">
+                                <div>
+                                    {{itemColor.code}}
+                                </div>
+                                <ColorIcon :colors="itemColor.web" style="margin:auto;"></ColorIcon>
+                                <div>
+                                    <small class="text-muted">
+                                        {{itemColor.name}}
+                                    </small>
+                                </div>
+                                <div>
+                                    <div v-if="itemColor.img">
+                                        <img :src="itemColor.img">
+                                    </div>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" v-bind:id="itemColor.id"  @change="onAttachmentColor">
+                                        <label class="custom-file-label" for="accessory">Выберите фаил</label>
+                                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -200,7 +226,7 @@
         </form>
     </div>
 
-    <modal-window ref="modal"></modal-window>
+    <modal-window ref="modal" @updateParent="getDataModal"></modal-window>
 
 </div>
 </template>
@@ -216,10 +242,12 @@ import CountrySelect from '../html/CountrySelect';
 
 import ModalWindow from '../modal/Modal';
 
+import ColorIcon from '../html/ColorIcon';
+
 export default {
     name: 'mark-edit',
     components: {
-        Error, Message, Spin, BrandSelect, BodySelect, CountrySelect, ModalWindow
+        Error, Message, Spin, BrandSelect, BodySelect, CountrySelect, ModalWindow, ColorIcon
     },
     data() {
         return {
@@ -244,6 +272,7 @@ export default {
                 properties: [],
                 icon: '',
                 banner: '',
+                colors: []
             },
             properties: [],
             notFound: false,
@@ -266,13 +295,35 @@ export default {
                 array.push({
                     id: item.id,
                     name: item.name,
-                    value: ''
+                    value: (item.value) ? item.value : ''
                 });
             })
             return array;
         }
     },
     methods: {
+
+        getDataModal(data) {
+            var exsist = false;
+            var index = false;
+
+            if(this.mark.colors.length == 0)
+                this.mark.colors.push(data);
+            else{
+                this.mark.colors.forEach( (item, i) => {
+                    if(data.id == item.id){
+                        exsist = true;
+                        index = i;
+                    }
+                });
+                if(exsist == false)
+                    this.mark.colors.push(data);
+                else {
+                    this.mark.colors.splice(index,1)
+                }
+            }
+        },
+
         showModal: function () {
             this.$refs.modal.show = true
             this.$refs.modal.brand = this.mark.brand_id
@@ -288,6 +339,14 @@ export default {
         },
         onAttachmentBanner (e) {
             this.mark.banner = e.target.files[0]
+        },
+        onAttachmentColor(e) {
+            var colorId = e.target.getAttribute('id')
+
+            this.mark.colors.forEach(function(item,i){
+                if(colorId == item.id)
+                    item.img = e.target.files[0]
+            })
         },
 
         loadProperties() {
@@ -309,6 +368,39 @@ export default {
             axios.get('/api/marks/' + id + '/edit')
             .then( response => {
                 this.mark.name = response.data.mark.name;
+                this.mark.prefix = response.data.mark.prefix;
+                this.mark.brand_id = response.data.mark.brand_id;
+                this.mark.body_work_id = response.data.mark.body_work_id;
+                this.mark.country_factory_id = response.data.mark.country_factory_id;
+                this.mark.info.slogan = response.data.mark.info.slogan;
+                this.mark.info.description = response.data.mark.info.description;
+                this.mark.status = response.data.mark.status;
+
+                this.mark.document = response.data.mark.document;
+
+                this.mark.icon = response.data.mark.icon.image;
+                this.mark.banner = response.data.mark.banner.image;
+
+                this.mark.colors = []
+                Array.from(response.data.mark.markcolors).forEach((item, i) => {
+                    this.mark.colors.push({
+                        id: item.color_id,
+                        name: item.color.name,
+                        code: item.color.code,
+                        web: item.color.web,
+                        img: item.image
+                    })
+                });
+
+                this.properties = []
+                Array.from(response.data.mark.properties).forEach((item, i) => {
+                    this.properties.push({
+                        id: item.id,
+                        name: item.name,
+                        value: item.pivot.value
+                    })
+                })
+                console.log(this.mark.properties)
             })
             .catch(errors => {
                 this.notFound = true;
@@ -348,10 +440,6 @@ export default {
             })
         },
 
-        loadColor() {
-
-        },
-
         getFormData(method = '') {
             var formData = new FormData();
 
@@ -376,6 +464,10 @@ export default {
                 formData.append('properties['+item.id+']',     item.value);
             })
 
+            this.mark.colors.forEach(function(item, i){
+                formData.append('colors[' + item.id + ']', item.img);
+            })
+
             if(method == 'patch')
                 formData.append("_method", "PATCH");
 
@@ -390,3 +482,7 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+img{width: 100%;}
+</style>

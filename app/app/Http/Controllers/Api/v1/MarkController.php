@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mark;
+use Storage;
 
 class MarkController extends Controller
 {
@@ -28,9 +29,14 @@ class MarkController extends Controller
         ]);
     }
 
-    public function edit(Mark $mark, Request $request)
+    public function edit(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
     {
-        echo 'edit';
+        $service->loadFullData($mark);
+
+        return response()->json([
+            'status' => 1,
+            'mark' => $mark
+        ]);
     }
 
     public function store(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
@@ -41,10 +47,27 @@ class MarkController extends Controller
         $service->saveIcon($mark, $request->icon);
         $service->saveBanner($mark, $request->banner);
         $service->saveDocuments($mark, $request->document);
+        $service->saveColors($mark, $request->colors);
+        return response()->json([
+            'status' => 1,
+            'mark' => $mark,
+            'message' => 'Марка создана'
+        ]);
     }
 
-    public function update(Mark $mark, Request $request)
+    public function update(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
     {
-        echo 'update';
+        $service->saveMark($mark, $request->only(self::MARK_COL));
+        $service->saveInfo($mark, $request->get('info'));
+        $service->saveProperties($mark, $request->get('properties'));
+        $service->saveIcon($mark, $request->icon);
+        $service->saveBanner($mark, $request->banner);
+        $service->saveDocuments($mark, $request->document);
+        $service->saveColors($mark, $request->colors);
+        return response()->json([
+            'status' => 1,
+            'mark' => $mark,
+            'message' => 'Марка изменена'
+        ]);
     }
 }

@@ -9,7 +9,7 @@
                 <div class="v-modal-content">
                     <div class="row">
                         <div class="col-2 text-center" v-for="item in data">
-                            <div class="item-color" @click="checkColor(item.id)">
+                            <div class="item-color" @click="checkColor(item)">
                                 <div>
                                     {{item.code}}
                                 </div>
@@ -54,8 +54,15 @@
             this.loadData()
         },
         methods: {
+            //
             checkColor(param) {
-                alert(param)
+                this.$emit('updateParent', {
+                    id: param.id,
+                    name: param.name,
+                    code: param.code,
+                    web: param.web,
+                    img: ''
+                })
             },
 
             closeModal: function () {

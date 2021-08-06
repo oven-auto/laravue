@@ -45,4 +45,9 @@ class Mark extends Model
     {
         return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
     }
+
+    public function markcolors()
+    {
+        return $this->hasMany(\App\Models\MarkColor::class, 'mark_id', 'id')->with('color');
+    }
 }
