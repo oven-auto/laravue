@@ -111,7 +111,13 @@ Class MarkRepository
         $mark->info;
         $mark->icon->image = asset('storage'.$mark->icon->image);
         $mark->banner->image = asset('storage'.$mark->banner->image);
+
         $mark->properties;
+        if($mark->properties->count())
+            foreach ($mark->properties as $item) {
+                $item->value = $item->pivot->value;
+                unset($item->pivot);
+            }
 
         $mark->document->brochure = asset('storage'.$mark->document->brochure);
         $mark->document->price = asset('storage'.$mark->document->price);

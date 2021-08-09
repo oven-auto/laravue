@@ -10,136 +10,11 @@
         <form>
             <div class="h5">{{ mark.name ? 'Модель: ' + mark.name : 'Новая модель' }}</div>
 
-            <div class="row pb-3">
-                <div class="col-8"></div>
-                <div class="col-4 text-right">
-                    <div>
-                        <label class="checkbox " :title="'Статус'">
-                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="mark.status" v-model="mark.status">
-                            <div class="checkbox__text" style="">
-                                <div style="width: 200px;text-align: left;">
-                                    {{ (mark.status) ? 'Модель актуальна' : 'Модель выключена' }}
-                                </div>
-                            </div>
-                        </label>
-                    </div>
-                </div>
-            </div>
+            <MarkMainInfoVue :mark="mark"></MarkMainInfoVue>
 
-            <div class="row pb-3">
-                <div class="col-12 h5 mb-3">
-                    Основные сведения о модели
-                </div>
-                <div class="col-4">
-                    <div class="btn-group">
-                        <div>
-                            <label for="name">Название</label>
-                            <input style="border-radius: 5px 0 0 5px;" type="text" name="name" v-model="mark.name" class="form-control"/>
-                        </div>
-                        <div style="width: 130px;">
-                            <label for="name">Префикс</label>
-                            <input style="border-radius: 0px 5px 5px 0px;" type="text" name="prefix" v-model="mark.prefix" class="form-control"/>
-                        </div>
-                    </div>
+            <MarkDocumentVue :mark="mark"></MarkDocumentVue>
 
-                    <BrandSelect v-model="mark.brand_id" name="brand_id"></BrandSelect>
-
-                    <BodySelect v-model="mark.body_work_id" name="body_work_id"></BodySelect>
-
-                    <CountrySelect v-model="mark.country_factory_id" name="country_factory_id"></CountrySelect>
-                </div>
-
-                <div class="col-8">
-                    <div class="">
-                        <label for="name">Слоган</label>
-                        <input type="text" v-model="mark.info.slogan" class="form-control">
-                    </div>
-
-                    <div class="">
-                        <label for="name">Описание</label>
-                        <textarea v-model="mark.info.description" class="form-control" style="height: 175px;"></textarea>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row py-5">
-                <div class="col-12 h5 mb-3">
-                    Документы модели
-                </div>
-                <div class="col">
-                    <div class="">
-                        Брошюра
-                    </div>
-
-                    <div v-if="mark.document.brochure" class="pb-3">
-                        <img :src="mark.document.brochure" class="brand-icon">
-                    </div>
-
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="brochure" name="brochure" @change="onAttachmentChange">
-                        <label class="custom-file-label" for="brochure">Выберите фаил</label>
-                        <div class="invalid-feedback">Example invalid custom file feedback</div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="">
-                        Прайс
-                    </div>
-
-                    <div v-if="mark.document.price" class="pb-3">
-                        <img :src="mark.document.price" class="brand-icon">
-                    </div>
-
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="price" name="price"  @change="onAttachmentChange">
-                        <label class="custom-file-label" for="price">Выберите фаил</label>
-                        <div class="invalid-feedback">Example invalid custom file feedback</div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="">
-                        Мануал
-                    </div>
-
-                    <div v-if="mark.document.manual" class="pb-3">
-                        <img :src="mark.document.manual" class="brand-icon">
-                    </div>
-
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="manual" name="manual"  @change="onAttachmentChange">
-                        <label class="custom-file-label" for="manual">Выберите фаил</label>
-                        <div class="invalid-feedback">Example invalid custom file feedback</div>
-                    </div>
-                </div>
-
-                <div class="col">
-                    <div class="">
-                        Аксессуары
-                    </div>
-
-                    <div v-if="mark.document.accessory" class="pb-3">
-                        <img :src="mark.document.accessory" class="brand-icon">
-                    </div>
-
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentChange">
-                        <label class="custom-file-label" for="accessory">Выберите фаил</label>
-                        <div class="invalid-feedback">Example invalid custom file feedback</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row pb-5">
-                <div class="col-12 h5 mb-3">
-                    Характеристики модели
-                </div>
-                <div class="col-3" v-for="item in mark.properties">
-                    <label>{{ item.name }}</label>
-                    <input type="text" class="form-control" v-model="item.value">
-                </div>
-            </div>
+            <MarkProperties :installed="mark.properties" @updateParent="getProperties"></MarkProperties>
 
             <div class="row pb-5">
                 <div class="col-6 mb-3">
@@ -236,18 +111,20 @@ import Error from '../alert/ErrorComponent';
 import Message from '../alert/MessageComponent';
 import Spin from '../spinner/SpinComponent';
 
-import BrandSelect from '../html/BrandSelect';
-import BodySelect from '../html/BodySelect';
-import CountrySelect from '../html/CountrySelect';
+
 
 import ModalWindow from '../modal/Modal';
 
 import ColorIcon from '../html/ColorIcon';
 
+import MarkMainInfoVue from './MarkMainInfo.vue';
+import MarkDocumentVue from './MarkDocument.vue';
+import MarkProperties from './MarkProperties.vue';
+
 export default {
     name: 'mark-edit',
     components: {
-        Error, Message, Spin, BrandSelect, BodySelect, CountrySelect, ModalWindow, ColorIcon
+        Error, Message, Spin, ModalWindow, ColorIcon, MarkMainInfoVue, MarkDocumentVue, MarkProperties
     },
     data() {
         return {
@@ -274,7 +151,7 @@ export default {
                 banner: '',
                 colors: []
             },
-            properties: [],
+            //properties: [],
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
@@ -283,35 +160,14 @@ export default {
         }
     },
     mounted() {
-        this.loadProperties();
         if(this.urlId)
             this.loadData(this.urlId)
     },
 
-    computed: {
-        // transformedProperties: function() {
-        //     var array = [];
-        //     this.properties.forEach( (item, i) => {
-        //         var value = '';
-
-        //         this.mark.properties.forEach(( installProperty, i) => {
-
-        //             if(item.mark_id == installProperty.mark_id && item.property_id == installProperty.property_id) {
-        //                 value = installProperty.value
-        //             }
-        //             console.log(item.name + ' ' + installProperty.name)
-        //         })
-
-        //         array.push({
-        //             id: item.id,
-        //             name: item.name,
-        //             value: value
-        //         });
-        //     })
-        //     return array;
-        // }
-    },
     methods: {
+        getProperties(data) {
+            console.log(1)
+        },
 
         getDataModal(data) {
             var exsist = false;
@@ -340,10 +196,7 @@ export default {
             this.$refs.modal.loadData()
         },
 
-        onAttachmentChange (e) {
-            var fileProperty = e.target.getAttribute('id')
-            this.mark.document[fileProperty] = e.target.files[0]
-        },
+
         onAttachmentIcon (e) {
             this.mark.icon= e.target.files[0]
         },
@@ -359,22 +212,7 @@ export default {
             })
         },
 
-        loadProperties() {
-            this.loading = true;
-            axios.get('/api/properties')
-            .then(res => {
-                this.mark.properties = res.data.data
-                this.mark.properties.forEach(function(item,i){
-                    item.value = '';
-                })
-            })
-            .catch(errors => {
 
-            })
-            .finally(() => {
-                this.loading = false;
-            })
-        },
 
         loadData(id) {
             this.loading = true;
@@ -406,12 +244,8 @@ export default {
                     })
                 });
 
-                this.mark.properties.forEach( (item) => {
-                    Array.from(response.data.mark.properties).forEach( (install) => {
-                        if(item.id == install.id)
-                            item.value = install.pivot.value
-                    })
-                })
+                this.mark.properties = response.data.mark.properties
+
             })
             .catch(errors => {
                 this.notFound = true;
