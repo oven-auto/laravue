@@ -135,7 +135,7 @@
                 <div class="col-12 h5 mb-3">
                     Характеристики модели
                 </div>
-                <div class="col-3" v-for="item in transformedProperties">
+                <div class="col-3" v-for="item in mark.properties">
                     <label>{{ item.name }}</label>
                     <input type="text" class="form-control" v-model="item.value">
                 </div>
@@ -289,17 +289,27 @@ export default {
     },
 
     computed: {
-        transformedProperties: function() {
-            var array = [];
-            this.properties.forEach( function(item, i) {
-                array.push({
-                    id: item.id,
-                    name: item.name,
-                    value: (item.value) ? item.value : ''
-                });
-            })
-            return array;
-        }
+        // transformedProperties: function() {
+        //     var array = [];
+        //     this.properties.forEach( (item, i) => {
+        //         var value = '';
+
+        //         this.mark.properties.forEach(( installProperty, i) => {
+
+        //             if(item.mark_id == installProperty.mark_id && item.property_id == installProperty.property_id) {
+        //                 value = installProperty.value
+        //             }
+        //             console.log(item.name + ' ' + installProperty.name)
+        //         })
+
+        //         array.push({
+        //             id: item.id,
+        //             name: item.name,
+        //             value: value
+        //         });
+        //     })
+        //     return array;
+        // }
     },
     methods: {
 
@@ -353,7 +363,10 @@ export default {
             this.loading = true;
             axios.get('/api/properties')
             .then(res => {
-                this.properties = res.data.data
+                this.mark.properties = res.data.data
+                this.mark.properties.forEach(function(item,i){
+                    item.value = '';
+                })
             })
             .catch(errors => {
 
@@ -379,6 +392,7 @@ export default {
                 this.mark.document = response.data.mark.document;
 
                 this.mark.icon = response.data.mark.icon.image;
+
                 this.mark.banner = response.data.mark.banner.image;
 
                 this.mark.colors = []
@@ -392,15 +406,12 @@ export default {
                     })
                 });
 
-                this.properties = []
-                Array.from(response.data.mark.properties).forEach((item, i) => {
-                    this.properties.push({
-                        id: item.id,
-                        name: item.name,
-                        value: item.pivot.value
+                this.mark.properties.forEach( (item) => {
+                    Array.from(response.data.mark.properties).forEach( (install) => {
+                        if(item.id == install.id)
+                            item.value = install.pivot.value
                     })
                 })
-                console.log(this.mark.properties)
             })
             .catch(errors => {
                 this.notFound = true;
@@ -417,7 +428,10 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(id);
+                    location.reload()
+                    //this.loadData(id);
+                    //this.$forceUpdate();
+                    //console.log(this.mark.icon + 'reload')
                 }
             })
             .catch(errors => {
@@ -460,7 +474,7 @@ export default {
             formData.append('icon', this.mark.icon);
             formData.append('banner', this.mark.banner);
 
-            this.transformedProperties.forEach(function(item, i){
+            this.mark.properties.forEach(function(item, i){
                 formData.append('properties['+item.id+']',     item.value);
             })
 

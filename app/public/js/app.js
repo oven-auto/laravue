@@ -4137,18 +4137,24 @@ __webpack_require__.r(__webpack_exports__);
     this.loadProperties();
     if (this.urlId) this.loadData(this.urlId);
   },
-  computed: {
-    transformedProperties: function transformedProperties() {
-      var array = [];
-      this.properties.forEach(function (item, i) {
-        array.push({
-          id: item.id,
-          name: item.name,
-          value: item.value ? item.value : ''
-        });
-      });
-      return array;
-    }
+  computed: {// transformedProperties: function() {
+    //     var array = [];
+    //     this.properties.forEach( (item, i) => {
+    //         var value = '';
+    //         this.mark.properties.forEach(( installProperty, i) => {
+    //             if(item.mark_id == installProperty.mark_id && item.property_id == installProperty.property_id) {
+    //                 value = installProperty.value
+    //             }
+    //             console.log(item.name + ' ' + installProperty.name)
+    //         })
+    //         array.push({
+    //             id: item.id,
+    //             name: item.name,
+    //             value: value
+    //         });
+    //     })
+    //     return array;
+    // }
   },
   methods: {
     getDataModal: function getDataModal(data) {
@@ -4192,7 +4198,11 @@ __webpack_require__.r(__webpack_exports__);
 
       this.loading = true;
       axios.get('/api/properties').then(function (res) {
-        _this.properties = res.data.data;
+        _this.mark.properties = res.data.data;
+
+        _this.mark.properties.forEach(function (item, i) {
+          item.value = '';
+        });
       })["catch"](function (errors) {})["finally"](function () {
         _this.loading = false;
       });
@@ -4223,15 +4233,12 @@ __webpack_require__.r(__webpack_exports__);
             img: item.image
           });
         });
-        _this2.properties = [];
-        Array.from(response.data.mark.properties).forEach(function (item, i) {
-          _this2.properties.push({
-            id: item.id,
-            name: item.name,
-            value: item.pivot.value
+
+        _this2.mark.properties.forEach(function (item) {
+          Array.from(response.data.mark.properties).forEach(function (install) {
+            if (item.id == install.id) item.value = install.pivot.value;
           });
         });
-        console.log(_this2.mark.properties);
       })["catch"](function (errors) {
         _this2.notFound = true;
       })["finally"](function () {
@@ -4245,8 +4252,9 @@ __webpack_require__.r(__webpack_exports__);
         if (res.data.status) {
           _this3.succes = true;
           _this3.succesMessage = res.data.message;
-
-          _this3.loadData(id);
+          location.reload(); //this.loadData(id);
+          //this.$forceUpdate();
+          //console.log(this.mark.icon + 'reload')
         }
       })["catch"](function (errors) {
         console.log(errors);
@@ -4283,7 +4291,7 @@ __webpack_require__.r(__webpack_exports__);
       formData.append('document[accessory]', this.mark.document.accessory);
       formData.append('icon', this.mark.icon);
       formData.append('banner', this.mark.banner);
-      this.transformedProperties.forEach(function (item, i) {
+      this.mark.properties.forEach(function (item, i) {
         formData.append('properties[' + item.id + ']', item.value);
       });
       this.mark.colors.forEach(function (item, i) {
@@ -48675,7 +48683,7 @@ var render = function() {
                     )
                   ]),
                   _vm._v(" "),
-                  _vm._l(_vm.transformedProperties, function(item) {
+                  _vm._l(_vm.mark.properties, function(item) {
                     return _c("div", { staticClass: "col-3" }, [
                       _c("label", [_vm._v(_vm._s(item.name))]),
                       _vm._v(" "),
