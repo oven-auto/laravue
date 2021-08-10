@@ -1,5 +1,5 @@
 <template>
-    <div class="row pb-5">
+    <div class="row py-3">
         <div class="col-12 h5 mb-3">
             Характеристики модели
         </div>

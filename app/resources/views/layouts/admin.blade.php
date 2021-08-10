@@ -18,7 +18,7 @@
 
     </head>
 
-    <body>
+    <body class="bg-white">
         <div id="app">
             <top-menu></top-menu>
             <div class="container pt-3">

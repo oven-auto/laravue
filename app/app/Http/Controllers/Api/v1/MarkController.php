@@ -9,11 +9,6 @@ use Storage;
 
 class MarkController extends Controller
 {
-
-    const MARK_COL = [
-        'name', 'prefix', 'sort', 'status', 'brand_id', 'body_work_id', 'country_factory_id'
-    ];
-
     public function index()
     {
         $marks = Mark::with(['icon', 'bodywork', 'brand'])->get();
@@ -41,13 +36,8 @@ class MarkController extends Controller
 
     public function store(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
     {
-        $service->saveMark($mark, $request->only(self::MARK_COL));
-        $service->saveInfo($mark, $request->get('info'));
-        $service->saveProperties($mark, $request->get('properties'));
-        $service->saveIcon($mark, $request->icon);
-        $service->saveBanner($mark, $request->banner);
-        $service->saveDocuments($mark, $request->document);
-        $service->saveColors($mark, $request->colors);
+        $service->saveMark($mark, $request->all());
+
         return response()->json([
             'status' => 1,
             'mark' => $mark,
@@ -56,14 +46,9 @@ class MarkController extends Controller
     }
 
     public function update(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
-    {//dd($request->all());
-        $service->saveMark($mark, $request->only(self::MARK_COL));
-        $service->saveInfo($mark, $request->get('info'));
-        $service->saveProperties($mark, $request->get('properties'));
-        $service->saveIcon($mark, $request->icon);
-        $service->saveBanner($mark, $request->banner);
-        $service->saveDocuments($mark, $request->document);
-        $service->saveColors($mark, $request->colors);
+    {
+        $service->saveMark($mark, $request->all());
+
         return response()->json([
             'status' => 1,
             'mark' => $mark,

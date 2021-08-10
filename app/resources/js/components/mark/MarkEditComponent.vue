@@ -16,33 +16,33 @@
 
             <MarkProperties :installed="mark.properties" @updateProperties="getProperties"></MarkProperties>
 
-            <div class="row pb-5">
+            <div class="row py-3 text-center">
                 <div class="col-6 mb-3">
-                    <div class="h5">
-                        Иконка модели
-                    </div>
-                    <div v-if="mark.icon" class="pb-3">
-                        <img :src="mark.icon" class="">
-                    </div>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentIcon">
-                        <label class="custom-file-label" for="accessory">Выберите фаил</label>
-                        <div class="invalid-feedback">Example invalid custom file feedback</div>
-                    </div>
+                        <div class="h5 text-left">
+                            Иконка модели
+                        </div>
+                        <div v-if="mark.icon" class="pb-3">
+                            <img :src="mark.icon" style="height: 200px;width:auto;">
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentIcon">
+                            <label class="custom-file-label" for="accessory">Выберите фаил</label>
+                            <div class="invalid-feedback">Example invalid custom file feedback</div>
+                        </div>
                 </div>
 
                 <div class="col-6 mb-3">
-                    <div class="h5">
-                        Банер модели
-                    </div>
-                    <div v-if="mark.banner" class="pb-3">
-                        <img :src="mark.banner" class="">
-                    </div>
-                    <div class="custom-file">
-                        <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentBanner">
-                        <label class="custom-file-label" for="accessory">Выберите фаил</label>
-                        <div class="invalid-feedback">Example invalid custom file feedback</div>
-                    </div>
+                        <div class="h5 text-left">
+                            Банер модели
+                        </div>
+                        <div v-if="mark.banner" class="pb-3">
+                            <img :src="mark.banner" style="height: 200px;width:auto;">
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentBanner">
+                            <label class="custom-file-label" for="accessory">Выберите фаил</label>
+                            <div class="invalid-feedback">Example invalid custom file feedback</div>
+                        </div>
                 </div>
             </div>
 
@@ -270,24 +270,27 @@ export default {
         },
 
         updateData(id) {
+            this.loading = true;
             axios.post('/api/marks/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    //location.reload()
-                    //this.loadData(id);
-                    //this.$forceUpdate();
-                    //console.log(this.mark.icon + 'reload')
+                    this.loadData(id);
                 }
             })
             .catch(errors => {
+                this.loading = false;
                 console.log(errors)
+            })
+            .finally( () => {
+                this.loading = true;
             })
         },
 
         storeData() {
+            this.loading = true;
             axios.post('/api/marks/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -298,7 +301,11 @@ export default {
                 }
             })
             .catch(errors => {
+                this.loading = false;
                 console.log(errors)
+            })
+            .finally( () => {
+                this.loading = true;
             })
         },
 
@@ -314,10 +321,14 @@ export default {
             formData.append('info[slogan]',          this.mark.info.slogan);
             formData.append('info[description]',     this.mark.info.description);
 
-            formData.append('document[brochure]',   this.mark.document.brochure);
-            formData.append('document[manual]',     this.mark.document.manual);
-            formData.append('document[price]',      this.mark.document.price);
-            formData.append('document[accessory]',  this.mark.document.accessory);
+            if(isObject(this.mark.document.brochure))
+                formData.append('document[brochure]',   this.mark.document.brochure);
+            if(isObject(this.mark.document.manual))
+                formData.append('document[manual]',     this.mark.document.manual);
+            if(isObject(this.mark.document.price))
+                formData.append('document[price]',      this.mark.document.price);
+            if(isObject(this.mark.document.accessory))
+                formData.append('document[accessory]',  this.mark.document.accessory);
 
             formData.append('icon', this.mark.icon);
             formData.append('banner', this.mark.banner);
@@ -346,5 +357,5 @@ export default {
 </script>
 
 <style scoped>
-img{width: 100%;}
+
 </style>

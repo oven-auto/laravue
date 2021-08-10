@@ -5,10 +5,49 @@ namespace App\Repositories;
 use App\Models\Mark;
 use Illuminate\Http\UploadedFile;
 use Storage;
+use DB;
 
 Class MarkRepository
 {
+    const MARK_COL = [
+        'name', 'prefix', 'sort', 'status', 'brand_id', 'body_work_id', 'country_factory_id'
+    ];
+
     public function saveMark(Mark $mark, $data = []) :void
+    {
+        try {
+            DB::transaction(function () use ($mark, $data) {
+                $this->saveMain($mark, array_filter($data, function ($key) {
+                    if (\array_key_exists($key, array_flip(self::MARK_COL) )) {
+                        return true;
+                    }
+                }, ARRAY_FILTER_USE_KEY));
+
+                if (isset($data['info'])) {
+                    $this->saveInfo($mark, $data['info']);
+                }
+                if (isset($data['properties'])) {
+                    $this->saveProperties($mark, $data['properties']);
+                }
+                if (isset($data['icon'])) {
+                    $this->saveIcon($mark, $data['icon']);
+                }
+                if (isset($data['banner'])) {
+                    $this->saveBanner($mark, $data['banner']);
+                }
+                if (isset($data['document'])) {
+                    $this->saveDocuments($mark, $data['document']);
+                }
+                if (isset($data['colors'])) {
+                    $this->saveColors($mark, $data['colors']);
+                }
+            });
+        } catch(Exception $e) {
+			die($e);
+		}
+    }
+
+    public function saveMain(Mark $mark, $data = []) :void
     {
         $mark->fill($data)->save();
     }
@@ -23,15 +62,10 @@ Class MarkRepository
 
     public function saveProperties(Mark $model, $data = []) :void
     {
-        //$propertiesArray = [];
-
         $model->properties()->detach();
 
         foreach($data as $id => $value)
             $model->properties()->attach($id, ['value' => $value]);
-            //$propertiesArray[] = ['property_id' => $id, 'value' => $value];
-
-        //$model->properties()->sync($propertiesArray);
     }
 
     public function saveIcon(Mark $mark, $file) :void
@@ -70,6 +104,9 @@ Class MarkRepository
 
     public function saveDocuments(Mark $mark, $data = []) :void
     {
+        if($data == null && !is_array($data))
+            return;
+
         $finalName = [];
         $path = '/public/mark/'.$mark->slug.'/documents';
         $urlPath = '/mark/'.$mark->slug.'/documents';
@@ -112,9 +149,10 @@ Class MarkRepository
 
     public function loadFullData(Mark $mark)
     {
+        $time = '?'.date('dmyhms');
         $mark->info;
-        $mark->icon->image = asset('storage'.$mark->icon->image);
-        $mark->banner->image = asset('storage'.$mark->banner->image);
+        $mark->icon->image = asset('storage'.$mark->icon->image) . $time;
+        $mark->banner->image = asset('storage'.$mark->banner->image) . $time;
 
         $mark->properties;
         if($mark->properties->count())
@@ -123,13 +161,13 @@ Class MarkRepository
                 unset($item->pivot);
             }
 
-        $mark->document->brochure = asset('storage'.$mark->document->brochure);
-        $mark->document->price = asset('storage'.$mark->document->price);
-        $mark->document->manual = asset('storage'.$mark->document->manual);
-        $mark->document->accessory = asset('storage'.$mark->document->accessory);
+        $mark->document->brochure = asset('storage'.$mark->document->brochure) . $time;
+        $mark->document->price = asset('storage'.$mark->document->price) . $time;
+        $mark->document->manual = asset('storage'.$mark->document->manual) . $time;
+        $mark->document->accessory = asset('storage'.$mark->document->accessory) . $time;
 
         if($mark->markcolors->count())
             foreach($mark->markcolors as $itemColor)
-                $itemColor->image = asset('storage'.$itemColor->image);
+                $itemColor->image = asset('storage'.$itemColor->image) . $time;
     }
 }

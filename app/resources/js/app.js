@@ -5,6 +5,7 @@
  */
 
 require('./bootstrap');
+require('./function/isString');
 
 window.Vue = require('vue').default;
 
