@@ -23,11 +23,15 @@ Class MarkRepository
 
     public function saveProperties(Mark $model, $data = []) :void
     {
-        $propertiesArray = [];
+        //$propertiesArray = [];
+
+        $model->properties()->detach();
+
         foreach($data as $id => $value)
-            if(!empty($id) && !empty($value))
-                $propertiesArray[] = ['property_id' => $id, 'value' => $value];
-        $model->properties()->sync($propertiesArray);
+            $model->properties()->attach($id, ['value' => $value]);
+            //$propertiesArray[] = ['property_id' => $id, 'value' => $value];
+
+        //$model->properties()->sync($propertiesArray);
     }
 
     public function saveIcon(Mark $mark, $file) :void

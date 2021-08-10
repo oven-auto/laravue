@@ -65,7 +65,7 @@ export default {
         res(newValue, oldValue) {
             // Пробрасываем данные родительскому компоненту,
             // ч/з вызов метода.
-            this.$emit('updateParent', this.properties)
+            this.$emit('updateProperties', this.properties)
         }
     }
 

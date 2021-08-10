@@ -28,7 +28,12 @@
                 </div>
                 <div style="width: 130px;">
                     <label for="name">Префикс</label>
-                    <input style="border-radius: 0px 5px 5px 0px;" type="text" name="prefix" v-model="mark.prefix" class="form-control"/>
+                    <input style="border-radius: 0px 5px 5px 0px;"
+                        type="text"
+                        name="prefix"
+                        v-model="mark.prefix"
+                        class="form-control"
+                    />
                 </div>
             </div>
 

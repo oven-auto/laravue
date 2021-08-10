@@ -4118,7 +4118,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   methods: {
     getProperties: function getProperties(data) {
-      console.log(1);
+      this.mark.properties = data;
     },
     getDataModal: function getDataModal(data) {
       var exsist = false;
@@ -4141,7 +4141,14 @@ __webpack_require__.r(__webpack_exports__);
       this.$refs.modal.loadData();
     },
     onAttachmentIcon: function onAttachmentIcon(e) {
-      this.mark.icon = e.target.files[0];
+      this.mark.icon = e.target.files[0]; // if ( e.target.files[0].type.match('image.*') ) {
+      //     var reader = new FileReader();
+      //     reader.onload = function(e) {
+      //         me.closest('.color-check').find('img').attr('src', e.target.result);
+      //     }
+      //     reader.readAsDataURL(e.target.files[0]);
+      // } else
+      //     console.log('is not image mime type');
     },
     onAttachmentBanner: function onAttachmentBanner(e) {
       this.mark.banner = e.target.files[0];
@@ -4158,7 +4165,7 @@ __webpack_require__.r(__webpack_exports__);
       this.loading = true;
       axios.get('/api/marks/' + id + '/edit').then(function (response) {
         _this.mark.name = response.data.mark.name;
-        _this.mark.prefix = response.data.mark.prefix;
+        _this.mark.prefix = response.data.mark.prefix ? response.data.mark.prefix : '';
         _this.mark.brand_id = response.data.mark.brand_id;
         _this.mark.body_work_id = response.data.mark.body_work_id;
         _this.mark.country_factory_id = response.data.mark.country_factory_id;
@@ -4191,8 +4198,8 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/api/marks/' + id, this.getFormData('patch'), this.getConfig()).then(function (res) {
         if (res.data.status) {
           _this2.succes = true;
-          _this2.succesMessage = res.data.message;
-          location.reload(); //this.loadData(id);
+          _this2.succesMessage = res.data.message; //location.reload()
+          //this.loadData(id);
           //this.$forceUpdate();
           //console.log(this.mark.icon + 'reload')
         }
@@ -4416,6 +4423,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
 
 
 
@@ -4516,7 +4528,7 @@ __webpack_require__.r(__webpack_exports__);
     res: function res(newValue, oldValue) {
       // Пробрасываем данные родительскому компоненту,
       // ч/з вызов метода.
-      this.$emit('updateParent', this.properties);
+      this.$emit('updateProperties', this.properties);
     }
   }
 });
@@ -48820,7 +48832,7 @@ var render = function() {
                 _vm._v(" "),
                 _c("MarkProperties", {
                   attrs: { installed: _vm.mark.properties },
-                  on: { updateParent: _vm.getProperties }
+                  on: { updateProperties: _vm.getProperties }
                 }),
                 _vm._v(" "),
                 _c("div", { staticClass: "row pb-5" }, [
@@ -48833,10 +48845,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.mark.icon
                       ? _c("div", { staticClass: "pb-3" }, [
-                          _c("img", {
-                            staticClass: "brand-icon",
-                            attrs: { src: _vm.mark.icon }
-                          })
+                          _c("img", { attrs: { src: _vm.mark.icon } })
                         ])
                       : _vm._e(),
                     _vm._v(" "),
@@ -48875,10 +48884,7 @@ var render = function() {
                     _vm._v(" "),
                     _vm.mark.banner
                       ? _c("div", { staticClass: "pb-3" }, [
-                          _c("img", {
-                            staticClass: "brand-icon",
-                            attrs: { src: _vm.mark.banner }
-                          })
+                          _c("img", { attrs: { src: _vm.mark.banner } })
                         ])
                       : _vm._e(),
                     _vm._v(" "),

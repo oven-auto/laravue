@@ -56,7 +56,7 @@ class MarkController extends Controller
     }
 
     public function update(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
-    {dd($request->all());
+    {//dd($request->all());
         $service->saveMark($mark, $request->only(self::MARK_COL));
         $service->saveInfo($mark, $request->get('info'));
         $service->saveProperties($mark, $request->get('properties'));

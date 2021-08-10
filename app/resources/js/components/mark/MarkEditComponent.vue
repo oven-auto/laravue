@@ -14,7 +14,7 @@
 
             <MarkDocumentVue :mark="mark"></MarkDocumentVue>
 
-            <MarkProperties :installed="mark.properties" @updateParent="getProperties"></MarkProperties>
+            <MarkProperties :installed="mark.properties" @updateProperties="getProperties"></MarkProperties>
 
             <div class="row pb-5">
                 <div class="col-6 mb-3">
@@ -22,7 +22,7 @@
                         Иконка модели
                     </div>
                     <div v-if="mark.icon" class="pb-3">
-                        <img :src="mark.icon" class="brand-icon">
+                        <img :src="mark.icon" class="">
                     </div>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentIcon">
@@ -31,12 +31,12 @@
                     </div>
                 </div>
 
-                 <div class="col-6 mb-3">
+                <div class="col-6 mb-3">
                     <div class="h5">
                         Банер модели
                     </div>
                     <div v-if="mark.banner" class="pb-3">
-                        <img :src="mark.banner" class="brand-icon">
+                        <img :src="mark.banner" class="">
                     </div>
                     <div class="custom-file">
                         <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentBanner">
@@ -121,10 +121,11 @@ import MarkMainInfoVue from './MarkMainInfo.vue';
 import MarkDocumentVue from './MarkDocument.vue';
 import MarkProperties from './MarkProperties.vue';
 
+
 export default {
     name: 'mark-edit',
     components: {
-        Error, Message, Spin, ModalWindow, ColorIcon, MarkMainInfoVue, MarkDocumentVue, MarkProperties
+        Error, Message, Spin, ModalWindow, ColorIcon, MarkMainInfoVue, MarkDocumentVue, MarkProperties,
     },
     data() {
         return {
@@ -166,8 +167,10 @@ export default {
 
     methods: {
         getProperties(data) {
-            console.log(1)
+            this.mark.properties = data
         },
+
+
 
         getDataModal(data) {
             var exsist = false;
@@ -199,7 +202,18 @@ export default {
 
         onAttachmentIcon (e) {
             this.mark.icon= e.target.files[0]
+
+            // if ( e.target.files[0].type.match('image.*') ) {
+            //     var reader = new FileReader();
+            //     reader.onload = function(e) {
+            //         me.closest('.color-check').find('img').attr('src', e.target.result);
+            //     }
+            //     reader.readAsDataURL(e.target.files[0]);
+            // } else
+            //     console.log('is not image mime type');
         },
+
+
         onAttachmentBanner (e) {
             this.mark.banner = e.target.files[0]
         },
@@ -219,7 +233,7 @@ export default {
             axios.get('/api/marks/' + id + '/edit')
             .then( response => {
                 this.mark.name = response.data.mark.name;
-                this.mark.prefix = response.data.mark.prefix;
+                this.mark.prefix = response.data.mark.prefix ? response.data.mark.prefix : '';
                 this.mark.brand_id = response.data.mark.brand_id;
                 this.mark.body_work_id = response.data.mark.body_work_id;
                 this.mark.country_factory_id = response.data.mark.country_factory_id;
@@ -262,7 +276,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    location.reload()
+                    //location.reload()
                     //this.loadData(id);
                     //this.$forceUpdate();
                     //console.log(this.mark.icon + 'reload')
