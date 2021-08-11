@@ -2,10 +2,10 @@
     <div id="property-list">
         <div class="row pb-3">
             <div class="col">
-                <div class="h5">Список характеристик</div>
+                <div class="h5">Список комплектаций</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/properties/create'">Создать новый</router-link>
+                <router-link class="btn btn-primary" :to="'/complectations/create'">Создать новую</router-link>
             </div>
         </div>
 
@@ -15,15 +15,19 @@
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
+                <th>Код</th>
+                <th>Цена</th>
             </tr>
 
-            <tr v-for="property in properties">
+            <tr v-for="item in complectations">
                 <td>
-                    <router-link :to="toEdit + property.id">
+                    <router-link :to="toEdit + item.id">
                         Open
                     </router-link>
                 </td>
-                <td>{{ property.name }}</td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.code }}</td>
+                <td>{{ item.price }}</td>
             </tr>
         </table>
     </div>
@@ -33,27 +37,27 @@
 import Spin from '../spinner/SpinComponent';
 
 export default {
-    name: 'property-list',
+    name: 'complectation-list',
     components: {
         Spin
     },
     data() {
         return {
-            toEdit: '/properties/edit/',
+            toEdit: '/complectations/edit/',
             loading: true,
-            properties: [],
+            complectations: [],
             notFound: false,
         }
     },
     mounted() {
-        this.loadProperty()
+        this.loadData()
     },
     methods: {
-        loadProperty() {
-            axios.get('/api/properties')
+        loadData() {
+            axios.get('/api/complectations')
                 .then(response => {
                     if(response.data.status == 1) {
-                        this.properties = response.data.data;
+                        this.complectations = response.data.data;
                         this.loading = false;
                     }
                     else{

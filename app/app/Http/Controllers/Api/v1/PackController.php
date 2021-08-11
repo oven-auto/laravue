@@ -8,9 +8,15 @@ use App\Models\Pack;
 
 class PackController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $packs = Pack::fullData()->get();
+        $query = Pack::fullData();
+
+        if($request->has('brand_id'))
+            $query->where('brand_id', $request->get('brand_id'));
+
+        $packs = $query->get();
+
         if($packs->count())
             return response()->json([
                 'status' => 1,

@@ -10,7 +10,17 @@ class ComplectController extends Controller
 {
     public function index()
     {
-
+        $complectations = Complectation::get();
+        if($complectations->count())
+            return response()->json([
+                'status' => 1,
+                'data' => $complectations,
+                'count' => $complectations->count()
+            ]);
+        return response()->json([
+            'status' => 0,
+            'message' => 'Не нашлось ни одной комплектации'
+        ]);
     }
 
     public function edit(Complectation $complectation)
@@ -20,7 +30,7 @@ class ComplectController extends Controller
 
     public function store(Complectation $complectation, Request $request)
     {
-
+        dd($request->all());
     }
 
     public function update(Complectation $complectation, Request $request)

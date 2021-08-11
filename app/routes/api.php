@@ -46,4 +46,5 @@ Route::resource('countryfactories', \App\Http\Controllers\Api\v1\CountryFactoryC
 
 Route::resource('marks', \App\Http\Controllers\Api\v1\MarkController::class);
 
-Route::resource('complects', \App\Http\Controllers\Api\v1\ComplectController::class);
+Route::resource('complectations', \App\Http\Controllers\Api\v1\ComplectController::class);
+Route::get('markcolors', [\App\Http\Controllers\Api\v1\MarkColorController::class, 'index']);

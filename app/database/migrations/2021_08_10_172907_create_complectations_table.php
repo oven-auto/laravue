@@ -20,6 +20,7 @@ class CreateComplectationsTable extends Migration
             $table->foreignId('motor_id')->constrained()->onDelete('cascade');
             $table->string('name');
             $table->string('code');
+            $table->integer('price');
             $table->integer('sort');
             $table->boolean('status');
             $table->integer('parent_id')->default(0);

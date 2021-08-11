@@ -2422,6 +2422,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _alert_ErrorComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../alert/ErrorComponent */ "./resources/js/components/alert/ErrorComponent.vue");
 /* harmony import */ var _alert_MessageComponent__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../alert/MessageComponent */ "./resources/js/components/alert/MessageComponent.vue");
 /* harmony import */ var _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../spinner/SpinComponent */ "./resources/js/components/spinner/SpinComponent.vue");
+/* harmony import */ var _html_BrandSelect__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../html/BrandSelect */ "./resources/js/components/html/BrandSelect.vue");
+/* harmony import */ var _html_MarkSelect__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../html/MarkSelect */ "./resources/js/components/html/MarkSelect.vue");
+/* harmony import */ var _html_MotorSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../html/MotorSelect */ "./resources/js/components/html/MotorSelect.vue");
 //
 //
 //
@@ -2458,6 +2461,91 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
 
 
 
@@ -2466,13 +2554,31 @@ __webpack_require__.r(__webpack_exports__);
   components: {
     Error: _alert_ErrorComponent__WEBPACK_IMPORTED_MODULE_0__.default,
     Message: _alert_MessageComponent__WEBPACK_IMPORTED_MODULE_1__.default,
-    Spin: _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_2__.default
+    Spin: _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_2__.default,
+    BrandSelect: _html_BrandSelect__WEBPACK_IMPORTED_MODULE_3__.default,
+    MarkSelect: _html_MarkSelect__WEBPACK_IMPORTED_MODULE_4__.default,
+    MotorSelect: _html_MotorSelect__WEBPACK_IMPORTED_MODULE_5__.default
   },
   data: function data() {
     return {
-      property: {
-        name: null
+      complectation: {
+        id: '',
+        name: '',
+        code: '',
+        price: '',
+        brand_id: 0,
+        mark_id: 0,
+        motor_id: 0,
+        sort: 0,
+        status: 0,
+        parent_id: 0,
+        devices: [],
+        packs: [],
+        colors: []
       },
+      devices: [],
+      packs: [],
+      markcolors: [],
       notFound: false,
       loading: true,
       urlId: this.$route.params.id,
@@ -2481,43 +2587,67 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   mounted: function mounted() {
-    if (this.urlId) this.loadProperty(this.urlId);
+    if (this.urlId) this.loadData(this.urlId);
   },
   methods: {
-    loadProperty: function loadProperty(id) {
+    getDevices: function getDevices() {
       var _this = this;
 
-      axios.get('/api/properties/' + id + '/edit').then(function (response) {
-        _this.loading = false;
-        _this.property.name = response.data.property.name;
-      })["catch"](function (errors) {
-        _this.notFound = true;
-        _this.loading = false;
-      });
+      var param = 'brand_id=' + this.complectation.brand_id;
+      axios.get('/api/devices?' + param).then(function (res) {
+        _this.devices = res.data.data;
+      })["catch"](function (errors) {});
     },
-    updateProperty: function updateProperty(id) {
+    getPacks: function getPacks() {
       var _this2 = this;
 
-      axios.post('/api/properties/' + id, this.getFormData('patch'), this.getConfig()).then(function (res) {
-        if (res.data.status) {
-          _this2.succes = true;
-          _this2.succesMessage = res.data.message;
+      var param = 'brand_id=' + this.complectation.brand_id;
+      axios.get('/api/packs?' + param).then(function (res) {
+        _this2.packs = res.data.data;
+      })["catch"](function (errors) {});
+    },
+    getColors: function getColors() {
+      var _this3 = this;
 
-          _this2.loadProperty(id);
+      var param = 'mark_id=' + this.complectation.mark_id;
+      axios.get('/api/markcolors?' + param).then(function (res) {
+        _this3.markcolors = res.data.data;
+      })["catch"](function (errors) {});
+    },
+    loadData: function loadData(id) {
+      var _this4 = this;
+
+      axios.get('/api/complectations/' + id + '/edit').then(function (response) {
+        _this4.loading = false;
+        _this4.complectations = response.data.data;
+      })["catch"](function (errors) {
+        _this4.notFound = true;
+        _this4.loading = false;
+      });
+    },
+    updateData: function updateData(id) {
+      var _this5 = this;
+
+      axios.post('/api/complectations/' + id, this.getFormData('patch'), this.getConfig()).then(function (res) {
+        if (res.data.status) {
+          _this5.succes = true;
+          _this5.succesMessage = res.data.message;
+
+          _this5.loadData(id);
         }
       })["catch"](function (errors) {
         console.log(errors);
       });
     },
-    storeProperty: function storeProperty() {
-      var _this3 = this;
+    storeData: function storeData() {
+      var _this6 = this;
 
-      axios.post('/api/properties/', this.getFormData(), this.getConfig()).then(function (res) {
+      axios.post('/api/complectations/', this.complectation, this.getConfig()).then(function (res) {
         if (res.data.status) {
-          _this3.succes = true;
-          _this3.succesMessage = res.data.message;
+          _this6.succes = true;
+          _this6.succesMessage = res.data.message;
 
-          _this3.loadProperty(res.data.property.id);
+          _this6.loadData(res.data.property.id);
         }
       })["catch"](function (errors) {
         console.log(errors);
@@ -2526,7 +2656,15 @@ __webpack_require__.r(__webpack_exports__);
     getFormData: function getFormData() {
       var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
       var formData = new FormData();
-      formData.append('name', this.property.name);
+      formData.append('name', this.complectation.name);
+      formData.append('code', this.complectation.code);
+      formData.append('price', this.complectation.price);
+      formData.append('brand_id', this.complectation.brand_id);
+      formData.append('mark_id', this.complectation.mark_id);
+      formData.append('motor_id', this.complectation.motor_id);
+      formData.append('parent_id', this.complectation.parent_id);
+      formData.append('sort', this.complectation.sort);
+      formData.append('status', this.complectation.status);
       if (method == 'patch') formData.append("_method", "PATCH");
       return formData;
     },
@@ -2534,6 +2672,36 @@ __webpack_require__.r(__webpack_exports__);
       return {
         'content-type': 'multipart/form-data'
       };
+    },
+    chunkArray: function chunkArray(arr, chunk) {
+      var i,
+          j,
+          tmp = [];
+
+      for (i = 0, j = arr.length; i < j; i += chunk) {
+        tmp.push(arr.slice(i, i + chunk));
+      }
+
+      return tmp;
+    }
+  },
+  watch: {
+    'complectation.brand_id': {
+      immediate: true,
+      handler: function handler() {
+        this.complectation.devices = [];
+        this.complectation.packs = [];
+        this.markcolors = [];
+        this.getDevices();
+        this.getPacks();
+      }
+    },
+    'complectation.mark_id': {
+      immediate: true,
+      handler: function handler() {
+        this.complectation.colors = [];
+        this.getColors();
+      }
     }
   }
 });
@@ -2583,30 +2751,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'property-list',
+  name: 'complectation-list',
   components: {
     Spin: _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_0__.default
   },
   data: function data() {
     return {
-      toEdit: '/properties/edit/',
+      toEdit: '/complectations/edit/',
       loading: true,
-      properties: [],
+      complectations: [],
       notFound: false
     };
   },
   mounted: function mounted() {
-    this.loadProperty();
+    this.loadData();
   },
   methods: {
-    loadProperty: function loadProperty() {
+    loadData: function loadData() {
       var _this = this;
 
-      axios.get('/api/properties').then(function (response) {
+      axios.get('/api/complectations').then(function (response) {
         if (response.data.status == 1) {
-          _this.properties = response.data.data;
+          _this.complectations = response.data.data;
           _this.loading = false;
         } else {
           _this.loading = false;
@@ -3851,6 +4023,83 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MarkSelect.vue?vue&type=script&lang=js&":
+/*!**********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MarkSelect.vue?vue&type=script&lang=js& ***!
+  \**********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      marks: []
+    };
+  },
+  mounted: function mounted() {
+    this.loadData(this.brand);
+  },
+  methods: {
+    loadData: function loadData() {
+      var _this = this;
+
+      var brand = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+      var str = '';
+      if (brand > 0) str = '?brand_id=' + brand;
+      axios.get('/api/marks' + str).then(function (res) {
+        _this.marks = res.data.data;
+      })["catch"](function (error) {});
+    }
+  },
+  props: {
+    name: {
+      type: String,
+      "default": null
+    },
+    value: {
+      type: Number,
+      "default": 0
+    },
+    brand: {
+      type: Number,
+      "default": 0
+    }
+  },
+  computed: {
+    selected: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(val) {
+        this.$emit('input', val);
+      }
+    }
+  },
+  watch: {
+    brand: function brand(v) {
+      this.loadData(this.brand);
+    }
+  }
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorDriverSelect.vue?vue&type=script&lang=js&":
 /*!*****************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorDriverSelect.vue?vue&type=script&lang=js& ***!
@@ -3910,6 +4159,83 @@ __webpack_require__.r(__webpack_exports__);
       set: function set(val) {
         this.$emit('input', val);
       }
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorSelect.vue?vue&type=script&lang=js&":
+/*!***********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorSelect.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      motors: []
+    };
+  },
+  mounted: function mounted() {
+    this.loadData(this.brand);
+  },
+  methods: {
+    loadData: function loadData() {
+      var _this = this;
+
+      var brand = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
+      var str = '';
+      if (brand > 0) str = '?brand_id=' + brand;
+      axios.get('/api/motors' + str).then(function (res) {
+        _this.motors = res.data.data;
+      })["catch"](function (error) {});
+    }
+  },
+  props: {
+    name: {
+      type: String,
+      "default": null
+    },
+    value: {
+      type: Number,
+      "default": 0
+    },
+    brand: {
+      type: Number,
+      "default": 0
+    }
+  },
+  computed: {
+    selected: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(val) {
+        this.$emit('input', val);
+      }
+    }
+  },
+  watch: {
+    brand: function brand(v) {
+      this.loadData(this.brand);
     }
   }
 });
@@ -44046,6 +44372,45 @@ component.options.__file = "resources/js/components/html/HtmlSelect.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/html/MarkSelect.vue":
+/*!*****************************************************!*\
+  !*** ./resources/js/components/html/MarkSelect.vue ***!
+  \*****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _MarkSelect_vue_vue_type_template_id_1163bd32___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MarkSelect.vue?vue&type=template&id=1163bd32& */ "./resources/js/components/html/MarkSelect.vue?vue&type=template&id=1163bd32&");
+/* harmony import */ var _MarkSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MarkSelect.vue?vue&type=script&lang=js& */ "./resources/js/components/html/MarkSelect.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _MarkSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _MarkSelect_vue_vue_type_template_id_1163bd32___WEBPACK_IMPORTED_MODULE_0__.render,
+  _MarkSelect_vue_vue_type_template_id_1163bd32___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/html/MarkSelect.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/html/MotorDriverSelect.vue":
 /*!************************************************************!*\
   !*** ./resources/js/components/html/MotorDriverSelect.vue ***!
@@ -44081,6 +44446,45 @@ var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__
 /* hot reload */
 if (false) { var api; }
 component.options.__file = "resources/js/components/html/MotorDriverSelect.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/components/html/MotorSelect.vue":
+/*!******************************************************!*\
+  !*** ./resources/js/components/html/MotorSelect.vue ***!
+  \******************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _MotorSelect_vue_vue_type_template_id_65564118___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./MotorSelect.vue?vue&type=template&id=65564118& */ "./resources/js/components/html/MotorSelect.vue?vue&type=template&id=65564118&");
+/* harmony import */ var _MotorSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./MotorSelect.vue?vue&type=script&lang=js& */ "./resources/js/components/html/MotorSelect.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _MotorSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _MotorSelect_vue_vue_type_template_id_65564118___WEBPACK_IMPORTED_MODULE_0__.render,
+  _MotorSelect_vue_vue_type_template_id_65564118___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/html/MotorSelect.vue"
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
 
 /***/ }),
@@ -45402,6 +45806,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/html/MarkSelect.vue?vue&type=script&lang=js&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/components/html/MarkSelect.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MarkSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MarkSelect.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MarkSelect.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MarkSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
 /***/ "./resources/js/components/html/MotorDriverSelect.vue?vue&type=script&lang=js&":
 /*!*************************************************************************************!*\
   !*** ./resources/js/components/html/MotorDriverSelect.vue?vue&type=script&lang=js& ***!
@@ -45415,6 +45835,22 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorDriverSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MotorDriverSelect.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorDriverSelect.vue?vue&type=script&lang=js&");
  /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorDriverSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
+/***/ "./resources/js/components/html/MotorSelect.vue?vue&type=script&lang=js&":
+/*!*******************************************************************************!*\
+  !*** ./resources/js/components/html/MotorSelect.vue?vue&type=script&lang=js& ***!
+  \*******************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MotorSelect.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorSelect.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
 
 /***/ }),
 
@@ -46240,6 +46676,23 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/html/MarkSelect.vue?vue&type=template&id=1163bd32&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/components/html/MarkSelect.vue?vue&type=template&id=1163bd32& ***!
+  \************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MarkSelect_vue_vue_type_template_id_1163bd32___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MarkSelect_vue_vue_type_template_id_1163bd32___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MarkSelect_vue_vue_type_template_id_1163bd32___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MarkSelect.vue?vue&type=template&id=1163bd32& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MarkSelect.vue?vue&type=template&id=1163bd32&");
+
+
+/***/ }),
+
 /***/ "./resources/js/components/html/MotorDriverSelect.vue?vue&type=template&id=35581f40&":
 /*!*******************************************************************************************!*\
   !*** ./resources/js/components/html/MotorDriverSelect.vue?vue&type=template&id=35581f40& ***!
@@ -46253,6 +46706,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorDriverSelect_vue_vue_type_template_id_35581f40___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorDriverSelect_vue_vue_type_template_id_35581f40___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MotorDriverSelect.vue?vue&type=template&id=35581f40& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorDriverSelect.vue?vue&type=template&id=35581f40&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/html/MotorSelect.vue?vue&type=template&id=65564118&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/html/MotorSelect.vue?vue&type=template&id=65564118& ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorSelect_vue_vue_type_template_id_65564118___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorSelect_vue_vue_type_template_id_65564118___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_MotorSelect_vue_vue_type_template_id_65564118___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./MotorSelect.vue?vue&type=template&id=65564118& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorSelect.vue?vue&type=template&id=65564118&");
 
 
 /***/ }),
@@ -47439,11 +47909,10 @@ var render = function() {
             _c("form", [
               _c("div", { staticClass: "h5" }, [
                 _vm._v(
-                  _vm._s(
-                    _vm.property.name
-                      ? _vm.property.name
-                      : "Новый тип оборудования"
-                  )
+                  "Комплектация: " +
+                    _vm._s(
+                      _vm.complectation.name ? _vm.complectation.name : "новая"
+                    )
                 )
               ]),
               _vm._v(" "),
@@ -47459,25 +47928,468 @@ var render = function() {
                         {
                           name: "model",
                           rawName: "v-model",
-                          value: _vm.property.name,
-                          expression: "property.name"
+                          value: _vm.complectation.name,
+                          expression: "complectation.name"
                         }
                       ],
                       staticClass: "form-control",
                       attrs: { type: "text", name: "name" },
-                      domProps: { value: _vm.property.name },
+                      domProps: { value: _vm.complectation.name },
                       on: {
                         input: function($event) {
                           if ($event.target.composing) {
                             return
                           }
-                          _vm.$set(_vm.property, "name", $event.target.value)
+                          _vm.$set(
+                            _vm.complectation,
+                            "name",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", [
+                    _c("label", { attrs: { for: "name" } }, [_vm._v("Код")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.complectation.code,
+                          expression: "complectation.code"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", name: "name" },
+                      domProps: { value: _vm.complectation.code },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.complectation,
+                            "code",
+                            $event.target.value
+                          )
+                        }
+                      }
+                    })
+                  ]),
+                  _vm._v(" "),
+                  _c("div", [
+                    _c("label", { attrs: { for: "name" } }, [_vm._v("Цена")]),
+                    _vm._v(" "),
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.complectation.price,
+                          expression: "complectation.price"
+                        }
+                      ],
+                      staticClass: "form-control",
+                      attrs: { type: "text", name: "name" },
+                      domProps: { value: _vm.complectation.price },
+                      on: {
+                        input: function($event) {
+                          if ($event.target.composing) {
+                            return
+                          }
+                          _vm.$set(
+                            _vm.complectation,
+                            "price",
+                            $event.target.value
+                          )
                         }
                       }
                     })
                   ])
-                ])
+                ]),
+                _vm._v(" "),
+                _c(
+                  "div",
+                  { staticClass: "col-6" },
+                  [
+                    _c("BrandSelect", {
+                      attrs: { name: "brand_id" },
+                      model: {
+                        value: _vm.complectation.brand_id,
+                        callback: function($$v) {
+                          _vm.$set(_vm.complectation, "brand_id", $$v)
+                        },
+                        expression: "complectation.brand_id"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("MarkSelect", {
+                      attrs: {
+                        brand: _vm.complectation.brand_id,
+                        name: "mark_id"
+                      },
+                      model: {
+                        value: _vm.complectation.mark_id,
+                        callback: function($$v) {
+                          _vm.$set(_vm.complectation, "mark_id", $$v)
+                        },
+                        expression: "complectation.mark_id"
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("MotorSelect", {
+                      attrs: {
+                        brand: _vm.complectation.brand_id,
+                        name: "motor_id"
+                      },
+                      model: {
+                        value: _vm.complectation.motor_id,
+                        callback: function($$v) {
+                          _vm.$set(_vm.complectation, "motor_id", $$v)
+                        },
+                        expression: "complectation.motor_id"
+                      }
+                    })
+                  ],
+                  1
+                )
               ]),
+              _vm._v(" "),
+              _vm.devices && _vm.devices.length > 0
+                ? _c(
+                    "div",
+                    { staticClass: "row py-3" },
+                    [
+                      _c("div", { staticClass: "col-12 h5 pb-3" }, [
+                        _vm._v(
+                          "\n                    Оборудование\n                "
+                        )
+                      ]),
+                      _vm._v(" "),
+                      _vm._l(
+                        _vm.chunkArray(
+                          _vm.devices,
+                          Math.ceil(_vm.devices.length / 3)
+                        ),
+                        function(chunk) {
+                          return _c(
+                            "div",
+                            { staticClass: "col-4" },
+                            _vm._l(chunk, function(itemDevice) {
+                              return _c("div", [
+                                _c(
+                                  "label",
+                                  {
+                                    staticClass:
+                                      "checkbox d-flex align-items-center",
+                                    attrs: { title: itemDevice.name }
+                                  },
+                                  [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.complectation.devices,
+                                          expression: "complectation.devices"
+                                        }
+                                      ],
+                                      staticClass: "device-checkbox-toggle",
+                                      attrs: { type: "checkbox" },
+                                      domProps: {
+                                        value: itemDevice.id,
+                                        checked: Array.isArray(
+                                          _vm.complectation.devices
+                                        )
+                                          ? _vm._i(
+                                              _vm.complectation.devices,
+                                              itemDevice.id
+                                            ) > -1
+                                          : _vm.complectation.devices
+                                      },
+                                      on: {
+                                        change: function($event) {
+                                          var $$a = _vm.complectation.devices,
+                                            $$el = $event.target,
+                                            $$c = $$el.checked ? true : false
+                                          if (Array.isArray($$a)) {
+                                            var $$v = itemDevice.id,
+                                              $$i = _vm._i($$a, $$v)
+                                            if ($$el.checked) {
+                                              $$i < 0 &&
+                                                _vm.$set(
+                                                  _vm.complectation,
+                                                  "devices",
+                                                  $$a.concat([$$v])
+                                                )
+                                            } else {
+                                              $$i > -1 &&
+                                                _vm.$set(
+                                                  _vm.complectation,
+                                                  "devices",
+                                                  $$a
+                                                    .slice(0, $$i)
+                                                    .concat($$a.slice($$i + 1))
+                                                )
+                                            }
+                                          } else {
+                                            _vm.$set(
+                                              _vm.complectation,
+                                              "devices",
+                                              $$c
+                                            )
+                                          }
+                                        }
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "checkbox__text" },
+                                      [
+                                        _vm._v(
+                                          "\n                                " +
+                                            _vm._s(itemDevice.name) +
+                                            "\n                            "
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ])
+                            }),
+                            0
+                          )
+                        }
+                      )
+                    ],
+                    2
+                  )
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.packs
+                ? _c("div", { staticClass: "row py-3" }, [
+                    _c("div", { staticClass: "col-12 h5 pb-3" }, [
+                      _vm._v("\n                    Опции\n                ")
+                    ]),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "col-12" }, [
+                      _c(
+                        "table",
+                        { staticClass: "table" },
+                        _vm._l(_vm.packs, function(pack) {
+                          return _c("tr", [
+                            _c("td", { staticClass: "pl-0" }, [
+                              _c(
+                                "label",
+                                {
+                                  staticClass:
+                                    "checkbox d-flex align-items-center",
+                                  attrs: { title: pack.name }
+                                },
+                                [
+                                  _c("input", {
+                                    directives: [
+                                      {
+                                        name: "model",
+                                        rawName: "v-model",
+                                        value: _vm.complectation.packs,
+                                        expression: "complectation.packs"
+                                      }
+                                    ],
+                                    staticClass: "device-checkbox-toggle",
+                                    attrs: { type: "checkbox" },
+                                    domProps: {
+                                      value: pack.id,
+                                      checked: Array.isArray(
+                                        _vm.complectation.packs
+                                      )
+                                        ? _vm._i(
+                                            _vm.complectation.packs,
+                                            pack.id
+                                          ) > -1
+                                        : _vm.complectation.packs
+                                    },
+                                    on: {
+                                      change: function($event) {
+                                        var $$a = _vm.complectation.packs,
+                                          $$el = $event.target,
+                                          $$c = $$el.checked ? true : false
+                                        if (Array.isArray($$a)) {
+                                          var $$v = pack.id,
+                                            $$i = _vm._i($$a, $$v)
+                                          if ($$el.checked) {
+                                            $$i < 0 &&
+                                              _vm.$set(
+                                                _vm.complectation,
+                                                "packs",
+                                                $$a.concat([$$v])
+                                              )
+                                          } else {
+                                            $$i > -1 &&
+                                              _vm.$set(
+                                                _vm.complectation,
+                                                "packs",
+                                                $$a
+                                                  .slice(0, $$i)
+                                                  .concat($$a.slice($$i + 1))
+                                              )
+                                          }
+                                        } else {
+                                          _vm.$set(
+                                            _vm.complectation,
+                                            "packs",
+                                            $$c
+                                          )
+                                        }
+                                      }
+                                    }
+                                  }),
+                                  _vm._v(" "),
+                                  _c("div", { staticClass: "checkbox__text" }, [
+                                    _vm._v(
+                                      "\n                                        " +
+                                        _vm._s(pack.name) +
+                                        "\n                                    "
+                                    )
+                                  ])
+                                ]
+                              )
+                            ]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(pack.code))]),
+                            _vm._v(" "),
+                            _c("td", [_vm._v(_vm._s(pack.price))]),
+                            _vm._v(" "),
+                            _c(
+                              "td",
+                              _vm._l(pack.devices, function(device) {
+                                return _c(
+                                  "span",
+                                  { staticClass: "badge badge-dark mx-1" },
+                                  [
+                                    _vm._v(
+                                      "\n                                    " +
+                                        _vm._s(device.name) +
+                                        "\n                                "
+                                    )
+                                  ]
+                                )
+                              }),
+                              0
+                            )
+                          ])
+                        }),
+                        0
+                      )
+                    ])
+                  ])
+                : _vm._e(),
+              _vm._v(" "),
+              _vm.markcolors
+                ? _c(
+                    "div",
+                    { staticClass: "row py-3" },
+                    _vm._l(_vm.markcolors, function(markcolor) {
+                      return _c("div", { staticClass: "col-3" }, [
+                        _c("div", { staticClass: "text-center" }, [
+                          _c("div", [
+                            _c(
+                              "label",
+                              {
+                                staticClass:
+                                  "checkbox d-flex align-items-center",
+                                attrs: { title: markcolor.color.code }
+                              },
+                              [
+                                _c("input", {
+                                  directives: [
+                                    {
+                                      name: "model",
+                                      rawName: "v-model",
+                                      value: _vm.complectation.colors,
+                                      expression: "complectation.colors"
+                                    }
+                                  ],
+                                  staticClass: "device-checkbox-toggle",
+                                  attrs: { type: "checkbox" },
+                                  domProps: {
+                                    value: markcolor.id,
+                                    checked: Array.isArray(
+                                      _vm.complectation.colors
+                                    )
+                                      ? _vm._i(
+                                          _vm.complectation.colors,
+                                          markcolor.id
+                                        ) > -1
+                                      : _vm.complectation.colors
+                                  },
+                                  on: {
+                                    change: function($event) {
+                                      var $$a = _vm.complectation.colors,
+                                        $$el = $event.target,
+                                        $$c = $$el.checked ? true : false
+                                      if (Array.isArray($$a)) {
+                                        var $$v = markcolor.id,
+                                          $$i = _vm._i($$a, $$v)
+                                        if ($$el.checked) {
+                                          $$i < 0 &&
+                                            _vm.$set(
+                                              _vm.complectation,
+                                              "colors",
+                                              $$a.concat([$$v])
+                                            )
+                                        } else {
+                                          $$i > -1 &&
+                                            _vm.$set(
+                                              _vm.complectation,
+                                              "colors",
+                                              $$a
+                                                .slice(0, $$i)
+                                                .concat($$a.slice($$i + 1))
+                                            )
+                                        }
+                                      } else {
+                                        _vm.$set(
+                                          _vm.complectation,
+                                          "colors",
+                                          $$c
+                                        )
+                                      }
+                                    }
+                                  }
+                                }),
+                                _vm._v(" "),
+                                _c("div", { staticClass: "checkbox__text" }, [
+                                  _vm._v(
+                                    "\n                                    " +
+                                      _vm._s(markcolor.color.code) +
+                                      "\n                                "
+                                  )
+                                ])
+                              ]
+                            )
+                          ]),
+                          _vm._v(" "),
+                          _c("div", [
+                            _c("img", {
+                              staticStyle: { width: "100%" },
+                              attrs: { src: markcolor.image }
+                            })
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "text-muted" }, [
+                            _vm._v(_vm._s(markcolor.color.name))
+                          ])
+                        ])
+                      ])
+                    }),
+                    0
+                  )
+                : _vm._e(),
               _vm._v(" "),
               _vm.urlId
                 ? _c(
@@ -47488,7 +48400,7 @@ var render = function() {
                       on: {
                         click: function($event) {
                           $event.preventDefault()
-                          return _vm.updateProperty(_vm.urlId)
+                          return _vm.updateData(_vm.urlId)
                         }
                       }
                     },
@@ -47502,7 +48414,7 @@ var render = function() {
                       on: {
                         click: function($event) {
                           $event.preventDefault()
-                          return _vm.storeProperty()
+                          return _vm.storeData()
                         }
                       }
                     },
@@ -47565,9 +48477,9 @@ var render = function() {
               "router-link",
               {
                 staticClass: "btn btn-primary",
-                attrs: { to: "/properties/create" }
+                attrs: { to: "/complectations/create" }
               },
-              [_vm._v("Создать новый")]
+              [_vm._v("Создать новую")]
             )
           ],
           1
@@ -47583,24 +48495,32 @@ var render = function() {
               _c("tr", [
                 _c("th", { staticStyle: { width: "80px" } }, [_vm._v("#")]),
                 _vm._v(" "),
-                _c("th", [_vm._v("Название")])
+                _c("th", [_vm._v("Название")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Код")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Цена")])
               ]),
               _vm._v(" "),
-              _vm._l(_vm.properties, function(property) {
+              _vm._l(_vm.complectations, function(item) {
                 return _c("tr", [
                   _c(
                     "td",
                     [
                       _c(
                         "router-link",
-                        { attrs: { to: _vm.toEdit + property.id } },
+                        { attrs: { to: _vm.toEdit + item.id } },
                         [_vm._v("\n                    Open\n                ")]
                       )
                     ],
                     1
                   ),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(property.name))])
+                  _c("td", [_vm._v(_vm._s(item.name))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(item.code))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(item.price))])
                 ])
               })
             ],
@@ -47616,7 +48536,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("div", { staticClass: "col" }, [
-      _c("div", { staticClass: "h5" }, [_vm._v("Список характеристик")])
+      _c("div", { staticClass: "h5" }, [_vm._v("Список комплектаций")])
     ])
   }
 ]
@@ -49014,6 +49934,75 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MarkSelect.vue?vue&type=template&id=1163bd32&":
+/*!***************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MarkSelect.vue?vue&type=template&id=1163bd32& ***!
+  \***************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("label", [_vm._v("Модель")]),
+    _vm._v(" "),
+    _c(
+      "select",
+      {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.selected,
+            expression: "selected"
+          }
+        ],
+        staticClass: "form-control",
+        on: {
+          change: function($event) {
+            var $$selectedVal = Array.prototype.filter
+              .call($event.target.options, function(o) {
+                return o.selected
+              })
+              .map(function(o) {
+                var val = "_value" in o ? o._value : o.value
+                return val
+              })
+            _vm.selected = $event.target.multiple
+              ? $$selectedVal
+              : $$selectedVal[0]
+          }
+        }
+      },
+      [
+        _c("option", { attrs: { value: "", selected: "" } }, [
+          _vm._v("Укажите параметр")
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.marks, function(item) {
+          return _c("option", { domProps: { value: item.id } }, [
+            _vm._v("\n            " + _vm._s(item.name) + "\n        ")
+          ])
+        })
+      ],
+      2
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorDriverSelect.vue?vue&type=template&id=35581f40&":
 /*!**********************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorDriverSelect.vue?vue&type=template&id=35581f40& ***!
@@ -49067,6 +50056,75 @@ var render = function() {
         ]),
         _vm._v(" "),
         _vm._l(_vm.data, function(item) {
+          return _c("option", { domProps: { value: item.id } }, [
+            _vm._v("\n            " + _vm._s(item.name) + "\n        ")
+          ])
+        })
+      ],
+      2
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorSelect.vue?vue&type=template&id=65564118&":
+/*!****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/MotorSelect.vue?vue&type=template&id=65564118& ***!
+  \****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("label", [_vm._v("Мотор")]),
+    _vm._v(" "),
+    _c(
+      "select",
+      {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.selected,
+            expression: "selected"
+          }
+        ],
+        staticClass: "form-control",
+        on: {
+          change: function($event) {
+            var $$selectedVal = Array.prototype.filter
+              .call($event.target.options, function(o) {
+                return o.selected
+              })
+              .map(function(o) {
+                var val = "_value" in o ? o._value : o.value
+                return val
+              })
+            _vm.selected = $event.target.multiple
+              ? $$selectedVal
+              : $$selectedVal[0]
+          }
+        }
+      },
+      [
+        _c("option", { attrs: { value: "", selected: "" } }, [
+          _vm._v("Укажите параметр")
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.motors, function(item) {
           return _c("option", { domProps: { value: item.id } }, [
             _vm._v("\n            " + _vm._s(item.name) + "\n        ")
           ])

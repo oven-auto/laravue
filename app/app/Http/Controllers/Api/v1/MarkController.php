@@ -9,9 +9,15 @@ use Storage;
 
 class MarkController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $marks = Mark::with(['icon', 'bodywork', 'brand'])->get();
+        $query = Mark::with(['icon', 'bodywork', 'brand']);
+
+        if($request->has('brand_id'))
+            $query->where('brand_id', $request->get('brand_id'));
+
+        $marks = $query->get();
+
         if($marks->count())
             return response()->json([
                 'status' => 1,
