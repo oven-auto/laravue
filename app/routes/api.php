@@ -45,3 +45,5 @@ Route::resource('bodyworks', \App\Http\Controllers\Api\v1\BodyWorkController::cl
 Route::resource('countryfactories', \App\Http\Controllers\Api\v1\CountryFactoryController::class);
 
 Route::resource('marks', \App\Http\Controllers\Api\v1\MarkController::class);
+
+Route::resource('complects', \App\Http\Controllers\Api\v1\ComplectController::class);

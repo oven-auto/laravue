@@ -45,6 +45,9 @@ import countryFactoryEdit from './components/mark/country/CountryFactoryEditComp
 import markList from './components/mark/MarkListComponent';
 import markEdit from './components/mark/MarkEditComponent';
 
+import complectationList from './components/complectation/ComplectationListComponent';
+import complectationEdit from './components/complectation/ComplectationEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -260,6 +263,21 @@ const routes = [
     {
         path: '/marks/edit/:id',
         component: markEdit
+    },
+    ///////////
+    //COMPLECTATION ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/complectations/list',
+        component: complectationList
+    },
+    {
+        path: '/complectations/create',
+        component: complectationEdit
+    },
+    {
+        path: '/complectations/edit/:id',
+        component: complectationEdit
     },
 
 
