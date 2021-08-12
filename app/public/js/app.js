@@ -2543,6 +2543,34 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2574,11 +2602,13 @@ __webpack_require__.r(__webpack_exports__);
         parent_id: 0,
         devices: [],
         packs: [],
-        colors: []
+        colors: [],
+        colorPack: []
       },
       devices: [],
       packs: [],
       markcolors: [],
+      coloredOptions: {},
       notFound: false,
       loading: true,
       urlId: this.$route.params.id,
@@ -2589,7 +2619,41 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     if (this.urlId) this.loadData(this.urlId);
   },
+  computed: {},
   methods: {
+    addColorToColorPack: function addColorToColorPack() {
+      var mas = [];
+      document.querySelectorAll('.color-pack').forEach(function (item) {
+        var colorId = item.getAttribute('color-id');
+        var packId = item.value;
+        var status = item.checked;
+        var parentInput = item.closest('.item-complect-color').querySelector('.item-color-input');
+
+        if (status) {
+          if (parentInput.checked == false) parentInput.click();
+          mas.push({
+            color_id: colorId,
+            pack_id: packId
+          });
+        }
+      });
+      this.complectation.colorPack = mas;
+    },
+    appendColoredOption: function appendColoredOption(pack) {
+      var status = event.target.checked;
+
+      if (pack.colored) {
+        if (status) {
+          this.coloredOptions[pack.id] = {
+            pack_id: pack.id,
+            pack_code: pack.code,
+            pack_colors: {}
+          };
+        } else {
+          delete this.coloredOptions[pack.id];
+        }
+      }
+    },
     getDevices: function getDevices() {
       var _this = this;
 
@@ -2619,7 +2683,52 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get('/api/complectations/' + id + '/edit').then(function (response) {
         _this4.loading = false;
-        _this4.complectations = response.data.data;
+        _this4.complectation.name = response.data.data.name;
+        _this4.complectation.code = response.data.data.code;
+        _this4.complectation.price = response.data.data.price;
+        _this4.complectation.brand_id = response.data.data.brand_id;
+        _this4.complectation.mark_id = response.data.data.mark_id;
+        _this4.complectation.motor_id = response.data.data.motor_id;
+        _this4.complectation.status = response.data.data.status;
+        _this4.complectation.sort = response.data.data.sort;
+        _this4.complectation.parent_id = response.data.data.parent_id;
+        var arrayDev = [];
+        response.data.data.devices.forEach(function (item, i) {
+          arrayDev.push(item.id);
+        });
+        _this4.complectation.devices = arrayDev;
+        var arrayPack = [];
+        response.data.data.packs.forEach(function (item, i) {
+          arrayPack.push(item.id);
+
+          if (item.colored) {
+            _this4.coloredOptions[item.id] = {
+              pack_id: item.id,
+              pack_code: item.code,
+              pack_colors: {}
+            };
+          }
+        });
+        _this4.complectation.packs = arrayPack;
+        var arrayColor = [];
+        response.data.data.colors.forEach(function (item) {
+          arrayColor.push(item.id);
+        });
+        _this4.complectation.colors = arrayColor;
+        var arrayColorPacks = [];
+        response.data.data.color_packs.forEach(function (item) {
+          arrayColorPacks.push({
+            color_id: item.id,
+            pack_id: item.pivot.pack_id
+          }); // document.querySelectorAll('.color-pack').forEach( (input) => {
+          //     var colorId = input.getAttribute('color-id')
+          //     var packId = input.value
+          //     console.log('input - ' + ' colorID - ' + colorId + ' packId - ' + packId)
+          //     if(colorId == item.id && packId == item.pivot.pack_id)
+          //         input.checked = true
+          //  })
+        });
+        _this4.complectation.colorPack = arrayColorPacks;
       })["catch"](function (errors) {
         _this4.notFound = true;
         _this4.loading = false;
@@ -2653,24 +2762,9 @@ __webpack_require__.r(__webpack_exports__);
         console.log(errors);
       });
     },
-    getFormData: function getFormData() {
-      var method = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
-      var formData = new FormData();
-      formData.append('name', this.complectation.name);
-      formData.append('code', this.complectation.code);
-      formData.append('price', this.complectation.price);
-      formData.append('brand_id', this.complectation.brand_id);
-      formData.append('mark_id', this.complectation.mark_id);
-      formData.append('motor_id', this.complectation.motor_id);
-      formData.append('parent_id', this.complectation.parent_id);
-      formData.append('sort', this.complectation.sort);
-      formData.append('status', this.complectation.status);
-      if (method == 'patch') formData.append("_method", "PATCH");
-      return formData;
-    },
     getConfig: function getConfig() {
       return {
-        'content-type': 'multipart/form-data'
+        'content-type': 'application-json'
       };
     },
     chunkArray: function chunkArray(arr, chunk) {
@@ -2689,8 +2783,8 @@ __webpack_require__.r(__webpack_exports__);
     'complectation.brand_id': {
       immediate: true,
       handler: function handler() {
-        this.complectation.devices = [];
-        this.complectation.packs = [];
+        //this.complectation.devices = []
+        //this.complectation.packs = []
         this.markcolors = [];
         this.getDevices();
         this.getPacks();
@@ -2699,7 +2793,7 @@ __webpack_require__.r(__webpack_exports__);
     'complectation.mark_id': {
       immediate: true,
       handler: function handler() {
-        this.complectation.colors = [];
+        //this.complectation.colors = []
         this.getColors();
       }
     }
@@ -6710,6 +6804,17 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -6764,6 +6869,7 @@ __webpack_require__.r(__webpack_exports__);
         _this.pack.code = response.data.pack.code;
         _this.pack.price = response.data.pack.price;
         _this.pack.brand_id = response.data.pack.brand_id;
+        _this.pack.colored = response.data.pack.colored;
         var arrayDev = [];
         response.data.pack.devices.forEach(function (item, i) {
           arrayDev.push(item.id);
@@ -48214,38 +48320,43 @@ var render = function() {
                                         : _vm.complectation.packs
                                     },
                                     on: {
-                                      change: function($event) {
-                                        var $$a = _vm.complectation.packs,
-                                          $$el = $event.target,
-                                          $$c = $$el.checked ? true : false
-                                        if (Array.isArray($$a)) {
-                                          var $$v = pack.id,
-                                            $$i = _vm._i($$a, $$v)
-                                          if ($$el.checked) {
-                                            $$i < 0 &&
-                                              _vm.$set(
-                                                _vm.complectation,
-                                                "packs",
-                                                $$a.concat([$$v])
-                                              )
+                                      change: [
+                                        function($event) {
+                                          var $$a = _vm.complectation.packs,
+                                            $$el = $event.target,
+                                            $$c = $$el.checked ? true : false
+                                          if (Array.isArray($$a)) {
+                                            var $$v = pack.id,
+                                              $$i = _vm._i($$a, $$v)
+                                            if ($$el.checked) {
+                                              $$i < 0 &&
+                                                _vm.$set(
+                                                  _vm.complectation,
+                                                  "packs",
+                                                  $$a.concat([$$v])
+                                                )
+                                            } else {
+                                              $$i > -1 &&
+                                                _vm.$set(
+                                                  _vm.complectation,
+                                                  "packs",
+                                                  $$a
+                                                    .slice(0, $$i)
+                                                    .concat($$a.slice($$i + 1))
+                                                )
+                                            }
                                           } else {
-                                            $$i > -1 &&
-                                              _vm.$set(
-                                                _vm.complectation,
-                                                "packs",
-                                                $$a
-                                                  .slice(0, $$i)
-                                                  .concat($$a.slice($$i + 1))
-                                              )
+                                            _vm.$set(
+                                              _vm.complectation,
+                                              "packs",
+                                              $$c
+                                            )
                                           }
-                                        } else {
-                                          _vm.$set(
-                                            _vm.complectation,
-                                            "packs",
-                                            $$c
-                                          )
+                                        },
+                                        function($event) {
+                                          return _vm.appendColoredOption(pack)
                                         }
-                                      }
+                                      ]
                                     }
                                   }),
                                   _vm._v(" "),
@@ -48263,6 +48374,10 @@ var render = function() {
                             _c("td", [_vm._v(_vm._s(pack.code))]),
                             _vm._v(" "),
                             _c("td", [_vm._v(_vm._s(pack.price))]),
+                            _vm._v(" "),
+                            _c("td", [
+                              _vm._v(_vm._s(pack.colored ? "Цветовой" : ""))
+                            ]),
                             _vm._v(" "),
                             _c(
                               "td",
@@ -48294,98 +48409,162 @@ var render = function() {
                     "div",
                     { staticClass: "row py-3" },
                     _vm._l(_vm.markcolors, function(markcolor) {
-                      return _c("div", { staticClass: "col-3" }, [
-                        _c("div", { staticClass: "text-center" }, [
-                          _c("div", [
-                            _c(
-                              "label",
-                              {
-                                staticClass:
-                                  "checkbox d-flex align-items-center",
-                                attrs: { title: markcolor.color.code }
-                              },
-                              [
-                                _c("input", {
-                                  directives: [
-                                    {
-                                      name: "model",
-                                      rawName: "v-model",
-                                      value: _vm.complectation.colors,
-                                      expression: "complectation.colors"
-                                    }
-                                  ],
-                                  staticClass: "device-checkbox-toggle",
-                                  attrs: { type: "checkbox" },
-                                  domProps: {
-                                    value: markcolor.id,
-                                    checked: Array.isArray(
-                                      _vm.complectation.colors
-                                    )
-                                      ? _vm._i(
-                                          _vm.complectation.colors,
-                                          markcolor.id
-                                        ) > -1
-                                      : _vm.complectation.colors
+                      return _c(
+                        "div",
+                        { staticClass: "col-3 item-complect-color" },
+                        [
+                          _c(
+                            "div",
+                            {
+                              staticClass: "text-center mb-1 rounded border p-2"
+                            },
+                            [
+                              _c("div", [
+                                _c(
+                                  "label",
+                                  {
+                                    staticClass:
+                                      "checkbox d-flex align-items-center",
+                                    attrs: { title: markcolor.color.code }
                                   },
-                                  on: {
-                                    change: function($event) {
-                                      var $$a = _vm.complectation.colors,
-                                        $$el = $event.target,
-                                        $$c = $$el.checked ? true : false
-                                      if (Array.isArray($$a)) {
-                                        var $$v = markcolor.id,
-                                          $$i = _vm._i($$a, $$v)
-                                        if ($$el.checked) {
-                                          $$i < 0 &&
-                                            _vm.$set(
-                                              _vm.complectation,
-                                              "colors",
-                                              $$a.concat([$$v])
-                                            )
-                                        } else {
-                                          $$i > -1 &&
-                                            _vm.$set(
-                                              _vm.complectation,
-                                              "colors",
-                                              $$a
-                                                .slice(0, $$i)
-                                                .concat($$a.slice($$i + 1))
-                                            )
+                                  [
+                                    _c("input", {
+                                      directives: [
+                                        {
+                                          name: "model",
+                                          rawName: "v-model",
+                                          value: _vm.complectation.colors,
+                                          expression: "complectation.colors"
                                         }
-                                      } else {
-                                        _vm.$set(
-                                          _vm.complectation,
-                                          "colors",
-                                          $$c
+                                      ],
+                                      staticClass:
+                                        "item-color-input device-checkbox-toggle",
+                                      attrs: { type: "checkbox" },
+                                      domProps: {
+                                        value: markcolor.id,
+                                        checked: Array.isArray(
+                                          _vm.complectation.colors
                                         )
+                                          ? _vm._i(
+                                              _vm.complectation.colors,
+                                              markcolor.id
+                                            ) > -1
+                                          : _vm.complectation.colors
+                                      },
+                                      on: {
+                                        change: function($event) {
+                                          var $$a = _vm.complectation.colors,
+                                            $$el = $event.target,
+                                            $$c = $$el.checked ? true : false
+                                          if (Array.isArray($$a)) {
+                                            var $$v = markcolor.id,
+                                              $$i = _vm._i($$a, $$v)
+                                            if ($$el.checked) {
+                                              $$i < 0 &&
+                                                _vm.$set(
+                                                  _vm.complectation,
+                                                  "colors",
+                                                  $$a.concat([$$v])
+                                                )
+                                            } else {
+                                              $$i > -1 &&
+                                                _vm.$set(
+                                                  _vm.complectation,
+                                                  "colors",
+                                                  $$a
+                                                    .slice(0, $$i)
+                                                    .concat($$a.slice($$i + 1))
+                                                )
+                                            }
+                                          } else {
+                                            _vm.$set(
+                                              _vm.complectation,
+                                              "colors",
+                                              $$c
+                                            )
+                                          }
+                                        }
                                       }
-                                    }
-                                  }
+                                    }),
+                                    _vm._v(" "),
+                                    _c(
+                                      "div",
+                                      { staticClass: "checkbox__text" },
+                                      [
+                                        _vm._v(
+                                          "\n                                    " +
+                                            _vm._s(markcolor.color.code) +
+                                            "\n                                "
+                                        )
+                                      ]
+                                    )
+                                  ]
+                                )
+                              ]),
+                              _vm._v(" "),
+                              _c("div", [
+                                _c("img", {
+                                  staticStyle: { width: "100%" },
+                                  attrs: { src: markcolor.image }
+                                })
+                              ]),
+                              _vm._v(" "),
+                              _c("div", { staticClass: "text-muted" }, [
+                                _vm._v(_vm._s(markcolor.color.name))
+                              ]),
+                              _vm._v(" "),
+                              _c(
+                                "div",
+                                _vm._l(_vm.coloredOptions, function(
+                                  coloredOpt
+                                ) {
+                                  return _c("div", [
+                                    _c(
+                                      "label",
+                                      {
+                                        staticClass:
+                                          "checkbox d-flex align-items-center",
+                                        attrs: { title: coloredOpt.pack_code }
+                                      },
+                                      [
+                                        _c("input", {
+                                          staticClass:
+                                            "device-checkbox-toggle color-pack",
+                                          attrs: {
+                                            type: "checkbox",
+                                            "color-id": markcolor.id
+                                          },
+                                          domProps: {
+                                            value: coloredOpt.pack_id
+                                          },
+                                          on: {
+                                            change: function($event) {
+                                              return _vm.addColorToColorPack()
+                                            }
+                                          }
+                                        }),
+                                        _vm._v(" "),
+                                        _c(
+                                          "div",
+                                          { staticClass: "checkbox__text" },
+                                          [
+                                            _vm._v(
+                                              "\n                                        " +
+                                                _vm._s(coloredOpt.pack_code) +
+                                                "\n                                    "
+                                            )
+                                          ]
+                                        )
+                                      ]
+                                    )
+                                  ])
                                 }),
-                                _vm._v(" "),
-                                _c("div", { staticClass: "checkbox__text" }, [
-                                  _vm._v(
-                                    "\n                                    " +
-                                      _vm._s(markcolor.color.code) +
-                                      "\n                                "
-                                  )
-                                ])
-                              ]
-                            )
-                          ]),
-                          _vm._v(" "),
-                          _c("div", [
-                            _c("img", {
-                              staticStyle: { width: "100%" },
-                              attrs: { src: markcolor.image }
-                            })
-                          ]),
-                          _vm._v(" "),
-                          _c("div", { staticClass: "text-muted" }, [
-                            _vm._v(_vm._s(markcolor.color.name))
-                          ])
-                        ])
-                      ])
+                                0
+                              )
+                            ]
+                          )
+                        ]
+                      )
                     }),
                     0
                   )
@@ -53000,6 +53179,72 @@ var render = function() {
             _c("form", [
               _c("div", { staticClass: "h5" }, [
                 _vm._v(_vm._s(_vm.pack.code ? _vm.pack.code : "Новая опция"))
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col-12 text-right" }, [
+                  _c(
+                    "label",
+                    {
+                      staticClass: "checkbox align-items-center",
+                      attrs: { title: "Цветовая опция" }
+                    },
+                    [
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.pack.colored,
+                            expression: "pack.colored"
+                          }
+                        ],
+                        staticClass: "device-checkbox-toggle",
+                        attrs: { type: "checkbox" },
+                        domProps: {
+                          value: _vm.pack.colored,
+                          checked: Array.isArray(_vm.pack.colored)
+                            ? _vm._i(_vm.pack.colored, _vm.pack.colored) > -1
+                            : _vm.pack.colored
+                        },
+                        on: {
+                          change: function($event) {
+                            var $$a = _vm.pack.colored,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = _vm.pack.colored,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 &&
+                                  _vm.$set(
+                                    _vm.pack,
+                                    "colored",
+                                    $$a.concat([$$v])
+                                  )
+                              } else {
+                                $$i > -1 &&
+                                  _vm.$set(
+                                    _vm.pack,
+                                    "colored",
+                                    $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                                  )
+                              }
+                            } else {
+                              _vm.$set(_vm.pack, "colored", $$c)
+                            }
+                          }
+                        }
+                      }),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "checkbox__text" }, [
+                        _vm._v(
+                          "\n                            Цветовая опция\n                        "
+                        )
+                      ])
+                    ]
+                  )
+                ])
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "row pb-3" }, [

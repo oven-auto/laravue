@@ -10,6 +10,17 @@
             <form>
                 <div class="h5">{{ pack.code ? pack.code : 'Новая опция' }}</div>
 
+                <div class="row">
+                    <div class="col-12 text-right">
+                        <label class="checkbox align-items-center" title="Цветовая опция">
+                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="pack.colored" v-model="pack.colored">
+                            <div class="checkbox__text" style="">
+                                Цветовая опция
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
                 <div class="row pb-3">
                     <div class="col-6">
                         <div >
@@ -115,7 +126,7 @@ export default {
                 this.pack.code = response.data.pack.code;
                 this.pack.price = response.data.pack.price;
                 this.pack.brand_id = response.data.pack.brand_id;
-
+                this.pack.colored = response.data.pack.colored;
                 var arrayDev = [];
                 response.data.pack.devices.forEach(function(item,i){
                     arrayDev.push(item.id);

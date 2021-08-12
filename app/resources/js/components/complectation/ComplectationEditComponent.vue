@@ -65,7 +65,13 @@
                         <tr v-for="pack in packs">
                             <td class="pl-0">
                                 <label class="checkbox d-flex align-items-center" :title="pack.name">
-                                    <input class="device-checkbox-toggle" type="checkbox" v-bind:value="pack.id" v-model="complectation.packs">
+                                    <input
+                                        class="device-checkbox-toggle"
+                                        type="checkbox"
+                                        v-bind:value="pack.id"
+                                        v-model="complectation.packs"
+                                        v-on:change="appendColoredOption(pack)"
+                                    >
                                     <div class="checkbox__text" style="">
                                         {{pack.name}}
                                     </div>
@@ -73,6 +79,7 @@
                             </td>
                             <td>{{pack.code}}</td>
                             <td>{{pack.price}}</td>
+                            <td>{{pack.colored ? 'Цветовой' : ''}}</td>
                             <td>
                                 <span v-for="device in pack.devices" class="badge badge-dark mx-1">
                                     {{device.name}}
@@ -84,11 +91,16 @@
             </div>
 
             <div class="row py-3" v-if="markcolors">
-                <div class="col-3" v-for="markcolor in markcolors">
-                    <div class="text-center">
+                <div class="col-3 item-complect-color" v-for="markcolor in markcolors">
+                    <div class="text-center mb-1 rounded border p-2">
                         <div>
                             <label class="checkbox d-flex align-items-center" :title="markcolor.color.code">
-                                <input class="device-checkbox-toggle" type="checkbox" v-bind:value="markcolor.id" v-model="complectation.colors">
+                                <input
+                                    class="item-color-input device-checkbox-toggle"
+                                    type="checkbox"
+                                    v-bind:value="markcolor.id"
+                                    v-model="complectation.colors"
+                                >
                                 <div class="checkbox__text" style="">
                                     {{markcolor.color.code}}
                                 </div>
@@ -98,6 +110,22 @@
                             <img :src="markcolor.image" style="width:100%">
                         </div>
                         <div class="text-muted">{{markcolor.color.name}}</div>
+                        <div>
+                            <div v-for="coloredOpt in coloredOptions">
+                                <label class="checkbox d-flex align-items-center" :title="coloredOpt.pack_code">
+                                    <input
+                                        class="device-checkbox-toggle color-pack"
+                                        type="checkbox"
+                                        v-bind:value="coloredOpt.pack_id"
+                                        :color-id="markcolor.id"
+                                        v-on:change="addColorToColorPack()"
+                                    >
+                                    <div class="checkbox__text" style="">
+                                        {{coloredOpt.pack_code}}
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -147,10 +175,12 @@ export default {
                 devices: [],
                 packs: [],
                 colors: [],
+                colorPack: []
             },
             devices: [],
             packs: [],
             markcolors: [],
+            coloredOptions: {},
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
@@ -162,7 +192,45 @@ export default {
         if(this.urlId)
             this.loadData(this.urlId)
     },
+
+    computed: {
+
+    },
+
     methods: {
+        addColorToColorPack() {
+            var mas = []
+            document.querySelectorAll('.color-pack').forEach(function (item) {
+                var colorId = item.getAttribute('color-id')
+                var packId = item.value
+                var status = item.checked
+                var parentInput = item.closest('.item-complect-color').querySelector('.item-color-input')
+                if(status) {
+                    if(parentInput.checked == false)
+                        parentInput.click()
+                    mas.push({
+                        color_id: colorId,
+                        pack_id: packId
+                    })
+                }
+            })
+            this.complectation.colorPack = mas
+        },
+
+        appendColoredOption(pack){
+            var status = event.target.checked
+            if(pack.colored) {
+                if(status) {
+                    this.coloredOptions[pack.id] = {
+                        pack_id: pack.id,
+                        pack_code: pack.code,
+                        pack_colors: {},
+                    }
+                } else {
+                    delete this.coloredOptions[pack.id]
+                }
+            }
+        },
 
         getDevices() {
             var param = 'brand_id='+this.complectation.brand_id
@@ -201,7 +269,57 @@ export default {
             axios.get('/api/complectations/' + id + '/edit')
             .then( response => {
                 this.loading = false;
-                this.complectations = response.data.data;
+                this.complectation.name = response.data.data.name;
+                this.complectation.code = response.data.data.code;
+                this.complectation.price = response.data.data.price;
+                this.complectation.brand_id = response.data.data.brand_id;
+                this.complectation.mark_id = response.data.data.mark_id;
+                this.complectation.motor_id = response.data.data.motor_id;
+                this.complectation.status = response.data.data.status;
+                this.complectation.sort = response.data.data.sort;
+                this.complectation.parent_id = response.data.data.parent_id;
+
+                var arrayDev = [];
+                response.data.data.devices.forEach(function(item,i){
+                    arrayDev.push(item.id);
+                })
+                this.complectation.devices = arrayDev;
+
+                var arrayPack = [];
+                response.data.data.packs.forEach( (item,i) => {
+                    arrayPack.push(item.id);
+                    if(item.colored) {
+                        this.coloredOptions[item.id] = {
+                            pack_id: item.id,
+                            pack_code: item.code,
+                            pack_colors: {},
+                        }
+                    }
+                })
+                this.complectation.packs = arrayPack;
+
+                var arrayColor = []
+                response.data.data.colors.forEach( (item) => {
+                    arrayColor.push(item.id)
+                })
+                this.complectation.colors = arrayColor
+
+                var arrayColorPacks = [];
+                response.data.data.color_packs.forEach( (item) => {
+                    arrayColorPacks.push({color_id: item.id, pack_id: item.pivot.pack_id})
+
+                    // document.querySelectorAll('.color-pack').forEach( (input) => {
+
+                    //     var colorId = input.getAttribute('color-id')
+                    //     var packId = input.value
+                    //     console.log('input - ' + ' colorID - ' + colorId + ' packId - ' + packId)
+                    //     if(colorId == item.id && packId == item.pivot.pack_id)
+                    //         input.checked = true
+                    //  })
+
+                })
+                this.complectation.colorPack = arrayColorPacks
+
             })
             .catch(errors => {
                 this.notFound = true;
@@ -239,28 +357,9 @@ export default {
             })
         },
 
-        getFormData(method = '') {
-            var formData = new FormData();
-
-            formData.append('name', this.complectation.name);
-            formData.append('code', this.complectation.code);
-            formData.append('price', this.complectation.price);
-            formData.append('brand_id', this.complectation.brand_id);
-            formData.append('mark_id', this.complectation.mark_id);
-            formData.append('motor_id', this.complectation.motor_id);
-            formData.append('parent_id', this.complectation.parent_id);
-            formData.append('sort', this.complectation.sort);
-            formData.append('status', this.complectation.status);
-
-            if(method == 'patch')
-                formData.append("_method", "PATCH");
-
-            return formData;
-        },
-
         getConfig() {
             return {
-                'content-type': 'multipart/form-data'
+                'content-type': 'application-json'
             }
         },
 
@@ -277,8 +376,8 @@ export default {
         'complectation.brand_id': {
             immediate: true,
             handler() {
-                this.complectation.devices = []
-                this.complectation.packs = []
+                //this.complectation.devices = []
+                //this.complectation.packs = []
                 this.markcolors = []
                 this.getDevices();
                 this.getPacks();
@@ -287,7 +386,7 @@ export default {
         'complectation.mark_id': {
             immediate: true,
             handler() {
-                this.complectation.colors = []
+                //this.complectation.colors = []
                 this.getColors();
             },
         }

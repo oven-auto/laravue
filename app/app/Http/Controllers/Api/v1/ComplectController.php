@@ -8,6 +8,11 @@ use App\Models\Complectation;
 
 class ComplectController extends Controller
 {
+    public function __construct(\App\Repositories\ComplectationRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function index()
     {
         $complectations = Complectation::get();
@@ -25,12 +30,20 @@ class ComplectController extends Controller
 
     public function edit(Complectation $complectation)
     {
+        $complectation->devices;
+        $complectation->packs;
+        $complectation->colors;
+        $complectation->colorPacks;
 
+        return response()->json([
+            'status' => 1,
+            'data' => $complectation->toArray()
+        ]);
     }
 
     public function store(Complectation $complectation, Request $request)
     {
-        dd($request->all());
+        $this->repository->save($complectation, $request->all());
     }
 
     public function update(Complectation $complectation, Request $request)
