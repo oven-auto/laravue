@@ -2571,6 +2571,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 
@@ -2613,31 +2614,34 @@ __webpack_require__.r(__webpack_exports__);
       loading: true,
       urlId: this.$route.params.id,
       succes: false,
-      succesMessage: null
+      succesMessage: null,
+      firstLoad: false
     };
   },
   mounted: function mounted() {
-    if (this.urlId) this.loadData(this.urlId);
+    if (this.urlId) {
+      this.firstLoad = true;
+      this.loadData(this.urlId);
+    }
   },
   computed: {},
   methods: {
-    addColorToColorPack: function addColorToColorPack() {
-      var mas = [];
-      document.querySelectorAll('.color-pack').forEach(function (item) {
-        var colorId = item.getAttribute('color-id');
-        var packId = item.value;
-        var status = item.checked;
-        var parentInput = item.closest('.item-complect-color').querySelector('.item-color-input');
-
-        if (status) {
-          if (parentInput.checked == false) parentInput.click();
-          mas.push({
-            color_id: colorId,
-            pack_id: packId
-          });
-        }
-      });
-      this.complectation.colorPack = mas;
+    addColorToColorPack: function addColorToColorPack() {// var mas = []
+      // document.querySelectorAll('.color-pack').forEach(function (item) {
+      //     var colorId = item.getAttribute('color-id')
+      //     var packId = item.value
+      //     var status = item.checked
+      //     var parentInput = item.closest('.item-complect-color').querySelector('.item-color-input')
+      //     if(status) {
+      //         if(parentInput.checked == false)
+      //             parentInput.click()
+      //         mas.push({
+      //             color_id: colorId,
+      //             pack_id: packId
+      //         })
+      //     }
+      // })
+      // this.complectation.colorPack = mas
     },
     appendColoredOption: function appendColoredOption(pack) {
       var status = event.target.checked;
@@ -2645,12 +2649,18 @@ __webpack_require__.r(__webpack_exports__);
       if (pack.colored) {
         if (status) {
           this.coloredOptions[pack.id] = {
-            pack_id: pack.id,
-            pack_code: pack.code,
-            pack_colors: {}
+            id: pack.id,
+            code: pack.code
           };
         } else {
           delete this.coloredOptions[pack.id];
+          this.complectation.colors.forEach(function (color, a) {
+            color.installColorPack.forEach(function (packId, i) {
+              if (packId == pack.id) {
+                delete color.installColorPack[i];
+              }
+            });
+          });
         }
       }
     },
@@ -2675,7 +2685,11 @@ __webpack_require__.r(__webpack_exports__);
 
       var param = 'mark_id=' + this.complectation.mark_id;
       axios.get('/api/markcolors?' + param).then(function (res) {
-        _this3.markcolors = res.data.data;
+        _this3.complectation.colors = res.data.data;
+
+        _this3.complectation.colors.forEach(function (color) {
+          color.installColor = color.id, color.installColorPack = [];
+        });
       })["catch"](function (errors) {});
     },
     loadData: function loadData(id) {
@@ -2700,36 +2714,15 @@ __webpack_require__.r(__webpack_exports__);
         var arrayPack = [];
         response.data.data.packs.forEach(function (item, i) {
           arrayPack.push(item.id);
-
-          if (item.colored) {
-            _this4.coloredOptions[item.id] = {
-              pack_id: item.id,
-              pack_code: item.code,
-              pack_colors: {}
-            };
-          }
         });
         _this4.complectation.packs = arrayPack;
-        var arrayColor = [];
-        response.data.data.colors.forEach(function (item) {
-          arrayColor.push(item.id);
+        _this4.complectation.colors = response.data.data.mark_color;
+        var obj = {};
+        response.data.data.packs.forEach(function (item) {
+          if (item.colored) _this4.coloredOptions[item.id] = item;
         });
-        _this4.complectation.colors = arrayColor;
-        var arrayColorPacks = [];
-        response.data.data.color_packs.forEach(function (item) {
-          arrayColorPacks.push({
-            color_id: item.id,
-            pack_id: item.pivot.pack_id
-          }); // document.querySelectorAll('.color-pack').forEach( (input) => {
-          //     var colorId = input.getAttribute('color-id')
-          //     var packId = input.value
-          //     console.log('input - ' + ' colorID - ' + colorId + ' packId - ' + packId)
-          //     if(colorId == item.id && packId == item.pivot.pack_id)
-          //         input.checked = true
-          //  })
-        });
-        _this4.complectation.colorPack = arrayColorPacks;
       })["catch"](function (errors) {
+        console.log(errors);
         _this4.notFound = true;
         _this4.loading = false;
       });
@@ -2737,7 +2730,7 @@ __webpack_require__.r(__webpack_exports__);
     updateData: function updateData(id) {
       var _this5 = this;
 
-      axios.post('/api/complectations/' + id, this.getFormData('patch'), this.getConfig()).then(function (res) {
+      axios.patch('/api/complectations/' + id, this.complectation, this.getConfig()).then(function (res) {
         if (res.data.status) {
           _this5.succes = true;
           _this5.succesMessage = res.data.message;
@@ -2793,8 +2786,8 @@ __webpack_require__.r(__webpack_exports__);
     'complectation.mark_id': {
       immediate: true,
       handler: function handler() {
-        //this.complectation.colors = []
-        this.getColors();
+        if (!this.firstLoad) this.getColors();
+        this.firstLoad = false;
       }
     }
   }
@@ -48404,11 +48397,11 @@ var render = function() {
                   ])
                 : _vm._e(),
               _vm._v(" "),
-              _vm.markcolors
+              _vm.complectation.colors
                 ? _c(
                     "div",
                     { staticClass: "row py-3" },
-                    _vm._l(_vm.markcolors, function(markcolor) {
+                    _vm._l(_vm.complectation.colors, function(markcolors) {
                       return _c(
                         "div",
                         { staticClass: "col-3 item-complect-color" },
@@ -48425,7 +48418,7 @@ var render = function() {
                                   {
                                     staticClass:
                                       "checkbox d-flex align-items-center",
-                                    attrs: { title: markcolor.color.code }
+                                    attrs: { title: markcolors.color.code }
                                   },
                                   [
                                     _c("input", {
@@ -48433,44 +48426,44 @@ var render = function() {
                                         {
                                           name: "model",
                                           rawName: "v-model",
-                                          value: _vm.complectation.colors,
-                                          expression: "complectation.colors"
+                                          value: markcolors.installColor,
+                                          expression: "markcolors.installColor"
                                         }
                                       ],
                                       staticClass:
                                         "item-color-input device-checkbox-toggle",
                                       attrs: { type: "checkbox" },
                                       domProps: {
-                                        value: markcolor.id,
+                                        value: markcolors.id,
                                         checked: Array.isArray(
-                                          _vm.complectation.colors
+                                          markcolors.installColor
                                         )
                                           ? _vm._i(
-                                              _vm.complectation.colors,
-                                              markcolor.id
+                                              markcolors.installColor,
+                                              markcolors.id
                                             ) > -1
-                                          : _vm.complectation.colors
+                                          : markcolors.installColor
                                       },
                                       on: {
                                         change: function($event) {
-                                          var $$a = _vm.complectation.colors,
+                                          var $$a = markcolors.installColor,
                                             $$el = $event.target,
                                             $$c = $$el.checked ? true : false
                                           if (Array.isArray($$a)) {
-                                            var $$v = markcolor.id,
+                                            var $$v = markcolors.id,
                                               $$i = _vm._i($$a, $$v)
                                             if ($$el.checked) {
                                               $$i < 0 &&
                                                 _vm.$set(
-                                                  _vm.complectation,
-                                                  "colors",
+                                                  markcolors,
+                                                  "installColor",
                                                   $$a.concat([$$v])
                                                 )
                                             } else {
                                               $$i > -1 &&
                                                 _vm.$set(
-                                                  _vm.complectation,
-                                                  "colors",
+                                                  markcolors,
+                                                  "installColor",
                                                   $$a
                                                     .slice(0, $$i)
                                                     .concat($$a.slice($$i + 1))
@@ -48478,8 +48471,8 @@ var render = function() {
                                             }
                                           } else {
                                             _vm.$set(
-                                              _vm.complectation,
-                                              "colors",
+                                              markcolors,
+                                              "installColor",
                                               $$c
                                             )
                                           }
@@ -48493,7 +48486,7 @@ var render = function() {
                                       [
                                         _vm._v(
                                           "\n                                    " +
-                                            _vm._s(markcolor.color.code) +
+                                            _vm._s(markcolors.color.code) +
                                             "\n                                "
                                         )
                                       ]
@@ -48505,18 +48498,18 @@ var render = function() {
                               _c("div", [
                                 _c("img", {
                                   staticStyle: { width: "100%" },
-                                  attrs: { src: markcolor.image }
+                                  attrs: { src: markcolors.image }
                                 })
                               ]),
                               _vm._v(" "),
                               _c("div", { staticClass: "text-muted" }, [
-                                _vm._v(_vm._s(markcolor.color.name))
+                                _vm._v(_vm._s(markcolors.color.name))
                               ]),
                               _vm._v(" "),
                               _c(
                                 "div",
                                 _vm._l(_vm.coloredOptions, function(
-                                  coloredOpt
+                                  coloredPack
                                 ) {
                                   return _c("div", [
                                     _c(
@@ -48524,23 +48517,80 @@ var render = function() {
                                       {
                                         staticClass:
                                           "checkbox d-flex align-items-center",
-                                        attrs: { title: coloredOpt.pack_code }
+                                        attrs: { title: coloredPack.code }
                                       },
                                       [
                                         _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value:
+                                                markcolors.installColorPack,
+                                              expression:
+                                                "markcolors.installColorPack"
+                                            }
+                                          ],
                                           staticClass:
                                             "device-checkbox-toggle color-pack",
                                           attrs: {
                                             type: "checkbox",
-                                            "color-id": markcolor.id
+                                            "color-id": markcolors.id
                                           },
                                           domProps: {
-                                            value: coloredOpt.pack_id
+                                            value: coloredPack.id,
+                                            checked: Array.isArray(
+                                              markcolors.installColorPack
+                                            )
+                                              ? _vm._i(
+                                                  markcolors.installColorPack,
+                                                  coloredPack.id
+                                                ) > -1
+                                              : markcolors.installColorPack
                                           },
                                           on: {
-                                            change: function($event) {
-                                              return _vm.addColorToColorPack()
-                                            }
+                                            change: [
+                                              function($event) {
+                                                var $$a =
+                                                    markcolors.installColorPack,
+                                                  $$el = $event.target,
+                                                  $$c = $$el.checked
+                                                    ? true
+                                                    : false
+                                                if (Array.isArray($$a)) {
+                                                  var $$v = coloredPack.id,
+                                                    $$i = _vm._i($$a, $$v)
+                                                  if ($$el.checked) {
+                                                    $$i < 0 &&
+                                                      _vm.$set(
+                                                        markcolors,
+                                                        "installColorPack",
+                                                        $$a.concat([$$v])
+                                                      )
+                                                  } else {
+                                                    $$i > -1 &&
+                                                      _vm.$set(
+                                                        markcolors,
+                                                        "installColorPack",
+                                                        $$a
+                                                          .slice(0, $$i)
+                                                          .concat(
+                                                            $$a.slice($$i + 1)
+                                                          )
+                                                      )
+                                                  }
+                                                } else {
+                                                  _vm.$set(
+                                                    markcolors,
+                                                    "installColorPack",
+                                                    $$c
+                                                  )
+                                                }
+                                              },
+                                              function($event) {
+                                                return _vm.addColorToColorPack()
+                                              }
+                                            ]
                                           }
                                         }),
                                         _vm._v(" "),
@@ -48550,7 +48600,7 @@ var render = function() {
                                           [
                                             _vm._v(
                                               "\n                                        " +
-                                                _vm._s(coloredOpt.pack_code) +
+                                                _vm._s(coloredPack.code) +
                                                 "\n                                    "
                                             )
                                           ]

@@ -20,7 +20,7 @@ class ComplectationRepository
         $this->saveDevices($complectation, $data['devices']);
         $this->savePacks($complectation, $data['packs']);
         $this->saveColors($complectation, $data['colors']);
-        $this->saveColorPacks($complectation, $data['colorPack']);
+        //$this->saveColorPacks($complectation, $data['colorPack']);
     }
 
     public function saveMain(Complectation $complectation, $data = [])
@@ -40,14 +40,17 @@ class ComplectationRepository
 
     public function saveColors(Complectation $complectation, $data = [])
     {
-        $complectation->colors()->sync($data);
-    }
-
-    public function saveColorPacks(Complectation $complectation, $data = [])
-    {
+        $complectation->colors()->detach();
         $complectation->colorPacks()->detach();
-        foreach($data as $item) {
-            $complectation->colorPacks()->attach($item['color_id'], ['pack_id' => $item['pack_id']]);
+        foreach($data as $itemColor) {
+            if($itemColor['installColor'])
+            {
+                $complectation->colors()->attach($itemColor['id']);
+                foreach($itemColor['installColorPack'] as $installPackId) {
+                    if($installPackId)
+                        $complectation->colorPacks()->attach($itemColor['id'], ['pack_id' => $installPackId]);
+                }
+            }
         }
     }
 }

@@ -32,4 +32,9 @@ class Complectation extends Model
     {
         return $this->belongsToMany(\App\Models\MarkColor::class, 'complectation_color_packs', 'complectation_id')->withPivot('pack_id')->with('color');
     }
+
+    public function markColor()
+    {
+        return $this->hasMany(\App\Models\MarkColor::class, 'mark_id', 'mark_id')->with('color');
+    }
 }
