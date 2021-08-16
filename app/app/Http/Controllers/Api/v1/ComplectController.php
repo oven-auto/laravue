@@ -13,9 +13,15 @@ class ComplectController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $complectations = Complectation::get();
+        $query = Complectation::with(['motor']);
+
+        if($request->has('mark_id'))
+            $query->where('mark_id', $request->get('mark_id'));
+
+        $complectations = $query->get();
+
         if($complectations->count())
             return response()->json([
                 'status' => 1,
@@ -36,7 +42,7 @@ class ComplectController extends Controller
         $complectation->colors;
         $complectation->colorPacks;
         $complectation->markColor;
-        //dd($complectation->colorPacks);
+
         $coloredPacks = collect($complectation->packs->where('colored', 1)->all());
 
         foreach($complectation->markColor as $itemMarkColor) {
@@ -50,7 +56,6 @@ class ComplectController extends Controller
             $itemMarkColor->installColorPack = $installColorPack;
 
             $itemMarkColor->colorPackList = $coloredPacks;
-
         }
 
         return response()->json([

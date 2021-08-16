@@ -48,6 +48,9 @@ import markEdit from './components/mark/MarkEditComponent';
 import complectationList from './components/complectation/ComplectationListComponent';
 import complectationEdit from './components/complectation/ComplectationEditComponent';
 
+import carList from './components/car/CarListComponent';
+import carEdit from './components/car/CarEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -278,6 +281,21 @@ const routes = [
     {
         path: '/complectations/edit/:id',
         component: complectationEdit
+    },
+    ///////////
+    //CAR           ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/cars/list',
+        component:carList
+    },
+    {
+        path: '/cars/create',
+        component: carEdit
+    },
+    {
+        path: '/cars/edit/:id',
+        component: carEdit
     },
 
 

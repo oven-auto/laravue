@@ -1,9 +1,9 @@
 <template>
     <div>
-        <label>Модель</label>
+        <label>Комплектация</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in marks" :value="item.id">
+            <option v-for="item in complectations" :value="item.id">
                 {{ item.name }}
             </option>
         </select>
@@ -14,23 +14,23 @@
 export default {
     data() {
         return {
-            marks: [],
+            complectations: [],
         }
     },
 
     mounted() {
-        this.loadData(this.brand)
+        this.loadData(this.mark)
     },
 
     methods: {
-        loadData(brand='') {
+        loadData(mark='') {
             var str = '';
-            if(brand > 0)
-                str = '?brand_id=' + brand
+            if(mark > 0)
+                str = '?mark_id=' + mark
 
-            axios.get('/api/marks' + str)
+            axios.get('/api/complectations' + str)
             .then(res => {
-                this.marks = res.data.data
+                this.complectations = res.data.data
             })
             .catch(error => {
 
@@ -46,7 +46,7 @@ export default {
             type: Number,
             default: 0
         },
-        brand: {
+        mark: {
             type: Number,
             default: 0
         }
@@ -63,9 +63,8 @@ export default {
     },
 
     watch: {
-        brand(v){
-
-            this.loadData(this.brand)
+        mark(v){
+            this.loadData(this.mark)
         }
     },
 }

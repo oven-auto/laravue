@@ -57,6 +57,10 @@
                     <router-link :to="'/complectations/list'" class="nav-link">Комплектации</router-link>
                 </li>
 
+                <li class="nav-item">
+                    <router-link :to="'/cars/list'" class="nav-link">Склад</router-link>
+                </li>
+
                 <!-- <li v-for="link in links" class="nav-item {{ item.href ? '' : 'dropdown' }}">
                     <router-link :to="link.href" class="nav-link"> {{ link.title }}</router-link>
                 </li> -->

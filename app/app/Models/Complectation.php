@@ -37,4 +37,9 @@ class Complectation extends Model
     {
         return $this->hasMany(\App\Models\MarkColor::class, 'mark_id', 'mark_id')->with('color');
     }
+
+    public function motor()
+    {
+        return $this->hasOne(\App\Models\Motor::class, 'id', 'motor_id')->withDefault()->with(['transmission', 'driver', 'type']);
+    }
 }

@@ -17,6 +17,10 @@ class MarkColorController extends Controller
         if($request->has('mark_id'))
             $query->where('mark_id', $request->get('mark_id'));
 
+        if($request->has('complectation_id'))
+            $query->rightJoin('complectation_colors', 'complectation_colors.mark_color_id', '=', 'mark_colors.id')
+                ->where('complectation_colors.complectation_id', $request->get('complectation_id'));
+
         $markcolors = $query->get();
 
         foreach($markcolors as $item) {
