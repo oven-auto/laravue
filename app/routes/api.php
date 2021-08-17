@@ -48,5 +48,6 @@ Route::resource('marks', \App\Http\Controllers\Api\v1\MarkController::class);
 
 Route::resource('complectations', \App\Http\Controllers\Api\v1\ComplectController::class);
 Route::get('markcolors', [\App\Http\Controllers\Api\v1\MarkColorController::class, 'index']);
+Route::get('complectcolors', [\App\Http\Controllers\Api\v1\ComplectColorController::class, 'colorpack']);
 
 Route::resource('cars', \App\Http\Controllers\Api\v1\CarController::class);

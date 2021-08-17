@@ -15,6 +15,10 @@ class PackController extends Controller
         if($request->has('brand_id'))
             $query->where('brand_id', $request->get('brand_id'));
 
+        if($request->has('complectation_id'))
+            $query->rightJoin('complectation_packs', 'complectation_packs.pack_id', '=', 'packs.id')
+                ->where('complectation_packs.complectation_id', $request->get('complectation_id'));
+
         $packs = $query->get();
 
         if($packs->count())

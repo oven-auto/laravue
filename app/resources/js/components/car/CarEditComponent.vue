@@ -35,7 +35,17 @@
 
                 <div class="row">
                     <div class="col-6">
-                        <CarColorPack :complectation="car.complectation_id"></CarColorPack>
+                        <CarColor :complectation="car.complectation_id" @updateColor="onUpdateColor"></CarColor>
+                    </div>
+
+                    <div class="col-6">
+                        <CarPack
+                            :complectation="car.complectation_id"
+                            @updatePack="onUpdatePack"
+                            :install="car.packs"
+                            :color="car.color_id"
+                        >
+                        </CarPack>
                     </div>
                 </div>
 
@@ -62,22 +72,24 @@ import BrandSelect from '../html/BrandSelect';
 import MarkSelect from '../html/MarkSelect';
 import ComplectationSelect from '../html/ComplectationSelect';
 
-import CarColorPack from './CarColorPackComponent';
+import CarColor from './CarColorComponent';
+import CarPack from './CarPackComponent';
 
 export default {
     name: 'car-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColorPack
+        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColor, CarPack
     },
     data() {
         return {
             car: {
-                brand_id: 0,
-                mark_id: 0,
-                complectation_id: 0,
-                color_id: 0,
+                brand_id: 13,
+                mark_id: 50,
+                complectation_id: 6,
+                color_id: 42,
                 vin: '',
                 year: '',
+                packs: []
             },
             devices: [],
             notFound: false,
@@ -92,6 +104,15 @@ export default {
             this.loadData(this.urlId)
     },
     methods: {
+
+        onUpdateColor(markColor) {
+            this.car.color_id = markColor.id
+        },
+
+        onUpdatePack(packs) {
+            this.car.packs = packs
+        },
+
         loadData(id) {
             axios.get('/api/cars/' + id + '/edit')
             .then( response => {

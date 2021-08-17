@@ -20,7 +20,7 @@ class CarController extends Controller
 
     public function store(Car $car, Request $request)
     {
-
+        dd($request->all());
     }
 
     public function update(Car $car, Request $request)

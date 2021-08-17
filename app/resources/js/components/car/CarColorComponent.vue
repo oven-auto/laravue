@@ -21,7 +21,7 @@ export default {
     components: {
         ColorIcon
     },
-    name: 'car-color-pack',
+    name: 'car-color',
     data() {
         return {
             colors: [],
@@ -37,7 +37,7 @@ export default {
     computed: {
         currentImg() {
             return this.currentColor.image
-        }
+        },
     },
     mounted() {
         this.loadData();
@@ -45,7 +45,8 @@ export default {
 
     methods: {
         clickColor(obj) {
-            this.currentColor = obj
+            this.currentColor = obj;
+            this.$emit('updateColor', this.currentColor)
         },
         loadData() {
             axios.get('/api/markcolors?' + 'complectation_id='+this.complectation)
