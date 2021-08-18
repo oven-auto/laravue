@@ -40,10 +40,14 @@ export default {
 
 <style scoped>
 .color-icon{
-    width: 50px;
-    height: 50px;
+    width: 30px;
+    height: 30px;
     border-radius: 100%;
     box-shadow: 0 0 5px #ccc;
     display: inline-block;
+    cursor: pointer;
+}
+.color-icon:hover{
+    transform: scale(1.1, 1.1);
 }
 </style>

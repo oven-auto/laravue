@@ -2170,6 +2170,10 @@ __webpack_require__.r(__webpack_exports__);
     complectation: {
       type: Number,
       "default": 0
+    },
+    currentColorId: {
+      type: Number,
+      "default": 0
     }
   },
   computed: {
@@ -2181,21 +2185,141 @@ __webpack_require__.r(__webpack_exports__);
     this.loadData();
   },
   methods: {
-    clickColor: function clickColor(obj) {
-      this.currentColor = obj;
-      this.$emit('updateColor', this.currentColor);
-    },
-    loadData: function loadData() {
+    clickColor: function clickColor(id) {
       var _this = this;
 
+      this.colors.forEach(function (item) {
+        if (item.id == id) _this.currentColor = item;
+      });
+      this.$emit('updateColor', this.currentColor.id);
+    },
+    loadData: function loadData() {
+      var _this2 = this;
+
       axios.get('/api/markcolors?' + 'complectation_id=' + this.complectation).then(function (res) {
-        _this.colors = res.data.data;
+        _this2.colors = res.data.data;
+
+        _this2.clickColor(_this2.currentColorId);
       })["catch"](function (errors) {});
     }
   },
   watch: {
     complectation: function complectation(v) {
+      this.currentColor = {
+        id: 0
+      };
       this.loadData();
+    }
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarDeviceComponent.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarDeviceComponent.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: 'car-device',
+  data: function data() {
+    return {
+      devices: [],
+      install: [],
+      price: 0
+    };
+  },
+  mounted: function mounted() {
+    this.loadData();
+    this.price = this.devicePrice;
+    this.install = this.installProp;
+  },
+  computed: {
+    installPriceComputed: {
+      get: function get() {
+        var res = parseInt(this.price);
+        if (isNumeric(res)) return res;
+        return 0;
+      },
+      set: function set(val) {
+        this.price = val;
+      }
+    }
+  },
+  props: ['installProp', 'devicePrice'],
+  methods: {
+    returnData: function returnData() {
+      this.$emit('updateDevice', {
+        devices: this.install,
+        price: isNumeric(parseInt(this.price)) ? parseInt(this.price) : 0
+      });
+    },
+    formatPrice: function formatPrice(param) {
+      return number_format(param, 0, '', ' ', 'руб.');
+    },
+    chunkArray: function chunkArray(arr, chunk) {
+      var i,
+          j,
+          tmp = [];
+
+      for (i = 0, j = arr.length; i < j; i += chunk) {
+        tmp.push(arr.slice(i, i + chunk));
+      }
+
+      return tmp;
+    },
+    loadData: function loadData() {
+      var _this = this;
+
+      axios.get('/api/devices').then(function (res) {
+        _this.devices = res.data.data;
+      })["catch"](function (errors) {
+        console.log(errors);
+      });
+    }
+  },
+  watch: {
+    installProp: function installProp(v) {
+      this.price = this.devicePrice;
+      this.install = this.installProp;
+    },
+    devicePrice: function devicePrice(v) {
+      this.price = this.devicePrice;
+      this.install = this.installProp;
     }
   }
 });
@@ -2221,6 +2345,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _html_ComplectationSelect__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../html/ComplectationSelect */ "./resources/js/components/html/ComplectationSelect.vue");
 /* harmony import */ var _CarColorComponent__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./CarColorComponent */ "./resources/js/components/car/CarColorComponent.vue");
 /* harmony import */ var _CarPackComponent__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./CarPackComponent */ "./resources/js/components/car/CarPackComponent.vue");
+/* harmony import */ var _CarDeviceComponent__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./CarDeviceComponent */ "./resources/js/components/car/CarDeviceComponent.vue");
 //
 //
 //
@@ -2286,6 +2411,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
 
 
 
@@ -2304,20 +2455,24 @@ __webpack_require__.r(__webpack_exports__);
     MarkSelect: _html_MarkSelect__WEBPACK_IMPORTED_MODULE_4__.default,
     ComplectationSelect: _html_ComplectationSelect__WEBPACK_IMPORTED_MODULE_5__.default,
     CarColor: _CarColorComponent__WEBPACK_IMPORTED_MODULE_6__.default,
-    CarPack: _CarPackComponent__WEBPACK_IMPORTED_MODULE_7__.default
+    CarPack: _CarPackComponent__WEBPACK_IMPORTED_MODULE_7__.default,
+    CarDevice: _CarDeviceComponent__WEBPACK_IMPORTED_MODULE_8__.default
   },
   data: function data() {
     return {
       car: {
-        brand_id: 13,
-        mark_id: 50,
-        complectation_id: 6,
-        color_id: 42,
+        brand_id: 0,
+        mark_id: 0,
+        complectation_id: 0,
+        color_id: 0,
         vin: '',
         year: '',
-        packs: []
+        packs: [],
+        device_price: 0,
+        devices: []
       },
-      devices: [],
+      packPrice: 0,
+      complectPrice: 0,
       notFound: false,
       loading: true,
       urlId: this.$route.params.id,
@@ -2325,23 +2480,40 @@ __webpack_require__.r(__webpack_exports__);
       succesMessage: null
     };
   },
+  computed: {
+    fullPrice: function fullPrice() {
+      return this.packPrice + this.complectPrice + parseInt(this.car.device_price);
+    }
+  },
   mounted: function mounted() {
     if (this.urlId) this.loadData(this.urlId);
   },
   methods: {
-    onUpdateColor: function onUpdateColor(markColor) {
-      this.car.color_id = markColor.id;
+    formatPrice: function formatPrice(param) {
+      return number_format(param, 0, '', ' ', 'руб.');
     },
-    onUpdatePack: function onUpdatePack(packs) {
-      this.car.packs = packs;
+    onUpdateDevice: function onUpdateDevice(data) {
+      this.car.devices = data.devices, this.car.device_price = data.price;
+    },
+    onUpdateColor: function onUpdateColor(markColorId) {
+      this.car.color_id = markColorId;
+    },
+    onUpdatePack: function onUpdatePack(data) {
+      this.car.packs = data.data;
+      this.packPrice = data.packPrice;
     },
     loadData: function loadData(id) {
       var _this = this;
 
       axios.get('/api/cars/' + id + '/edit').then(function (response) {
+        _this.car = response.data.data;
+        _this.car.packs = response.data.data.packs;
         _this.loading = false;
       })["catch"](function (errors) {
+        console.log(errors);
         _this.notFound = true;
+        _this.loading = false;
+      })["finally"](function () {
         _this.loading = false;
       });
     },
@@ -2351,9 +2523,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.patch('/api/cars/' + id, this.car, this.getConfig()).then(function (res) {
         if (res.data.status) {
           _this2.succes = true;
-          _this2.succesMessage = res.data.message;
-
-          _this2.loadData(id);
+          _this2.succesMessage = res.data.message; //this.loadData(id);
         }
       })["catch"](function (errors) {
         console.log(errors);
@@ -2365,9 +2535,7 @@ __webpack_require__.r(__webpack_exports__);
       axios.post('/api/cars/', this.car, this.getConfig()).then(function (res) {
         if (res.data.status) {
           _this3.succes = true;
-          _this3.succesMessage = res.data.message;
-
-          _this3.loadData(res.data.pack.id);
+          _this3.succesMessage = res.data.message; //this.loadData(res.data.pack.id);
         }
       })["catch"](function (errors) {
         console.log(errors);
@@ -2378,22 +2546,23 @@ __webpack_require__.r(__webpack_exports__);
         'content-type': 'application/json'
       };
     },
-    getDevices: function getDevices() {
+    getComplectationPrice: function getComplectationPrice() {
       var _this4 = this;
 
-      var param = 'brand_id=' + this.pack.brand_id;
-      axios.get('/api/devices?' + param).then(function (res) {
-        _this4.devices = res.data.data;
-      })["catch"](function (errors) {});
+      if (this.car.complectation_id > 0) axios.get('/api/complectprice/' + this.car.complectation_id).then(function (res) {
+        _this4.complectPrice = res.data.data;
+      })["catch"](function (errors) {
+        console.log(errors);
+      });
     }
   },
-  watch: {// 'car.brand_id': {
-    //     immediate: true,
-    //     handler() {
-    //         // if(this.pack.brand_id > 0)
-    //         //     this.getDevices();
-    //     },
-    // }
+  watch: {
+    'car.complectation_id': {
+      immediate: true,
+      handler: function handler() {
+        this.getComplectationPrice();
+      }
+    }
   }
 });
 
@@ -2527,6 +2696,16 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'car-pack',
   data: function data() {
@@ -2550,7 +2729,17 @@ __webpack_require__.r(__webpack_exports__);
       "default": 0
     }
   },
-  computed: {},
+  computed: {
+    packPrice: function packPrice() {
+      var _this = this;
+
+      var sum = 0;
+      this.packs.forEach(function (item) {
+        if (_this.data.includes(item.id)) sum += item.price;
+      });
+      return sum;
+    }
+  },
   mounted: function mounted() {
     this.loadData();
     this.loadColor();
@@ -2558,48 +2747,66 @@ __webpack_require__.r(__webpack_exports__);
     this.checkColorPack();
   },
   methods: {
+    priceFormat: function priceFormat(param) {
+      return number_format(param, 0, '', ' ', 'руб.');
+    },
     changePack: function changePack() {
-      this.$emit('updatePack', this.data);
+      console.log('pomenjal');
+      this.checkColorPack();
+      this.$emit('updatePack', {
+        data: this.data,
+        packPrice: this.packPrice
+      });
     },
     loadData: function loadData() {
-      var _this = this;
+      var _this2 = this;
 
       axios.get('/api/packs?complectation_id=' + this.complectation).then(function (res) {
-        _this.packs = res.data.data;
+        if (res.data.status == 1) {
+          _this2.packs = res.data.data; //this.changePack()
+        }
       })["catch"](function (errors) {});
     },
     loadColor: function loadColor() {
-      var _this2 = this;
+      var _this3 = this;
 
-      axios.get('/api/complectcolors?complectation_id=' + this.complectation).then(function (res) {
-        _this2.colors = res.data.data;
+      if (this.complectation > 0) axios.get('/api/complectcolors?complectation_id=' + this.complectation).then(function (res) {
+        _this3.colors = res.data.data;
       })["catch"](function (errors) {});
     },
     checkColorPack: function checkColorPack() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.packs.forEach(function (item) {
         if (item.colored) {
-          var index = _this3.data.indexOf(item.id);
+          var index = _this4.data.indexOf(item.id);
 
-          if (index > -1) _this3.data.splice(index, 1);
+          if (index > -1) _this4.data.splice(index, 1);
         }
       });
       this.colors.forEach(function (item) {
-        if (_this3.color == item.id) {
-          if (!_this3.data.includes(item.pack_id)) _this3.data.push(item.pack_id);
+        if (_this4.color == item.id) {
+          if (!_this4.data.includes(item.pack_id)) _this4.data.push(item.pack_id);
         }
       });
     }
   },
   watch: {
     complectation: function complectation(v) {
-      this.loadData();
-      this.loadColor();
+      if (v > 0) {
+        //this.data = []
+        this.loadData();
+        this.loadColor(); //this.changePack()
+      }
     },
     color: function color(v) {
-      this.checkColorPack();
-    }
+      if (v > 0) {
+        this.checkColorPack(); //this.changePack()
+      }
+    } // install(v) {
+    //     this.data = this.install
+    // }
+
   }
 });
 
@@ -4442,6 +4649,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+//
+//
+//
+//
 //
 //
 //
@@ -7855,6 +8066,8 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
 __webpack_require__(/*! ./function/isString */ "./resources/js/function/isString.js");
 
+__webpack_require__(/*! ./function/numberFormat */ "./resources/js/function/numberFormat.js");
+
 window.Vue = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js").default;
 /**
  * The following block of code may be used to automatically register your
@@ -7939,6 +8152,48 @@ window.isString = function (param) {
 
 window.isObject = function (param) {
   return _typeof(param) === "object" || param instanceof Object;
+};
+
+window.isNumeric = function (param) {
+  return !isNaN(param) && typeof param === 'number' || param instanceof Number;
+};
+
+/***/ }),
+
+/***/ "./resources/js/function/numberFormat.js":
+/*!***********************************************!*\
+  !*** ./resources/js/function/numberFormat.js ***!
+  \***********************************************/
+/***/ (() => {
+
+window.number_format = function (number, decimals, dec_point, separator) {
+  var valute = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : '';
+  number = (number + '').replace(/[^0-9+\-Ee.]/g, '');
+
+  var n = !isFinite(+number) ? 0 : +number,
+      prec = !isFinite(+decimals) ? 0 : Math.abs(decimals),
+      sep = typeof separator === 'undefined' ? ',' : separator,
+      dec = typeof dec_point === 'undefined' ? '.' : dec_point,
+      s = '',
+      toFixedFix = function toFixedFix(n, prec) {
+    var k = Math.pow(10, prec);
+    return '' + (Math.round(n * k) / k).toFixed(prec);
+  }; // Фиксим баг в IE parseFloat(0.55).toFixed(0) = 0;
+
+
+  s = (prec ? toFixedFix(n, prec) : '' + Math.round(n)).split('.');
+
+  if (s[0].length > 3) {
+    s[0] = s[0].replace(/\B(?=(?:\d{3})+(?!\d))/g, sep);
+  }
+
+  if ((s[1] || '').length < prec) {
+    s[1] = s[1] || '';
+    s[1] += new Array(prec - s[1].length + 1).join('0');
+  }
+
+  if (valute) return s.join(dec) + ' ' + valute;
+  return s.join(dec);
 };
 
 /***/ }),
@@ -12732,7 +12987,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.color-icon[data-v-2d0b07fa]{\n    width: 50px;\n    height: 50px;\n    border-radius: 100%;\n    box-shadow: 0 0 5px #ccc;\n    display: inline-block;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.color-icon[data-v-2d0b07fa]{\n    width: 30px;\n    height: 30px;\n    border-radius: 100%;\n    box-shadow: 0 0 5px #ccc;\n    display: inline-block;\n    cursor: pointer;\n}\n.color-icon[data-v-2d0b07fa]:hover{\n    transform: scale(1.1, 1.1);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -44431,6 +44686,45 @@ component.options.__file = "resources/js/components/car/CarColorComponent.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/car/CarDeviceComponent.vue":
+/*!************************************************************!*\
+  !*** ./resources/js/components/car/CarDeviceComponent.vue ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _CarDeviceComponent_vue_vue_type_template_id_e4aabfce___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./CarDeviceComponent.vue?vue&type=template&id=e4aabfce& */ "./resources/js/components/car/CarDeviceComponent.vue?vue&type=template&id=e4aabfce&");
+/* harmony import */ var _CarDeviceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./CarDeviceComponent.vue?vue&type=script&lang=js& */ "./resources/js/components/car/CarDeviceComponent.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _CarDeviceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _CarDeviceComponent_vue_vue_type_template_id_e4aabfce___WEBPACK_IMPORTED_MODULE_0__.render,
+  _CarDeviceComponent_vue_vue_type_template_id_e4aabfce___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/car/CarDeviceComponent.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/car/CarEditComponent.vue":
 /*!**********************************************************!*\
   !*** ./resources/js/components/car/CarEditComponent.vue ***!
@@ -46430,6 +46724,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/car/CarDeviceComponent.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/car/CarDeviceComponent.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CarDeviceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CarDeviceComponent.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarDeviceComponent.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_CarDeviceComponent_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
 /***/ "./resources/js/components/car/CarEditComponent.vue?vue&type=script&lang=js&":
 /*!***********************************************************************************!*\
   !*** ./resources/js/components/car/CarEditComponent.vue?vue&type=script&lang=js& ***!
@@ -47360,6 +47670,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CarColorComponent_vue_vue_type_template_id_4f1b8d10___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CarColorComponent_vue_vue_type_template_id_4f1b8d10___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CarColorComponent.vue?vue&type=template&id=4f1b8d10& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarColorComponent.vue?vue&type=template&id=4f1b8d10&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/car/CarDeviceComponent.vue?vue&type=template&id=e4aabfce&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/car/CarDeviceComponent.vue?vue&type=template&id=e4aabfce& ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CarDeviceComponent_vue_vue_type_template_id_e4aabfce___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CarDeviceComponent_vue_vue_type_template_id_e4aabfce___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_CarDeviceComponent_vue_vue_type_template_id_e4aabfce___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./CarDeviceComponent.vue?vue&type=template&id=e4aabfce& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarDeviceComponent.vue?vue&type=template&id=e4aabfce&");
 
 
 /***/ }),
@@ -48579,7 +48906,7 @@ var render = function() {
       [
         _c("div", {}, [
           _c("img", {
-            staticStyle: { display: "inline-block" },
+            staticStyle: { display: "inline-block", width: "300px" },
             attrs: { src: _vm.currentImg }
           })
         ]),
@@ -48597,7 +48924,7 @@ var render = function() {
                 {
                   on: {
                     click: function($event) {
-                      return _vm.clickColor(item)
+                      return _vm.clickColor(item.id)
                     }
                   }
                 },
@@ -48617,6 +48944,160 @@ var render = function() {
   ])
 }
 var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarDeviceComponent.vue?vue&type=template&id=e4aabfce&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/car/CarDeviceComponent.vue?vue&type=template&id=e4aabfce& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", { staticClass: "pb-3 mb-3 h5" }, [
+      _vm._v(
+        "\n        Доподнительное оборудование: " +
+          _vm._s(_vm.formatPrice(_vm.devicePrice)) +
+          "\n    "
+      )
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "row pb-5 border-bottom" },
+      _vm._l(
+        _vm.chunkArray(_vm.devices, Math.ceil(_vm.devices.length / 2)),
+        function(chunk) {
+          return _c(
+            "div",
+            { staticClass: "col-6" },
+            _vm._l(chunk, function(itemDevice) {
+              return _c("div", [
+                _c(
+                  "label",
+                  {
+                    staticClass: "checkbox d-flex align-items-center",
+                    attrs: { title: itemDevice.name }
+                  },
+                  [
+                    _c("input", {
+                      directives: [
+                        {
+                          name: "model",
+                          rawName: "v-model",
+                          value: _vm.install,
+                          expression: "install"
+                        }
+                      ],
+                      staticClass: "device-checkbox-toggle",
+                      attrs: { type: "checkbox" },
+                      domProps: {
+                        value: itemDevice.id,
+                        checked: Array.isArray(_vm.install)
+                          ? _vm._i(_vm.install, itemDevice.id) > -1
+                          : _vm.install
+                      },
+                      on: {
+                        change: [
+                          function($event) {
+                            var $$a = _vm.install,
+                              $$el = $event.target,
+                              $$c = $$el.checked ? true : false
+                            if (Array.isArray($$a)) {
+                              var $$v = itemDevice.id,
+                                $$i = _vm._i($$a, $$v)
+                              if ($$el.checked) {
+                                $$i < 0 && (_vm.install = $$a.concat([$$v]))
+                              } else {
+                                $$i > -1 &&
+                                  (_vm.install = $$a
+                                    .slice(0, $$i)
+                                    .concat($$a.slice($$i + 1)))
+                              }
+                            } else {
+                              _vm.install = $$c
+                            }
+                          },
+                          _vm.returnData
+                        ]
+                      }
+                    }),
+                    _vm._v(" "),
+                    _c("div", { staticClass: "checkbox__text" }, [
+                      _vm._v(
+                        "\n                        " +
+                          _vm._s(itemDevice.name) +
+                          "\n                    "
+                      )
+                    ])
+                  ]
+                )
+              ])
+            }),
+            0
+          )
+        }
+      ),
+      0
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: " row" }, [
+      _vm._m(0),
+      _vm._v(" "),
+      _c("div", { staticClass: "col pt-3" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.installPriceComputed,
+              expression: "installPriceComputed"
+            }
+          ],
+          staticClass: "form-control",
+          attrs: { type: "number" },
+          domProps: { value: _vm.installPriceComputed },
+          on: {
+            input: [
+              function($event) {
+                if ($event.target.composing) {
+                  return
+                }
+                _vm.installPriceComputed = $event.target.value
+              },
+              _vm.returnData
+            ]
+          }
+        })
+      ])
+    ])
+  ])
+}
+var staticRenderFns = [
+  function() {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col-8 text-right" }, [
+      _c("div", { staticClass: "h5 mb-0 pt-4" }, [
+        _vm._v("Цена доп. оборудования")
+      ])
+    ])
+  }
+]
 render._withStripped = true
 
 
@@ -48654,7 +49135,11 @@ var render = function() {
         : _c("div", [
             _c("form", [
               _c("div", { staticClass: "h5" }, [
-                _vm._v(_vm._s(_vm.car.vin ? _vm.car.vin : "Новая автомобиль"))
+                _vm._v(
+                  _vm._s(_vm.car.vin ? _vm.car.vin : "Новая автомобиль") +
+                    ": итоговая цена - " +
+                    _vm._s(_vm.formatPrice(_vm.fullPrice))
+                )
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "row pb-3" }, [
@@ -48662,27 +49147,43 @@ var render = function() {
                   "div",
                   { staticClass: "col-6" },
                   [
-                    _c("BrandSelect", {
-                      attrs: { name: "'brand_id'" },
-                      model: {
-                        value: _vm.car.brand_id,
-                        callback: function($$v) {
-                          _vm.$set(_vm.car, "brand_id", $$v)
-                        },
-                        expression: "car.brand_id"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("MarkSelect", {
-                      attrs: { brand: _vm.car.brand_id, name: "mark_id" },
-                      model: {
-                        value: _vm.car.mark_id,
-                        callback: function($$v) {
-                          _vm.$set(_vm.car, "mark_id", $$v)
-                        },
-                        expression: "car.mark_id"
-                      }
-                    }),
+                    _c("div", { staticClass: "row" }, [
+                      _c(
+                        "div",
+                        { staticClass: "col" },
+                        [
+                          _c("BrandSelect", {
+                            attrs: { name: "'brand_id'" },
+                            model: {
+                              value: _vm.car.brand_id,
+                              callback: function($$v) {
+                                _vm.$set(_vm.car, "brand_id", $$v)
+                              },
+                              expression: "car.brand_id"
+                            }
+                          })
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "div",
+                        { staticClass: "col" },
+                        [
+                          _c("MarkSelect", {
+                            attrs: { brand: _vm.car.brand_id, name: "mark_id" },
+                            model: {
+                              value: _vm.car.mark_id,
+                              callback: function($$v) {
+                                _vm.$set(_vm.car, "mark_id", $$v)
+                              },
+                              expression: "car.mark_id"
+                            }
+                          })
+                        ],
+                        1
+                      )
+                    ]),
                     _vm._v(" "),
                     _c("ComplectationSelect", {
                       attrs: {
@@ -48696,96 +49197,129 @@ var render = function() {
                         },
                         expression: "car.complectation_id"
                       }
-                    })
+                    }),
+                    _vm._v(" "),
+                    _c("div", [
+                      _c("label", { attrs: { for: "name" } }, [_vm._v("VIN")]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.car.vin,
+                            expression: "car.vin"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", name: "name" },
+                        domProps: { value: _vm.car.vin },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.car, "vin", $event.target.value)
+                          }
+                        }
+                      })
+                    ]),
+                    _vm._v(" "),
+                    _c("div", [
+                      _c("label", { attrs: { for: "name" } }, [
+                        _vm._v("Год выпуска")
+                      ]),
+                      _vm._v(" "),
+                      _c("input", {
+                        directives: [
+                          {
+                            name: "model",
+                            rawName: "v-model",
+                            value: _vm.car.year,
+                            expression: "car.year"
+                          }
+                        ],
+                        staticClass: "form-control",
+                        attrs: { type: "text", name: "name" },
+                        domProps: { value: _vm.car.year },
+                        on: {
+                          input: function($event) {
+                            if ($event.target.composing) {
+                              return
+                            }
+                            _vm.$set(_vm.car, "year", $event.target.value)
+                          }
+                        }
+                      })
+                    ])
                   ],
                   1
                 ),
                 _vm._v(" "),
                 _c("div", { staticClass: "col-6" }, [
-                  _c("div", [
-                    _c("label", { attrs: { for: "name" } }, [_vm._v("VIN")]),
-                    _vm._v(" "),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.car.vin,
-                          expression: "car.vin"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { type: "text", name: "name" },
-                      domProps: { value: _vm.car.vin },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.car, "vin", $event.target.value)
-                        }
-                      }
-                    })
-                  ]),
-                  _vm._v(" "),
-                  _c("div", [
-                    _c("label", { attrs: { for: "name" } }, [
-                      _vm._v("Год выпуска")
-                    ]),
-                    _vm._v(" "),
-                    _c("input", {
-                      directives: [
-                        {
-                          name: "model",
-                          rawName: "v-model",
-                          value: _vm.car.year,
-                          expression: "car.year"
-                        }
-                      ],
-                      staticClass: "form-control",
-                      attrs: { type: "text", name: "name" },
-                      domProps: { value: _vm.car.year },
-                      on: {
-                        input: function($event) {
-                          if ($event.target.composing) {
-                            return
-                          }
-                          _vm.$set(_vm.car, "year", $event.target.value)
-                        }
-                      }
-                    })
-                  ])
+                  _c(
+                    "div",
+                    { staticClass: "border p-3 rounded" },
+                    [
+                      _c("CarColor", {
+                        attrs: {
+                          complectation: _vm.car.complectation_id,
+                          currentColorId: _vm.car.color_id
+                        },
+                        on: { updateColor: _vm.onUpdateColor }
+                      })
+                    ],
+                    1
+                  )
+                ])
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "row py-3 my-3" }, [
+                _c("div", { staticClass: "col-8" }, [
+                  _c(
+                    "div",
+                    { staticClass: "  border rounded p-3" },
+                    [
+                      _c("CarDevice", {
+                        attrs: {
+                          installProp: _vm.car.devices,
+                          devicePrice: _vm.car.device_price
+                        },
+                        on: { updateDevice: _vm.onUpdateDevice }
+                      })
+                    ],
+                    1
+                  )
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col-4" }, [
+                  _c(
+                    "div",
+                    { staticClass: "rounded border p-3" },
+                    [
+                      _c("CarPack", {
+                        attrs: {
+                          complectation: _vm.car.complectation_id,
+                          install: _vm.car.packs,
+                          color: _vm.car.color_id
+                        },
+                        on: { updatePack: _vm.onUpdatePack }
+                      })
+                    ],
+                    1
+                  )
                 ])
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "row" }, [
-                _c(
-                  "div",
-                  { staticClass: "col-6" },
-                  [
-                    _c("CarColor", {
-                      attrs: { complectation: _vm.car.complectation_id },
-                      on: { updateColor: _vm.onUpdateColor }
-                    })
-                  ],
-                  1
-                ),
-                _vm._v(" "),
-                _c(
-                  "div",
-                  { staticClass: "col-6" },
-                  [
-                    _c("CarPack", {
-                      attrs: {
-                        complectation: _vm.car.complectation_id,
-                        install: _vm.car.packs,
-                        color: _vm.car.color_id
-                      },
-                      on: { updatePack: _vm.onUpdatePack }
-                    })
-                  ],
-                  1
-                )
+                _c("div", { staticClass: "col text-right" }, [
+                  _c("div", { staticClass: "h5" }, [
+                    _vm._v(
+                      "Итоговая цена автомобиля: " +
+                        _vm._s(_vm.formatPrice(_vm.fullPrice))
+                    )
+                  ])
+                ])
               ]),
               _vm._v(" "),
               _vm.urlId
@@ -48964,85 +49498,110 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    _vm._l(_vm.packs, function(item) {
-      return _c("div", { staticClass: "border-bottom py-1" }, [
-        _c("b", {}, [_vm._v(_vm._s(item.name))]),
-        _vm._v(" "),
-        _c(
+  return _c("div", [
+    _c("div", { staticClass: "h5" }, [_vm._v("\n        Опции\n    ")]),
+    _vm._v(" "),
+    _vm.packs
+      ? _c(
           "div",
-          _vm._l(item.devices, function(device) {
-            return _c("span", { staticClass: "text-muted" }, [
-              _vm._v(
-                "\n                " + _vm._s(device.name) + "\n            "
+          _vm._l(_vm.packs, function(item) {
+            return _c("div", { staticClass: "border-bottom py-2" }, [
+              _c("div", { staticClass: "row" }, [
+                _c("div", { staticClass: "col" }, [
+                  _c("b", {}, [_vm._v(_vm._s(item.name))])
+                ]),
+                _vm._v(" "),
+                _c("div", { staticClass: "col text-right" }, [
+                  _vm._v(_vm._s(_vm.priceFormat(item.price)))
+                ])
+              ]),
+              _vm._v(" "),
+              _c(
+                "div",
+                _vm._l(item.devices, function(device) {
+                  return _c("span", { staticClass: "text-muted" }, [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(device.name) +
+                        "\n            "
+                    )
+                  ])
+                }),
+                0
+              ),
+              _vm._v(" "),
+              _c(
+                "label",
+                {
+                  staticClass: "checkbox d-flex align-items-center",
+                  attrs: { title: item.code }
+                },
+                [
+                  _c("input", {
+                    directives: [
+                      {
+                        name: "model",
+                        rawName: "v-model",
+                        value: _vm.data,
+                        expression: "data"
+                      }
+                    ],
+                    staticClass: "device-checkbox-toggle",
+                    attrs: { type: "checkbox", disabled: item.colored == 1 },
+                    domProps: {
+                      value: item.id,
+                      checked: Array.isArray(_vm.data)
+                        ? _vm._i(_vm.data, item.id) > -1
+                        : _vm.data
+                    },
+                    on: {
+                      change: [
+                        function($event) {
+                          var $$a = _vm.data,
+                            $$el = $event.target,
+                            $$c = $$el.checked ? true : false
+                          if (Array.isArray($$a)) {
+                            var $$v = item.id,
+                              $$i = _vm._i($$a, $$v)
+                            if ($$el.checked) {
+                              $$i < 0 && (_vm.data = $$a.concat([$$v]))
+                            } else {
+                              $$i > -1 &&
+                                (_vm.data = $$a
+                                  .slice(0, $$i)
+                                  .concat($$a.slice($$i + 1)))
+                            }
+                          } else {
+                            _vm.data = $$c
+                          }
+                        },
+                        _vm.changePack
+                      ]
+                    }
+                  }),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "checkbox__text" }, [
+                    _vm._v(
+                      "\n                " +
+                        _vm._s(item.code) +
+                        "\n            "
+                    )
+                  ])
+                ]
               )
             ])
           }),
           0
-        ),
-        _vm._v(" "),
-        _c(
-          "label",
-          {
-            staticClass: "checkbox d-flex align-items-center",
-            attrs: { title: item.code }
-          },
-          [
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.data,
-                  expression: "data"
-                }
-              ],
-              staticClass: "device-checkbox-toggle",
-              attrs: { type: "checkbox", disabled: item.colored == 1 },
-              domProps: {
-                value: item.id,
-                checked: Array.isArray(_vm.data)
-                  ? _vm._i(_vm.data, item.id) > -1
-                  : _vm.data
-              },
-              on: {
-                change: [
-                  function($event) {
-                    var $$a = _vm.data,
-                      $$el = $event.target,
-                      $$c = $$el.checked ? true : false
-                    if (Array.isArray($$a)) {
-                      var $$v = item.id,
-                        $$i = _vm._i($$a, $$v)
-                      if ($$el.checked) {
-                        $$i < 0 && (_vm.data = $$a.concat([$$v]))
-                      } else {
-                        $$i > -1 &&
-                          (_vm.data = $$a
-                            .slice(0, $$i)
-                            .concat($$a.slice($$i + 1)))
-                      }
-                    } else {
-                      _vm.data = $$c
-                    }
-                  },
-                  _vm.changePack
-                ]
-              }
-            }),
-            _vm._v(" "),
-            _c("div", { staticClass: "checkbox__text" }, [
-              _vm._v(
-                "\n                " + _vm._s(item.code) + "\n            "
-              )
-            ])
-          ]
         )
-      ])
-    }),
-    0
-  )
+      : _vm._e(),
+    _vm._v(" "),
+    _c("div", { staticClass: "pt-3 text-right h5 mb-0" }, [
+      _vm._v("\n        Итого цена опций: "),
+      _c("span", {
+        domProps: { innerHTML: _vm._s(_vm.priceFormat(_vm.packPrice)) }
+      })
+    ])
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -51468,7 +52027,21 @@ var render = function() {
         _vm._v(" "),
         _vm._l(_vm.complectations, function(item) {
           return _c("option", { domProps: { value: item.id } }, [
-            _vm._v("\n            " + _vm._s(item.name) + "\n        ")
+            _vm._v(
+              "\n            " +
+                _vm._s(item.code) +
+                "\n            " +
+                _vm._s(item.name) +
+                "\n            " +
+                _vm._s(item.motor.size) +
+                " ( " +
+                _vm._s(item.motor.power) +
+                " л.с.)\n            " +
+                _vm._s(item.motor.transmission.acronym) +
+                "\n            " +
+                _vm._s(item.motor.driver.acronym) +
+                "\n        "
+            )
           ])
         })
       ],

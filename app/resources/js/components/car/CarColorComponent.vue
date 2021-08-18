@@ -2,10 +2,10 @@
 <div class="row">
     <div class="col text-center">
         <div class="">
-            <img :src="currentImg" style="display:inline-block">
+            <img :src="currentImg" style="display:inline-block; width: 300px;">
         </div>
         <div style="display:inline-block;" class=" text-center mx-2" v-for="item in colors">
-            <div v-on:click="clickColor(item)">
+            <div v-on:click="clickColor(item.id)">
                 <div>{{item.color.code}}</div>
                 <ColorIcon :colors="item.color.web"></ColorIcon>
             </div>
@@ -33,6 +33,10 @@ export default {
             type: Number,
             default: 0,
         },
+        currentColorId: {
+            type: Number,
+            default: 0
+        }
     },
     computed: {
         currentImg() {
@@ -44,14 +48,20 @@ export default {
     },
 
     methods: {
-        clickColor(obj) {
-            this.currentColor = obj;
-            this.$emit('updateColor', this.currentColor)
+
+        clickColor(id) {
+            this.colors.forEach( (item) => {
+                if(item.id == id)
+                     this.currentColor = item;
+            })
+            this.$emit('updateColor', this.currentColor.id)
         },
+
         loadData() {
             axios.get('/api/markcolors?' + 'complectation_id='+this.complectation)
             .then( (res) => {
                 this.colors = res.data.data
+                this.clickColor(this.currentColorId)
             })
             .catch( (errors) => {
 
@@ -60,6 +70,7 @@ export default {
     },
     watch: {
         complectation(v){
+            this.currentColor = {id: 0}
             this.loadData()
         }
     },

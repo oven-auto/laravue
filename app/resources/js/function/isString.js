@@ -5,3 +5,7 @@ window.isString = function(param) {
 window.isObject = function(param) {
     return (typeof param === "object" || param instanceof Object);
 }
+
+window.isNumeric = function(param) {
+    return (!isNaN(param) && typeof param === 'number' || param instanceof Number );
+}

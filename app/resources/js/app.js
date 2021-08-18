@@ -6,6 +6,7 @@
 
 require('./bootstrap');
 require('./function/isString');
+require('./function/numberFormat');
 
 window.Vue = require('vue').default;
 

@@ -67,10 +67,20 @@ class ComplectController extends Controller
     public function store(Complectation $complectation, Request $request)
     {
         $this->repository->save($complectation, $request->all());
+        return response()->json([
+            'status' => 1,
+            'data' => $complectation,
+            'message' => 'Комплектация создана'
+        ]);
     }
 
     public function update(Complectation $complectation, Request $request)
     {
         $this->repository->save($complectation, $request->all());
+        return response()->json([
+            'status' => 1,
+            'data' => $complectation,
+            'message' => 'Комплектация изменена'
+        ]);
     }
 }

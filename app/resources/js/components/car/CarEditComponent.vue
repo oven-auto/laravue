@@ -8,18 +8,19 @@
 
         <div v-else>
             <form>
-                <div class="h5">{{ car.vin ? car.vin : 'Новая автомобиль' }}</div>
+                <div class="h5">{{ car.vin ? car.vin : 'Новая автомобиль' }}: итоговая цена - {{formatPrice(fullPrice)}}</div>
 
                 <div class="row pb-3">
 
 
                     <div class="col-6">
-                        <BrandSelect name="'brand_id'" v-model="car.brand_id"></BrandSelect>
-                        <MarkSelect v-model="car.mark_id" :brand="car.brand_id" name="mark_id"></MarkSelect>
-                        <ComplectationSelect v-model="car.complectation_id" :mark="car.mark_id" name="complectation_id"></ComplectationSelect>
-                    </div>
+                        <div class="row">
+                            <div class="col"><BrandSelect name="'brand_id'" v-model="car.brand_id"></BrandSelect></div>
+                            <div class="col"><MarkSelect v-model="car.mark_id" :brand="car.brand_id" name="mark_id"></MarkSelect></div>
+                        </div>
 
-                    <div class="col-6">
+                        <ComplectationSelect v-model="car.complectation_id" :mark="car.mark_id" name="complectation_id"></ComplectationSelect>
+
                         <div >
                             <label for="name">VIN</label>
                             <input type="text" name="name" v-model="car.vin" class="form-control"/>
@@ -31,14 +32,28 @@
                         </div>
                     </div>
 
-                </div>
-
-                <div class="row">
                     <div class="col-6">
-                        <CarColor :complectation="car.complectation_id" @updateColor="onUpdateColor"></CarColor>
+                        <div class="border p-3 rounded">
+                            <CarColor :complectation="car.complectation_id" @updateColor="onUpdateColor" :currentColorId="car.color_id"></CarColor>
+                        </div>
                     </div>
 
-                    <div class="col-6">
+                </div>
+
+                <div class="row py-3 my-3">
+                    <div class="col-8">
+                        <div class="  border rounded p-3">
+                            <CarDevice
+                                :installProp="car.devices"
+                                :devicePrice="car.device_price"
+                                @updateDevice="onUpdateDevice"
+                            >
+                            </CarDevice>
+                        </div>
+                    </div>
+
+                    <div class="col-4">
+                        <div class="rounded border p-3">
                         <CarPack
                             :complectation="car.complectation_id"
                             @updatePack="onUpdatePack"
@@ -46,6 +61,16 @@
                             :color="car.color_id"
                         >
                         </CarPack>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+                <div class="row">
+                    <div class="col text-right">
+                        <div class="h5">Итоговая цена автомобиля: {{formatPrice(fullPrice)}}</div>
                     </div>
                 </div>
 
@@ -74,24 +99,28 @@ import ComplectationSelect from '../html/ComplectationSelect';
 
 import CarColor from './CarColorComponent';
 import CarPack from './CarPackComponent';
+import CarDevice from './CarDeviceComponent';
 
 export default {
     name: 'car-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColor, CarPack
+        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColor, CarPack, CarDevice
     },
     data() {
         return {
             car: {
-                brand_id: 13,
-                mark_id: 50,
-                complectation_id: 6,
-                color_id: 42,
+                brand_id: 0,
+                mark_id: 0,
+                complectation_id: 0,
+                color_id: 0,
                 vin: '',
                 year: '',
-                packs: []
+                packs: [],
+                device_price: 0,
+                devices: []
             },
-            devices: [],
+            packPrice: 0,
+            complectPrice: 0,
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
@@ -99,29 +128,51 @@ export default {
             succesMessage: null,
         }
     },
+
+    computed: {
+        fullPrice() {
+            return this.packPrice + this.complectPrice + parseInt(this.car.device_price)
+        },
+    },
+
     mounted() {
         if(this.urlId)
             this.loadData(this.urlId)
     },
     methods: {
-
-        onUpdateColor(markColor) {
-            this.car.color_id = markColor.id
+        formatPrice(param) {
+            return number_format(param,0,'',' ', 'руб.');
         },
 
-        onUpdatePack(packs) {
-            this.car.packs = packs
+        onUpdateDevice(data) {
+            this.car.devices = data.devices,
+            this.car.device_price = data.price
+        },
+
+        onUpdateColor(markColorId) {
+            this.car.color_id = markColorId
+        },
+
+        onUpdatePack(data) {
+            this.car.packs = data.data
+            this.packPrice = data.packPrice
         },
 
         loadData(id) {
+
             axios.get('/api/cars/' + id + '/edit')
             .then( response => {
-
+                this.car = response.data.data
+                this.car.packs = response.data.data.packs
                 this.loading = false;
 
             })
             .catch(errors => {
+                console.log(errors)
                 this.notFound = true;
+                this.loading = false;
+            })
+            .finally( () => {
                 this.loading = false;
             })
         },
@@ -133,7 +184,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(id);
+                    //this.loadData(id);
                 }
             })
             .catch(errors => {
@@ -148,7 +199,7 @@ export default {
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(res.data.pack.id);
+                    //this.loadData(res.data.pack.id);
                 }
             })
             .catch(errors => {
@@ -162,27 +213,28 @@ export default {
             }
         },
 
-        getDevices() {
-            var param = 'brand_id='+this.pack.brand_id
-            axios.get('/api/devices?' + param)
-            .then(res => {
-                this.devices = res.data.data
-            })
-            .catch(errors => {
 
-            })
+
+        getComplectationPrice() {
+            if(this.car.complectation_id > 0)
+                axios.get('/api/complectprice/'+this.car.complectation_id)
+                .then( (res) => {
+                    this.complectPrice = res.data.data
+                })
+                .catch((errors) => {
+                    console.log(errors)
+                })
         }
 
 
     },
     watch: {
-        // 'car.brand_id': {
-        //     immediate: true,
-        //     handler() {
-        //         // if(this.pack.brand_id > 0)
-        //         //     this.getDevices();
-        //     },
-        // }
+        'car.complectation_id': {
+            immediate: true,
+            handler() {
+                this.getComplectationPrice()
+            },
+        }
     }
 }
 </script>

@@ -4,7 +4,11 @@
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in complectations" :value="item.id">
+                {{ item.code }}
                 {{ item.name }}
+                {{ item.motor.size}} ( {{ item.motor.power }} л.с.)
+                {{ item.motor.transmission.acronym }}
+                {{ item.motor.driver.acronym }}
             </option>
         </select>
     </div>

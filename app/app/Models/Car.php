@@ -25,17 +25,17 @@ class Car extends Model
 
     public function complectation()
     {
-        return $this->hasOne(\App\Models\Coplectation::class, 'id', 'complectation_id')->withDefault();
+        return $this->hasOne(\App\Models\Complectation::class, 'id', 'complectation_id')->withDefault()->with('motor');
     }
 
     public function color()
     {
-        return $this->hasOne(\App\Models\MarkColor::class, 'id', 'complectation_id')->withDefault();
+        return $this->hasOne(\App\Models\MarkColor::class, 'id', 'color_id')->withDefault()->with('color');
     }
 
     public function packs()
     {
-        return $this->belongsToMany(\App\Models\Packs::class, 'car_packs', 'car_id');
+        return $this->belongsToMany(\App\Models\Pack::class, 'car_packs', 'car_id');
     }
 
     public function devices()

@@ -1,9 +1,15 @@
 <template>
 <div >
+    <div class="h5">
+        Опции
+    </div>
+    <div v-if="packs">
+    <div v-for="item in packs" class="border-bottom py-2">
 
-    <div v-for="item in packs" class="border-bottom py-1">
-
-        <b class="">{{item.name}}</b>
+        <div class="row">
+            <div class="col"><b class="">{{item.name}}</b></div>
+            <div class="col text-right">{{priceFormat(item.price)}}</div>
+        </div>
         <div>
             <span v-for="device in item.devices" class="text-muted">
                 {{device.name}}
@@ -15,7 +21,11 @@
                 {{item.code}}
             </div>
         </label>
+    </div>
+    </div>
 
+    <div class="pt-3 text-right h5 mb-0">
+        Итого цена опций: <span v-html="priceFormat(packPrice)"></span>
     </div>
 
 </div>
@@ -47,26 +57,47 @@ export default {
         }
     },
     computed: {
+        packPrice() {
+            var sum = 0;
 
+            this.packs.forEach( (item) => {
+                if(this.data.includes(item.id))
+                    sum += item.price
+            })
+            return sum
+        }
     },
 
     mounted() {
+
         this.loadData()
         this.loadColor()
         this.data = this.install
         this.checkColorPack()
+
     },
 
     methods: {
+        priceFormat(param) {
+            return number_format(param, 0, '', ' ', 'руб.');
+        },
 
         changePack() {
-            this.$emit('updatePack', this.data)
+            console.log('pomenjal')
+            this.checkColorPack()
+            this.$emit('updatePack', {
+                data: this.data,
+                packPrice: this.packPrice
+            })
         },
 
         loadData() {
             axios.get('/api/packs?complectation_id=' + this.complectation)
             .then((res) => {
-                this.packs = res.data.data
+                if(res.data.status == 1) {
+                    this.packs = res.data.data
+                    //this.changePack()
+                }
             })
             .catch((errors)=>{
 
@@ -74,13 +105,14 @@ export default {
         },
 
         loadColor() {
-            axios.get('/api/complectcolors?complectation_id=' + this.complectation)
-            .then((res) => {
-                this.colors = res.data.data
-            })
-            .catch((errors)=>{
+            if(this.complectation > 0)
+                axios.get('/api/complectcolors?complectation_id=' + this.complectation)
+                .then((res) => {
+                        this.colors = res.data.data
+                })
+                .catch((errors)=>{
 
-            })
+                })
         },
 
         checkColorPack() {
@@ -91,6 +123,7 @@ export default {
                         this.data.splice(index, 1)
                 }
             })
+
             this.colors.forEach( (item) => {
                 if(this.color == item.id) {
                     if(!this.data.includes(item.pack_id))
@@ -102,12 +135,22 @@ export default {
 
     watch: {
         complectation(v) {
-            this.loadData();
-            this.loadColor()
+            if(v>0){
+                //this.data = []
+                this.loadData();
+                this.loadColor();
+                //this.changePack()
+            }
         },
         color(v) {
-            this.checkColorPack()
-        }
+            if(v>0) {
+                this.checkColorPack()
+                //this.changePack()
+            }
+        },
+        // install(v) {
+        //     this.data = this.install
+        // }
     }
 
 }

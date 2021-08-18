@@ -18,8 +18,9 @@ class CreateCarsTable extends Migration
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
             $table->foreignId('mark_id')->constrained()->onDelete('cascade');
             $table->foreignId('complectation_id')->constrained()->onDelete('cascade');
-            $table->foreignId('mark_color_id')->constrained()->onDelete('cascade');
+            $table->foreignId('color_id')->constrained()->onDelete('cascade');
             $table->integer('year');
+            $table->integer('device_price')->default(0);
             $table->string('vin', 17);
         });
     }
