@@ -30,7 +30,7 @@ class Car extends Model
 
     public function color()
     {
-        return $this->hasOne(\App\Models\MarkColor::class, 'id', 'color_id')->withDefault()->with('color');
+        return $this->hasOne(\App\Models\MarkColor::class, 'id', 'mark_color_id')->withDefault()->with('color');
     }
 
     public function packs()

@@ -2741,18 +2741,15 @@ __webpack_require__.r(__webpack_exports__);
     }
   },
   mounted: function mounted() {
+    console.log(this.install);
     this.loadData();
-    this.loadColor();
-    this.data = this.install;
-    this.checkColorPack();
   },
   methods: {
     priceFormat: function priceFormat(param) {
       return number_format(param, 0, '', ' ', 'руб.');
     },
     changePack: function changePack() {
-      console.log('pomenjal');
-      this.checkColorPack();
+      //this.checkColorPack()
       this.$emit('updatePack', {
         data: this.data,
         packPrice: this.packPrice
@@ -2763,9 +2760,22 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get('/api/packs?complectation_id=' + this.complectation).then(function (res) {
         if (res.data.status == 1) {
-          _this2.packs = res.data.data; //this.changePack()
+          _this2.packs = res.data.data;
+          _this2.data = _this2.install;
+
+          _this2.loadColor();
+
+          _this2.changePack(); //this.checkColorPack()
+
+
+          _this2.changePack();
+
+          console.log('---');
+          console.log(_this2.install);
         }
-      })["catch"](function (errors) {});
+      })["catch"](function (errors) {
+        console.log(errors);
+      });
     },
     loadColor: function loadColor() {
       var _this3 = this;
@@ -2793,20 +2803,26 @@ __webpack_require__.r(__webpack_exports__);
   },
   watch: {
     complectation: function complectation(v) {
+      console.log('complect');
+
       if (v > 0) {
         //this.data = []
         this.loadData();
-        this.loadColor(); //this.changePack()
       }
     },
     color: function color(v) {
+      console.log('color');
+
       if (v > 0) {
         this.checkColorPack(); //this.changePack()
       }
-    } // install(v) {
-    //     this.data = this.install
-    // }
-
+    },
+    data: function data(v) {
+      this.$emit('updatePack', {
+        data: this.data,
+        packPrice: this.packPrice
+      });
+    }
   }
 });
 
@@ -53163,9 +53179,9 @@ var render = function() {
                     ]),
                     _vm._v(
                       "\n                " +
-                        _vm._s(
-                          mark.prefix ? mark.prefix : "" + " " + mark.name
-                        ) +
+                        _vm._s(mark.prefix ? mark.prefix : "") +
+                        " " +
+                        _vm._s(mark.name) +
                         "\n            "
                     )
                   ]),

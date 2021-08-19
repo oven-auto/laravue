@@ -42,7 +42,7 @@ Class MarkRepository
                     $this->saveColors($mark, $data['colors']);
                 }
             });
-        } catch(Exception $e) {
+        } catch(\Exception $e) {
 			die($e);
 		}
     }
@@ -132,7 +132,7 @@ Class MarkRepository
         $path = '/public/mark/'.$mark->slug.'/colors';
         $urlPath = '/mark/'.$mark->slug.'/colors';
         $idArray = [];
-
+        //dump($path);
         foreach($data as $colorId => $file) {
             if ($file instanceof UploadedFile) {
                 $fileName = $colorId.'_'.$mark->slug.'.'.$file->getClientOriginalExtension();

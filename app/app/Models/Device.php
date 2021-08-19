@@ -20,7 +20,7 @@ class Device extends Model
 
     public function filter()
     {
-        return $this->hasOne(\App\Models\DeviceFilter::class, 'id', 'device_filter_id');
+        return $this->hasOne(\App\Models\DeviceFilter::class, 'id', 'device_filter_id')->withDefault();
     }
 
     public function brands()

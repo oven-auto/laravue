@@ -26,7 +26,7 @@
             </td>
             <td>
                 <span class="badge badge-secondary">{{ mark.brand.name }} </span>
-                {{ mark.prefix ? mark.prefix : '' + ' ' + mark.name }}
+                {{ mark.prefix ? mark.prefix : '' }} {{ mark.name  }}
             </td>
             <td>
                 <span class="badge badge-success" v-if="mark.status">

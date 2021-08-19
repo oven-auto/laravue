@@ -69,11 +69,8 @@ export default {
     },
 
     mounted() {
-
+        console.log(this.install)
         this.loadData()
-        this.loadColor()
-        this.data = this.install
-        this.checkColorPack()
 
     },
 
@@ -83,8 +80,9 @@ export default {
         },
 
         changePack() {
-            console.log('pomenjal')
-            this.checkColorPack()
+
+            //this.checkColorPack()
+
             this.$emit('updatePack', {
                 data: this.data,
                 packPrice: this.packPrice
@@ -96,11 +94,18 @@ export default {
             .then((res) => {
                 if(res.data.status == 1) {
                     this.packs = res.data.data
-                    //this.changePack()
+                    this.data = this.install
+                    this.loadColor();
+                    this.changePack()
+                    //this.checkColorPack()
+                    this.changePack()
+
+                    console.log('---')
+                    console.log(this.install)
                 }
             })
             .catch((errors)=>{
-
+                console.log(errors)
             })
         },
 
@@ -135,22 +140,26 @@ export default {
 
     watch: {
         complectation(v) {
+            console.log('complect')
             if(v>0){
                 //this.data = []
                 this.loadData();
-                this.loadColor();
-                //this.changePack()
+
             }
         },
         color(v) {
+            console.log('color')
             if(v>0) {
                 this.checkColorPack()
                 //this.changePack()
             }
         },
-        // install(v) {
-        //     this.data = this.install
-        // }
+        data(v) {
+                this.$emit('updatePack', {
+                data: this.data,
+                packPrice: this.packPrice
+            })
+        }
     }
 
 }
