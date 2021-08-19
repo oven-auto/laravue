@@ -51,6 +51,9 @@ import complectationEdit from './components/complectation/ComplectationEditCompo
 import carList from './components/car/CarListComponent';
 import carEdit from './components/car/CarEditComponent';
 
+import creditList from './components/credit/CreditListComponent';
+import creditEdit from './components/credit/CreditEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -296,6 +299,21 @@ const routes = [
     {
         path: '/cars/edit/:id',
         component: carEdit
+    },
+    ///////////
+    //CREDIT    ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/credits/list',
+        component: creditList
+    },
+    {
+        path: '/credits/create',
+        component: creditEdit
+    },
+    {
+        path: '/credits/edit/:id',
+        component: creditEdit
     },
 
 

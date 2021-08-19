@@ -52,3 +52,5 @@ Route::get('complectcolors', [\App\Http\Controllers\Api\v1\ComplectColorControll
 Route::get('complectprice/{complectation}', [\App\Http\Controllers\Api\v1\ComplectPriceController::class, 'price']);
 
 Route::resource('cars', \App\Http\Controllers\Api\v1\CarController::class);
+
+Route::resource('credits', \App\Http\Controllers\Api\v1\CreditController::class);

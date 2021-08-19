@@ -67,6 +67,11 @@
 
 
 
+                <div class="row">
+                    <div class="col text-right">
+                        <div class="h5">Цена комплектации: {{formatPrice(complectPrice)}}</div>
+                    </div>
+                </div>
 
                 <div class="row">
                     <div class="col text-right">

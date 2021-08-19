@@ -49,16 +49,22 @@
                     </div>
                 </li>
 
-                <li class="nav-item">
-                    <router-link :to="'/marks/list'" class="nav-link">Модели</router-link>
-                </li>
-
-                <li class="nav-item">
-                    <router-link :to="'/complectations/list'" class="nav-link">Комплектации</router-link>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Прайс
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <router-link :to="'/marks/list'" class="dropdown-item">Модели</router-link>
+                        <router-link :to="'/complectations/list'" class="dropdown-item">Комплектации</router-link>
+                    </div>
                 </li>
 
                 <li class="nav-item">
                     <router-link :to="'/cars/list'" class="nav-link">Склад</router-link>
+                </li>
+
+                <li class="nav-item">
+                    <router-link :to="'/credits/list'" class="nav-link">Кредиты</router-link>
                 </li>
 
                 <!-- <li v-for="link in links" class="nav-item {{ item.href ? '' : 'dropdown' }}">
