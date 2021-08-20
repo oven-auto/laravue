@@ -54,6 +54,9 @@ import carEdit from './components/car/CarEditComponent';
 import creditList from './components/credit/CreditListComponent';
 import creditEdit from './components/credit/CreditEditComponent';
 
+import bannerList from './components/banner/BannerListComponent';
+import bannerEdit from './components/banner/BannerEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -314,6 +317,21 @@ const routes = [
     {
         path: '/credits/edit/:id',
         component: creditEdit
+    },
+    ///////////
+    //BANNER    ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/banners/list',
+        component: bannerList
+    },
+    {
+        path: '/banners/create',
+        component: bannerEdit
+    },
+    {
+        path: '/banners/edit/:id',
+        component: bannerEdit
     },
 
 

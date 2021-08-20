@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateComplectationsTable extends Migration
+class CreateBannersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,17 +13,16 @@ class CreateComplectationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('complectations', function (Blueprint $table) {
+        Schema::create('banners', function (Blueprint $table) {
             $table->id();
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
-            $table->foreignId('mark_id')->constrained()->onDelete('cascade');
-            $table->foreignId('motor_id')->constrained()->onDelete('cascade');
             $table->string('name');
-            $table->string('code');
-            $table->integer('price');
+            $table->string('title')->nullable();
+            $table->text('text')->nullable();
+            $table->string('link')->nullable();
             $table->integer('sort');
             $table->boolean('status');
-            $table->integer('parent_id')->default(0);
+            $table->string('image');
             $table->timestamps();
         });
     }
@@ -35,6 +34,6 @@ class CreateComplectationsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('complectations');
+        Schema::dropIfExists('banners');
     }
 }

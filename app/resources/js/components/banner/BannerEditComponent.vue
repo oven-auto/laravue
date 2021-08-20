@@ -8,15 +8,15 @@
 
         <div v-else>
             <form>
-                <div class="h5">{{ credit.name ? credit.name : 'Новый кредит' }}</div>
+                <div class="h5">{{ banner.name ? banner.name : 'Новый банер' }}</div>
 
                 <div class="row">
                     <div class="col text-right">
                         <label class="checkbox " :title="'Статус'">
-                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="credit.status" v-model="credit.status">
+                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="banner.status" v-model="banner.status">
                             <div class="checkbox__text" style="">
                                 <div style="width: 200px;text-align: left;">
-                                    {{ (credit.status) ? 'Кредит включен' : 'Кредит выключен' }}
+                                    {{ (banner.status) ? 'Банер включен' : 'Банер выключен' }}
                                 </div>
                             </div>
                         </label>
@@ -25,34 +25,19 @@
 
                 <div class="row pb-3">
                     <div class="col">
-                        <BrandSelect v-model="credit.brand_id"></BrandSelect>
-
-                        <TextInput :label="'Название'" v-model="credit.name" ></TextInput>
-
-                        <RangeInput :label="'Ставка (%)'" v-model="credit.rate" :min="0" :max="20" :step="0.1"></RangeInput>
-
-                        <RangeInput :label="'Срок кредита (лет)'" v-model="credit.period" :min="1" :max="7"></RangeInput>
-
-                        <RangeInput :label="'ПВ (%)'" v-model="credit.contribution" :min="0" :max="100"></RangeInput>
-
-                        <RangeInput :label="'Платеж (руб.)'" v-model="credit.pay" :min="0" :max="100000"></RangeInput>
-
-                        <div class="row">
-                            <div class="col">
-                                <DateInput :label="'Начало'" v-model="credit.begin_at"></DateInput>
-                            </div>
-                            <div class="col">
-                                <DateInput :label="'Конец'" v-model="credit.end_at"></DateInput>
-                            </div>
-                        </div>
+                        <TextInput :label="'Тех.название'" v-model="banner.name" ></TextInput>
+                        <BrandSelect v-model="banner.brand_id"></BrandSelect>
+                        <TextInput :label="'Заголовок'" v-model="banner.title" ></TextInput>
+                        <TextArea :label="'Текст'" v-model="banner.text"></TextArea>
+                        <TextInput :label="'Ссылка'" v-model="banner.link" ></TextInput>
                     </div>
 
                     <div class="col">
                         <div>
                              <label for="icon">Банер</label>
 
-                            <div v-if="credit.banner" class="pb-3">
-                                <img :src="credit.banner" class="brand-icon">
+                            <div v-if="banner.image" class="pb-3">
+                                <img :src="banner.image" class="brand-icon">
                             </div>
 
                             <div class="custom-file">
@@ -62,13 +47,6 @@
                             </div>
                         </div>
 
-                        <CreditMark :brand="credit.brand_id" v-model="credit.marks" @onChange="getMarks"></CreditMark>
-                    </div>
-                </div>
-
-                <div class="row pb-3">
-                    <div class="col">
-                        <TextArea :label="'Дисклеймер'" v-model="credit.disclaimer"></TextArea>
                     </div>
                 </div>
 
@@ -97,28 +75,23 @@ import TextArea from '../html/TextArea';
 import RangeInput from '../html/RangeInput';
 import DateInput from '../html/DateInput';
 
-import CreditMark from './CreditMarkComponent';
 
 export default {
     name: 'credit-edit',
     components: {
-        Error, Message, Spin, BrandSelect, TextInput,TextArea, RangeInput, DateInput, CreditMark
+        Error, Message, Spin, BrandSelect, TextInput,TextArea, RangeInput, DateInput
     },
     data() {
         return {
-            credit: {
-                brand_id: 0,
-                status: 0,
+            banner: {
                 name: '',
-                banner: '',
-                rate: 0,
-                pay: 0,
-                period: 0,
-                contribution: 0,
-                begin_at: '',
-                end_at: '',
-                disclaimer: '',
-                marks: []
+                title: '',
+                text: '',
+                link: '',
+                image: '',
+                sort: 1,
+                status: '',
+                brand_id: 0
             },
             notFound: false,
             loading: true,
@@ -138,25 +111,20 @@ export default {
     },
     methods: {
         onAttachmentChange(e) {
-            this.credit.banner = e.target.files[0]
-        },
-        getMarks(param){
-            this.credit.marks = param
+            this.banner.image = e.target.files[0]
         },
 
         loadData(id) {
 
             this.loading = true;
 
-            axios.get('/api/credits/' + id + '/edit')
+            axios.get('/api/banners/' + id + '/edit')
             .then( response => {
-                this.credit = response.data.data
-                this.loading = false;
+                this.banner = response.data.data
 
             })
             .catch(errors => {
                 this.notFound = true;
-                this.loading = false;
             })
             .finally( () => {
                 this.loading = false;
@@ -166,7 +134,7 @@ export default {
         updateData(id) {
             this.loading = true;
 
-            axios.post('/api/credits/' + id, this.getFormData('patch'), this.getConfig())
+            axios.post('/api/banners/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status == 1) {
                     this.succes = true;
@@ -187,13 +155,13 @@ export default {
 
         storeData() {
             this.loading = true;
-            axios.post('/api/credits/', this.getFormData(), this.getConfig())
+            axios.post('/api/banners/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.$router.push('/credits/list')
-                    this.$router.push('/credits/edit/'+res.data.data.id)
+                    this.$router.push('/banners/list')
+                    this.$router.push('/banners/edit/'+res.data.data.id)
                     this.urlId = res.data.data.id
                     this.loadData(res.data.data.id)
                 } else {
@@ -213,20 +181,14 @@ export default {
         getFormData(method = '') {
             var formData = new FormData();
 
-            formData.append('brand_id', this.credit.brand_id);
-            formData.append('name', this.credit.name);
-            formData.append('status', Number(this.credit.status));
-            formData.append('rate', this.credit.rate);
-            formData.append('pay', this.credit.pay);
-            formData.append('period', this.credit.period);
-            formData.append('contribution', this.credit.contribution);
-            formData.append('begin_at', this.credit.begin_at);
-            formData.append('end_at', this.credit.end_at);
-            formData.append('banner', this.credit.banner);
-            formData.append('disclaimer', this.credit.disclaimer);
-            this.credit.marks.forEach( (item) => {
-                formData.append('marks[]', item);
-            })
+            formData.append('brand_id', this.banner.brand_id);
+            formData.append('title', this.banner.title);
+            formData.append('status', Number(this.banner.status));
+            formData.append('link', this.banner.link);
+            formData.append('image', this.banner.image);
+            formData.append('text', this.banner.text);
+            formData.append('name', this.banner.name);
+            formData.append('sort', this.banner.sort);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

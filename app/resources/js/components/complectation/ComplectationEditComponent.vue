@@ -325,32 +325,47 @@ export default {
         },
 
         updateData(id) {
+            this.loading = false;
             axios.patch('/api/complectations/' + id, this.complectation, this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
+                if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(id);
+                    this.loadData(id)
+                } else {
+                    this.succes = true;
+                    this.succesMessage = res.data.message + ': ' + res.data.errors;
                 }
             })
             .catch(errors => {
                 console.log(errors)
+            })
+            .finally(() => {
+                this.loading = false
             })
         },
 
         storeData() {
+            this.loading = true
             axios.post('/api/complectations/', this.complectation, this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
+                if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadData(res.data.property.id);
+                    this.$router.push('/complectations/list')
+                    this.$router.push('/complectations/edit/'+res.data.data.id)
+                    this.urlId = res.data.data.id
+                    this.loadData(res.data.data.id)
+                } else {
+                    this.succes = true;
+                    this.succesMessage = res.data.message + ': ' + res.data.errors;
                 }
             })
             .catch(errors => {
                 console.log(errors)
+            })
+            .finally(()=> {
+                this.loading = false
             })
         },
 

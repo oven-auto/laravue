@@ -54,3 +54,5 @@ Route::get('complectprice/{complectation}', [\App\Http\Controllers\Api\v1\Comple
 Route::resource('cars', \App\Http\Controllers\Api\v1\CarController::class);
 
 Route::resource('credits', \App\Http\Controllers\Api\v1\CreditController::class);
+
+Route::resource('banners', \App\Http\Controllers\Api\v1\BannerController::class);

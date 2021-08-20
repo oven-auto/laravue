@@ -164,18 +164,16 @@ export default {
         },
 
         loadData(id) {
-
+            this.loading = true
             axios.get('/api/cars/' + id + '/edit')
             .then( response => {
                 this.car = response.data.data
                 this.car.packs = response.data.data.packs
-                this.loading = false;
 
             })
             .catch(errors => {
                 console.log(errors)
                 this.notFound = true;
-                this.loading = false;
             })
             .finally( () => {
                 this.loading = false;
@@ -183,32 +181,51 @@ export default {
         },
 
         updateData(id) {
+            this.loading = true
             axios.patch('/api/cars/' + id, this.car, this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
+                if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    //this.loadData(id);
+                } else {
+                    this.succes = true;
+                    this.succesMessage = res.data.message + ': ' + res.data.errors;
                 }
             })
             .catch(errors => {
+                this.succes = true;
+                this.succesMessage = 'Произошла ошибка';
                 console.log(errors)
+            })
+            .finally ( () => {
+                this.loading = false
             })
         },
 
         storeData() {
+            this.loading = true
             axios.post('/api/cars/', this.car, this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
+                if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    //this.loadData(res.data.pack.id);
+                    this.$router.push('/cars/list')
+                    this.$router.push('/cars/edit/'+res.data.data.id)
+                    this.urlId = res.data.data.id
+                    this.loadData(res.data.data.id)
+                    console.log(res.data.data.id)
+                } else {
+                    this.succes = true;
+                    this.succesMessage = res.data.message + ': ' + res.data.errors;
                 }
             })
             .catch(errors => {
+                this.succes = true;
+                this.succesMessage = 'Произошла ошибка';
                 console.log(errors)
+            })
+            .finally ( () => {
+                this.loading = false
             })
         },
 

@@ -4,75 +4,74 @@ namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Credit;
-use App\Repositories\CreditRepository;
+use App\Models\Banner;
+use App\Repositories\BannerRepository;
 
-class CreditController extends Controller
+class BannerController extends Controller
 {
 
-    public function __construct(CreditRepository $repository)
+    public function __construct(BannerRepository $repository)
     {
         $this->repository = $repository;
     }
 
     public function index()
     {
-        $credits = Credit::with('marks')->get();
-        if($credits->count())
+        $banners = Banner::get();
+        if($banners->count())
             return response()->json([
                 'status' => 1,
-                'data' => $credits,
-                'count' => $credits->count()
+                'data' => $banners,
+                'count' => $banners->count()
             ]);
         return response()->json([
             'status' => 0,
-            'message' => 'Не нашлось ни одного кредита'
+            'message' => 'Не нашлось ни одного банера'
         ]);
     }
 
-    public function edit(Credit $credit)
+    public function edit(Banner $banner)
     {
-        $data = $this->repository->getCreditArray($credit);
-
+        $banner->image = asset('storage/'.$banner->image) . '?'.date('dmYhms');
         return response()->json([
             'status' => 1,
-            'data' => $data
+            'data' => $banner->toArray()
         ]);
     }
 
-    public function store(Credit $credit, Request $request)
+    public function store(Banner $banner, Request $request)
     {
-        $result = $this->repository->save($credit, $request->all());
+        $result = $this->repository->save($banner,$request->all());
 
         if($result['status'])
             return response()->json([
                 'status' => 1,
-                'data' => $credit,
-                'message' => 'Кредит создан'
+                'data' => $banner,
+                'message' => 'Банер создан'
             ]);
         else
             return response()->json([
                 'status' => 0,
-                'data' => $credit,
+                'data' => $banner,
                 'errors' => $result['error'],
                 'message' => 'Произошла ошибка'
             ]);
     }
 
-    public function update(Credit $credit, Request $request)
+    public function update(Banner $banner, Request $request)
     {
-        $result = $this->repository->save($credit, $request->all());
+        $result = $this->repository->save($banner,$request->all());
 
         if($result['status'])
             return response()->json([
                 'status' => 1,
-                'data' => $credit,
-                'message' => 'Кредит изменен'
+                'data' => $banner,
+                'message' => 'Банер изменен'
             ]);
         else
             return response()->json([
                 'status' => 0,
-                'data' => $credit,
+                'data' => $banner,
                 'errors' => $result['error'],
                 'message' => 'Произошла ошибка'
             ]);
