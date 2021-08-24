@@ -10,7 +10,7 @@ class PageController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Page::select('*');
+        $query = Page::with('section');
         $pages = $query->get();
         if($pages->count())
             return response()->json([

@@ -8,7 +8,7 @@
                 <div class="h5">Ярлыки</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/shortcuts/create'">Добавить новый ярлык</router-link>
+                <router-link class="btn btn-primary" :to="'/pages/create'">Добавить новую страницу</router-link>
             </div>
         </div>
 
@@ -17,6 +17,7 @@
         <table v-else class="table">
             <tr>
                 <th style="width: 80px;">#</th>
+                <th>Раздел</th>
                 <th>Название</th>
             </tr>
 
@@ -26,7 +27,8 @@
                         Open
                     </router-link>
                 </td>
-                <td>{{item.name }}</td>
+                <td>{{item.section.name }}</td>
+                <td>{{item.title }}</td>
             </tr>
         </table>
     </div>
@@ -47,7 +49,7 @@ export default {
         return {
             data: [],
             loading: true,
-            toEdit: '/shortcuts/edit/',
+            toEdit: '/pages/edit/',
             notFound: false,
             succes: false,
             succesMessage: null,
@@ -58,7 +60,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/shortcuts')
+            axios.get('/api/pages')
             .then(res => {
                 if(res.data.status == 1)
                     this.data = res.data.data;

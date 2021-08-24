@@ -13,5 +13,8 @@ class Page extends Model
 
     public $timestamps = false;
 
-
+    public function section()
+    {
+        return $this->hasOne(\App\Models\SectionPage::class, 'id', 'section_page_id')->withDefault();
+    }
 }

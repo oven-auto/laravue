@@ -6161,6 +6161,76 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/SectionPageSelect.vue?vue&type=script&lang=js&":
+/*!*****************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/SectionPageSelect.vue?vue&type=script&lang=js& ***!
+  \*****************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  data: function data() {
+    return {
+      sectionpages: []
+    };
+  },
+  mounted: function mounted() {
+    this.loadBrands();
+  },
+  methods: {
+    loadBrands: function loadBrands() {
+      var _this = this;
+
+      axios.get('/api/sectionpages').then(function (res) {
+        _this.sectionpages = res.data.data;
+      })["catch"](function (error) {});
+    }
+  },
+  props: {
+    name: {
+      type: String,
+      "default": null
+    },
+    value: {
+      type: Number,
+      "default": 0
+    }
+  },
+  computed: {
+    selected: {
+      get: function get() {
+        return this.value;
+      },
+      set: function set(val) {
+        this.$emit('input', val);
+      }
+    }
+  } // watch: {
+  //     selected(v){
+  //         this.$emit('input', v);
+  //     }
+  // },
+
+});
+
+/***/ }),
+
 /***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/TextArea.vue?vue&type=script&lang=js&":
 /*!********************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/TextArea.vue?vue&type=script&lang=js& ***!
@@ -8828,6 +8898,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _html_TextArea__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ../html/TextArea */ "./resources/js/components/html/TextArea.vue");
 /* harmony import */ var _html_RangeInput__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ../html/RangeInput */ "./resources/js/components/html/RangeInput.vue");
 /* harmony import */ var _html_DateInput__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../html/DateInput */ "./resources/js/components/html/DateInput.vue");
+/* harmony import */ var _html_SectionPageSelect__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ../html/SectionPageSelect */ "./resources/js/components/html/SectionPageSelect.vue");
 //
 //
 //
@@ -8879,6 +8950,11 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+
 
 
 
@@ -8888,7 +8964,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
-  name: 'credit-edit',
+  name: 'page-edit',
   components: {
     Error: _alert_ErrorComponent__WEBPACK_IMPORTED_MODULE_0__.default,
     Message: _alert_MessageComponent__WEBPACK_IMPORTED_MODULE_1__.default,
@@ -8897,24 +8973,29 @@ __webpack_require__.r(__webpack_exports__);
     TextInput: _html_TextInput__WEBPACK_IMPORTED_MODULE_4__.default,
     TextArea: _html_TextArea__WEBPACK_IMPORTED_MODULE_5__.default,
     RangeInput: _html_RangeInput__WEBPACK_IMPORTED_MODULE_6__.default,
-    DateInput: _html_DateInput__WEBPACK_IMPORTED_MODULE_7__.default
+    DateInput: _html_DateInput__WEBPACK_IMPORTED_MODULE_7__.default,
+    SectionPage: _html_SectionPageSelect__WEBPACK_IMPORTED_MODULE_8__.default
   },
   data: function data() {
     return {
-      shortcut: {
-        name: '',
+      page: {
         title: '',
-        link: '',
-        icon: '',
-        sort: 1,
-        status: '',
-        brand_id: 0
+        text: '',
+        status: 0,
+        section_page_id: 0
       },
       notFound: false,
       loading: true,
       urlId: this.$route.params.id,
       succes: false,
-      succesMessage: null
+      succesMessage: null,
+      editorSettings: {
+        modules: {
+          imageResize: {
+            displaySize: true
+          }
+        }
+      }
     };
   },
   computed: {},
@@ -8926,8 +9007,8 @@ __webpack_require__.r(__webpack_exports__);
       var _this = this;
 
       this.loading = true;
-      axios.get('/api/shortcuts/' + id + '/edit').then(function (response) {
-        _this.shortcut = response.data.data;
+      axios.get('/api/pages/' + id + '/edit').then(function (response) {
+        _this.page = response.data.data;
       })["catch"](function (errors) {
         _this.notFound = true;
       })["finally"](function () {
@@ -8938,7 +9019,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.loading = true;
-      axios.patch('/api/shortcuts/' + id, this.shortcut, this.getConfig()).then(function (res) {
+      axios.patch('/api/pages/' + id, this.page, this.getConfig()).then(function (res) {
         if (res.data.status == 1) {
           _this2.succes = true;
           _this2.succesMessage = res.data.message;
@@ -8958,14 +9039,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       this.loading = true;
-      axios.post('/api/shortcuts/', this.shortcut, this.getConfig()).then(function (res) {
+      axios.post('/api/pages/', this.page, this.getConfig()).then(function (res) {
         if (res.data.status == 1) {
           _this3.succes = true;
           _this3.succesMessage = res.data.message;
 
-          _this3.$router.push('/shortcuts/list');
+          _this3.$router.push('/pages/list');
 
-          _this3.$router.push('/shortcuts/edit/' + res.data.data.id);
+          _this3.$router.push('/pages/edit/' + res.data.data.id);
 
           _this3.urlId = res.data.data.id;
 
@@ -9038,6 +9119,8 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -9050,7 +9133,7 @@ __webpack_require__.r(__webpack_exports__);
     return {
       data: [],
       loading: true,
-      toEdit: '/shortcuts/edit/',
+      toEdit: '/pages/edit/',
       notFound: false,
       succes: false,
       succesMessage: null
@@ -9063,7 +9146,7 @@ __webpack_require__.r(__webpack_exports__);
     loadData: function loadData() {
       var _this = this;
 
-      axios.get('/api/shortcuts').then(function (res) {
+      axios.get('/api/pages').then(function (res) {
         if (res.data.status == 1) _this.data = res.data.data;else {
           _this.succes = true;
           _this.succesMessage = res.data.message;
@@ -47907,6 +47990,45 @@ component.options.__file = "resources/js/components/html/RangeInput.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/html/SectionPageSelect.vue":
+/*!************************************************************!*\
+  !*** ./resources/js/components/html/SectionPageSelect.vue ***!
+  \************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _SectionPageSelect_vue_vue_type_template_id_4ccfec92___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./SectionPageSelect.vue?vue&type=template&id=4ccfec92& */ "./resources/js/components/html/SectionPageSelect.vue?vue&type=template&id=4ccfec92&");
+/* harmony import */ var _SectionPageSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./SectionPageSelect.vue?vue&type=script&lang=js& */ "./resources/js/components/html/SectionPageSelect.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__.default)(
+  _SectionPageSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__.default,
+  _SectionPageSelect_vue_vue_type_template_id_4ccfec92___WEBPACK_IMPORTED_MODULE_0__.render,
+  _SectionPageSelect_vue_vue_type_template_id_4ccfec92___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/html/SectionPageSelect.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/html/TextArea.vue":
 /*!***************************************************!*\
   !*** ./resources/js/components/html/TextArea.vue ***!
@@ -49746,6 +49868,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/html/SectionPageSelect.vue?vue&type=script&lang=js&":
+/*!*************************************************************************************!*\
+  !*** ./resources/js/components/html/SectionPageSelect.vue?vue&type=script&lang=js& ***!
+  \*************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SectionPageSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SectionPageSelect.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/SectionPageSelect.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_SectionPageSelect_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__.default); 
+
+/***/ }),
+
 /***/ "./resources/js/components/html/TextArea.vue?vue&type=script&lang=js&":
 /*!****************************************************************************!*\
   !*** ./resources/js/components/html/TextArea.vue?vue&type=script&lang=js& ***!
@@ -50966,6 +51104,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RangeInput_vue_vue_type_template_id_326b3d96___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_RangeInput_vue_vue_type_template_id_326b3d96___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./RangeInput.vue?vue&type=template&id=326b3d96& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/RangeInput.vue?vue&type=template&id=326b3d96&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/html/SectionPageSelect.vue?vue&type=template&id=4ccfec92&":
+/*!*******************************************************************************************!*\
+  !*** ./resources/js/components/html/SectionPageSelect.vue?vue&type=template&id=4ccfec92& ***!
+  \*******************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SectionPageSelect_vue_vue_type_template_id_4ccfec92___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SectionPageSelect_vue_vue_type_template_id_4ccfec92___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_SectionPageSelect_vue_vue_type_template_id_4ccfec92___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./SectionPageSelect.vue?vue&type=template&id=4ccfec92& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/SectionPageSelect.vue?vue&type=template&id=4ccfec92&");
 
 
 /***/ }),
@@ -56742,6 +56897,75 @@ render._withStripped = true
 
 /***/ }),
 
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/SectionPageSelect.vue?vue&type=template&id=4ccfec92&":
+/*!**********************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/SectionPageSelect.vue?vue&type=template&id=4ccfec92& ***!
+  \**********************************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("label", [_vm._v("Раздел")]),
+    _vm._v(" "),
+    _c(
+      "select",
+      {
+        directives: [
+          {
+            name: "model",
+            rawName: "v-model",
+            value: _vm.selected,
+            expression: "selected"
+          }
+        ],
+        staticClass: "form-control",
+        on: {
+          change: function($event) {
+            var $$selectedVal = Array.prototype.filter
+              .call($event.target.options, function(o) {
+                return o.selected
+              })
+              .map(function(o) {
+                var val = "_value" in o ? o._value : o.value
+                return val
+              })
+            _vm.selected = $event.target.multiple
+              ? $$selectedVal
+              : $$selectedVal[0]
+          }
+        }
+      },
+      [
+        _c("option", { attrs: { value: "", selected: "" } }, [
+          _vm._v("Укажите параметр")
+        ]),
+        _vm._v(" "),
+        _vm._l(_vm.sectionpages, function(item) {
+          return _c("option", { domProps: { value: item.id } }, [
+            _vm._v("\n            " + _vm._s(item.name) + "\n        ")
+          ])
+        })
+      ],
+      2
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
 /***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/TextArea.vue?vue&type=template&id=24e953ba&":
 /*!*************************************************************************************************************************************************************************************************************************!*\
   !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/html/TextArea.vue?vue&type=template&id=24e953ba& ***!
@@ -60021,7 +60245,7 @@ var render = function() {
   var _c = _vm._self._c || _h
   return _c(
     "div",
-    { staticClass: "color-edit" },
+    { staticClass: "page-edit" },
     [
       _vm.succes
         ? _c("message", { attrs: { message: _vm.succesMessage } })
@@ -60034,9 +60258,7 @@ var render = function() {
         : _c("div", [
             _c("form", [
               _c("div", { staticClass: "h5" }, [
-                _vm._v(
-                  _vm._s(_vm.shortcut.name ? _vm.shortcut.name : "Новый ярлык")
-                )
+                _vm._v(_vm._s(_vm.page.name ? _vm.page.name : "Новая страница"))
               ]),
               _vm._v(" "),
               _c("div", { staticClass: "row" }, [
@@ -60050,44 +60272,43 @@ var render = function() {
                           {
                             name: "model",
                             rawName: "v-model",
-                            value: _vm.shortcut.status,
-                            expression: "shortcut.status"
+                            value: _vm.page.status,
+                            expression: "page.status"
                           }
                         ],
                         staticClass: "device-checkbox-toggle",
                         attrs: { type: "checkbox" },
                         domProps: {
-                          value: _vm.shortcut.status,
-                          checked: Array.isArray(_vm.shortcut.status)
-                            ? _vm._i(_vm.shortcut.status, _vm.shortcut.status) >
-                              -1
-                            : _vm.shortcut.status
+                          value: _vm.page.status,
+                          checked: Array.isArray(_vm.page.status)
+                            ? _vm._i(_vm.page.status, _vm.page.status) > -1
+                            : _vm.page.status
                         },
                         on: {
                           change: function($event) {
-                            var $$a = _vm.shortcut.status,
+                            var $$a = _vm.page.status,
                               $$el = $event.target,
                               $$c = $$el.checked ? true : false
                             if (Array.isArray($$a)) {
-                              var $$v = _vm.shortcut.status,
+                              var $$v = _vm.page.status,
                                 $$i = _vm._i($$a, $$v)
                               if ($$el.checked) {
                                 $$i < 0 &&
                                   _vm.$set(
-                                    _vm.shortcut,
+                                    _vm.page,
                                     "status",
                                     $$a.concat([$$v])
                                   )
                               } else {
                                 $$i > -1 &&
                                   _vm.$set(
-                                    _vm.shortcut,
+                                    _vm.page,
                                     "status",
                                     $$a.slice(0, $$i).concat($$a.slice($$i + 1))
                                   )
                               }
                             } else {
-                              _vm.$set(_vm.shortcut, "status", $$c)
+                              _vm.$set(_vm.page, "status", $$c)
                             }
                           }
                         }
@@ -60106,9 +60327,9 @@ var render = function() {
                             _vm._v(
                               "\n                                " +
                                 _vm._s(
-                                  _vm.shortcut.status
-                                    ? "Ярлык включен"
-                                    : "Ярлык выключен"
+                                  _vm.page.status
+                                    ? "Страница включена"
+                                    : "Страница выключена"
                                 ) +
                                 "\n                            "
                             )
@@ -60123,61 +60344,47 @@ var render = function() {
               _c("div", { staticClass: "row pb-3" }, [
                 _c(
                   "div",
-                  { staticClass: "col-6" },
+                  { staticClass: "col" },
                   [
-                    _c("TextInput", {
-                      attrs: { label: "Тех.название" },
+                    _c("SectionPage", {
                       model: {
-                        value: _vm.shortcut.name,
+                        value: _vm.page.section_page_id,
                         callback: function($$v) {
-                          _vm.$set(_vm.shortcut, "name", $$v)
+                          _vm.$set(_vm.page, "section_page_id", $$v)
                         },
-                        expression: "shortcut.name"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("BrandSelect", {
-                      model: {
-                        value: _vm.shortcut.brand_id,
-                        callback: function($$v) {
-                          _vm.$set(_vm.shortcut, "brand_id", $$v)
-                        },
-                        expression: "shortcut.brand_id"
+                        expression: "page.section_page_id"
                       }
                     }),
                     _vm._v(" "),
                     _c("TextInput", {
                       attrs: { label: "Заголовок" },
                       model: {
-                        value: _vm.shortcut.title,
+                        value: _vm.page.title,
                         callback: function($$v) {
-                          _vm.$set(_vm.shortcut, "title", $$v)
+                          _vm.$set(_vm.page, "title", $$v)
                         },
-                        expression: "shortcut.title"
+                        expression: "page.title"
                       }
                     }),
                     _vm._v(" "),
-                    _c("TextInput", {
-                      attrs: { label: "Ссылка" },
-                      model: {
-                        value: _vm.shortcut.link,
-                        callback: function($$v) {
-                          _vm.$set(_vm.shortcut, "link", $$v)
-                        },
-                        expression: "shortcut.link"
-                      }
-                    }),
-                    _vm._v(" "),
-                    _c("TextInput", {
-                      attrs: { label: "Иконка" },
-                      model: {
-                        value: _vm.shortcut.icon,
-                        callback: function($$v) {
-                          _vm.$set(_vm.shortcut, "icon", $$v)
-                        },
-                        expression: "shortcut.icon"
-                      }
-                    })
+                    _c(
+                      "div",
+                      [
+                        _c("label", [_vm._v("Текст")]),
+                        _vm._v(" "),
+                        _c("VueEditor", {
+                          attrs: { editorOptions: _vm.editorSettings },
+                          model: {
+                            value: _vm.page.text,
+                            callback: function($$v) {
+                              _vm.$set(_vm.page, "text", $$v)
+                            },
+                            expression: "page.text"
+                          }
+                        })
+                      ],
+                      1
+                    )
                   ],
                   1
                 )
@@ -60273,9 +60480,9 @@ var render = function() {
               "router-link",
               {
                 staticClass: "btn btn-primary",
-                attrs: { to: "/shortcuts/create" }
+                attrs: { to: "/pages/create" }
               },
-              [_vm._v("Добавить новый ярлык")]
+              [_vm._v("Добавить новую страницу")]
             )
           ],
           1
@@ -60290,6 +60497,8 @@ var render = function() {
             [
               _c("tr", [
                 _c("th", { staticStyle: { width: "80px" } }, [_vm._v("#")]),
+                _vm._v(" "),
+                _c("th", [_vm._v("Раздел")]),
                 _vm._v(" "),
                 _c("th", [_vm._v("Название")])
               ]),
@@ -60308,7 +60517,9 @@ var render = function() {
                     1
                   ),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(item.name))])
+                  _c("td", [_vm._v(_vm._s(item.section.name))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(item.title))])
                 ])
               })
             ],

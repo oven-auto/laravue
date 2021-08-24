@@ -1,5 +1,5 @@
 <template>
-    <div class="color-edit">
+    <div class="page-edit">
         <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
@@ -8,15 +8,15 @@
 
         <div v-else>
             <form>
-                <div class="h5">{{ shortcut.name ? shortcut.name : 'Новый ярлык' }}</div>
+                <div class="h5">{{ page.name ? page.name : 'Новая страница' }}</div>
 
                 <div class="row">
                     <div class="col text-right">
                         <label class="checkbox " :title="'Статус'">
-                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="shortcut.status" v-model="shortcut.status">
+                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="page.status" v-model="page.status">
                             <div class="checkbox__text" style="">
                                 <div style="width: 200px;text-align: left;">
-                                    {{ (shortcut.status) ? 'Ярлык включен' : 'Ярлык выключен' }}
+                                    {{ (page.status) ? 'Страница включена' : 'Страница выключена' }}
                                 </div>
                             </div>
                         </label>
@@ -24,15 +24,19 @@
                 </div>
 
                 <div class="row pb-3">
-                    <div class="col-6">
-                        <TextInput :label="'Тех.название'" v-model="shortcut.name" ></TextInput>
-                        <BrandSelect v-model="shortcut.brand_id"></BrandSelect>
-                        <TextInput :label="'Заголовок'" v-model="shortcut.title" ></TextInput>
-                        <TextInput :label="'Ссылка'" v-model="shortcut.link" ></TextInput>
-                        <TextInput :label="'Иконка'" v-model="shortcut.icon" ></TextInput>
+                    <div class="col">
+                        <SectionPage v-model="page.section_page_id"></SectionPage>
+
+                        <TextInput :label="'Заголовок'" v-model="page.title" ></TextInput>
+
+                        <div>
+                            <label>Текст</label>
+                            <VueEditor
+                                v-model="page.text"
+                                :editorOptions="editorSettings"
+                            ></VueEditor>
+                        </div>
                     </div>
-
-
                 </div>
 
                 <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
@@ -59,29 +63,36 @@ import TextInput from '../html/TextInput';
 import TextArea from '../html/TextArea';
 import RangeInput from '../html/RangeInput';
 import DateInput from '../html/DateInput';
+import SectionPage from '../html/SectionPageSelect';
+
 
 
 export default {
-    name: 'credit-edit',
+    name: 'page-edit',
     components: {
-        Error, Message, Spin, BrandSelect, TextInput,TextArea, RangeInput, DateInput
+        Error, Message, Spin, BrandSelect, TextInput,TextArea, RangeInput, DateInput, SectionPage,
     },
     data() {
         return {
-            shortcut: {
-                name: '',
+            page: {
                 title: '',
-                link: '',
-                icon: '',
-                sort: 1,
-                status: '',
-                brand_id: 0
+                text: '',
+                status: 0,
+                section_page_id: 0
             },
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
+            editorSettings: {
+                modules: {
+
+                    imageResize: {
+                        displaySize: true
+                    },
+                }
+            }
         }
     },
 
@@ -98,9 +109,9 @@ export default {
 
             this.loading = true;
 
-            axios.get('/api/shortcuts/' + id + '/edit')
+            axios.get('/api/pages/' + id + '/edit')
             .then( response => {
-                this.shortcut = response.data.data
+                this.page = response.data.data
 
             })
             .catch(errors => {
@@ -114,7 +125,7 @@ export default {
         updateData(id) {
             this.loading = true;
 
-            axios.patch('/api/shortcuts/' + id, this.shortcut, this.getConfig())
+            axios.patch('/api/pages/' + id, this.page, this.getConfig())
             .then(res => {
                 if(res.data.status == 1) {
                     this.succes = true;
@@ -135,13 +146,13 @@ export default {
 
         storeData() {
             this.loading = true;
-            axios.post('/api/shortcuts/', this.shortcut, this.getConfig())
+            axios.post('/api/pages/', this.page, this.getConfig())
             .then(res => {
                 if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.$router.push('/shortcuts/list')
-                    this.$router.push('/shortcuts/edit/'+res.data.data.id)
+                    this.$router.push('/pages/list')
+                    this.$router.push('/pages/edit/'+res.data.data.id)
                     this.urlId = res.data.data.id
                     this.loadData(res.data.data.id)
                 } else {
@@ -163,6 +174,8 @@ export default {
                 'content-type': 'application/json'
             }
         },
+
+
     },
     watch: {
 
