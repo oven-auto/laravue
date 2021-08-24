@@ -71,6 +71,18 @@
                     <router-link :to="'/banners/list'" class="nav-link">Банеры</router-link>
                 </li>
 
+                <li class="nav-item">
+                    <router-link :to="'/shortcuts/list'" class="nav-link">Ярлыки</router-link>
+                </li>
+
+                <li class="nav-item">
+                    <router-link :to="'/sectionpages/list'" class="nav-link">Разделы</router-link>
+                </li>
+
+                <li class="nav-item">
+                    <router-link :to="'/pages/list'" class="nav-link">Страницы</router-link>
+                </li>
+
                 <!-- <li v-for="link in links" class="nav-item {{ item.href ? '' : 'dropdown' }}">
                     <router-link :to="link.href" class="nav-link"> {{ link.title }}</router-link>
                 </li> -->

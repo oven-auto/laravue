@@ -57,6 +57,15 @@ import creditEdit from './components/credit/CreditEditComponent';
 import bannerList from './components/banner/BannerListComponent';
 import bannerEdit from './components/banner/BannerEditComponent';
 
+import shortcutList from './components/shortcut/ShortcutListComponent';
+import shortcutEdit from './components/shortcut/ShortcutEditComponent';
+
+import sectionPageList from './components/page/SectionPageListComponent';
+import sectionPageEdit from './components/page/SectionPageEditComponent';
+
+import pageList from './components/page/PageListComponent';
+import pageEdit from './components/page/PageEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -332,6 +341,54 @@ const routes = [
     {
         path: '/banners/edit/:id',
         component: bannerEdit
+    },
+
+    ///////////
+    //SHORTCUT    ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/shortcuts/list',
+        component: shortcutList
+    },
+    {
+        path: '/shortcuts/create',
+        component: shortcutEdit
+    },
+    {
+        path: '/shortcuts/edit/:id',
+        component: shortcutEdit
+    },
+
+    ///////////
+    //SECTION PAGE    ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/sectionpages/list',
+        component: sectionPageList
+    },
+    {
+        path: '/sectionpages/create',
+        component: sectionPageEdit
+    },
+    {
+        path: '/sectionpages/edit/:id',
+        component: sectionPageEdit
+    },
+
+    ///////////
+    //PAGE    ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/pages/list',
+        component: pageList
+    },
+    {
+        path: '/pages/create',
+        component: pageEdit
+    },
+    {
+        path: '/pages/edit/:id',
+        component: pageEdit
     },
 
 

@@ -56,3 +56,9 @@ Route::resource('cars', \App\Http\Controllers\Api\v1\CarController::class);
 Route::resource('credits', \App\Http\Controllers\Api\v1\CreditController::class);
 
 Route::resource('banners', \App\Http\Controllers\Api\v1\BannerController::class);
+
+Route::resource('shortcuts', \App\Http\Controllers\Api\v1\ShortcutController::class);
+
+Route::resource('sectionpages', \App\Http\Controllers\Api\v1\SectionPageController::class);
+
+Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
