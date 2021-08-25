@@ -112,7 +112,5 @@ export default {
 </script>
 
 <style>
-img {
-    width: 100%;
-}
+
 </style>

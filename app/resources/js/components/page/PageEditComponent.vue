@@ -29,7 +29,7 @@
 
                         <TextInput :label="'Заголовок'" v-model="page.title" ></TextInput>
 
-                        <div>
+                        <div class="textarea">
                             <label>Текст</label>
                             <VueEditor
                                 v-model="page.text"
@@ -65,13 +65,18 @@ import RangeInput from '../html/RangeInput';
 import DateInput from '../html/DateInput';
 import SectionPage from '../html/SectionPageSelect';
 
-
+import { VueEditor, Quill } from 'vue2-editor'
+//import { ImageDrop } from 'quill-image-drop-module';
+import BlotFormatter from 'quill-blot-formatter';
+//Quill.register("modules/imageDrop", ImageDrop);
+Quill.register('modules/blotFormatter', BlotFormatter);
 
 export default {
     name: 'page-edit',
     components: {
-        Error, Message, Spin, BrandSelect, TextInput,TextArea, RangeInput, DateInput, SectionPage,
+        Error, Message, Spin, BrandSelect, TextInput,TextArea, RangeInput, DateInput, SectionPage, VueEditor
     },
+
     data() {
         return {
             page: {
@@ -85,12 +90,10 @@ export default {
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
+
             editorSettings: {
                 modules: {
-
-                    imageResize: {
-                        displaySize: true
-                    },
+                    blotFormatter: {}
                 }
             }
         }
@@ -182,3 +185,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.textarea img{
+    width: auto !important;
+}
+</style>

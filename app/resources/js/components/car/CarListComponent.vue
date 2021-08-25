@@ -17,10 +17,12 @@
         <table v-else class="table">
             <tr>
                 <th style="width: 80px;">#</th>
-                <th>Бренд</th>
                 <th>Модель</th>
-                <th>Комплектация</th>
                 <th>Цвет</th>
+                <th>$ Кузов</th>
+                <th>$ Опций</th>
+                <th>$ Оборуд.</th>
+                <th>$ Итого</th>
             </tr>
 
             <tr v-for="item in data">
@@ -29,10 +31,18 @@
                         Open
                     </router-link>
                 </td>
-                <td>{{ item.brand.name }}</td>
-                <td>{{ item.mark.name }}</td>
-                <td>{{ item.complectation.name }}</td>
+                <td>
+                    {{ item.brand.name }}
+                    {{ item.mark.name }}
+                    {{ item.complectation.name }}
+                    {{ item.complectation.motor.size }}
+                    ({{ item.complectation.motor.power }}л.с.)
+                </td>
                 <td>{{ item.color.color.name }}</td>
+                <td><small class="text-small"> {{ formatPrice(item.price.complectation_price) }} </small> </td>
+                <td><small class="text-small">{{ formatPrice(item.price.pack_price) }} </small></td>
+                <td><small class="text-small">{{ formatPrice(item.price.device_price) }} </small></td>
+                <td>{{ formatPrice(item.price.full_price) }}</td>
             </tr>
 
         </table>
@@ -64,6 +74,11 @@ export default {
         this.loadData()
     },
     methods: {
+        formatPrice(price)
+        {
+            return number_format(price,0,'',' ','руб.')
+        },
+
         loadData() {
             axios.get('/api/cars')
             .then(res => {

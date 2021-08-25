@@ -42,4 +42,9 @@ class Car extends Model
     {
         return $this->belongsToMany(\App\Models\Device::class, 'car_devices', 'car_id');
     }
+
+    public function price()
+    {
+        return $this->hasOne(\App\Models\CarPrice::class, 'car_id', 'id')->withDefault();
+    }
 }

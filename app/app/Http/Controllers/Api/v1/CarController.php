@@ -17,7 +17,7 @@ class CarController extends Controller
 
     public function index()
     {
-        $cars = Car::with(['brand','color','mark','complectation'])->get();
+        $cars = Car::with(['brand','color','mark','complectation','price'])->get();
 
         if($cars->count())
             return response()->json([
