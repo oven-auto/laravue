@@ -15,9 +15,23 @@ class CarController extends Controller
         $this->repository = $repository;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $cars = Car::with(['brand','color','mark','complectation','price'])->get();
+        $query = Car::with(['brand','color','mark','complectation','price']);
+
+        if($request->has('brand_id'))
+            $query->where('brand_id', $request->get('brand_id'));
+        if($request->has('mark_id'))
+            $query->where('mark_id', $request->get('mark_id'));
+        if($request->has('complectation_id'))
+            $query->where('complectation_id', $request->get('complectation_id'));
+        if($request->has('vin'))
+            $query->where('vin', 'like', '%'.$request->get('vin').'%');
+
+        $cars = $query->paginate(20);
+
+        foreach($cars as $itemCar)
+            $itemCar->color->image =  asset('storage'.$itemCar->color->image) . '?'.date('dmYhms');
 
         if($cars->count())
             return response()->json([

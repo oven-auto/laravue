@@ -1,5 +1,5 @@
 <template>
-    <div id="pack-list">
+    <div id="credit-list">
 
         <message v-if="succes" :message="succesMessage"></message>
 
@@ -14,13 +14,23 @@
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
-            <tr>
-                <th style="width: 80px;">#</th>
-                <th>Название</th>
-                <th>Модели</th>
-            </tr>
+        <table v-else class="table table-hover">
+            <thead class="table-dark">
+                <tr>
+                    <th style="width: 80px;">#</th>
+                    <th>Название</th>
+                    <th>Модели</th>
+                    <th>Ставка %</th>
+                    <th>Срок (лет)</th>
+                    <th>ПВ (%)</th>
+                    <th>Платеж (руб.)</th>
+                    <th>Начало</th>
+                    <th>Конец</th>
+                    <th></th>
+                </tr>
+            </thead>
 
+            <tbody>
             <tr v-for="item in data">
                 <td>
                     <router-link :to="toEdit + item.id">
@@ -33,7 +43,30 @@
                         {{mark.name}}
                     </span>
                 </td>
+                <td>{{item.rate}}</td>
+                <td>{{item.period}}</td>
+                <td>{{item.contribution}}</td>
+                <td>{{item.pay}}</td>
+                <td>{{item.begin_at}}</td>
+                <td>{{item.end_at}}</td>
+                <td class="text-right status-badge">
+                    <div v-if="item.status == 1">
+                        <span v-if="moreThanCurrentDate(item.begin_at)" class="badge badge-primary">
+                            Ожидает
+                        </span>
+                        <span v-else-if="lessThanCurrentDate(item.end_at)" class="badge badge-danger">
+                            Просрочен
+                        </span>
+                        <span v-else class="badge badge-success">
+                            Актуально
+                        </span>
+                    </div>
+                    <span v-else class="badge badge-secondary">
+                        Отключен
+                    </span>
+                </td>
             </tr>
+            </tbody>
         </table>
     </div>
 </template>
@@ -63,6 +96,15 @@ export default {
         this.loadData()
     },
     methods: {
+        moreThanCurrentDate(param) {
+            return Date.parse(param) > Date.now()
+        },
+        lessThanCurrentDate(param) {
+            console.log(Date.parse(param))
+            console.log(Date.now())
+            console.log('---')
+            return Date.parse(param) < Date.now()
+        },
         loadData() {
             axios.get('/api/credits')
             .then(res => {
@@ -81,3 +123,14 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+#credit-list td{
+    vertical-align: middle;
+}
+#credit-list .status-badge .badge{
+    font-weight: normal;
+    width: 70px;
+
+}
+</style>

@@ -60,7 +60,7 @@
                 </li>
 
                 <li class="nav-item">
-                    <router-link :to="'/cars/list'" class="nav-link">Склад</router-link>
+                    <router-link :to="'/cars/list/1'" class="nav-link">Склад</router-link>
                 </li>
 
                 <li class="nav-item">

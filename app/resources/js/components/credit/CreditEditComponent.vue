@@ -1,5 +1,5 @@
 <template>
-    <div class="color-edit">
+    <div id="credit-edit">
         <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="row pb-3">
-                    <div class="col">
+                    <div class="col-6">
                         <BrandSelect v-model="credit.brand_id"></BrandSelect>
 
                         <TextInput :label="'Название'" v-model="credit.name" ></TextInput>
@@ -47,12 +47,12 @@
                         </div>
                     </div>
 
-                    <div class="col">
+                    <div class="col-6">
                         <div>
                              <label for="icon">Банер</label>
 
                             <div v-if="credit.banner" class="pb-3">
-                                <img :src="credit.banner" class="brand-icon">
+                                <img :src="credit.banner" class="credit-icon">
                             </div>
 
                             <div class="custom-file">
@@ -245,3 +245,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+#credit-edit .credit-icon{
+    width: 100%;
+}
+</style>
