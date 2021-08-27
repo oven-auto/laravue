@@ -17,7 +17,10 @@ class BannerController extends Controller
 
     public function index()
     {
-        $banners = Banner::get();
+        $banners = Banner::with('brand')->get();
+        foreach($banners as $itemBanner)
+            $itemBanner->image = asset('storage'.$itemBanner->image).'?'.date('dmYhms');
+
         if($banners->count())
             return response()->json([
                 'status' => 1,

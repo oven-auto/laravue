@@ -15,12 +15,25 @@ class ComplectController extends Controller
 
     public function index(Request $request)
     {
-        $query = Complectation::with(['motor']);
+        $query = Complectation::with(['motor','brand','mark']);
 
+        if($request->has('brand_id'))
+            $query->where('brand_id', $request->get('brand_id'));
         if($request->has('mark_id'))
             $query->where('mark_id', $request->get('mark_id'));
+        if($request->has('status'))
+            $query->where('status', $request->get('status'));
+        if($request->has('code'))
+            $query->where('code', 'like', '%'.$request->get('code').'%');
+        if($request->has('name'))
+            $query->where('name', 'like', '%'.$request->get('name').'%');
 
-        $complectations = $query->get();
+        $complectations = $query
+            ->orderBy('mark_id')
+            ->orderBy('sort')
+            ->orderBy('parent_id')
+            ->orderBy('price')
+            ->get();
 
         if($complectations->count())
             return response()->json([
@@ -34,14 +47,22 @@ class ComplectController extends Controller
         ]);
     }
 
-    public function edit(Complectation $complectation)
+    public function edit($complectation)
     {
-        $this->repository->getComplectationArray($complectation);
+        if($complectation) {
+            $complectation = Complectation::find($complectation);
+            $this->repository->getComplectationArray($complectation);
+            return response()->json([
+                'status' => 1,
+                'data' => $complectation->toArray()
+            ]);
+        } else {
+            return response()->json([
+                'status' => 0,
+                'data' => 'Не нашлось'
+            ]);
+        }
 
-        return response()->json([
-            'status' => 1,
-            'data' => $complectation->toArray()
-        ]);
     }
 
     public function store(Complectation $complectation, Request $request)

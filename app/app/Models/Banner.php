@@ -12,4 +12,9 @@ class Banner extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function brand()
+    {
+        return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
+    }
 }

@@ -11,8 +11,6 @@ class Complectation extends Model
 
     protected $guarded = [];
 
-    public $timestamps = false;
-
     public function devices()
     {
         return $this->belongsToMany(\App\Models\Device::class, 'complectation_devices', 'complectation_id');
@@ -41,5 +39,15 @@ class Complectation extends Model
     public function motor()
     {
         return $this->hasOne(\App\Models\Motor::class, 'id', 'motor_id')->withDefault()->with(['transmission', 'driver', 'type']);
+    }
+
+    public function brand()
+    {
+        return $this->hasOne(\App\Models\Brand::class,'id','brand_id')->withDefault();
+    }
+
+    public function mark()
+    {
+        return $this->hasOne(\App\Models\Mark::class,'id','mark_id')->withDefault();
     }
 }

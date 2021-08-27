@@ -21,9 +21,13 @@ class ComplectationRepository
                         return true;
                     }
                 }, ARRAY_FILTER_USE_KEY));
-                $this->saveDevices($complectation, $data['devices']);
-                $this->savePacks($complectation, $data['packs']);
+                if(isset($data['devices']))
+                    $this->saveDevices($complectation, $data['devices']);
+                if(isset($data['packs']))
+                    $this->savePacks($complectation, $data['packs']);
+                if(isset($data['colors']))
                 $this->saveColors($complectation, $data['colors']);
+
                 return ['status' => 1];
             });
         } catch(\Exception $e) {
@@ -37,7 +41,10 @@ class ComplectationRepository
 
     public function saveMain(Complectation $complectation, $data = [])
     {
-        $complectation->fill($data)->save();
+        $complectation->fill($data);
+        if(!$complectation->id && !$complectation->parent_id)
+            $complectation->sort = Complectation::max('sort')+1;
+        $complectation->save();
     }
 
     public function saveDevices(Complectation $complectation, $data = [])

@@ -24,7 +24,7 @@
                 </div>
 
                 <div class="row pb-3">
-                    <div class="col">
+                    <div class="col-6">
                         <TextInput :label="'Тех.название'" v-model="banner.name" ></TextInput>
                         <BrandSelect v-model="banner.brand_id"></BrandSelect>
                         <TextInput :label="'Заголовок'" v-model="banner.title" ></TextInput>
@@ -32,12 +32,12 @@
                         <TextInput :label="'Ссылка'" v-model="banner.link" ></TextInput>
                     </div>
 
-                    <div class="col">
+                    <div class="col-6">
                         <div>
                              <label for="icon">Банер</label>
 
                             <div v-if="banner.image" class="pb-3">
-                                <img :src="banner.image" class="brand-icon">
+                                <img :src="banner.image" class="brand-icon" style="width:100%;">
                             </div>
 
                             <div class="custom-file">
@@ -121,7 +121,7 @@ export default {
             axios.get('/api/banners/' + id + '/edit')
             .then( response => {
                 this.banner = response.data.data
-
+                this.banner.text = this.banner.text == 'null' ? '' : this.banner.text
             })
             .catch(errors => {
                 this.notFound = true;

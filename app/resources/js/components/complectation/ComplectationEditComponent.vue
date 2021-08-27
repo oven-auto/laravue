@@ -11,6 +11,19 @@
         <form>
             <div class="h5">Комплектация: {{ complectation.name ? complectation.name : 'новая' }}</div>
 
+            <div class="row">
+                <div class="col text-right">
+                    <label class="checkbox " :title="'Статус'">
+                        <input class="device-checkbox-toggle" type="checkbox" v-bind:value="complectation.status" v-model="complectation.status">
+                        <div class="checkbox__text" style="">
+                            <div style="width: 200px;text-align: left;">
+                                {{ (complectation.status) ? 'Комплектация включена' : 'Комплектация выключена' }}
+                            </div>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
             <div class="row pb-3">
                 <div class="col-6">
                     <div >
@@ -30,12 +43,22 @@
                 </div>
 
                 <div class="col-6">
-
-                    <BrandSelect v-model="complectation.brand_id" name="brand_id"></BrandSelect>
-
-                    <MarkSelect v-model="complectation.mark_id" :brand="complectation.brand_id" name="mark_id"></MarkSelect>
+                    <div class="row">
+                        <div class="col-6">
+                            <BrandSelect v-model="complectation.brand_id" name="brand_id"></BrandSelect>
+                        </div>
+                        <div class="col-6">
+                            <MarkSelect v-model="complectation.mark_id" :brand="complectation.brand_id" name="mark_id"></MarkSelect>
+                        </div>
+                    </div>
 
                     <MotorSelect v-model="complectation.motor_id" :brand="complectation.brand_id" name="motor_id"></MotorSelect>
+
+                    <ComplectationSelect
+                        v-model="complectation.parent_id"
+                        :mark="complectation.mark_id"
+                        :label="'Родительская комплектация'"
+                    ></ComplectationSelect>
 
                 </div>
             </div>
@@ -153,12 +176,13 @@ import Spin from '../spinner/SpinComponent';
 import BrandSelect from '../html/BrandSelect';
 import MarkSelect from '../html/MarkSelect';
 import MotorSelect from '../html/MotorSelect';
+import ComplectationSelect from '../html/ComplectationSelect';
 
 
 export default {
-    name: 'device-type-edit',
+    name: 'complectation-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MarkSelect, MotorSelect
+        Error, Message, Spin, BrandSelect, MarkSelect, MotorSelect, ComplectationSelect
     },
     data() {
         return {
@@ -204,23 +228,8 @@ export default {
     },
 
     methods: {
+
         addColorToColorPack() {
-            // var mas = []
-            // document.querySelectorAll('.color-pack').forEach(function (item) {
-            //     var colorId = item.getAttribute('color-id')
-            //     var packId = item.value
-            //     var status = item.checked
-            //     var parentInput = item.closest('.item-complect-color').querySelector('.item-color-input')
-            //     if(status) {
-            //         if(parentInput.checked == false)
-            //             parentInput.click()
-            //         mas.push({
-            //             color_id: colorId,
-            //             pack_id: packId
-            //         })
-            //     }
-            // })
-            // this.complectation.colorPack = mas
         },
 
         appendColoredOption(pack){
@@ -322,6 +331,9 @@ export default {
                 this.notFound = true;
                 this.loading = false;
             })
+            .finally(()=>{
+                this.firstLoad = false
+            })
         },
 
         updateData(id) {
@@ -382,14 +394,68 @@ export default {
             }
             return tmp;
         },
+
+        loadParentData() {
+            this.loading = true
+
+            axios.get('/api/complectations/' + this.complectation.parent_id + '/edit')
+            .then( response => {
+                if(response.data.status == 1) {
+                    this.complectation.sort = response.data.data.sort
+                    var arrayDev = [];
+                    response.data.data.devices.forEach(function(item,i){
+                        arrayDev.push(item.id);
+                    })
+                    this.complectation.devices = arrayDev;
+
+                    var arrayPack = [];
+                    response.data.data.packs.forEach( (item,i) => {
+                        arrayPack.push(item.id);
+                    })
+                    this.complectation.packs = arrayPack;
+
+                    this.complectation.colors = response.data.data.mark_color;
+
+                    var obj = {}
+                    response.data.data.packs.forEach( ( item ) => {
+                        if(item.colored)
+                            this.coloredOptions[item.id] = item;
+                    })
+                } else {
+                    this.complectation.sort = 0
+                    this.complectation.devices = []
+                    this.complectation.packs = []
+                    this.complectation.colors.forEach((item)=>{
+                        item.installColor = false
+                        item.installColorPack = []
+                    })
+                }
+            })
+            .catch(errors => {
+                this.complectation.sort = 0
+                this.complectation.devices = []
+                this.complectation.packs = []
+                this.complectation.colors.forEach((item)=>{
+                    item.installColor = false
+                    item.installColorPack = []
+                })
+                console.log(errors)
+            })
+            .finally(()=>{
+                this.loading = false;
+            })
+        },
+
     },
 
     watch: {
+        'complectation.parent_id'(val){
+            if(!this.firstLoad)
+                this.loadParentData();
+        },
         'complectation.brand_id': {
             immediate: true,
             handler() {
-                //this.complectation.devices = []
-                //this.complectation.packs = []
                 this.markcolors = []
                 this.getDevices();
                 this.getPacks();
@@ -400,9 +466,10 @@ export default {
             handler() {
                 if(!this.firstLoad)
                     this.getColors();
-                this.firstLoad = false
+
             },
-        }
+        },
+
     }
 
 }

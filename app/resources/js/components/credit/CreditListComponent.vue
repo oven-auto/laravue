@@ -15,7 +15,7 @@
         <spin v-if="loading"></spin>
 
         <table v-else class="table table-hover">
-            <thead class="table-dark">
+            <thead class="thead-dark">
                 <tr>
                     <th style="width: 80px;">#</th>
                     <th>Название</th>

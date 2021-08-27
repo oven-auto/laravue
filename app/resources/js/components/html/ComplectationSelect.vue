@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label>Комплектация</label>
+        <label>{{label}}</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in complectations" :value="item.id">
@@ -53,6 +53,10 @@ export default {
         mark: {
             type: Number,
             default: 0
+        },
+        label: {
+            type: String,
+            default: 'Комлектация'
         }
     },
     computed: {
@@ -61,6 +65,8 @@ export default {
                 return this.value;
             },
             set(val) {
+                if(!val)
+                    val = 0
                 this.$emit('input', val);
             },
         },
