@@ -61,7 +61,7 @@
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row mark-colors">
                         <div class="col-3" v-for="itemColor in mark.colors">
                             <div class="item-color text-center">
                                 <div>
@@ -357,5 +357,7 @@ export default {
 </script>
 
 <style scoped>
-
+.mark-colors{
+    width: 100%;
+}
 </style>
