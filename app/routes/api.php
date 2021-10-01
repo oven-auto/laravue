@@ -65,4 +65,5 @@ Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
 Route::group(['prefix' => 'front'], function() {
 	Route::get('marks/list', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'list']);
+	Route::get('marks/view/{slug}', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'get']);
 });

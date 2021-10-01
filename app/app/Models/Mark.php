@@ -50,4 +50,9 @@ class Mark extends Model
     {
         return $this->hasMany(\App\Models\MarkColor::class, 'mark_id', 'id')->with('color');
     }
+
+    public function basecomplectation()
+    {
+        return $this->hasOne(\App\Models\Complectation::class, 'mark_id', 'id')->where('status',1)->orderBy('price')->withDefault();
+    }
 }
