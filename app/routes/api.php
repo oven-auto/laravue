@@ -66,4 +66,9 @@ Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 Route::group(['prefix' => 'front'], function() {
 	Route::get('marks/list', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'list']);
 	Route::get('marks/view/{slug}', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'get']);
+	Route::get('complectations/list', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'get']);
+	Route::get('complectations/show/{id}', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'show']);
+	Route::get('credits', [\App\Http\Controllers\Api\v1\Front\CreditController::class, 'get']);
+	Route::get('cars', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'get']);
+	Route::get('car', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'show']);
 });

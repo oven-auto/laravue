@@ -74,4 +74,15 @@ Class CreditRepository
 
         return $data;
     }
+
+    public function getCreditsByMarkId($mark_id) 
+    {
+        $credits = Credit::join('credit_marks', 'credit_marks.credit_id', '=', 'credits.id')
+            ->where('credit_marks.mark_id', $mark_id)
+            ->get();
+        foreach ($credits as $key => $item) {
+            $item->banner = asset('storage/'.$item->banner) . '?'.date('dmYh');
+        }
+        return $credits;
+    }
 }

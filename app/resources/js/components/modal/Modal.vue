@@ -7,8 +7,8 @@
             </slot>
             <slot name="body">
                 <div class="v-modal-content">
-                    <div class="row">
-                        <div class="col-2 text-center" v-for="item in data">
+                    <div class="row d-flex align-items-center">
+                        <div class="col-2 mb-3 text-center" v-for="item in data">
                             <div class="item-color" @click="checkColor(item)">
                                 <div>
                                     {{item.code}}
@@ -97,7 +97,7 @@
         position: fixed;
         top: 0;
         left: 0;
-        min-height: 100%;
+        min-height: 100vh;
         width: 100%;
         background: rgba(0, 0, 0, 0.5);
         z-index: 999;;
@@ -105,12 +105,14 @@
 
     .v-modal {
         background: #fff;
+        overflow-y: scroll;
         border-radius: 8px;
         padding: 15px;
         min-width: 1000px;
         max-width: 1000px;
         position: absolute;
-        top: 200px;
+        max-height: 80vh;
+        top: 400px;
         left: 50%;
         transform: translate(-50%, -50%);
 

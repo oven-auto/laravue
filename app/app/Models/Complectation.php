@@ -50,4 +50,9 @@ class Complectation extends Model
     {
         return $this->hasOne(\App\Models\Mark::class,'id','mark_id')->withDefault();
     }
+
+    public function cars()
+    {
+        return $this->hasMany(\App\Models\Car::class, 'complectation_id', 'id');
+    }
 }

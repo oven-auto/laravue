@@ -75,7 +75,7 @@
                                 </div>
                                 <div>
                                     <div v-if="itemColor.img">
-                                        <img :src="itemColor.img">
+                                        <img :src="itemColor.img" style="width:100%;">
                                     </div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" v-bind:id="itemColor.id"  @change="onAttachmentColor">
