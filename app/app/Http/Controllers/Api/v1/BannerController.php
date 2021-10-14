@@ -15,8 +15,17 @@ class BannerController extends Controller
         $this->repository = $repository;
     }
 
+    function test() {
+        static $x = 0;
+        $x++;
+        echo $x;
+    }
     public function index()
-    {
+    {   
+         $this->test();
+         $this->test();
+         $this->test();
+
         $banners = Banner::with('brand')->get();
         foreach($banners as $itemBanner)
             $itemBanner->image = asset('storage'.$itemBanner->image).'?'.date('dmYhms');

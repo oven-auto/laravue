@@ -49,6 +49,12 @@ class ComplectationController extends Controller
         $complectation = Complectation::with(['colors','colorPacks'])->find($id);
         foreach ($complectation->colors as $key => $item) {
             $item->image = asset('storage/' . $item->image . '?' . date('dmyh'));
+            $mas = [];
+            foreach($complectation->colorPacks as $pack) {
+                if($item->color_id == $pack->color_id)
+                    $mas[] = $pack->pivot->pack_id;
+            }
+            $item->color_packs = $mas;
         }
         return response()->json([
             'data' => $complectation,
