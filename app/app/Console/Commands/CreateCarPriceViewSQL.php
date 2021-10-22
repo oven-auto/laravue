@@ -41,10 +41,12 @@ class CreateCarPriceViewSQL extends Command
         $query = "CREATE VIEW car_prices AS
             SELECT
                 cars.id as car_id,
-                complectations.price as complectation_price,
-                sum(packs.price) as pack_price,
-                cars.device_price as device_price,
-                (complectations.price + sum(packs.price) + cars.device_price) as full_price
+                IFNULL(complectations.price,0) as complectation_price,
+                IFNULL(cars.device_price,0) as device_price,
+                IFNULL(sum(packs.price),0) as pack_price,
+
+                (IFNULL(complectations.price,0) + IFNULL(cars.device_price,0) +  IFNULL(sum(packs.price),0)) as full_price
+                
             FROM cars
             LEFT JOIN complectations on complectations.id = cars.complectation_id
             LEFT JOIN car_packs on car_packs.car_id = cars.id

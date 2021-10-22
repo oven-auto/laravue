@@ -8,16 +8,26 @@ use App\Models\Car;
 
 class CarController extends Controller
 {
-    public function get(Request $request)
+    public function get(Request $request, $count = 15)
     {
+    	if($request->has('count'))
+    		$count = $request->get('count');
+
     	$query = Car::with(['brand','complectation', 'mark', 'color', 'price']);
+    	
     	if($request->has('complectation_id'))
     		$query->where('complectation_id', $request->get('complectation_id'));
-    	$cars = $query->get();
-
-    	foreach($cars as $itemCar) {
-    		$itemCar->color->image = asset('storage/' . $itemCar->color->image . '?' . date('dmyh'));
+        if($request->has('vin'))
+            $query->where('vin', $request->get('vin'));
+    	//\DB::enableQueryLog();
+    	$cars = $query->paginate($count);
+        //dd(\DB::getQueryLog());
+    	foreach($cars as $key => $itemCar) {
+    		if(strpos($itemCar->color->image, asset('storage')) === false){
+    			$itemCar->color->image = asset('storage/' . $itemCar->color->image . '?' . date('dmyh'));
+    		}
     	}
+
     	return response()->json([
     		'data' => $cars,
     		'status' => 1
@@ -42,23 +52,24 @@ class CarController extends Controller
     	]);
     }
 
-    // public function head(Request $request, $car = []) 
+    // public function list(Request $request) 
     // {
-    	
+    // 	$query = Car::select('cars.*','brands.name as brand', 'marks.name as mark', 'complectation.name as complectation', 'car_prices.full_price')
+    // 		->leftJoin('marks', 'marks.id', '=', 'cars.mark_id')
+    // 		->leftJoin('complectations', 'complectations.id', '=', 'cars.complectation_id')
+    // 		->leftJoin('car_prices', 'car_prices.car_id', '=', 'cars.id')
+    // 		->leftJoin('brands', 'brands.id', '=', 'cars.brand_id')
+    // 		->with('color');
 
-    // 	if($request->has('car_id')) {
-	   //  	$query = Car::select('cars.id','cars.vin','brands.name as brand','marks.name as mark','complectations.name as complectation','car_prices.full_price')
-	   //  		->leftJoin('marks', 'marks.id', '=', 'cars.mark_id')
-	   //  		->leftJoin('complectations', 'complectations.id', '=', 'cars.complectation_id')
-	   //  		->leftJoin('car_prices', 'car_prices.car_id', '=', 'cars.id')
-	   //  		->leftJoin('brands', 'brands.id', '=', 'cars.brand_id');
-    // 		$query->where('cars.id', $request->get('car_id'));
-    // 		$car = $query->first();
+    // 	$cars = $query->simplePaginate(15);
+
+    // 	foreach ($cars as $key => $itemCar) {
+    // 		$itemCar->color->image = asset('storage/' . $itemCar->color->image . '?' . date('dmyh'));
     // 	}
-    	
+
     // 	return response()->json([
-    // 		'data' => $car,
-    // 		'status' => $car->count() ? 1 : 0
+    // 		'data' => $cars,
+    // 		'status' => $cars->count() ? 1 : 0
     // 	]);
     // }
 
@@ -75,6 +86,14 @@ class CarController extends Controller
     	return response()->json([
     		'data' => $color,
     		'status' => $color->count() ? 1 : 0
+    	]);
+    }
+
+    public function count(Request $request) 
+    {
+    	$count = Car::count();
+    	return response()->json([
+    		'count' => $count
     	]);
     }
 }

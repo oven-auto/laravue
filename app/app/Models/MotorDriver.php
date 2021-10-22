@@ -9,7 +9,12 @@ class MotorDriver extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'acronym'];
+    protected $fillable = ['name', 'acronym', 'driver_type_id'];
 
     public $timestamps = false;
+
+    public function type()
+    {
+    	return $this->hasOne(\App\Models\DriverType::class, 'id', 'driver_type_id');
+    }
 }

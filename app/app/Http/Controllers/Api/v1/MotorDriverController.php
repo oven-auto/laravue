@@ -50,4 +50,13 @@ class MotorDriverController extends Controller
             'message' => 'Привод изменен'
         ]);
     }
+
+    public function getTypes()
+    {
+        $types = \App\Models\DriverType::get();
+        return response()->json([
+            'status' => 1,
+            'data' => $types
+        ]);
+    }
 }

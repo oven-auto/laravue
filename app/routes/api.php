@@ -31,8 +31,10 @@ Route::resource('properties', \App\Http\Controllers\Api\v1\PropertyController::c
 Route::resource('motortypes', \App\Http\Controllers\Api\v1\MotorTypeController::class);
 
 Route::resource('motortransmissions', \App\Http\Controllers\Api\v1\MotorTransmissionController::class);
+Route::get('transmissions/type', [\App\Http\Controllers\Api\v1\MotorTransmissionController::class, 'getTypes']);
 
 Route::resource('motordrivers', \App\Http\Controllers\Api\v1\MotorDriverController::class);
+Route::get('drivers/type', [\App\Http\Controllers\Api\v1\MotorDriverController::class, 'getTypes']);
 
 Route::resource('motors', \App\Http\Controllers\Api\v1\MotorController::class);
 
@@ -63,7 +65,10 @@ Route::resource('sectionpages', \App\Http\Controllers\Api\v1\SectionPageControll
 
 Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
+
+
 Route::group(['prefix' => 'front'], function() {
+	Route::get('marks/name', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'getMarksName']);
 	Route::get('marks/list', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'list']);
 	Route::get('marks/view/{slug}', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'get']);
 	Route::get('complectations/list', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'get']);
@@ -74,4 +79,8 @@ Route::group(['prefix' => 'front'], function() {
 	Route::get('car', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'show']);
 	Route::get('car/head', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'head']);
 	Route::get('car/image', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'image']);
+	Route::get('cars/count', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'count']);
+	
+	Route::get('transmissions/type', [\App\Http\Controllers\Api\v1\Front\TransmissionController::class, 'getTypes']);
+	Route::get('drivers/type', [\App\Http\Controllers\Api\v1\Front\DriverController::class, 'getTypes']);
 });

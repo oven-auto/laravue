@@ -21,6 +21,8 @@
                             <label for="name">Абревиатура</label>
                             <input type="text" name="name" v-model="driver.acronym" class="form-control"/>
                         </div>
+
+                        <DriverType v-model="driver.type"></DriverType>
                     </div>
                 </div>
 
@@ -42,17 +44,19 @@
 import Error from '../../alert/ErrorComponent';
 import Message from '../../alert/MessageComponent';
 import Spin from '../../spinner/SpinComponent';
+import DriverType from '../../html/DriverTypeSelect';
 
 export default {
     name: 'device-driver-edit',
     components: {
-        Error, Message, Spin
+        Error, Message, Spin, DriverType
     },
     data() {
         return {
             driver: {
                 name: null,
                 acronym: null,
+                type: null,
             },
             notFound: false,
             loading: true,
@@ -72,6 +76,7 @@ export default {
                 this.loading = false;
                 this.driver.name = response.data.motordriver.name;
                 this.driver.acronym = response.data.motordriver.acronym;
+                this.driver.type = response.data.motordriver.driver_type_id
             })
             .catch(errors => {
                 this.notFound = true;

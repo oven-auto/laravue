@@ -21,6 +21,10 @@
                             <label for="name">Абревиатура</label>
                             <input type="text" name="name" v-model="transmission.acronym" class="form-control"/>
                         </div>
+
+                        <div>
+                            <TransmissionType v-model="transmission.type"></TransmissionType>
+                        </div>
                     </div>
                 </div>
 
@@ -42,17 +46,19 @@
 import Error from '../../alert/ErrorComponent';
 import Message from '../../alert/MessageComponent';
 import Spin from '../../spinner/SpinComponent';
+import TransmissionType from '../../html/TransmissionTypeSelect';
 
 export default {
     name: 'device-type-edit',
     components: {
-        Error, Message, Spin
+        Error, Message, Spin, TransmissionType
     },
     data() {
         return {
             transmission: {
                 name: null,
                 acronym: null,
+                type: null
             },
             notFound: false,
             loading: true,
@@ -72,6 +78,7 @@ export default {
                 this.loading = false;
                 this.transmission.name = response.data.motortransmission.name;
                 this.transmission.acronym = response.data.motortransmission.acronym;
+                this.transmission.type = response.data.motortransmission.transmission_type_id
             })
             .catch(errors => {
                 this.notFound = true;

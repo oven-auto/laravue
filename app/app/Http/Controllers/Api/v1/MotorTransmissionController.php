@@ -50,4 +50,13 @@ class MotorTransmissionController extends Controller
             'message' => 'Трансмиссия изменена'
         ]);
     }
+
+    public function getTypes()
+    {
+        $types = \App\Models\TransmissionType::get();
+        return response()->json([
+            'status' => 1,
+            'data' => $types
+        ]);
+    }
 }

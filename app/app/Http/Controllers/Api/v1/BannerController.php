@@ -19,7 +19,7 @@ class BannerController extends Controller
     {   
         $banners = Banner::with('brand')->get();
         foreach($banners as $itemBanner)
-            $itemBanner->image = asset('storage'.$itemBanner->image).'?'.date('dmYhms');
+            $itemBanner->image = asset('storage'.$itemBanner->image).'?'.date('dmYh');
 
         if($banners->count())
             return response()->json([
@@ -35,7 +35,7 @@ class BannerController extends Controller
 
     public function edit(Banner $banner)
     {
-        $banner->image = asset('storage/'.$banner->image) . '?'.date('dmYhms');
+        $banner->image = asset('storage/'.$banner->image) . '?'.date('dmYh');
         return response()->json([
             'status' => 1,
             'data' => $banner->toArray()

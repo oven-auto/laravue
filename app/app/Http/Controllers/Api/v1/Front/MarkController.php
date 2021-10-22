@@ -16,7 +16,7 @@ class MarkController extends Controller
     	}
     	return response()->json([
     		'data' => $marks,
-    		'status' => 1
+    		'status' => $marks->count() ? 1 : 0,
     	]);
     }
 
@@ -29,7 +29,16 @@ class MarkController extends Controller
     	}
     	return response()->json([
     		'data' => $mark,
-    		'status' => 1
+    		'status' => $mark->count() ? 1 : 0
     	]);
+    }
+
+    public function getMarksName()
+    {
+        $marks = Mark::select('name','prefix','id')->get();
+        return response()->json([
+            'data' => $marks,
+            'status' => $marks->count() ? 1 : 0
+        ]);
     }
 }

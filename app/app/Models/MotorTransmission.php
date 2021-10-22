@@ -9,7 +9,12 @@ class MotorTransmission extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'acronym'];
+    protected $fillable = ['name', 'acronym', 'transmission_type_id'];
 
     public $timestamps = false;
+
+    public function type()
+    {
+    	return $this->hasOne(\App\Models\TransmissionType::class, 'id', 'transmission_type_id');
+    }
 }
