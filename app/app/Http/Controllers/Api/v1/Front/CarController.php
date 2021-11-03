@@ -5,28 +5,17 @@ namespace App\Http\Controllers\Api\v1\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Car;
+use App\Services\Car\CarSearchService;
 
 class CarController extends Controller
 {
-    public function get(Request $request, $count = 15)
-    {
-    	if($request->has('count'))
-    		$count = $request->get('count');
-
-    	$query = Car::with(['brand','complectation', 'mark', 'color', 'price']);
-    	
-    	if($request->has('complectation_id'))
-    		$query->where('complectation_id', $request->get('complectation_id'));
-        if($request->has('vin'))
-            $query->where('vin', $request->get('vin'));
-    	//\DB::enableQueryLog();
-    	$cars = $query->paginate($count);
-        //dd(\DB::getQueryLog());
-    	foreach($cars as $key => $itemCar) {
-    		if(strpos($itemCar->color->image, asset('storage')) === false){
+    public function get(Request $request, $count = 15, CarSearchService $service)
+    {        
+    	$cars = $service->prepare($request->all())->paginate();
+        
+    	foreach($cars as $key => $itemCar) 
+    		if(strpos($itemCar->color->image, asset('storage')) === false)
     			$itemCar->color->image = asset('storage/' . $itemCar->color->image . '?' . date('dmyh'));
-    		}
-    	}
 
     	return response()->json([
     		'data' => $cars,
