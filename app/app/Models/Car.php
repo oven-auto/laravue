@@ -47,4 +47,9 @@ class Car extends Model
     {
         return $this->hasOne(\App\Models\CarPrice::class, 'car_id', 'id')->withDefault();
     }
+
+    public function equipments()
+    {
+        return $this->belongsToMany(\App\Models\Device::class, 'car_equipments', 'car_id');
+    }
 }

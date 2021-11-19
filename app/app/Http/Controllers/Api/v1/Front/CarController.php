@@ -41,27 +41,6 @@ class CarController extends Controller
     	]);
     }
 
-    // public function list(Request $request) 
-    // {
-    // 	$query = Car::select('cars.*','brands.name as brand', 'marks.name as mark', 'complectation.name as complectation', 'car_prices.full_price')
-    // 		->leftJoin('marks', 'marks.id', '=', 'cars.mark_id')
-    // 		->leftJoin('complectations', 'complectations.id', '=', 'cars.complectation_id')
-    // 		->leftJoin('car_prices', 'car_prices.car_id', '=', 'cars.id')
-    // 		->leftJoin('brands', 'brands.id', '=', 'cars.brand_id')
-    // 		->with('color');
-
-    // 	$cars = $query->simplePaginate(15);
-
-    // 	foreach ($cars as $key => $itemCar) {
-    // 		$itemCar->color->image = asset('storage/' . $itemCar->color->image . '?' . date('dmyh'));
-    // 	}
-
-    // 	return response()->json([
-    // 		'data' => $cars,
-    // 		'status' => $cars->count() ? 1 : 0
-    // 	]);
-    // }
-
     public function image(Request $request, $car = [], $color = [])
     {
     	$query = Car::with('color');

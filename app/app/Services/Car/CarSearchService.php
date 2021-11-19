@@ -13,6 +13,7 @@ Class CarSearchService
 	{
 		$this->query = Car::select('cars.*')
             ->with(['brand','complectation', 'mark', 'color', 'price']);
+        $this->query->leftJoin('car_prices', 'car_prices.car_id', '=', 'cars.id');
 	}
 
 	private function setParam($data = [])
@@ -20,13 +21,17 @@ Class CarSearchService
 		$this->params = $data;
 		if(isset($data['count']))
 			$this->count = $data['count'];
+        if(isset($data['order']) && $data['order']!="")
+            if($data['order'] == 'min')
+                $this->query->orderBy('car_prices.full_price', 'ASC');
+            else if($data['order'] == 'max')
+                $this->query->orderBy('car_prices.full_price', 'DESC');
 	}
 
 	public function prepare($data = []) 
 	{
 		$this->init();
 		$this->setParam($data);
-
 		$this->searchMark();
 		$this->searchComplectation();
 		$this->searchVin();
@@ -70,7 +75,7 @@ Class CarSearchService
     private function searchPrice()
     {
         if(isset($this->params['minPrice']) || isset($this->params['maxPrice'])) {
-            $this->query->leftJoin('car_prices', 'car_prices.car_id', '=', 'cars.id');
+            
             if(isset($this->params['minPrice']))
                 $this->query->where('car_prices.full_price', '>=', $this->params['minPrice']);
             if(isset($this->params['maxPrice']))
