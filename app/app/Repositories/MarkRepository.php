@@ -170,4 +170,28 @@ Class MarkRepository
             foreach($mark->markcolors as $itemColor)
                 $itemColor->image = asset('storage'.$itemColor->image) . $time;
     }
+
+    public function getMarkTabList()
+    {
+        $marks = Mark::select('name', 'prefix', 'id', 'body_work_id','slug')
+            ->with(['icon','bodywork','basecomplectation'])
+            ->get();
+
+        return $marks;
+    }
+
+    public function getMarkBySlug($slug)
+    {
+        $mark = Mark::with(['bodywork','banner', 'brand', 'info', 'properties','markcolors'])
+            ->where('slug',$slug)
+            ->first();
+
+        return $mark;
+    }
+
+    public function getMarksName()
+    {
+        $marks = Mark::select('name','prefix','id', 'slug')->get();
+        return $marks;
+    }
 }

@@ -75,7 +75,19 @@
 
                 <div class="row">
                     <div class="col text-right">
-                        <div class="h5">Итоговая цена автомобиля: {{formatPrice(fullPrice)}}</div>
+                        <div class="h5">Цена опций: {{formatPrice(packPrice)}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col text-right">
+                        <div class="h5">Цена допов: {{formatPrice(car.device_price)}}</div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col text-right">
+                        <div class="h5">Итоговая цена: {{formatPrice(fullPrice)}}</div>
                     </div>
                 </div>
 

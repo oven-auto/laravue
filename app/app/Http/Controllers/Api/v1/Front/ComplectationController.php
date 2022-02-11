@@ -5,18 +5,21 @@ namespace App\Http\Controllers\Api\v1\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complectation;
+use App\Services\Complectation\ComplectationService;
 
 class ComplectationController extends Controller
 {
+    private $service;
+
+    public function __construct(ComplectationService $service)
+    {
+        $this->service = $service;
+    }
+
     public function get(Request $request)
     {
-    	$query = Complectation::with(['motor']);
-    	if($request->has('mark_id'))
-    		$query
-    			->withCount('cars')
-    			->where('mark_id', $request->get('mark_id'));
+    	$complectations = $this->service->getAll($request->all());
 
-    	$complectations = $query->get();
     	return response()->json([
     		'data' => $complectations,
     		'status' => 1
@@ -25,18 +28,7 @@ class ComplectationController extends Controller
 
     public function show($id, Request $request) 
     {
-        $query = Complectation::with('motor');
-        
-        if($request->has('devices'))
-            $query->with('devices');
-        if($request->has('packs'))
-            $query->with('packs');
-        if($request->has('brand'))
-            $query->with('brand');
-        if($request->has('mark'))
-            $query->with('mark');
-
-    	$complectation = $query->find($id);
+        $complectation = $this->service->getById($id, $request->all());
     	
         return response()->json([
     		'data' => $complectation,
@@ -46,16 +38,8 @@ class ComplectationController extends Controller
 
     public function image($id, Request $request)
     {
-        $complectation = Complectation::with(['colors','colorPacks'])->find($id);
-        foreach ($complectation->colors as $key => $item) {
-            $item->image = asset('storage/' . $item->image . '?' . date('dmyh'));
-            $mas = [];
-            foreach($complectation->colorPacks as $pack) {
-                if($item->color_id == $pack->color_id)
-                    $mas[] = $pack->pivot->pack_id;
-            }
-            $item->color_packs = $mas;
-        }
+        $complectation = $this->service->getComplectationImages($id);
+        
         return response()->json([
             'data' => $complectation,
             'status' => 1

@@ -26,7 +26,6 @@ class CarController extends Controller
     public function show(Request $request)
     {
     	$query = Car::select('cars.*','brands.name as brand','marks.name as mark','complectations.name as complectation','car_prices.full_price')
-    		->with('packs')
     		->leftJoin('marks', 'marks.id', '=', 'cars.mark_id')
     		->leftJoin('complectations', 'complectations.id', '=', 'cars.complectation_id')
     		->leftJoin('car_prices', 'car_prices.car_id', '=', 'cars.id')

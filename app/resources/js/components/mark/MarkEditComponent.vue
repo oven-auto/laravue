@@ -196,6 +196,7 @@ export default {
         showModal: function () {
             this.$refs.modal.show = true
             this.$refs.modal.brand = this.mark.brand_id
+            this.$refs.modal.colors = this.mark.colors
             this.$refs.modal.loadData()
         },
 

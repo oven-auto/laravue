@@ -21,8 +21,25 @@ class Pack extends Model
         return $this->belongsToMany(\App\Models\Device::class, 'pack_devices');
     }
 
+    public function marks()
+    {
+        return $this->belongsToMany(\App\Models\Mark::class, 'pack_marks');
+    }
+
     public function scopeFullData($query)
     {
         return $query->with(['brand', 'devices']);
+    }
+
+    public function scopeByCarId($query, $car_id)
+    {
+        return $query->leftJoin('car_packs','car_packs.pack_id','=','packs.id')
+            ->where('car_packs.car_id', $car_id);
+    }
+
+    public function scopeByComplectId($query, $complect_id)
+    {
+        return $query->leftJoin('complectation_packs','complectation_packs.pack_id','=','packs.id')
+            ->where('complectation_packs.complectation_id', $complect_id);
     }
 }

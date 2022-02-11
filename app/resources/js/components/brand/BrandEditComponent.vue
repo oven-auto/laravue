@@ -19,17 +19,40 @@
                         </div>
 
                         <div class="pt-3">
-                            <label for="icon">Иконка</label>
 
-                            <div v-if="iconSrc" class="pb-3">
-                                <img :src="iconSrc" class="brand-icon">
+
+                            <div class="pb-3">
+                                <label for="name">Цвет бренда</label>
+                                <input type="color" v-model="brand.brand_color" class="form-control" required>
                             </div>
 
-                            <div class="custom-file">
-                                <input type="file" class="custom-file-input" id="icon" name="icon" @change="onAttachmentChange">
-                                <label class="custom-file-label" for="icon">Выберите фаил</label>
-                                <div class="invalid-feedback">Example invalid custom file feedback</div>
+                            <div class="">
+                                <label for="name">Цвет текста</label>
+                                <input type="color" v-model="brand.font_color" class="form-control" required>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="col-6">
+                        <label for="icon">Иконка</label>
+
+                        <div v-if="iconSrc" class="pb-3">
+                            <img :src="iconSrc" class="brand-icon">
+                        </div>
+
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="icon" name="icon" @change="onAttachmentChange">
+                            <label class="custom-file-label" for="icon">Выберите фаил</label>
+                            <div class="invalid-feedback">Example invalid custom file feedback</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" py-3">
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert" v-if="statusErrors">
+                        {{httpErrors.length}}
+                        <div v-for="err in httpErrors" :key="err+'err'">
+                            {{err}}
                         </div>
                     </div>
                 </div>
@@ -65,6 +88,8 @@ export default {
             brand: {
                 name: null,
                 icon: null,
+                brand_color: null,
+                font_color: null
             },
             iconSrc: null,
             notFound: false,
@@ -72,6 +97,8 @@ export default {
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
+            httpErrors: {},
+            statusErrors: 0
         }
     },
 
@@ -91,6 +118,8 @@ export default {
                 this.loading = false;
                 this.brand.name = response.data.brand.name;
                 this.iconSrc = response.data.icon_src;
+                this.brand.brand_color = response.data.brand.brand_color;
+                this.brand.font_color = response.data.brand.font_color;
             })
             .catch(errors => {
                 this.notFound = true;
@@ -106,10 +135,12 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadBrand(id);
+                    this.statusErrors = 0
                 }
             })
             .catch(errors => {
-                console.log(errors)
+                this.httpErrors = errors.response.data.errors,
+                this.statusErrors = 1
             })
         },
 
@@ -121,10 +152,12 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadBrand(res.data.brand.id);
+                    this.statusErrors = 0
                 }
             })
             .catch(errors => {
-                console.log(errors)
+                this.httpErrors = errors.response.data.errors
+                this.statusErrors = 1
             })
         },
 
@@ -133,6 +166,8 @@ export default {
 
             formData.append('name', this.brand.name);
             formData.append('icon', this.brand.icon);
+            formData.append('brand_color', this.brand.brand_color);
+            formData.append('font_color', this.brand.font_color);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

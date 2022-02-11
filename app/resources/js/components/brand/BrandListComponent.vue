@@ -16,6 +16,7 @@
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
                 <th>Системное имя</th>
+                <th>Цвет</th>
             </tr>
 
             <tr v-for="brand in brands">
@@ -26,6 +27,9 @@
                 </td>
                 <td>{{ brand.name }}</td>
                 <td>{{ brand.slug }}</td>
+                <td>
+                    <brand-badge :brand="brand"></brand-badge>
+                </td>
             </tr>
         </table>
     </div>
@@ -33,11 +37,12 @@
 
 <script>
 import Spin from '../spinner/SpinComponent';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'brand-list',
     components: {
-        Spin
+        Spin, BrandBadge
     },
     data() {
         return {

@@ -15,11 +15,11 @@ class SectionPage extends Model
 
     public function pages()
     {
-        return $this->hasMany(App\Models\Page::class, 'section_page_id', 'id');
+        return $this->hasMany(\App\Models\Page::class, 'section_page_id', 'id');
     }
 
     public function brand()
     {
-        return $this->hasOne(App\Models\Brand::class, 'id', 'brand_id')->withDefault();
+        return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
     }
 }

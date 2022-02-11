@@ -9,9 +9,12 @@ class Brand extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'slug', 'icon'];
+    protected $fillable = ['name', 'slug', 'icon', 'brand_color', 'font_color'];
 
     public $timestamps = false;
 
-
+    public function getIconDateAttribute()
+    {
+    	return asset('storage'.$this->icon) . '?' . date('dmyhm');
+    }
 }

@@ -26,7 +26,7 @@
                         Open
                     </router-link>
                 </td>
-                <td>{{ item.brand.name }}</td>
+                <td><brand-badge :brand="item.brand"></brand-badge></td>
                 <td>{{ item.name }}</td>
                 <td>{{ item.size }} ( {{ item.power }} л.с.) {{item.valve}} кл.</td>
                 <td>{{ item.type.name }}</td>
@@ -41,12 +41,14 @@
 
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'motor-list',
     components: {
         Spin,
-        Message
+        Message,
+        BrandBadge
     },
     data() {
         return {

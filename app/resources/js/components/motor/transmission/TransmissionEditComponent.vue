@@ -56,9 +56,9 @@ export default {
     data() {
         return {
             transmission: {
-                name: null,
-                acronym: null,
-                type: null
+                name: '',
+                acronym: '',
+                type: ''
             },
             notFound: false,
             loading: true,
@@ -120,7 +120,7 @@ export default {
             var formData = new FormData();
 
             formData.append('name', this.transmission.name);
-            formData.append('acronym', this.transmission.acronym);
+            formData.append('acronym', this.transmission.acronym==null?'':this.transmission.acronym);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

@@ -14,30 +14,40 @@
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
-            <tr>
-                <th style="width: 80px;">#</th>
-                <th>Название</th>
-                <th>Фильтр</th>
-                <th>Тип</th>
-                <th>Бренд</th>
-            </tr>
+        <table v-else class="table table-hover device-table">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width: 80px;">#</th>
+                    <th>Название</th>
+                    <th>Фильтр</th>
+                    <th>Тип</th>
+                    <th>Бренд</th>
+                </tr>
+            </thead>
 
-            <tr v-for="device in devices">
-                <td>
-                    <router-link :to="toEdit + device.id">
-                        Open
-                    </router-link>
-                </td>
-                <td>{{ device.name }}</td>
-                <td style="">{{ device.filter.name }}</td>
-                <td style="width:150px;">{{ device.type.name }}</td>
-                <td style="width:100px;">
-                    <div v-for="brand in device.brands">
-                        <span class="mr-1 badge badge-secondary">{{ brand.name }}</span>
-                    </div>
-                </td>
-            </tr>
+            <tbody>
+                <tr v-for="device in devices">
+                    <td>
+                        <router-link :to="toEdit + device.id">
+                            Open
+                        </router-link>
+                    </td>
+                    <td>{{ device.name }}</td>
+                    <td style="">{{ device.filter.name }}</td>
+                    <td style="width:150px;">
+                        <span
+                            class="badge"
+                           >
+                            {{device.type.name }}
+                        </span>
+                    </td>
+                    <td style="width:100px;">
+                        <div v-for="brand in device.brands">
+                            <brand-badge :brand="brand"></brand-badge>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
         </table>
     </div>
 </template>
@@ -45,12 +55,14 @@
 <script>
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'device-list',
     components: {
         Spin,
-        Message
+        Message,
+        BrandBadge
     },
     data() {
         return {
@@ -60,6 +72,7 @@ export default {
             notFound: false,
             succes: false,
             succesMessage: null,
+            currentTypeId: 0,
         }
     },
     mounted() {
@@ -84,3 +97,9 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.device-table td{
+    vertical-align:middle;
+}
+</style>

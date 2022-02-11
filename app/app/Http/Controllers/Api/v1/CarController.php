@@ -31,7 +31,8 @@ class CarController extends Controller
         $cars = $query->paginate(20);
 
         foreach($cars as $itemCar)
-            $itemCar->color->image =  asset('storage'.$itemCar->color->image) . '?'.date('dmYhms');
+            if(strpos($itemCar->color->image, asset('storage')) === false)
+                $itemCar->color->image =  $itemCar->color->image_date;
 
         if($cars->count())
             return response()->json([

@@ -11,7 +11,7 @@
 
     <spin v-if="loading"></spin>
 
-    <table v-else class="table">
+    <!-- <table v-else class="table">
         <tr>
             <th style="width: 80px;">#</th>
             <th>Название</th>
@@ -25,7 +25,7 @@
                 </router-link>
             </td>
             <td>
-                <span class="badge badge-secondary">{{ mark.brand.name }} </span>
+                <brand-badge :brand="mark.brand"></brand-badge>
                 {{ mark.prefix ? mark.prefix : '' }} {{ mark.name  }}
             </td>
             <td>
@@ -37,7 +37,27 @@
                 </span>
             </td>
         </tr>
-    </table>
+    </table> -->
+
+    <div class="row marks-row" v-else>
+        <div class="col-3 "  v-for="mark in marks" >
+            <router-link :to="toEdit + mark.id">
+            <div class="border rounded py-3 mark-col">
+                <div :class="{'gray-image': mark.status==0}">
+                    <div class="text-center">
+                        {{mark.predix}}
+                        {{mark.brand.name}}
+                        <b>{{mark.name}}</b>
+                    </div>
+                    <img :src="writeImage(mark.icon.image)" >
+                    <div class="text-muted text-center">
+                        <small>{{mark.bodywork.name}}</small>
+                    </div>
+                </div>
+            </div>
+            </router-link>
+        </div>
+    </div>
 
 </div>
 
@@ -45,11 +65,13 @@
 
 <script>
 import Spin from '../spinner/SpinComponent';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'mark-list',
     components: {
-        Spin
+        Spin,
+        BrandBadge
     },
     data() {
         return {
@@ -63,6 +85,9 @@ export default {
         this.loadData()
     },
     methods: {
+        writeImage(url) {
+            return storageUrl+url;
+        },
         loadData() {
             axios.get('/api/marks')
             .then(response => {
@@ -83,3 +108,24 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.marks-row img{
+    width: 100%;
+}
+.marks-row a{
+    text-decoration: none;
+    color: inherit;
+}
+.mark-col{
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+.mark-col:hover{
+    transform: scale(1.02,1.02);
+    box-shadow: 0 0 30px rgb(226, 226, 226);
+}
+.gray-image{
+    opacity: .3;
+}
+</style>

@@ -48,17 +48,22 @@
                     </div>
                 </div>
 
-                <div class="row pb-3" v-if="devices && devices.length > 0">
-                    <div class="col-4" v-for="chunk in chunkArray(devices, Math.ceil(devices.length/3))">
-                        <div v-for="itemDevice in chunk">
-                            <label class="checkbox d-flex align-items-center" :title="itemDevice.name">
-                                <input class="device-checkbox-toggle" type="checkbox" v-bind:value="itemDevice.id" v-model="pack.devices">
-                                <div class="checkbox__text" style="">
-                                    {{itemDevice.name}}
-                                </div>
-                            </label>
-                        </div>
-                    </div>
+                <div class="pb-3">
+                    <MarkGroupCheckBox
+                        :install="pack.marks"
+                        :brand="pack.brand_id"
+                        @checkMark="setMarks"
+                    >
+                    </MarkGroupCheckBox>
+                </div>
+
+                <div class=" pb-3">
+                    <DeviceGroupCheckbox
+                        :install="pack.devices"
+                        @checkDevice="setDivices"
+                        :brand="pack.brand_id"
+                    >
+                    </DeviceGroupCheckbox>
                 </div>
 
                 <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
@@ -80,12 +85,15 @@ import Error from '../alert/ErrorComponent';
 import Message from '../alert/MessageComponent';
 import Spin from '../spinner/SpinComponent';
 import BrandSelect from '../html/BrandSelect';
+import DeviceGroupCheckbox from '../checkbox/DeviceGroupCheckBox';
+import MarkGroupCheckBox from '../checkbox/MarkGroupCheckBox';
 
 export default {
     name: 'pack-edit',
     components: {
-        Error, Message, Spin, BrandSelect
+        Error, Message, Spin, BrandSelect,DeviceGroupCheckbox, MarkGroupCheckBox
     },
+
     data() {
         return {
             pack: {
@@ -94,9 +102,9 @@ export default {
                 price: '',
                 colored: false,
                 brand_id: 0,
-                devices: []
+                devices: [],
+                marks: []
             },
-            devices: [],
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
@@ -109,13 +117,14 @@ export default {
             this.loadData(this.urlId)
     },
     methods: {
-        chunkArray(arr, chunk) {
-            var i, j, tmp = [];
-            for (i = 0, j = arr.length; i < j; i += chunk) {
-                tmp.push(arr.slice(i, i + chunk));
-            }
-            return tmp;
+        setDivices(data) {
+            this.pack.devices = data.devices
         },
+
+        setMarks(data) {
+            this.pack.marks = data.marks
+        },
+
         loadData(id) {
             axios.get('/api/packs/' + id + '/edit')
             .then( response => {
@@ -127,11 +136,18 @@ export default {
                 this.pack.price = response.data.pack.price;
                 this.pack.brand_id = response.data.pack.brand_id;
                 this.pack.colored = response.data.pack.colored;
+
                 var arrayDev = [];
                 response.data.pack.devices.forEach(function(item,i){
                     arrayDev.push(item.id);
                 })
                 this.pack.devices = arrayDev;
+
+                var arrayMark = [];
+                response.data.pack.marks.forEach(function(item,i){
+                    arrayMark.push(item.id);
+                })
+                this.pack.marks = arrayMark;
 
             })
             .catch(errors => {
@@ -175,26 +191,6 @@ export default {
                 'content-type': 'application/json'
             }
         },
-
-        getDevices() {
-            var param = 'brand_id='+this.pack.brand_id
-            axios.get('/api/devices?' + param)
-            .then(res => {
-                this.devices = res.data.data
-            })
-            .catch(errors => {
-
-            })
-        }
     },
-    watch: {
-        'pack.brand_id': {
-            immediate: true,
-            handler() {
-                if(this.pack.brand_id > 0)
-                    this.getDevices();
-            },
-        }
-    }
 }
 </script>

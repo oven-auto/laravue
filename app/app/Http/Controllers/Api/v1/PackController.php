@@ -10,7 +10,7 @@ class PackController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Pack::fullData();
+        $query = Pack::fullData()->with('marks');
 
         if($request->has('brand_id'))
             $query->where('brand_id', $request->get('brand_id'));
@@ -18,6 +18,10 @@ class PackController extends Controller
         if($request->has('complectation_id'))
             $query->rightJoin('complectation_packs', 'complectation_packs.pack_id', '=', 'packs.id')
                 ->where('complectation_packs.complectation_id', $request->get('complectation_id'));
+
+        if($request->has('mark_id'))
+            $query->leftJoin('pack_marks', 'pack_marks.pack_id', '=', 'packs.id')
+                ->where('pack_marks.mark_id', $request->get('mark_id'));
 
         $packs = $query->get();
 
@@ -36,6 +40,7 @@ class PackController extends Controller
     public function edit(Pack $pack)
     {
         $pack->devices;
+        $pack->marks;
 
         return response()->json([
             'status' => 1,
@@ -45,8 +50,9 @@ class PackController extends Controller
 
     public function store(Pack $pack, Request $request)
     {
-        $pack->fill($request->except('devices'))->save();
+        $pack->fill($request->except('devices','marks'))->save();
         $pack->devices()->sync($request->get('devices'));
+        $pack->marks()->sync($request->get('marks'));
         return response()->json([
             'status' => 1,
             'pack' => $pack,
@@ -56,8 +62,9 @@ class PackController extends Controller
 
     public function update(Pack $pack, Request $request)
     {
-        $pack->fill($request->except('devices'))->save();
+        $pack->fill($request->except('devices','marks'))->save();
         $pack->devices()->sync($request->get('devices'));
+        $pack->marks()->sync($request->get('marks'));
         return response()->json([
             'status' => 1,
             'pack' => $pack,

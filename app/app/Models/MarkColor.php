@@ -17,4 +17,9 @@ class MarkColor extends Model
     {
         return $this->hasOne(\App\Models\Color::class, 'id', 'color_id')->withDefault();
     }
+
+    public function getImageDateAttribute()
+    {
+    	return asset('storage'.$this->image) . '?' . date('dmyh');
+    }
 }

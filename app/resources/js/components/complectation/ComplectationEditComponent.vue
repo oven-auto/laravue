@@ -63,20 +63,13 @@
                 </div>
             </div>
 
-            <div class="row py-3" v-if="devices && devices.length > 0">
-                <div class="col-12 h5 pb-3">
-                    Оборудование
-                </div>
-                <div class="col-4" v-for="chunk in chunkArray(devices, Math.ceil(devices.length/3))">
-                    <div v-for="itemDevice in chunk">
-                        <label class="checkbox d-flex align-items-center" :title="itemDevice.name">
-                            <input class="device-checkbox-toggle" type="checkbox" v-bind:value="itemDevice.id" v-model="complectation.devices">
-                            <div class="checkbox__text" style="">
-                                {{itemDevice.name}}
-                            </div>
-                        </label>
-                    </div>
-                </div>
+            <div class=" py-3">
+                <DeviceGroupCheckbox
+                    :install="complectation.devices"
+                    @checkDevice="setDivices"
+                    :brand="complectation.brand_id"
+                >
+                </DeviceGroupCheckbox>
             </div>
 
             <div class="row py-3" v-if="packs">
@@ -84,31 +77,43 @@
                     Опции
                 </div>
                 <div class="col-12">
-                    <table class="table">
+                    <table class="table complectation-table table-hover">
+                        <thead class="table-dark">
+                            <tr>
+                                <td>Код</td>
+                                <td>Название</td>
+                                <td>Цена</td>
+                                <td>Тип</td>
+                                <td>Оборудование</td>
+                            </tr>
+                        </thead>
+
+                        <tbody>
                         <tr v-for="pack in packs">
-                            <td class="pl-0">
+                            <td class="pl-1">
                                 <label class="checkbox d-flex align-items-center" :title="pack.name">
                                     <input
-                                        class="device-checkbox-toggle"
+                                        class="device-checkbox-toggle "
                                         type="checkbox"
                                         v-bind:value="pack.id"
                                         v-model="complectation.packs"
                                         v-on:change="appendColoredOption(pack)"
                                     >
                                     <div class="checkbox__text" style="">
-                                        {{pack.name}}
+                                        {{pack.code}}
                                     </div>
                                 </label>
                             </td>
-                            <td>{{pack.code}}</td>
+                            <td>{{pack.name}}</td>
                             <td>{{pack.price}}</td>
                             <td>{{pack.colored ? 'Цветовой' : ''}}</td>
                             <td>
-                                <span v-for="device in pack.devices" class="badge badge-dark mx-1">
+                                <span v-for="device in pack.devices" class="badge badge-secondary mx-1">
                                     {{device.name}}
                                 </span>
                             </td>
                         </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -177,12 +182,13 @@ import BrandSelect from '../html/BrandSelect';
 import MarkSelect from '../html/MarkSelect';
 import MotorSelect from '../html/MotorSelect';
 import ComplectationSelect from '../html/ComplectationSelect';
+import DeviceGroupCheckbox from '../checkbox/DeviceGroupCheckBox'
 
 
 export default {
     name: 'complectation-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MarkSelect, MotorSelect, ComplectationSelect
+        Error, Message, Spin, BrandSelect, MarkSelect, MotorSelect, ComplectationSelect,DeviceGroupCheckbox
     },
     data() {
         return {
@@ -202,7 +208,7 @@ export default {
                 colors: [],
                 colorPack: []
             },
-            devices: [],
+
             packs: [],
             markcolors: [],
             coloredOptions: {},
@@ -228,7 +234,9 @@ export default {
     },
 
     methods: {
-
+        setDivices(data) {
+            this.complectation.devices = data.devices
+        },
         addColorToColorPack() {
         },
 
@@ -254,20 +262,13 @@ export default {
             }
         },
 
-        getDevices() {
-            var param = 'brand_id='+this.complectation.brand_id
-            axios.get('/api/devices?' + param)
-            .then(res => {
-                this.devices = res.data.data
-            })
-            .catch(errors => {
-
-            })
-        },
-
         getPacks() {
-            var param = 'brand_id=' + this.complectation.brand_id
-            axios.get('/api/packs?' + param)
+            var param = [];
+
+            if(this.complectation.mark_id)
+                param.push('mark_id=' + this.complectation.mark_id)
+
+            axios.get('/api/packs?' + param.join('&'))
             .then(res => {
                 this.packs = res.data.data
             })
@@ -320,8 +321,11 @@ export default {
                 this.complectation.colors = response.data.data.mark_color;
 
                 var obj = {}
+                console.log(response.data.data.packs)
+                console.log(this.complectation.packs)
+
                 response.data.data.packs.forEach( ( item ) => {
-                    if(item.colored)
+                    if(item.colored && this.complectation.packs.includes(item.id))
                         this.coloredOptions[item.id] = item;
                 })
 
@@ -387,14 +391,6 @@ export default {
             }
         },
 
-        chunkArray(arr, chunk) {
-            var i, j, tmp = [];
-            for (i = 0, j = arr.length; i < j; i += chunk) {
-                tmp.push(arr.slice(i, i + chunk));
-            }
-            return tmp;
-        },
-
         loadParentData() {
             this.loading = true
 
@@ -457,8 +453,8 @@ export default {
             immediate: true,
             handler() {
                 this.markcolors = []
-                this.getDevices();
-                this.getPacks();
+                if(!this.firstLoad)
+                    this.complectation.mark_id = 0
             },
         },
         'complectation.mark_id': {
@@ -466,7 +462,7 @@ export default {
             handler() {
                 if(!this.firstLoad)
                     this.getColors();
-
+                    this.getPacks();
             },
         },
 
@@ -474,3 +470,9 @@ export default {
 
 }
 </script>
+
+<style scoped>
+.complectation-table .badge{
+    white-space: normal;
+}
+</style>

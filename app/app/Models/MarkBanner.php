@@ -12,4 +12,9 @@ class MarkBanner extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function getImageDateAttribute()
+    {
+    	return asset('storage'.$this->image) . '?' . date('dmyhm');
+    }
 }

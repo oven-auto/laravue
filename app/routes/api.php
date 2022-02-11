@@ -74,6 +74,12 @@ Route::group(['prefix' => 'front'], function() {
 	Route::get('complectations/list', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'get']);
 	Route::get('complectations/show/{id}', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'show']);
 	Route::get('complectations/image/{id}', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'image']);
+
+	Route::get('packs/complectation/{id}', [\App\Http\Controllers\Api\v1\Front\Pack\PackComplectationController::class, 'get']);
+	Route::get('packs/car/{id}', [\App\Http\Controllers\Api\v1\Front\Pack\PackCarController::class, 'get']);
+
+	Route::get('devices/complectation/{id}',[\App\Http\Controllers\Api\v1\Front\Device\DeviceComplectationController::class, 'get']);
+
 	Route::get('credits', [\App\Http\Controllers\Api\v1\Front\CreditController::class, 'get']);
 	Route::get('cars', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'get']);
 	Route::get('car', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'show']);
@@ -87,4 +93,7 @@ Route::group(['prefix' => 'front'], function() {
 	Route::get('filters/device', [\App\Http\Controllers\Api\v1\Front\DeviceFilterController::class, 'get']);
 
 	Route::get('car/compare', [\App\Http\Controllers\Api\v1\Front\CarCompareController::class, 'compare']);
+
+	Route::get('sections/page/list', [\App\Http\Controllers\Api\v1\Front\PageController::class, 'sections']);
+	Route::get('page', [\App\Http\Controllers\Api\v1\Front\PageController::class, 'page']);
 });

@@ -9,7 +9,7 @@
 
     <div v-else>
         <form>
-            <div class="h5">{{ filter.name ? filter.name : 'Новый фильтр оборудования' }}</div>
+            <div class="h5">{{ filter.name ? filter.name : 'Новая группа оборудования' }}</div>
 
             <div class="row pb-3">
                 <div class="col-6">

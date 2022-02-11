@@ -9,7 +9,7 @@
                 <div class="v-modal-content">
                     <div class="row d-flex align-items-center">
                         <div class="col-2 mb-3 text-center" v-for="item in data">
-                            <div class="item-color" @click="checkColor(item)">
+                            <div class="item-color" @click="checkColor(item)" :class="{'active-color': colors.find(col => col.id == item.id)}">
                                 <div>
                                     {{item.code}}
                                 </div>
@@ -48,6 +48,7 @@
                 show: false,
                 data: [],
                 brand: 0,
+                colors: []
             }
         },
         mounted() {
@@ -91,7 +92,10 @@
     .item-color{
        cursor: pointer;
        border-radius: 10px;
-       background: #ddd;
+       border: 1px solid #eee;
+    }
+    .active-color{
+        background: #ddd;
     }
     .v-modal-shadow {
         position: fixed;

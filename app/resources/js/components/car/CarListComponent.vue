@@ -33,7 +33,10 @@
             <tbody>
                 <tr v-for="item in data" class="small-text ">
                     <td><router-link :to="toEdit + item.id">Open </router-link></td>
-                    <td><div><big>{{item.vin}}</big></div> </td>
+                    <td>
+                        <div><big>{{item.vin}}</big></div>
+                        <div>{{item.complectation.code}}</div>
+                    </td>
 
                     <td>
                         <div>{{ item.brand.name }} {{ item.mark.name }} </div>

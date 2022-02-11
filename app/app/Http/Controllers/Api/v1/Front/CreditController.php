@@ -4,19 +4,20 @@ namespace App\Http\Controllers\Api\v1\Front;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use App\Models\Credit;
-use App\Repositories\CreditRepository;
+use App\Services\Credit\CreditListService;
+use App\Http\Resources\Credit\CreditCollection;
 
 class CreditController extends Controller
-{
-    public function get(Request $request, CreditRepository $service, $credits = false)
+{	
+    public function get(Request $request, CreditListService $service)
     {
-    	if($request->has('mark_id'))
-    		$credits = $service->getCreditsByMarkId($request->get('mark_id'));
+    	$data = $request->all();
 
-    	return response()->json([
-    		'data' => $credits,
-    		'status' => ($credits) ? 1 : 0
-    	]);
+    	$credits = $service->setData($data)
+    		->onCurrentDate()
+    		->onActive()
+    		->getAll();
+
+    	return new CreditCollection($credits);
     }
 }

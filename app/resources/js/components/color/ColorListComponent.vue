@@ -14,7 +14,8 @@
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
+        <table v-else class="table table-hover">
+            <thead class="table-dark">
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
@@ -22,7 +23,9 @@
                 <th>Код</th>
                 <th>Иконка</th>
             </tr>
+            </thead>
 
+            <tbody>
             <tr v-for="item in data">
                 <td>
                     <router-link :to="toEdit + item.id">
@@ -30,12 +33,13 @@
                     </router-link>
                 </td>
                 <td>{{ item.name }}</td>
-                <td>{{ item.brand.name }}</td>
+                <td><brand-badge :brand="item.brand"></brand-badge></td>
                 <td>{{ item.code }}</td>
                 <td>
                     <ColorIcon :colors="item.web"></ColorIcon>
                 </td>
             </tr>
+            </tbody>
 
         </table>
     </div>
@@ -46,13 +50,15 @@
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import ColorIcon from '../html/ColorIcon';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'color-list',
     components: {
         Spin,
         Message,
-        ColorIcon
+        ColorIcon,
+        BrandBadge
     },
     data() {
         return {

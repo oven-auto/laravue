@@ -14,15 +14,19 @@
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
+        <table v-else class="table pack-table table-hover" >
+            <thead class="table-dark">
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Код</th>
                 <th>Название</th>
                 <th>Бренд</th>
+                <th>Модель</th>
                 <th>Оборудование</th>
             </tr>
+            </thead>
 
+            <tbody>
             <tr v-for="item in data">
                 <td>
                     <router-link :to="toEdit + item.id">
@@ -31,13 +35,21 @@
                 </td>
                 <td>{{ item.code }}</td>
                 <td>{{ item.name }}</td>
-                <td>{{ item.brand.name }}</td>
                 <td>
+                    <brand-badge :brand="item.brand"></brand-badge>
+                </td>
+                <td>
+                    <span class="badge badge-dark" v-for="(mark,i) in item.marks" :key="'pack-marks'+i">
+                        {{mark.name}}
+                    </span>
+                </td>
+                <td style="width: 50%;overflow:hidden;">
                     <span v-for="device in item.devices" class="badge badge-secondary mr-1">
                         {{ device.name }}
                     </span>
                 </td>
             </tr>
+            </tbody>
 
         </table>
     </div>
@@ -47,12 +59,14 @@
 
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'color-list',
     components: {
         Spin,
-        Message
+        Message,
+        BrandBadge
     },
     data() {
         return {
@@ -86,3 +100,12 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.pack-table .badge{
+    white-space:normal;
+}
+.pack-table td{
+    vertical-align: middle;
+}
+</style>

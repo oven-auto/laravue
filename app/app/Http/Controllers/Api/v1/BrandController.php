@@ -29,9 +29,9 @@ class BrandController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Brand $brand, \App\Http\Requests\BrandCreateRequest $request)
+    public function store(Brand $brand, \App\Http\Requests\Brand\BrandCreateRequest $request)
     {
-        $data = $request->only('name');
+        $data = $request->only(['name','brand_color', 'font_color']);
         if($request->has('icon')) {
             $iconName = date('Ymdhis').'.'.$request->icon->getClientOriginalExtension();
             $data['icon'] = $request->icon
@@ -68,9 +68,9 @@ class BrandController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Brand $brand,Request $request)
+    public function update(Brand $brand, \App\Http\Requests\Brand\BrandUpdateRequest $request)
     {
-        $data = $request->only('name');
+        $data = $request->only(['name','brand_color', 'font_color']);
         if($request->hasFile('icon')) {
             $iconName = date('Ymdhis').'.'.$request->icon->getClientOriginalExtension();
             $data['icon'] = $request->icon

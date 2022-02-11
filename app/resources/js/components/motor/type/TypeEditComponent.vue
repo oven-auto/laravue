@@ -51,8 +51,8 @@ export default {
     data() {
         return {
             type: {
-                name: null,
-                acronym: null,
+                name: '',
+                acronym: '',
             },
             notFound: false,
             loading: true,
@@ -113,7 +113,7 @@ export default {
             var formData = new FormData();
 
             formData.append('name', this.type.name);
-            formData.append('acronym', this.type.acronym);
+            formData.append('acronym', this.type.acronym==null?'':this.type.acronym);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

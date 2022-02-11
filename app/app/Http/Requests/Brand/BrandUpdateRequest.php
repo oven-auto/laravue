@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Brand;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Route;
@@ -34,7 +34,8 @@ class BrandUpdateRequest extends FormRequest
                 'max:255',
                 Rule::unique('brands')->ignore($brand ? $brand->id : ''),
             ],
-            'icon' => 'nullable|image'
+            'brand_color' => 'required|string',
+            'font_color' => 'required|string',
         ];
     }
 }

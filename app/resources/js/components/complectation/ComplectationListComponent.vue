@@ -41,7 +41,7 @@
                     </router-link>
                 </td>
                 <td>{{ item.code }}</td>
-                <td>{{item.brand.name}} {{item.mark.name}}</td>
+                <td><brand-badge :brand="item.brand"></brand-badge> {{item.mark.name}}</td>
                 <td>
                     {{ item.name }}
                     {{item.motor.size}} ({{item.motor.power}}л.с.)
@@ -64,13 +64,15 @@
 import Spin from '../spinner/SpinComponent';
 import ComplectationStatus from './ComplectationStatus';
 import ComplectationFilter from '../modal/ComplectationFilterModal';
+import BrandBadge from '../badge/BrandBadge';
 
 export default {
     name: 'complectation-list',
     components: {
         Spin,
         ComplectationStatus,
-        ComplectationFilter
+        ComplectationFilter,
+        BrandBadge
     },
     data() {
         return {

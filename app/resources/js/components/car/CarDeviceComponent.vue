@@ -78,7 +78,7 @@ export default {
         },
 
         loadData() {
-            axios.get('/api/devices')
+            axios.get('/api/devices?dops=1')
             .then(res => {
                 this.devices = res.data.data
             })

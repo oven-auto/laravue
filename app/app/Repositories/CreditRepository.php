@@ -16,7 +16,6 @@ Class CreditRepository
 
     public function save(Credit $credit, $data = []) :array
     {
-        $result = [];
         try {
             $result = DB::transaction(function () use ($data, $credit) {
                 if (isset($data['banner']) && $data['banner'] instanceof UploadedFile) {
@@ -36,15 +35,16 @@ Class CreditRepository
                 if (isset($data['marks'])) {
                     $this->saveMarks($credit, $data['marks']);
                 }
-                return ['status' => true];
             });
+            return [
+                'status' => 1
+            ];
         } catch(\Exception $e) {
-            return $result = [
+            return [
                 'status' => false,
                 'error' => $e->getMessage()
             ];
         }
-        return $result;
     }
 
     private function saveMain(Credit $credit, $data = [])

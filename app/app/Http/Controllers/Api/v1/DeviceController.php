@@ -17,6 +17,9 @@ class DeviceController extends Controller
             $query->leftJoin('device_brands', 'device_brands.device_id', '=', 'devices.id')
                 ->where('device_brands.brand_id', $request->get('brand_id'));
 
+        if($request->has('dops'))
+            $query->where('devices.device_type_id', 6);
+
         $devices = $query->orderBy('device_type_id')->orderBy('name')->get();
 
         if($devices->count())

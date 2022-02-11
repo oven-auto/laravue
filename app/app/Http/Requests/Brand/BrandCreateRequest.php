@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\Brand;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Route;
@@ -34,7 +34,9 @@ class BrandCreateRequest extends FormRequest
                 'max:255',
                 Rule::unique('brands')->ignore($brand ? $brand->id : ''),
             ],
-            'icon' => 'required|image'
+            'icon' => 'required|image',
+            'brand_color' => 'required|string',
+            'font_color' => 'required|string',
         ];
     }
 }

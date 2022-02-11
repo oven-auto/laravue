@@ -19,7 +19,7 @@
                         <div class="dropdown-divider"></div>
 
                         <router-link :to="'/devicetypes/list'" class="dropdown-item">Типы оборудование</router-link>
-                        <router-link :to="'/devicefilters/list'" class="dropdown-item">Фильтры оборудования</router-link>
+                        <router-link :to="'/devicefilters/list'" class="dropdown-item">Группы оборудования</router-link>
                         <router-link :to="'/devices/list'" class="dropdown-item">Оборудование</router-link>
                         <router-link :to="'/packs/list'" class="dropdown-item">Опции</router-link>
 

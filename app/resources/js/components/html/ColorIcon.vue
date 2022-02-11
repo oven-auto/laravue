@@ -27,12 +27,13 @@ export default {
     },
     computed: {
         bg() {
-            var colorArr = this.colors.split(":");
+            var back = ''
+            var colorArr = this.colors.split(",");
             if(colorArr.length > 1)
-                this.background = 'linear-gradient(to top, '+colorArr[0]+' 50%, '+colorArr[1]+' 50%)';
+                back = 'linear-gradient(to top, '+colorArr[0]+' 50%, '+colorArr[1]+' 50%)';
             else
-                this.background = colorArr[0];
-            return this.background
+                back = colorArr[0];
+            return back
         }
     }
 }

@@ -5,10 +5,10 @@
 
         <div class="row pb-3">
             <div class="col">
-                <div class="h5">Список фильтров оборудования</div>
+                <div class="h5">Список групп оборудования</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/devicefilters/create'">Создать новый фильтр</router-link>
+                <router-link class="btn btn-primary" :to="'/devicefilters/create'">Создать новую группу</router-link>
             </div>
         </div>
 

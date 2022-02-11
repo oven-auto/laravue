@@ -54,9 +54,9 @@ export default {
     data() {
         return {
             driver: {
-                name: null,
-                acronym: null,
-                type: null,
+                name: '',
+                acronym: '',
+                type: '',
             },
             notFound: false,
             loading: true,
@@ -118,7 +118,7 @@ export default {
             var formData = new FormData();
 
             formData.append('name', this.driver.name);
-            formData.append('acronym', this.driver.acronym);
+            formData.append('acronym', this.driver.acronym==null?'':this.driver.acronym);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");
