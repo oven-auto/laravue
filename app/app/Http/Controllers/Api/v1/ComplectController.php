@@ -31,8 +31,8 @@ class ComplectController extends Controller
         $complectations = $query
             ->orderBy('mark_id')
             ->orderBy('sort')
-            ->orderBy('parent_id')
-            ->orderBy('price')
+            //->orderBy('parent_id')
+            //->orderBy('price')
             ->get();
 
         if($complectations->count())

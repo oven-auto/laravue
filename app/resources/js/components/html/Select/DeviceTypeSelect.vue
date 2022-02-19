@@ -1,9 +1,9 @@
 <template>
     <div>
-        <label>Бренд</label>
+        <label>Тип оборудования</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in brands" :value="item.id">
+            <option v-for="item in types" :value="item.id">
                 {{ item.name }}
             </option>
         </select>
@@ -14,24 +14,24 @@
 export default {
     data() {
         return {
-            brands: [],
+            types: [],
         }
     },
     mounted() {
-        this.loadBrands()
+        this.loadTypes()
     },
     methods: {
-        loadBrands() {
-            axios.get('/api/brands')
+        loadTypes() {
+            axios.get('/api/devicetypes')
             .then(res => {
-                this.brands = res.data.brands
+                this.types = res.data.data
             })
             .catch(error => {
 
             })
         }
     },
-    props: ['name','value'],
+    props: ['name', 'value'],
     computed: {
         selected: {
             get() {

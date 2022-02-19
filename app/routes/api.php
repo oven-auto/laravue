@@ -65,7 +65,10 @@ Route::resource('sectionpages', \App\Http\Controllers\Api\v1\SectionPageControll
 
 Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
-
+Route::prefix('services')->group(function () {
+   Route::post('complectations/sort', [\App\Http\Controllers\Api\v1\Complectation\ComplectationSortController::class, 'index']);
+   Route::get('devices/namelist', [\App\Http\Controllers\Api\v1\Device\DeviceNameListController::class, 'index']);
+});
 
 Route::group(['prefix' => 'front'], function() {
 	Route::get('marks/name', [\App\Http\Controllers\Api\v1\Front\MarkController::class, 'getMarksName']);
@@ -86,7 +89,7 @@ Route::group(['prefix' => 'front'], function() {
 	Route::get('car/head', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'head']);
 	Route::get('car/image', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'image']);
 	Route::get('cars/count', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'count']);
-	
+
 	Route::get('transmissions/type', [\App\Http\Controllers\Api\v1\Front\TransmissionController::class, 'getTypes']);
 	Route::get('drivers/type', [\App\Http\Controllers\Api\v1\Front\DriverController::class, 'getTypes']);
 

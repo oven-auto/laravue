@@ -10,6 +10,12 @@
             <form>
                 <div class="h5">{{ pack.code ? pack.code : 'Новая опция' }}</div>
 
+                <div class="">
+                    <span class="badge badge-secondary" v-for="(device,i) in installDevices" :key="'b1'+i" style="margin-right:3px;">
+                        {{device}}
+                    </span>
+                </div>
+
                 <div class="row">
                     <div class="col-12 text-right">
                         <label class="checkbox align-items-center" title="Цветовая опция">
@@ -66,6 +72,8 @@
                     </DeviceGroupCheckbox>
                 </div>
 
+                <message v-if="succes" :message="succesMessage"></message>
+
                 <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
                     Изменить
                 </button>
@@ -110,11 +118,15 @@ export default {
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
+            installDevices: []
         }
     },
     mounted() {
         if(this.urlId)
             this.loadData(this.urlId)
+    },
+    computed: {
+
     },
     methods: {
         setDivices(data) {
@@ -192,5 +204,19 @@ export default {
             }
         },
     },
+    watch: {
+        'pack.devices': {
+            immediate: true,
+            handler() {
+                axios.get('/api/services/devices/namelist?ids='+this.pack.devices.join(','))
+                .then((res) => {
+                    this.installDevices = res.data.data
+                })
+                .catch(errors => {
+
+                })
+            },
+        }
+    }
 }
 </script>

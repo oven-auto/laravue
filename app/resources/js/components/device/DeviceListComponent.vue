@@ -8,6 +8,7 @@
                 <div class="h5">Список оборудования</div>
             </div>
             <div class="col text-right">
+                <button class="btn btn-success" @click="showModalDeviceFilter">Фильтр</button>
                 <router-link class="btn btn-primary" :to="'/devices/create'">Создать новое оборудование</router-link>
             </div>
         </div>
@@ -17,7 +18,7 @@
         <table v-else class="table table-hover device-table">
             <thead class="thead-dark">
                 <tr>
-                    <th style="width: 80px;">#</th>
+                    <th style="width: 80px;">#{{devices.length}}</th>
                     <th>Название</th>
                     <th>Фильтр</th>
                     <th>Тип</th>
@@ -49,6 +50,9 @@
                 </tr>
             </tbody>
         </table>
+
+        <DeviceFilterModal ref="modal" @updateParent="getDataModal"></DeviceFilterModal>
+
     </div>
 </template>
 
@@ -56,13 +60,15 @@
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import BrandBadge from '../badge/BrandBadge';
+import DeviceFilterModal from '../modal/DeviceFilterModal';
 
 export default {
     name: 'device-list',
     components: {
         Spin,
         Message,
-        BrandBadge
+        BrandBadge,
+        DeviceFilterModal,
     },
     data() {
         return {
@@ -73,14 +79,52 @@ export default {
             succes: false,
             succesMessage: null,
             currentTypeId: 0,
+            search: {
+                name: '',
+                brand_id: 0,
+                device_type_id: 0,
+                device_filter_id: 0,
+            },
         }
     },
     mounted() {
-        this.loadTypes()
+        this.initSearchFromUrl()
+        this.loadData()
     },
     methods: {
-        loadTypes() {
-            axios.get('/api/devices')
+        //инициализировать объект поиска из параметров гет юрл строки
+        initSearchFromUrl() {
+            var i = 0
+            var url = []
+            for(var key in this.$route.query)
+                this.search[key] = this.$route.query[key]
+        },
+        //Действие в ответ на действие в модали
+        getDataModal(data) {
+            this.loadData()
+        },
+        //Открыть модаль и передать ей объект поиска в свойство
+        showModalDeviceFilter() {
+            this.$refs.modal.show = true;
+            this.$refs.modal.search = this.search;
+        },
+        //Объектпоиска в строку юрл
+        searchToUrl() {
+            var mas = this.search;
+            var str = '';
+            var objUrl = {}
+            for(var key in mas)
+                if(mas[key]) {
+                    str+=key+'='+mas[key]+'&';
+                    objUrl[key] = mas[key]
+                }
+            this.$router.push('/devices/list?123')
+            this.$router.replace({query: objUrl})
+            return str;
+        },
+
+        loadData() {
+            axios.get('/api/devices?'+this.searchToUrl())
             .then(res => {
                 if(res.data.status == 1)
                     this.devices = res.data.data;

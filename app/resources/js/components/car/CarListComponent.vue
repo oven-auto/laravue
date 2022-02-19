@@ -21,7 +21,7 @@
 
             <thead class="thead-dark">
                 <tr>
-                    <th style="width: 80px;">#</th>
+                    <th style="width: 80px;">#{{data.length}}</th>
                     <th>VIN</th>
                     <th>Модель</th>
                     <th>Год</th>

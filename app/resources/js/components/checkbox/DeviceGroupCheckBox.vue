@@ -1,31 +1,42 @@
 <template>
-<div class="row">
-    <div class="col-12 h5 pb-3">
-        Оборудование
+<div class="">
+    <div class="row">
+        <div class="col-12 h5 pb-3">
+            Оборудование
+        </div>
     </div>
 
-    <div class="col-4" v-for="(chunk,k) in chunkArray(devices, Math.ceil(devices.length/3))" :key="'chunk'+k">
-        <div v-for="(itemDevice,i) in chunk" :key="'chunk-device'+i">
+    <div v-for="(typeGroup,g) in devices" :key="'group'+g" class="row" style="width: 100%;">
+        <div class="col-4" v-for="(chunk,k) in chunkArray(typeGroup, Math.ceil(typeGroup.length/3))" :key="'chunk'+k">
+            <div v-for="(itemDevice,i) in chunk" :key="'chunk-device'+i">
 
-            <div v-if="i == 0">
-                <div class="p-1" style="background: #eee;">{{itemDevice.type.name}}</div>
-            </div>
-            <div v-else-if="i != 0 && chunk[i].type.name != chunk[i-1].type.name">
-                <div class="p-1" style="background: #eee ;">{{itemDevice.type.name}}</div>
-            </div>
-
-            <label class="checkbox d-flex align-items-center" :title="itemDevice.name">
-                <input
-                    class="device-checkbox-toggle"
-                    type="checkbox"
-                    v-bind:value="itemDevice.id"
-                    v-model="selected"
-                    @change="changeDevice"
-                >
-                <div class="checkbox__text" style="overflow:hidden">
-                    {{itemDevice.name}}
+                <div v-if="i == 0">
+                    <div class="p-1" style="background: #eee;">{{itemDevice.type.name}} {{Math.ceil(typeGroup.length/3)}}</div>
                 </div>
-            </label>
+                <div v-else-if="i != 0 && chunk[i].type.name != chunk[i-1].type.name">
+                    <div class="p-1" style="background: #eee ;">{{itemDevice.type.name}}</div>
+                </div>
+
+                <div class="row">
+                    <div class="col-11">
+                        <label class="checkbox d-flex align-items-center" :title="itemDevice.name">
+                            <input
+                                class="device-checkbox-toggle"
+                                type="checkbox"
+                                v-bind:value="itemDevice.id"
+                                v-model="selected"
+                                @change="changeDevice"
+                            >
+                            <div class="checkbox__text" style="overflow:hidden">
+                                {{itemDevice.name}} {{itemDevice.checked}}
+                            </div>
+                        </label>
+                    </div>
+                    <div class="col-1 p-0">
+                        <span class="button-check" @click="checkChecked(itemDevice)"></span>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -38,10 +49,19 @@ export default {
     data() {
         return {
             devices: [],
-            selected: []
+            selected: [],
         }
     },
+
+    computed: {
+    },
+
     methods: {
+        checkChecked(itemDevice) {
+            //itemDevice.name = 1
+            itemDevice.checked = 1
+        },
+
         changeDevice() {
             this.$emit('checkDevice', {
                 devices: this.selected
@@ -55,11 +75,15 @@ export default {
             return tmp;
         },
         getDevices() {
-            var param = 'brand_id='+this.brand
+            var param = 'brand_id='+this.brand+'&group=type'
             axios.get('/api/devices?' + param)
             .then(res => {
                 this.devices = res.data.data
                 this.selected = this.install
+                for(var i in this.devices)
+                    for(var k in this.devices[i])
+                        this.devices[i][k].checked = 0
+
             })
             .catch(errors => {
 
@@ -76,3 +100,22 @@ export default {
     }
 }
 </script>
+
+<style scoped>
+.button-check{
+    border-radius: 100%;
+    background: #ececec;
+    width: 20px;
+    height: 20px;
+    display: inline-block;
+    margin-top: 8px;
+    margin-left: -5px;
+    cursor:crosshair
+}
+.button-check:hover{
+    background: #bdbdbd;
+}
+.active-input{
+    color: green;
+}
+</style>

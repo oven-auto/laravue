@@ -34,27 +34,17 @@
                     </div>
 
                     <div class="pt-3">
-                        <label for="name">Тип</label>
-                        <HtmlSelect
-                            :name="'device_type_id'"
-                            :options="types"
-                            v-model="device.device_type_id"
-                        >
-                        </HtmlSelect>
+                        <DeviceTypeSelect v-model="device.device_type_id"></DeviceTypeSelect>
                     </div>
 
                     <div class="pt-3">
-                        <label for="name">Фильтр</label>
-                        <HtmlSelect
-                            :name="'device_filter_id'"
-                            :options="filters"
-                            v-model="device.device_filter_id"
-                        >
-                        </HtmlSelect>
+                        <DeviceFilterSelect v-model="device.device_filter_id"></DeviceFilterSelect>
                     </div>
 
                 </div>
             </div>
+
+            <message v-if="succes" :message="succesMessage"></message>
 
             <button v-if="urlId" @click.prevent="updateDevice(urlId)" type="button" class="btn btn-success">
                 Изменить
@@ -77,18 +67,20 @@ import Message from '../alert/MessageComponent';
 import Spin from '../spinner/SpinComponent';
 import HtmlSelect from '../html/HtmlSelect';
 import HtmlMultiSelect from '../html/HtmlMultiSelect';
+import DeviceFilterSelect from '../html/Select/FilterDeviceSelect';
+import DeviceTypeSelect from '../html/Select/DeviceTypeSelect';
 
 export default {
     name: 'device-filter-edit',
     components: {
-        Error, Message, Spin, HtmlSelect, HtmlMultiSelect
+        Error, Message, Spin, HtmlSelect, HtmlMultiSelect,DeviceFilterSelect,DeviceTypeSelect,
     },
     data() {
         return {
             device: {
-                name: null,
-                device_type_id: null,
-                device_filter_id: null,
+                name: '',
+                device_type_id: '',
+                device_filter_id: '',
                 brand_id: []
             },
             types: [],
@@ -118,9 +110,9 @@ export default {
             .then( response => {
 
                 this.loading = false;
-                this.device.name =              response.data.device.name;
-                this.device.device_type_id =    response.data.device.device_type_id;
-                this.device.device_filter_id =  response.data.device.device_filter_id;
+                this.device.name =              response.data.device.name ?? '';
+                this.device.device_type_id =    response.data.device.device_type_id ?? '';
+                this.device.device_filter_id =  response.data.device.device_filter_id ?? '';
 
                 response.data.device.brands.forEach( (item, i) => {
                     this.device.brand_id.push(item.id)

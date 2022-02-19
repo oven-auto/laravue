@@ -20,7 +20,20 @@ class DeviceController extends Controller
         if($request->has('dops'))
             $query->where('devices.device_type_id', 6);
 
-        $devices = $query->orderBy('device_type_id')->orderBy('name')->get();
+
+        if($request->has('name'))
+            $query->where('devices.name', 'like', '%' . $request->get('name') . '%');
+
+        if($request->has('device_type_id'))
+            $query->where('devices.device_type_id', $request->get('device_type_id'));
+
+        if($request->has('device_filter_id'))
+            $query->where('devices.device_filter_id', $request->get('device_filter_id'));
+
+        $devices = $query->orderBy('devices.device_type_id')->orderBy('name')->get();
+
+        if($request->has('group') && $request->get('group') == 'type')
+            $devices = $devices->groupBy('device_type_id');
 
         if($devices->count())
             return response()->json([

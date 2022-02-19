@@ -53,7 +53,8 @@
                     brand_id: 0,
                     mark_id: 0,
                     name: '',
-                    code: ''
+                    code: '',
+                    status: ''
                 }
             }
         },

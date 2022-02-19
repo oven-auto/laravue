@@ -11,8 +11,14 @@ class ColorController extends Controller
     public function index(Request $request)
     {
         $query = Color::with('brand');
+
         if($request->has('brand_id'))
             $query->where('brand_id', $request->brand_id);
+        if($request->has('code'))
+            $query->where('colors.code', 'like', '%'.$request->get('code').'%');
+        if($request->has('name'))
+            $query->where('colors.name', 'like', '%'.$request->get('name').'%');
+
         $colors = $query->get();
 
         if($colors->count())

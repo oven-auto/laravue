@@ -42,7 +42,7 @@ class ComplectationRepository
     public function saveMain(Complectation $complectation, $data = [])
     {
         $complectation->fill($data);
-        if(!$complectation->id && !$complectation->parent_id)
+        if(!$complectation->id )
             $complectation->sort = Complectation::max('sort')+1;
         $complectation->save();
     }

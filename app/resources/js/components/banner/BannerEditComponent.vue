@@ -50,6 +50,8 @@
                     </div>
                 </div>
 
+                <message v-if="succes" :message="succesMessage"></message>
+
                 <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
                     Изменить
                 </button>

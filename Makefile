@@ -39,6 +39,9 @@ node-production:
 	sudo docker exec node-sshop yarn run production
 node-watch:
 	sudo docker exec node-sshop yarn run watch
+
+node-pack-install:
+	sudo docker exec node-sshop npm i -S $(packname)
 #изменить права на каталоги
 perm:
 	sudo chown ${USER}:${USER} ./app/bootstrap/cache -R
