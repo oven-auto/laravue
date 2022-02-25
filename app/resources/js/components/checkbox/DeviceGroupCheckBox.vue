@@ -18,8 +18,8 @@
                 </div>
 
                 <div class="row">
-                    <div class="col-11">
-                        <label class="checkbox d-flex align-items-center" :title="itemDevice.name">
+                    <div class="col-11" >
+                        <label class="checkbox d-flex align-items-center" :title="itemDevice.name" :class="{'active-input':itemDevice.checked}">
                             <input
                                 class="device-checkbox-toggle"
                                 type="checkbox"
@@ -27,13 +27,13 @@
                                 v-model="selected"
                                 @change="changeDevice"
                             >
-                            <div class="checkbox__text" style="overflow:hidden">
-                                {{itemDevice.name}} {{itemDevice.checked}}
+                            <div class="checkbox__text" style="overflow:hidden" >
+                                {{itemDevice.name}}
                             </div>
                         </label>
                     </div>
                     <div class="col-1 p-0">
-                        <span class="button-check" @click="checkChecked(itemDevice)"></span>
+                        <input type="checkbox" v-model="itemDevice.checked" class="button-check" >
                     </div>
                 </div>
             </div>
@@ -43,6 +43,7 @@
 </template>
 
 <script>
+
 export default {
     name: 'device-group-check-box',
     props: ['brand', 'install'],
@@ -57,10 +58,7 @@ export default {
     },
 
     methods: {
-        checkChecked(itemDevice) {
-            //itemDevice.name = 1
-            itemDevice.checked = 1
-        },
+
 
         changeDevice() {
             this.$emit('checkDevice', {
@@ -78,11 +76,12 @@ export default {
             var param = 'brand_id='+this.brand+'&group=type'
             axios.get('/api/devices?' + param)
             .then(res => {
+                for(var i in res.data.data)
+                    for(var k in res.data.data[i])
+                        res.data.data[i][k].checked = 0
                 this.devices = res.data.data
                 this.selected = this.install
-                for(var i in this.devices)
-                    for(var k in this.devices[i])
-                        this.devices[i][k].checked = 0
+
 
             })
             .catch(errors => {
@@ -101,7 +100,7 @@ export default {
 }
 </script>
 
-<style scoped>
+<style>
 .button-check{
     border-radius: 100%;
     background: #ececec;
@@ -110,12 +109,13 @@ export default {
     display: inline-block;
     margin-top: 8px;
     margin-left: -5px;
-    cursor:crosshair
+    cursor:crosshair;
 }
 .button-check:hover{
     background: #bdbdbd;
 }
 .active-input{
-    color: green;
+    background: green;
+    color: #fff;
 }
 </style>

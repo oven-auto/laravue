@@ -3741,10 +3741,6 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {},
   methods: {
-    checkChecked: function checkChecked(itemDevice) {
-      //itemDevice.name = 1
-      itemDevice.checked = 1;
-    },
     changeDevice: function changeDevice() {
       this.$emit('checkDevice', {
         devices: this.selected
@@ -3766,14 +3762,14 @@ __webpack_require__.r(__webpack_exports__);
 
       var param = 'brand_id=' + this.brand + '&group=type';
       axios.get('/api/devices?' + param).then(function (res) {
-        _this.devices = res.data.data;
-        _this.selected = _this.install;
-
-        for (var i in _this.devices) {
-          for (var k in _this.devices[i]) {
-            _this.devices[i][k].checked = 0;
+        for (var i in res.data.data) {
+          for (var k in res.data.data[i]) {
+            res.data.data[i][k].checked = 0;
           }
         }
+
+        _this.devices = res.data.data;
+        _this.selected = _this.install;
       })["catch"](function (errors) {});
     }
   },
@@ -19067,10 +19063,10 @@ ___CSS_LOADER_EXPORT___.push([module.id, "\n.car-list-table td[data-v-cb27ad5e]{
 
 /***/ }),
 
-/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css&":
-/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css& ***!
-  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css&":
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css& ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -19084,7 +19080,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.button-check[data-v-e690942a]{\n    border-radius: 100%;\n    background: #ececec;\n    width: 20px;\n    height: 20px;\n    display: inline-block;\n    margin-top: 8px;\n    margin-left: -5px;\n    cursor:crosshair\n}\n.button-check[data-v-e690942a]:hover{\n    background: #bdbdbd;\n}\n.active-input[data-v-e690942a]{\n    color: green;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.button-check{\n    border-radius: 100%;\n    background: #ececec;\n    width: 20px;\n    height: 20px;\n    display: inline-block;\n    margin-top: 8px;\n    margin-left: -5px;\n    cursor:crosshair;\n}\n.button-check:hover{\n    background: #bdbdbd;\n}\n.active-input{\n    background: green;\n    color: #fff;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -67651,10 +67647,10 @@ var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js
 
 /***/ }),
 
-/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css&":
-/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css& ***!
-  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css&":
+/*!***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css& ***!
+  \***********************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -67664,7 +67660,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! !../../../../node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js */ "./node_modules/style-loader/dist/runtime/injectStylesIntoStyleTag.js");
 /* harmony import */ var _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_id_e690942a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! !!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css& */ "./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css&");
 
             
 
@@ -67673,11 +67669,11 @@ var options = {};
 options.insert = "head";
 options.singleton = false;
 
-var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_id_e690942a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__["default"], options);
+var update = _node_modules_style_loader_dist_runtime_injectStylesIntoStyleTag_js__WEBPACK_IMPORTED_MODULE_0___default()(_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__["default"], options);
 
 
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_id_e690942a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_1__["default"].locals || {});
 
 /***/ }),
 
@@ -68846,9 +68842,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _DeviceGroupCheckBox_vue_vue_type_template_id_e690942a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true& */ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true&");
+/* harmony import */ var _DeviceGroupCheckBox_vue_vue_type_template_id_e690942a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./DeviceGroupCheckBox.vue?vue&type=template&id=e690942a& */ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&");
 /* harmony import */ var _DeviceGroupCheckBox_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./DeviceGroupCheckBox.vue?vue&type=script&lang=js& */ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=script&lang=js&");
-/* harmony import */ var _DeviceGroupCheckBox_vue_vue_type_style_index_0_id_e690942a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css& */ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css&");
+/* harmony import */ var _DeviceGroupCheckBox_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css& */ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css&");
 /* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! !../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
 
 
@@ -68860,11 +68856,11 @@ __webpack_require__.r(__webpack_exports__);
 
 var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_3__["default"])(
   _DeviceGroupCheckBox_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
-  _DeviceGroupCheckBox_vue_vue_type_template_id_e690942a_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render,
-  _DeviceGroupCheckBox_vue_vue_type_template_id_e690942a_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  _DeviceGroupCheckBox_vue_vue_type_template_id_e690942a___WEBPACK_IMPORTED_MODULE_0__.render,
+  _DeviceGroupCheckBox_vue_vue_type_template_id_e690942a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
   false,
   null,
-  "e690942a",
+  null,
   null
   
 )
@@ -73171,15 +73167,15 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css&":
-/*!***************************************************************************************************************************!*\
-  !*** ./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css& ***!
-  \***************************************************************************************************************************/
+/***/ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css&":
+/*!***************************************************************************************************!*\
+  !*** ./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css& ***!
+  \***************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_id_e690942a_scoped_true_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&id=e690942a&scoped=true&lang=css&");
+/* harmony import */ var _node_modules_style_loader_dist_cjs_js_node_modules_css_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_1_node_modules_vue_loader_lib_loaders_stylePostLoader_js_node_modules_postcss_loader_dist_cjs_js_clonedRuleSet_9_0_rules_0_use_2_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_style_index_0_lang_css___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/style-loader/dist/cjs.js!../../../../node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!../../../../node_modules/vue-loader/lib/loaders/stylePostLoader.js!../../../../node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css& */ "./node_modules/style-loader/dist/cjs.js!./node_modules/css-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[1]!./node_modules/vue-loader/lib/loaders/stylePostLoader.js!./node_modules/postcss-loader/dist/cjs.js??clonedRuleSet-9[0].rules[0].use[2]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=style&index=0&lang=css&");
 
 
 /***/ }),
@@ -73561,19 +73557,19 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
-/***/ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true&":
-/*!*************************************************************************************************************!*\
-  !*** ./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true& ***!
-  \*************************************************************************************************************/
+/***/ "./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&":
+/*!*************************************************************************************************!*\
+  !*** ./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a& ***!
+  \*************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_template_id_e690942a_scoped_true___WEBPACK_IMPORTED_MODULE_0__.render),
-/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_template_id_e690942a_scoped_true___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_template_id_e690942a___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_template_id_e690942a___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
-/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_template_id_e690942a_scoped_true___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true&");
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_DeviceGroupCheckBox_vue_vue_type_template_id_e690942a___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./DeviceGroupCheckBox.vue?vue&type=template&id=e690942a& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&");
 
 
 /***/ }),
@@ -76693,10 +76689,10 @@ render._withStripped = true
 
 /***/ }),
 
-/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true&":
-/*!****************************************************************************************************************************************************************************************************************************************************!*\
-  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&scoped=true& ***!
-  \****************************************************************************************************************************************************************************************************************************************************/
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a&":
+/*!****************************************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/checkbox/DeviceGroupCheckBox.vue?vue&type=template&id=e690942a& ***!
+  \****************************************************************************************************************************************************************************************************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -76767,6 +76763,7 @@ var render = function () {
                           "label",
                           {
                             staticClass: "checkbox d-flex align-items-center",
+                            class: { "active-input": itemDevice.checked },
                             attrs: { title: itemDevice.name },
                           },
                           [
@@ -76824,8 +76821,6 @@ var render = function () {
                                 _vm._v(
                                   "\n                                " +
                                     _vm._s(itemDevice.name) +
-                                    " " +
-                                    _vm._s(itemDevice.checked) +
                                     "\n                            "
                                 ),
                               ]
@@ -76835,11 +76830,50 @@ var render = function () {
                       ]),
                       _vm._v(" "),
                       _c("div", { staticClass: "col-1 p-0" }, [
-                        _c("span", {
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: itemDevice.checked,
+                              expression: "itemDevice.checked",
+                            },
+                          ],
                           staticClass: "button-check",
+                          attrs: { type: "checkbox" },
+                          domProps: {
+                            checked: Array.isArray(itemDevice.checked)
+                              ? _vm._i(itemDevice.checked, null) > -1
+                              : itemDevice.checked,
+                          },
                           on: {
-                            click: function ($event) {
-                              return _vm.checkChecked(itemDevice)
+                            change: function ($event) {
+                              var $$a = itemDevice.checked,
+                                $$el = $event.target,
+                                $$c = $$el.checked ? true : false
+                              if (Array.isArray($$a)) {
+                                var $$v = null,
+                                  $$i = _vm._i($$a, $$v)
+                                if ($$el.checked) {
+                                  $$i < 0 &&
+                                    _vm.$set(
+                                      itemDevice,
+                                      "checked",
+                                      $$a.concat([$$v])
+                                    )
+                                } else {
+                                  $$i > -1 &&
+                                    _vm.$set(
+                                      itemDevice,
+                                      "checked",
+                                      $$a
+                                        .slice(0, $$i)
+                                        .concat($$a.slice($$i + 1))
+                                    )
+                                }
+                              } else {
+                                _vm.$set(itemDevice, "checked", $$c)
+                              }
                             },
                           },
                         }),
