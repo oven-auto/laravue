@@ -23,6 +23,18 @@
                         <input type="text" name="name" v-model="countryfactory.city" class="form-control"/>
                     </div>
                 </div>
+
+                <div class="col-6">
+                    <div >
+                        <label for="name">Дистрибьютор</label>
+                        <input type="text" name="name" v-model="countryfactory.distributor" class="form-control"/>
+                    </div>
+
+                    <div >
+                        <label for="name">Логистический центр</label>
+                        <input type="text" name="name" v-model="countryfactory.logistic" class="form-control"/>
+                    </div>
+                </div>
             </div>
 
             <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
@@ -52,8 +64,7 @@ export default {
     data() {
         return {
             countryfactory: {
-                city: null,
-                country: null
+
             },
             notFound: false,
             loading: true,

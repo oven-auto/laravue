@@ -1,5 +1,5 @@
 <template>
-    <div class="color-icon" :style="{ background: bg}">
+    <div class="color-icon" :style="{ background: bg}" :class="(current == colors) ? 'checked-color-icon' : ''">
 
     </div>
 </template>
@@ -19,12 +19,7 @@ export default {
         else
             this.background = colorArr[0];*/
     },
-    props: {
-        colors: {
-            type: String,
-            default: null
-        }
-    },
+    props: ['colors', 'current'],
     computed: {
         bg() {
             var back = ''
@@ -50,5 +45,9 @@ export default {
 }
 .color-icon:hover{
     transform: scale(1.1, 1.1);
+}
+.checked-color-icon{
+    border: 5px solid #fff;
+    box-shadow: 0 0 5px #000;
 }
 </style>

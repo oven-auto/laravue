@@ -66,8 +66,37 @@ Route::resource('sectionpages', \App\Http\Controllers\Api\v1\SectionPageControll
 Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
 Route::prefix('services')->group(function () {
-   Route::post('complectations/sort', [\App\Http\Controllers\Api\v1\Complectation\ComplectationSortController::class, 'index']);
+
+   Route::patch('complectations/price', [\App\Http\Controllers\Api\v1\Complectation\ComplectationPriceController::class, 'index']);
    Route::get('devices/namelist', [\App\Http\Controllers\Api\v1\Device\DeviceNameListController::class, 'index']);
+   Route::delete('marks/document', [\App\Http\Controllers\Api\v1\Mark\MarkDocumentDeleteController::class, 'index']);
+   Route::patch('packs/price', [\App\Http\Controllers\Api\v1\Pack\PackPriceController::class, 'index']);
+   Route::get('marks/namelist', [\App\Http\Controllers\Api\v1\Mark\MarkNameListController::class, 'index']);
+
+   Route::prefix('sort')->group(function () {
+        Route::patch('complectations', [\App\Http\Controllers\Api\v1\Complectation\ComplectationSortController::class, 'index']);
+        Route::patch('marks',[\App\Http\Controllers\Api\v1\Services\Sort\Mark\MarkSortController::class, 'index']);
+        Route::patch('devicetypes', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceTypeSortController::class, 'index']);
+        Route::patch('devicefilters', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceFilterSortController::class, 'index']);
+   });
+
+   Route::prefix('count')->group(function () {
+       Route::get('cars', [\App\Http\Controllers\Api\v1\Services\Count\CarComplectCountController::class,'index']);
+   });
+
+   Route::prefix('html')->group(function () {
+       Route::prefix('select')->group(function () {
+           Route::get('toxic', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorToxicController::class, 'index']);
+       });
+   });
+});
+
+Route::prefix('breadcrumbs')->group(function(){
+    Route::get('packs/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\PackBreadCrumbsController::class, 'title']);
+    Route::get('devices/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\DeviceBreadCrumbsController::class, 'title']);
+    Route::get('colors/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\ColorBreadCrumbsController::class, 'title']);
+    Route::get('complectations/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\ComplectationBreadCrumbsController::class, 'title']);
+    Route::get('cars/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\CarBreadCrumbsController::class, 'title']);
 });
 
 Route::group(['prefix' => 'front'], function() {

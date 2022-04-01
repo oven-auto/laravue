@@ -39,17 +39,20 @@
         </tr>
     </table> -->
 
-    <div class="row marks-row" v-else>
+    <draggable v-model="marks" tag="div" :component-data="getComponentData()" class="row marks-row">
         <div class="col-3 "  v-for="mark in marks" >
             <router-link :to="toEdit + mark.id">
             <div class="border rounded py-3 mark-col">
+
                 <div :class="{'gray-image': mark.status==0}">
+
                     <div class="text-center">
                         {{mark.predix}}
                         {{mark.brand.name}}
                         <b>{{mark.name}}</b>
+                        <ion-icon class="drag-icon pr-3" name="ellipsis-vertical"></ion-icon>
                     </div>
-                    <img :src="writeImage(mark.icon.image)" >
+                    <img :src="(mark.icon.image)" >
                     <div class="text-muted text-center">
                         <small>{{mark.bodywork.name}}</small>
                     </div>
@@ -57,7 +60,7 @@
             </div>
             </router-link>
         </div>
-    </div>
+    </draggable>
 
 </div>
 
@@ -66,12 +69,14 @@
 <script>
 import Spin from '../spinner/SpinComponent';
 import BrandBadge from '../badge/BrandBadge';
+import draggable from 'vuedraggable'
 
 export default {
     name: 'mark-list',
     components: {
         Spin,
-        BrandBadge
+        BrandBadge,
+        draggable
     },
     data() {
         return {
@@ -85,6 +90,49 @@ export default {
         this.loadData()
     },
     methods: {
+        inputChanged(value) {
+            var oldIndex = value.oldIndex
+            var newIndex = value.newIndex
+
+            var data = {
+                active: {
+                    id: this.marks[newIndex].id,
+                },
+                second: {
+                    id: this.marks[oldIndex].id,
+                }
+            }
+            this.changeSort(data)
+        },
+
+        changeSort(obj) {
+            this.loading = true
+            axios.patch('/api/services/sort/marks', obj, this.getConfig())
+            .then((res)=>{
+                this.loadData()
+            })
+            .catch((error)=>{
+
+            })
+            .finally(()=>{
+                this.loading = false
+            })
+        },
+
+        getComponentData() {
+            return {
+                on: {
+                    update: this.inputChanged
+                },
+                attrs:{
+                    wrap: true
+                },
+                props: {
+                    value: this.activeNames
+                }
+            };
+        },
+
         writeImage(url) {
             return storageUrl+url;
         },
@@ -104,7 +152,13 @@ export default {
                 this.loading = false;
                 this.notFound = true;
             })
-        }
+        },
+
+        getConfig() {
+            return {
+                'content-type': 'application-json'
+            }
+        },
     }
 }
 </script>

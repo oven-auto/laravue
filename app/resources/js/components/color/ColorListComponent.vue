@@ -3,13 +3,19 @@
 
         <message v-if="succes" :message="succesMessage"></message>
 
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Палитра цветов</div>
+                <div class="h-title">Палитра цветов</div>
             </div>
             <div class="col text-right">
-                <button class="btn btn-success" @click="showModalColorFilter">Фильтр</button>
-                <router-link class="btn btn-primary" :to="'/colors/create'">Создать новый цвет</router-link>
+
+                <router-link class="btn btn-primary" :to="'/colors/create'">Добавить новый цвет</router-link>
+                <button class="btn btn-success" @click="showModalColorFilter">Поиск</button>
+
+            </div>
+
+            <div class="col-12" >
+                <FilterBreadCrumbs :search="search" :type="'colors'" @updateParent="getDataModal"></FilterBreadCrumbs>
             </div>
         </div>
 
@@ -55,6 +61,7 @@ import Message from '../alert/MessageComponent';
 import ColorIcon from '../html/ColorIcon';
 import BrandBadge from '../badge/BrandBadge';
 import ColorFilterModal from '../modal/ColorFilterModal';
+import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
 
 export default {
     name: 'color-list',
@@ -64,6 +71,7 @@ export default {
         ColorIcon,
         BrandBadge,
         ColorFilterModal,
+        FilterBreadCrumbs
     },
     data() {
         return {

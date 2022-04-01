@@ -3,31 +3,39 @@
 
         <message v-if="succes" :message="succesMessage"></message>
 
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Список групп оборудования</div>
+                <div class="h-title">Список фильтров по оборудованию</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/devicefilters/create'">Создать новую группу</router-link>
+                <router-link class="btn btn-primary" :to="'/devicefilters/create'">Создать новый фильтр</router-link>
             </div>
         </div>
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
-            <tr>
-                <th style="width: 80px;">#</th>
-                <th>Название</th>
-            </tr>
+        <table v-else class="table table-hover">
+            <thead class="thead-dark">
+                <tr>
+                    <th style="width: 80px;">#</th>
+                    <th>Название</th>
+                </tr>
+            </thead>
 
-            <tr v-for="type in types">
-                <td>
-                    <router-link :to="toEdit + type.id">
-                        Open
-                    </router-link>
-                </td>
-                <td>{{ type.name }}</td>
-            </tr>
+            <draggable v-model="types" tag="tbody" :component-data="getComponentData()">
+                <tr v-for="type in types">
+                    <td>
+                        <router-link :to="toEdit + type.id">
+                            Open
+                        </router-link>
+                    </td>
+                    <td>
+                        {{ type.name }}
+
+                        <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+                    </td>
+                </tr>
+            </draggable>
         </table>
     </div>
 </template>
@@ -35,12 +43,14 @@
 <script>
 import Spin from '../../spinner/SpinComponent';
 import Message from '../../alert/MessageComponent';
+import draggable from 'vuedraggable';
 
 export default {
     name: 'device-filter-list',
     components: {
         Spin,
-        Message
+        Message,
+        draggable
     },
     data() {
         return {
@@ -56,6 +66,47 @@ export default {
         this.loadTypes()
     },
     methods: {
+        inputChanged(value) {
+            var oldIndex = value.oldIndex
+            var newIndex = value.newIndex
+
+            var data = {
+                active: {
+                    id: this.types[newIndex].id,
+                },
+                second: {
+                    id: this.types[oldIndex].id,
+                }
+            }
+            this.changeSort(data)
+        },
+
+        changeSort(obj) {
+            this.loading = true
+            axios.patch('/api/services/sort/devicefilters', obj, this.getConfig())
+            .then((res)=>{
+                this.loadTypes()
+            })
+            .catch((error)=>{
+
+            })
+            .finally(()=>{
+                this.loading = false
+            })
+        },
+        getComponentData() {
+            return {
+                on: {
+                    update: this.inputChanged
+                },
+                attrs:{
+                    wrap: true
+                },
+                props: {
+                    value: this.activeNames
+                }
+            };
+        },
         loadTypes() {
             axios.get('/api/devicefilters')
             .then(res => {
@@ -70,7 +121,12 @@ export default {
             .catch(errors => {
                 console.log(errors)
             })
-        }
+        },
+        getConfig() {
+            return {
+                'content-type': 'application-json'
+            }
+        },
     }
 }
 </script>

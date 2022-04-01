@@ -14,7 +14,9 @@
                     </div>
 
                     <div class="col-6">
-                        <MarkSelect v-model="search.mark_id"></MarkSelect>
+                        <MarkSelect v-model="search.mark_id" :actual="1" :title="'Актуальные модель'"></MarkSelect>
+
+                        <MarkSelect v-model="search.mark_id" :nonactual="1" :title="'Архивная модель'"></MarkSelect>
                     </div>
                 </div>
             </div>

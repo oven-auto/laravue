@@ -19,9 +19,8 @@
                         <div class="dropdown-divider"></div>
 
                         <router-link :to="'/devicetypes/list'" class="dropdown-item">Типы оборудование</router-link>
-                        <router-link :to="'/devicefilters/list'" class="dropdown-item">Группы оборудования</router-link>
+                        <router-link :to="'/devicefilters/list'" class="dropdown-item">Фильтры по оборудованию</router-link>
                         <router-link :to="'/devices/list'" class="dropdown-item">Оборудование</router-link>
-                        <router-link :to="'/packs/list'" class="dropdown-item">Опции</router-link>
 
                         <div class="dropdown-divider"></div>
 
@@ -44,7 +43,7 @@
 
                          <div class="dropdown-divider"></div>
 
-                        <router-link :to="'/countryfactories/list'" class="dropdown-item">Места происхождения</router-link>
+                        <router-link :to="'/countryfactories/list'" class="dropdown-item">Производители</router-link>
 
                     </div>
                 </li>
@@ -55,12 +54,21 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                         <router-link :to="'/marks/list'" class="dropdown-item">Модели</router-link>
+                        <div class="dropdown-divider"></div>
+                        <router-link :to="'/packs/list'" class="dropdown-item">Опции</router-link>
+                        <div class="dropdown-divider"></div>
                         <router-link :to="'/complectations/list'" class="dropdown-item">Комплектации</router-link>
                     </div>
                 </li>
 
-                <li class="nav-item">
-                    <router-link :to="'/cars/list/1'" class="nav-link">Склад</router-link>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Склад
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <router-link :to="'/cars/list/1'" class="dropdown-item">Актуальные</router-link>
+                        <router-link :to="'/cars/list/archive/1'" class="dropdown-item">Архив</router-link>
+                    </div>
                 </li>
 
                 <li class="nav-item">

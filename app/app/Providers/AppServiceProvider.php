@@ -25,5 +25,6 @@ class AppServiceProvider extends ServiceProvider
     {
         \App\Models\Brand::observe(\App\Observers\BrandObserver::class);
         \App\Models\Mark::observe(\App\Observers\MarkObserver::class);
+        \App\Models\CarFixedPrice::observe(\App\Observers\FixedCarPrice::class);
     }
 }

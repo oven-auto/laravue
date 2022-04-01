@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 
 class Car extends Model
 {
     use HasFactory;
+    use SoftDeletes;
 
     protected $guarded = [];
 
@@ -51,5 +53,10 @@ class Car extends Model
     public function equipments()
     {
         return $this->belongsToMany(\App\Models\Device::class, 'car_equipments', 'car_id');
+    }
+
+    public function fixedprice()
+    {
+        return $this->hasOne(\App\Models\CarFixedPrice::class,'car_id','id')->withDefault();
     }
 }

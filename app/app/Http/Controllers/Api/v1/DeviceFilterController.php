@@ -10,7 +10,7 @@ class DeviceFilterController extends Controller
 {
     public function index()
     {
-        $devicefilters = DeviceFilter::get();
+        $devicefilters = DeviceFilter::orderBy('sort')->get();
         if($devicefilters->count())
             return response()->json([
                 'status' => 1,
@@ -26,7 +26,9 @@ class DeviceFilterController extends Controller
 
     public function store(DeviceFilter $devicefilter, Request $request)
     {
-        $devicefilter->fill($request->input())->save();
+        $devicefilter->fill($request->input());
+        $devicefilter->sort = DeviceFilter::max('sort')+1;
+        $devicefilter->save();
         return response()->json([
             'status' => 1,
             'filter' => $devicefilter,

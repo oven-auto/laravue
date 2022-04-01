@@ -1,22 +1,25 @@
 <template>
 <div id="property-list">
-    <div class="row pb-3">
+    <div class="row pb-3 d-flex align-items-center">
         <div class="col">
-            <div class="h5">Список типов кузовов</div>
+            <div class="h-title">Список типов кузовов</div>
         </div>
         <div class="col text-right">
-            <router-link class="btn btn-primary" :to="'/bodyworks/create'">Создать новый кузов</router-link>
+            <router-link class="btn btn-primary" :to="'/bodyworks/create'">Добавить новый кузов</router-link>
         </div>
     </div>
 
     <spin v-if="loading"></spin>
 
-    <table v-else class="table">
+    <table v-else class="table table-hover">
+        <thead class="thead-dark">
         <tr>
             <th style="width: 80px;">#</th>
             <th>Название</th>
         </tr>
+        </thead>
 
+        <tbody>
         <tr v-for="bodywork in bodyworks">
             <td>
                 <router-link :to="toEdit + bodywork.id">
@@ -25,6 +28,7 @@
             </td>
             <td>{{ bodywork.name }}</td>
         </tr>
+        </tbody>
     </table>
 </div>
 </template>

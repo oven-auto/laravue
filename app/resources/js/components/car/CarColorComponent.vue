@@ -1,13 +1,14 @@
 <template>
 <div class="row">
     <div class="col text-center">
+        <div>{{currentColor.color.name}}</div>
         <div class="">
             <img :src="currentImg" style="display:inline-block; width: 300px;">
         </div>
         <div style="display:inline-block;" class=" text-center mx-2" v-for="item in colors">
             <div v-on:click="clickColor(item.id)">
                 <div>{{item.color.code}}</div>
-                <ColorIcon :colors="item.color.web"></ColorIcon>
+                <ColorIcon :colors="item.color.web" :current="currentColor.color.web"></ColorIcon>
             </div>
         </div>
     </div>

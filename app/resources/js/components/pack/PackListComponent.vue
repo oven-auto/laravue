@@ -3,29 +3,34 @@
 
         <message v-if="succes" :message="succesMessage"></message>
 
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center" style="border 1px solid">
             <div class="col">
-                <div class="h5">Пакеты опций</div>
+                <div class="h-title">Cписок опций</div>
             </div>
             <div class="col text-right">
-                <button class="btn btn-success" @click="showModalPackFilter">Фильтр</button>
-                <router-link class="btn btn-primary" :to="'/packs/create'">Создать новую опцию</router-link>
+                <router-link class="btn btn-primary" :to="'/packs/create'">Добавить новую опцию</router-link>
+                <button class="btn btn-success" @click="showModalPackFilter">Поиск</button>
             </div>
+
+            <div class="col-12" >
+                <FilterBreadCrumbs :search="search" :type="'packs'" @updateParent="getDataModal"></FilterBreadCrumbs>
+            </div>
+
         </div>
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table pack-table table-hover" >
+        <table v-else class="table pack-table table-hover">
             <thead class="table-dark">
-            <tr>
-                <th style="width: 80px;">#{{data.length}}</th>
-                <th style="width: 18% ">Цена</th>
-                <th>Код</th>
-                <th>Название</th>
-                <th>Бренд</th>
-                <th>Модель</th>
-                <th>Оборудование</th>
-            </tr>
+                <tr>
+                    <th>#{{data.length}}</th>
+                    <th>Цена</th>
+                    <th>Код</th>
+                    <th>Название</th>
+                    <th>Бренд</th>
+                    <th>Модель</th>
+                    <th>Оборудование</th>
+                </tr>
             </thead>
 
             <tbody class="">
@@ -35,7 +40,19 @@
                         Open
                     </router-link>
                 </td>
-                <td>{{ formatPrice(item.price) }}</td>
+
+                <td>
+                    <div @click="showPriceModal(item.id)" v-if="statusPriceClick != item.id" style="width:130px;">
+                        {{ formatPrice(item.price) }}
+                    </div>
+                    <div class="input-group" v-else style="width:130px;">
+                        <input type="text" class="form-control" v-model="item.price" aria-describedby="basic-addon2" onFocus="this.select()">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary input-group-text" @click="changePrice(item)">OK</button>
+                        </div>
+                    </div>
+                </td>
+
                 <td>{{ item.code }}</td>
                 <td>{{ item.name }}</td>
                 <td>
@@ -66,6 +83,7 @@ import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import BrandBadge from '../badge/BrandBadge';
 import PackModalFilter from '../modal/PackFilterModal';
+import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
 
 export default {
     name: 'color-list',
@@ -74,7 +92,9 @@ export default {
         Message,
         BrandBadge,
         PackModalFilter,
+        FilterBreadCrumbs,
     },
+
     data() {
         return {
             data: [],
@@ -87,7 +107,8 @@ export default {
                 code: '',
                 brand_id: 0,
                 mark_id: 0,
-            }
+            },
+            statusPriceClick: 0,
         }
     },
     mounted() {
@@ -95,6 +116,25 @@ export default {
         this.loadData()
     },
     methods: {
+        showPriceModal(id) {
+            this.statusPriceClick = id
+        },
+
+        changePrice(pack) {
+            var data = {
+                id: pack.id,
+                price: pack.price
+            }
+            axios.patch('/api/services/packs/price', data, this.getConfig())
+            .then(res => {
+
+            }).catch(errors => {
+
+            }).finally(()=>{
+                this.statusPriceClick = 0
+            })
+        },
+
         formatPrice(price)  {
             return number_format(price,0,'',' ','руб.')
         },
@@ -143,8 +183,16 @@ export default {
             })
             .catch(errors => {
                 console.log(errors)
+            }).finally( () => {
+
             })
-        }
+        },
+
+        getConfig() {
+            return {
+                'content-type': 'application-json'
+            }
+        },
     }
 }
 </script>
@@ -156,4 +204,5 @@ export default {
 .pack-table td{
     vertical-align: middle;
 }
+
 </style>

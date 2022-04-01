@@ -11,7 +11,7 @@
             <div v-for="(itemDevice,i) in chunk" :key="'chunk-device'+i">
 
                 <div v-if="i == 0">
-                    <div class="p-1" style="background: #eee;">{{itemDevice.type.name}} {{Math.ceil(typeGroup.length/3)}}</div>
+                    <div class="p-1" style="background: #eee;">{{itemDevice.type.name}}</div>
                 </div>
                 <div v-else-if="i != 0 && chunk[i].type.name != chunk[i-1].type.name">
                     <div class="p-1" style="background: #eee ;">{{itemDevice.type.name}}</div>

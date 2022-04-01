@@ -18,6 +18,10 @@ class Motor extends Model
         return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
     }
 
+    public function toxic(){
+        return $this->hasOne(\App\Models\MotorToxic::class, 'id', 'motor_toxic_id')->withDefault();
+    }
+
     public function transmission()
     {
         return $this->hasOne(\App\Models\MotorTransmission::class, 'id', 'motor_transmission_id')->withDefault();
@@ -35,6 +39,6 @@ class Motor extends Model
 
     public function scopeFullData($query)
     {
-        return $query->with(['transmission', 'type', 'brand', 'driver']);
+        return $query->with(['transmission', 'type', 'brand', 'driver','toxic']);
     }
 }

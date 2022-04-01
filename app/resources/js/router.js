@@ -66,6 +66,9 @@ import sectionPageEdit from './components/page/SectionPageEditComponent';
 import pageList from './components/page/PageListComponent';
 import pageEdit from './components/page/PageEditComponent';
 
+import carArchiveList from './components/cararchive/CarArchiveList';
+import carArchiveShow from './components/cararchive/CarArchiveShow';
+
 const routes = [
     {
         path: '/',
@@ -311,6 +314,17 @@ const routes = [
     {
         path: '/cars/edit/:id',
         component: carEdit
+    },
+    ///////////
+    //ARCHIVE CAR           ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/cars/list/archive/:page?',
+        component:carArchiveList
+    },
+    {
+        path: '/cars/archive/:id?',
+        component: carArchiveShow
     },
     ///////////
     //CREDIT    ///////////////////////////////////////////////////////////////////////////////////////////

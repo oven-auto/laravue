@@ -40,11 +40,12 @@ class CreateCarDevicesViewSQL extends Command
     {
         $query = "CREATE VIEW car_equipments AS
             SELECT DISTINCT cars.id as car_id, devices.id as device_id, devices.device_filter_id
-            FROM cars 
+            FROM cars
             LEFT JOIN complectation_devices on complectation_devices.complectation_id = cars.complectation_id
             LEFT JOIN car_packs on car_packs.car_id = cars.id
             LEFT JOIN pack_devices on pack_devices.pack_id = car_packs.pack_id
             JOIN devices on devices.id = complectation_devices.device_id or devices.id = pack_devices.device_id
+            WHERE cars.deleted_at IS NULL
             ORDER BY cars.id
         ";
 

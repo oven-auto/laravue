@@ -11,3 +11,32 @@
 @import 'checkbox';
 
 @import 'color';
+
+.badge{
+    padding: 5px;
+}
+.h-title{
+    font-size: 20px;
+}
+thead th {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: rgba(20,20,20,0.9);
+}
+
+.badge-search{
+    color: #666;
+    background: #eee;
+    font-weight: normal;
+}
+.drag-icon{
+    float:right;font-size: 1.2rem;
+}
+.drag-icon-top-left{
+    position: absolute;
+    right: 5%;
+    top:15px;
+    font-size: 1.2rem;
+}

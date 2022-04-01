@@ -81,6 +81,12 @@
                             v-model="motor.motor_driver_id"
                         >
                         </MotorDriverSelect>
+
+                        <MotorToxic
+                            :name="'motor_toxic_id'"
+                            v-model="motor.motor_toxic_id"
+                        >
+                        </MotorToxic>
                     </div>
                 </div>
 
@@ -106,11 +112,12 @@ import BrandSelect from '../html/BrandSelect.vue';
 import MotorTypeSelect from '../html/MotorTypeSelect.vue';
 import MotorTransmissionSelect from '../html/MotorTransmissionSelect.vue';
 import MotorDriverSelect from '../html/MotorDriverSelect.vue';
+import MotorToxic from '../html/Select/ToxicSelect';
 
 export default {
     name: 'motor-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MotorTypeSelect,MotorTransmissionSelect,MotorDriverSelect
+        Error, Message, Spin, BrandSelect, MotorTypeSelect,MotorTransmissionSelect,MotorDriverSelect,MotorToxic
     },
     data() {
         return {
@@ -120,6 +127,7 @@ export default {
                 motor_transmission_id: 0,
                 motor_driver_id: 0,
                 motor_type_id: 0,
+                motor_toxic_id: '',
                 size: 0,
                 power: 0,
                 valve: 0
@@ -190,6 +198,7 @@ export default {
             formData.append('motor_type_id', this.motor.motor_type_id);
             formData.append('motor_transmission_id', this.motor.motor_transmission_id);
             formData.append('motor_driver_id', this.motor.motor_driver_id);
+            formData.append('motor_toxic_id', this.motor.motor_toxic_id);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

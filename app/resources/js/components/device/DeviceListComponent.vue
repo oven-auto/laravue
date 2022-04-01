@@ -3,14 +3,21 @@
 
         <message v-if="succes" :message="succesMessage"></message>
 
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Список оборудования</div>
+                <div class="h-title">Список оборудования</div>
             </div>
             <div class="col text-right">
-                <button class="btn btn-success" @click="showModalDeviceFilter">Фильтр</button>
-                <router-link class="btn btn-primary" :to="'/devices/create'">Создать новое оборудование</router-link>
+
+                <router-link class="btn btn-primary" :to="'/devices/create'">Добавить новое оборудование</router-link>
+                <button class="btn btn-success" @click="showModalDeviceFilter">Поиск</button>
+
             </div>
+
+            <div class="col-12" >
+                <FilterBreadCrumbs :search="search" :type="'devices'" @updateParent="getDataModal"></FilterBreadCrumbs>
+            </div>
+
         </div>
 
         <spin v-if="loading"></spin>
@@ -61,6 +68,7 @@ import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import BrandBadge from '../badge/BrandBadge';
 import DeviceFilterModal from '../modal/DeviceFilterModal';
+import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
 
 export default {
     name: 'device-list',
@@ -69,6 +77,7 @@ export default {
         Message,
         BrandBadge,
         DeviceFilterModal,
+        FilterBreadCrumbs,
     },
     data() {
         return {

@@ -161,10 +161,14 @@ Class MarkRepository
                 unset($item->pivot);
             }
 
-        $mark->document->brochure = asset('storage'.$mark->document->brochure) . $time;
-        $mark->document->price = asset('storage'.$mark->document->price) . $time;
-        $mark->document->manual = asset('storage'.$mark->document->manual) . $time;
-        $mark->document->accessory = asset('storage'.$mark->document->accessory) . $time;
+        if($mark->document->brochure)
+            $mark->document->brochure = asset('storage'.$mark->document->brochure);
+        if($mark->document->price)
+            $mark->document->price = asset('storage'.$mark->document->price);
+        if($mark->document->manual)
+            $mark->document->manual = asset('storage'.$mark->document->manual);
+        if($mark->document->accessory)
+            $mark->document->accessory = asset('storage'.$mark->document->accessory);
 
         if($mark->markcolors->count())
             foreach($mark->markcolors as $itemColor)

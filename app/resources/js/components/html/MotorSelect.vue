@@ -5,6 +5,12 @@
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in motors" :value="item.id">
                 {{ item.name }}
+                {{ item.size }}
+                {{item.type.acronym}}
+                ({{ item.power}}л.с.)
+                {{item.valve}}кл.
+                {{item.transmission.acronym}}
+                {{item.driver.acronym}}
             </option>
         </select>
     </div>

@@ -16,7 +16,10 @@ class MarkController extends Controller
         if($request->has('brand_id'))
             $query->where('brand_id', $request->get('brand_id'));
 
-        $marks = $query->get();
+        $marks = $query->orderBy('status','DESC')->orderBy('sort')->get();
+        foreach($marks as $item) {
+            $item->icon->image =  asset('storage'.$item->icon->image);
+        }
 
         if($marks->count())
             return response()->json([
@@ -42,7 +45,9 @@ class MarkController extends Controller
 
     public function store(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
     {
-        $service->saveMark($mark, $request->all());
+        $data = $request->all();
+        $data['sort'] = Mark::max('sort')+1;
+        $service->saveMark($mark, $data);
 
         return response()->json([
             'status' => 1,

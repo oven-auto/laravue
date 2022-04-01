@@ -6,14 +6,19 @@
 
         <div class="col">
 
-            <div class="">
-                Брошюра
+            <div class="row">
+                <div class="col">
+                    Брошюра
+                </div>
+                <div class="col text-right" v-if="brochure">
+                       <span class="pointer" aria-hidden="true" @click="delDocument('brochure')">&times;</span>
+                </div>
             </div>
             <div v-if="(brochure)" class="pb-3">
-                <a :href="mark.document.brochure" target="_blank">Фаил</a>
+                <a :href="mark.document.brochure" target="_blank">Смотреть</a>
             </div>
-            <div v-else class="pb-3">
-                {{ mark.document.brochure ? 'Новый фаил выбран' : ''}}
+            <div v-else class="pb-3 text-muted">
+                {{ mark.document.brochure ? 'Новый фаил выбран' : 'Фаил отсутствует'}}
             </div>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" id="brochure" name="brochure" @change="onAttachmentChange">
@@ -23,14 +28,19 @@
         </div>
 
         <div class="col">
-            <div class="">
-                Прайс
+            <div class="row">
+                <div class="col">
+                    Прайс
+                </div>
+                <div v-if="price" class="col text-right">
+                    <span class="pointer" aria-hidden="true" @click="delDocument('price')">&times;</span>
+                </div>
             </div>
             <div v-if="price" class="pb-3">
-                <a :href="mark.document.price" target="_blank">Фаил</a>
+                <a :href="mark.document.price" target="_blank">Смотреть</a>
             </div>
-            <div v-else class="pb-3">
-                {{ mark.document.price ? 'Новый фаил выбран' : ''}}
+            <div v-else class="pb-3 text-muted">
+                {{ mark.document.price ? 'Новый фаил выбран' : 'Фаил отсутствует'}}
             </div>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" id="price" name="price"  @change="onAttachmentChange">
@@ -40,14 +50,19 @@
         </div>
 
         <div class="col">
-            <div class="">
-                Мануал
+            <div class="row">
+                <div class="col">
+                    Мануал
+                </div>
+                <div class="col text-right" v-if="manual">
+                       <span class="pointer" aria-hidden="true" @click="delDocument('manual')">&times;</span>
+                </div>
             </div>
             <div v-if="manual" class="pb-3">
-                <a :href="mark.document.manual" target="_blank">Фаил</a>
+                <a :href="mark.document.manual" target="_blank">Смотреть</a>
             </div>
-            <div v-else class="pb-3">
-                {{ mark.document.manual ? 'Новый фаил выбран' : ''}}
+            <div v-else class="pb-3 text-muted">
+                {{ mark.document.manual ? 'Новый фаил выбран' : 'Фаил отсутствует'}}
             </div>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" id="manual" name="manual"  @change="onAttachmentChange">
@@ -57,14 +72,19 @@
         </div>
 
         <div class="col">
-            <div class="">
-                Аксессуары
+            <div class="row">
+                <div class="col">
+                    Аксессуары
+                </div>
+                <div class="col text-right" v-if="accessory">
+                       <span class="pointer" aria-hidden="true" @click="delDocument('accessory')">&times;</span>
+                </div>
             </div>
             <div v-if="accessory" class="pb-3">
-                <a :href="mark.document.accessory" target="_blank">Фаил</a>
+                <a :href="mark.document.accessory" target="_blank">Смотреть</a>
             </div>
-            <div v-else class="pb-3">
-                {{ mark.document.accessory ? 'Новый фаил выбран' : ''}}
+            <div v-else class="pb-3 text-muted">
+                {{ mark.document.accessory ? 'Новый фаил выбран' : 'Фаил отсутствует'}}
             </div>
             <div class="custom-file">
                 <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentChange">
@@ -78,6 +98,11 @@
 <script>
 export default {
     name: 'MarkDocument',
+    data() {
+        return {
+            type: '',
+        }
+    },
     props: {
         mark: {
             document: {
@@ -103,6 +128,33 @@ export default {
         },
     },
     methods: {
+        delDocument(type) {
+            this.type = type
+            this.mark.document[type] = ''
+            axios.post('/api/services/marks/document', this.getFormData(), this.getConfig())
+            .then(res => {
+
+            }).catch(error => {
+
+            }).finally(()=>{
+
+            })
+        },
+
+        getFormData(method = '') {
+            var formData = new FormData();
+            formData.append('mark_id', this.mark.document.mark_id)
+            formData.append('type', this.type)
+            formData.append("_method", "delete");
+            return formData
+        },
+
+        getConfig() {
+            return {
+                'content-type': 'multipart/form-data'
+            }
+        },
+
         onAttachmentChange (e) {
             var fileProperty = e.target.getAttribute('id')
             this.mark.document[fileProperty] = e.target.files[0]
@@ -112,5 +164,7 @@ export default {
 </script>
 
 <style>
-
+.pointer{
+    cursor: pointer;
+}
 </style>

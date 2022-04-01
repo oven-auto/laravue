@@ -10,12 +10,13 @@
                     <div class="row">
                         <div class="col-6">
                             <brand-select v-model="search.brand_id"></brand-select>
-                            <mark-select v-model="search.mark_id" :brand="search.brand_id"></mark-select>
+                            <text-input v-model="search.vin" :label="'VIN'"></text-input>
                             <complectation-select v-model="search.complectation_id" :mark="search.mark_id"></complectation-select>
                         </div>
 
                         <div class="col-6">
-                            <text-input v-model="search.vin" :label="'VIN'"></text-input>
+                            <MarkSelect v-model="search.mark_id" :actual="1" :title="'Актуальные модель'" :brand="search.brand_id"></MarkSelect>
+                            <MarkSelect v-model="search.mark_id" :nonactual="1" :title="'Архивная модель'" :brand="search.brand_id"></MarkSelect>
                         </div>
                     </div>
                 </div>

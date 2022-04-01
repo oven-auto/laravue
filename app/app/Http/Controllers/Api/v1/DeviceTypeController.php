@@ -11,7 +11,7 @@ class DeviceTypeController extends Controller
 
     public function index()
     {
-        $types = DeviceType::get();
+        $types = DeviceType::orderBy('sort')->get();
         if($types->count())
             return response()->json([
                 'status' => 1,
@@ -27,7 +27,9 @@ class DeviceTypeController extends Controller
 
     public function store(DeviceType $devicetype, Request $request)
     {
-        $devicetype->fill($request->input())->save();
+        $devicetype->fill($request->input());
+        $devicetype->sort = DeviceType::max('sort')+1;
+        $devicetype->save();
         return response()->json([
             'status' => 1,
             'type' => $devicetype,

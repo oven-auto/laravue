@@ -19,6 +19,9 @@ class CarController extends Controller
     {
         $query = Car::with(['brand','color','mark','complectation','price']);
 
+        if($request->has('archive') && $request->get('archive') == 1)
+            $query->onlyTrashed()->with('fixedprice');
+
         if($request->has('brand_id'))
             $query->where('brand_id', $request->get('brand_id'));
         if($request->has('mark_id'))
@@ -50,6 +53,15 @@ class CarController extends Controller
     {
         $data = $this->repository->getCarArray($car);
 
+        return response()->json([
+            'status' => 1,
+            'data' =>$data
+        ]);
+    }
+
+    public function show($id)
+    {
+        $data = Car::withTrashed()->with(['brand','complectation','devices','packs','mark','color','price','fixedprice'])->find($id);
         return response()->json([
             'status' => 1,
             'data' =>$data
@@ -92,5 +104,23 @@ class CarController extends Controller
                 'errors' => $result['error'],
                 'message' => 'Произошла ошибка'
             ]);
+    }
+
+    public function destroy(Car $car, Request $request)
+    {
+        $car->fixedprice()->updateOrCreate(
+            [
+                'car_id'=>$car->id
+            ],
+            [
+                'body_price'=>$car->complectation->price,
+                'packs_price' => $car->price->pack_price,
+                'equipments_price' => $car->device_price
+            ]
+        );
+        $car->delete();
+        return response()->json([
+            'data'=>1
+        ]);
     }
 }

@@ -3,15 +3,21 @@
 
         <message v-if="succes" :message="succesMessage"></message>
 
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Склад</div>
+                <div class="h-title">Актуальный склад</div>
             </div>
             <div class="col text-right">
-                <button type="button" class="btn btn-success" @click="showModal" >
-                    Фильтр
-                </button>
+
                 <router-link class="btn btn-primary" :to="'/cars/create'">Добавить новый автомобиль</router-link>
+                <button type="button" class="btn btn-success" @click="showModal" >
+                    Поиск
+                </button>
+
+            </div>
+
+            <div class="col-12" >
+                <FilterBreadCrumbs :search="search" :type="'cars'" @updateParent="getDataModal"></FilterBreadCrumbs>
             </div>
         </div>
 
@@ -27,11 +33,12 @@
                     <th>Год</th>
                     <th class="text-center">Цвет</th>
                     <th colspan="2">Детализация цены</th>
+                    <th></th>
                 </tr>
             </thead>
 
             <tbody>
-                <tr v-for="item in data" class="small-text ">
+                <tr v-for="(item,i) in data" :key="'car'+i" class="small-text ">
                     <td><router-link :to="toEdit + item.id">Open </router-link></td>
                     <td>
                         <div><big>{{item.vin}}</big></div>
@@ -60,6 +67,9 @@
                     <td>
                         <big>{{ formatPrice(item.price.full_price) }}</big>
                     </td>
+                    <td class="text-right">
+                       <span  class="badge badge-danger" @click="deleteCar(item.id, i)">В архив</span>
+                    </td>
                 </tr>
             </tbody>
 
@@ -87,13 +97,15 @@
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import ModalWindow from '../modal/CarFilterModal';
+import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
 
 export default {
     name: 'car-list',
     components: {
         Spin,
         Message,
-        ModalWindow
+        ModalWindow,
+        FilterBreadCrumbs
     },
     data() {
         return {
@@ -108,7 +120,7 @@ export default {
             currentPage: 1,
             pageArray: [],
             now_page: this.$route.params.page,
-            search: {}
+            search: {},
         }
     },
     mounted() {
@@ -116,6 +128,20 @@ export default {
     },
 
     methods: {
+        deleteCar(id, index) {
+            var status = confirm('Уверены, что хотите поместить этот автомобиль в архив?')
+            if(status) {
+                axios.delete('/api/cars/'+id)
+                .then(res => {
+                    this.data.splice(index, 1)
+                }).catch(errors => {
+
+                }).finally(() => {
+
+                })
+            }
+        },
+
         getUrlParamStr() {
             var i = 0
             var url = []

@@ -1,12 +1,18 @@
 <template>
     <div id="property-list">
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Список комплектаций</div>
+                <div class="h-title">Список комплектаций</div>
             </div>
             <div class="col text-right">
-                <button class="btn btn-primary" @click="showModalComplectationFilter">Фильтр</button>
-                <router-link class="btn btn-primary" :to="'/complectations/create'">Создать новую</router-link>
+
+                <router-link class="btn btn-primary" :to="'/complectations/create'">Добавить новую комплектацию</router-link>
+                <button class="btn btn-success" @click="showModalComplectationFilter">Поиск</button>
+
+            </div>
+
+            <div class="col-12" >
+                <FilterBreadCrumbs :search="search" :type="'complectations'" @updateParent="getDataModal"></FilterBreadCrumbs>
             </div>
         </div>
 
@@ -16,11 +22,13 @@
             <thead class="thead-dark">
             <tr>
                 <th style="width: 80px;">#{{complectations.length}}</th>
-                <th>Код</th>
+
                 <th>Модель</th>
+                <th>Код</th>
+
                 <th>Название</th>
                 <th>Цена</th>
-                <th style="width: 100px;">
+                <th style="width: 100px;" colspan="2">
                     <label class="checkbox " :title="'Статус'">
                         <input class="device-checkbox-toggle" type="checkbox" v-bind:value="status" v-model="status" @change="getByStatus()">
                         <div class="checkbox__text" style="">
@@ -40,18 +48,36 @@
                         Open
                     </router-link>
                 </td>
-                <td>{{ item.code }}</td>
+
                 <td><brand-badge :brand="item.brand"></brand-badge> {{item.mark.name}}</td>
+                <td>{{ item.code }}</td>
+
                 <td>
                     {{ item.name }}
-                    {{item.motor.size}} ({{item.motor.power}}л.с.)
+                    {{item.motor.size+item.motor.type.acronym}} ({{item.motor.power}}л.с.)  {{item.motor.valve}}кл.
                     {{item.motor.transmission.acronym}}
                     {{item.motor.driver.acronym}}
                 </td>
 
-                <td>{{ formatPrice(item.price) }}</td>
+                <td >
+                    <div @click="showPriceModal(item.id)" v-if="statusPriceClick != item.id" style="width:150px;">
+                        {{ formatPrice(item.price) }}
+                    </div>
+                    <div class="input-group" v-else style="width:150px;">
+                        <input type="text" class="form-control" v-model="item.price" aria-describedby="basic-addon2" onFocus="this.select()">
+                        <div class="input-group-append">
+                            <button class="btn btn-secondary input-group-text" @click="changePrice(item)">OK</button>
+                        </div>
+                    </div>
+                </td>
+
+                <td>
+                    <CarsComplectCount :complectation_id="item.id"></CarsComplectCount>
+                </td>
+
                 <td>
                     <complectation-status v-model="item.status" :id="item.id"></complectation-status>
+                    <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
                 </td>
             </tr>
             </draggable>
@@ -68,6 +94,8 @@ import Spin from '../spinner/SpinComponent';
 import ComplectationStatus from './ComplectationStatus';
 import ComplectationFilter from '../modal/ComplectationFilterModal';
 import BrandBadge from '../badge/BrandBadge';
+import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
+import CarsComplectCount from '../indicators/CarsComplectCount';
 
 export default {
     name: 'complectation-list',
@@ -76,10 +104,13 @@ export default {
         ComplectationStatus,
         ComplectationFilter,
         BrandBadge,
-        draggable
+        draggable,
+        FilterBreadCrumbs,
+        CarsComplectCount
     },
     data() {
         return {
+            statusPriceClick: 0,
             toEdit: '/complectations/edit/',
             loading: true,
             complectations: [],
@@ -100,6 +131,26 @@ export default {
         this.loadData()
     },
     methods: {
+        showPriceModal(id) {
+            this.statusPriceClick = id
+        },
+
+        changePrice(complectation) {
+            var data = {
+                id: complectation.id,
+                price: complectation.price
+            }
+            axios.patch('/api/services/complectations/price', data, this.getConfig())
+            .then(res => {
+
+            }).catch(errors => {
+
+            }).finally(()=>{
+                this.statusPriceClick = 0
+            })
+
+        },
+
         getByStatus() {
             this.search.status = Number(this.status)
             this.loadData()
@@ -179,7 +230,7 @@ export default {
 
         changeSort(obj) {
             this.loading = true
-            axios.post('/api/services/complectations/sort', obj, this.getConfig())
+            axios.patch('/api/services/sort/complectations', obj, this.getConfig())
             .then((res)=>{
                 // var data = res.data.data
                 // for(var i in data) {

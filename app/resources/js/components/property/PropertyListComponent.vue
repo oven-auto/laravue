@@ -1,22 +1,25 @@
 <template>
     <div id="property-list">
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Список характеристик</div>
+                <div class="h-title">Список характеристик</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/properties/create'">Создать новый</router-link>
+                <router-link class="btn btn-primary" :to="'/properties/create'">Добавить новую характеристику</router-link>
             </div>
         </div>
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
+        <table v-else class="table table-hover">
+            <thead class="thead-dark">
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
             </tr>
+            </thead>
 
+            <tbody>
             <tr v-for="property in properties">
                 <td>
                     <router-link :to="toEdit + property.id">
@@ -25,6 +28,7 @@
                 </td>
                 <td>{{ property.name }}</td>
             </tr>
+            </tbody>
         </table>
     </div>
 </template>

@@ -1,24 +1,27 @@
 <template>
     <div id="brand-list">
-        <div class="row pb-3">
+        <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h5">Список брендов</div>
+                <div class="h-title">Список брендов</div>
             </div>
             <div class="col text-right">
-                <router-link class="btn btn-primary" :to="'/brands/create'">Создать новый</router-link>
+                <router-link class="btn btn-primary" :to="'/brands/create'">Добавить новый бренд</router-link>
             </div>
         </div>
 
         <spin v-if="loading"></spin>
 
-        <table v-else class="table">
+        <table v-else class="table table-hover">
+            <thead class="thead-dark">
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
                 <th>Системное имя</th>
                 <th>Цвет</th>
             </tr>
+            </thead>
 
+            <tbody>
             <tr v-for="brand in brands">
                 <td>
                     <router-link :to="toEdit + brand.id">
@@ -31,6 +34,7 @@
                     <brand-badge :brand="brand"></brand-badge>
                 </td>
             </tr>
+            </tbody>
         </table>
     </div>
 </template>
