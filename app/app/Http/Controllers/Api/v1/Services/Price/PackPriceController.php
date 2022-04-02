@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Pack;
+namespace App\Http\Controllers\Api\v1\Services\Price;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

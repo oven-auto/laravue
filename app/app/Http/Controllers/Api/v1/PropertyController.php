@@ -10,7 +10,7 @@ class PropertyController extends Controller
 {
     public function index()
     {
-        $properties = Property::get();
+        $properties = Property::orderBy('sort')->get();
         if($properties->count())
             return response()->json([
                 'status' => 1,
@@ -33,6 +33,8 @@ class PropertyController extends Controller
 
     public function store(Property $property, Request $request)
     {
+        $data = $request->all();
+        $data['sort'] = Property::max('sort')+1;
         $property->fill($request->input())->save();
         return response()->json([
             'status' => 1,

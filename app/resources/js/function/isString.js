@@ -18,3 +18,8 @@ window.isEmptyObject = function(obj) {
     }
     return true;
 }
+window.getConfig = function() {
+    return {
+        'content-type': 'multipart/form-data'
+    }
+}

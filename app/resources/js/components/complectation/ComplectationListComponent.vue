@@ -140,7 +140,7 @@ export default {
                 id: complectation.id,
                 price: complectation.price
             }
-            axios.patch('/api/services/complectations/price', data, this.getConfig())
+            axios.patch('/api/services/price/complectation', data, this.getConfig())
             .then(res => {
 
             }).catch(errors => {

@@ -19,27 +19,32 @@
             </tr>
             </thead>
 
-            <tbody>
+            <draggable v-model="properties" tag="tbody" :component-data="getComponentData()" >
             <tr v-for="property in properties">
                 <td>
                     <router-link :to="toEdit + property.id">
                         Open
                     </router-link>
                 </td>
-                <td>{{ property.name }}</td>
+                <td>
+                    {{ property.name }}
+                    <ion-icon class="drag-icon pr-3" name="ellipsis-vertical"></ion-icon>
+                </td>
             </tr>
-            </tbody>
+            </draggable>
         </table>
     </div>
 </template>
 
 <script>
 import Spin from '../spinner/SpinComponent';
+import draggable from 'vuedraggable';
 
 export default {
     name: 'property-list',
     components: {
-        Spin
+        Spin,
+        draggable
     },
     data() {
         return {
@@ -53,6 +58,50 @@ export default {
         this.loadProperty()
     },
     methods: {
+
+        inputChanged(value) {
+            var oldIndex = value.oldIndex
+            var newIndex = value.newIndex
+
+            var data = {
+                active: {
+                    id: this.properties[newIndex].id,
+                },
+                second: {
+                    id: this.properties[oldIndex].id,
+                }
+            }
+            this.changeSort(data)
+        },
+
+        changeSort(obj) {
+            this.loading = true
+            axios.patch('/api/services/sort/properties', obj, getConfig())
+            .then((res)=>{
+                this.loadProperty()
+            })
+            .catch((error)=>{
+
+            })
+            .finally(()=>{
+                this.loading = false
+            })
+        },
+
+        getComponentData() {
+            return {
+                on: {
+                    update: this.inputChanged
+                },
+                attrs:{
+                    wrap: true
+                },
+                props: {
+                    value: this.activeNames
+                }
+            };
+        },
+
         loadProperty() {
             axios.get('/api/properties')
                 .then(response => {

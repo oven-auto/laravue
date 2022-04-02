@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadTypes() {
-            axios.get('/api/devicetypes')
+            axios.get('/api/services/html/select/devicetypes')
             .then(res => {
                 this.types = res.data.data
             })

@@ -3,7 +3,7 @@
         <label> {{title ? title : 'Модель'}}</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in marks" :value="item.id">
+            <option v-for="(item,i) in marks" :value="item.id" :key="'markselect'+i">
                 {{item.prefix}} {{ item.name }}
             </option>
         </select>
@@ -37,7 +37,7 @@ export default {
 
             str = '?' +str.join('&')
 
-            axios.get('/api/services/marks/namelist' + str)
+            axios.get('/api/services/html/select/marks' + str)
             .then(res => {
                 this.marks = res.data.data
             })
@@ -47,32 +47,7 @@ export default {
         }
     },
     props: ['name','value','brand','actual','nonactual','title'],
-    // {
-    //     name: {
-    //         type: String,
-    //         default: null
-    //     },
-    //     value: {
-    //         type: Number,
-    //         default: 0
-    //     },
-    //     brand: {
-    //         type: Number,
-    //         default: 0
-    //     },
-    //     actual: {
-    //         type: Number,
-    //         default: 0
-    //     },
-    //     nonactual: {
-    //         type: Number,
-    //         default: 0
-    //     },
-    //     title: {
-    //         type: String,
-    //         default: ''
-    //     }
-    // },
+
     computed: {
         selected: {
             get() {

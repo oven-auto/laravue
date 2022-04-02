@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Mark;
+namespace App\Http\Controllers\Api\v1\Services\Html\Select;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mark;
 
-class MarkNameListController extends Controller
+class MarkSelectController extends Controller
 {
     public function index(Request $request)
     {

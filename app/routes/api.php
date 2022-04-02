@@ -65,27 +65,47 @@ Route::resource('sectionpages', \App\Http\Controllers\Api\v1\SectionPageControll
 
 Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
-Route::prefix('services')->group(function () {
 
-   Route::patch('complectations/price', [\App\Http\Controllers\Api\v1\Complectation\ComplectationPriceController::class, 'index']);
+
+
+
+
+Route::prefix('services')->group(function () {
    Route::get('devices/namelist', [\App\Http\Controllers\Api\v1\Device\DeviceNameListController::class, 'index']);
    Route::delete('marks/document', [\App\Http\Controllers\Api\v1\Mark\MarkDocumentDeleteController::class, 'index']);
-   Route::patch('packs/price', [\App\Http\Controllers\Api\v1\Pack\PackPriceController::class, 'index']);
-   Route::get('marks/namelist', [\App\Http\Controllers\Api\v1\Mark\MarkNameListController::class, 'index']);
 
+
+   //МАРШРУТЫ ИЗМЕНЕНИЯ ЦЕНЫ
+   Route::prefix('price')->group(function () {
+        Route::patch('pack', [\App\Http\Controllers\Api\v1\Services\Price\PackPriceController::class, 'index']);
+        Route::patch('complectation', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'index']);
+   });
+
+   //МАРШРУТЫ ИЗМЕНЕНИЯ СОРТИРОВКИ
    Route::prefix('sort')->group(function () {
-        Route::patch('complectations', [\App\Http\Controllers\Api\v1\Complectation\ComplectationSortController::class, 'index']);
+        Route::patch('complectations', [\App\Http\Controllers\Api\v1\Services\Sort\Complectation\ComplectationSortController::class, 'index']);
         Route::patch('marks',[\App\Http\Controllers\Api\v1\Services\Sort\Mark\MarkSortController::class, 'index']);
         Route::patch('devicetypes', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceTypeSortController::class, 'index']);
         Route::patch('devicefilters', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceFilterSortController::class, 'index']);
+        Route::patch('properties', [\App\Http\Controllers\Api\v1\Services\Sort\Property\PropertySortController::class,'index']);
    });
 
+   //МАРШРУТЫ ПОЛУЧЕНИЯ КОЛИЧЕСТВА
    Route::prefix('count')->group(function () {
        Route::get('cars', [\App\Http\Controllers\Api\v1\Services\Count\CarComplectCountController::class,'index']);
    });
 
+    //МАРШРУТЫ ПОЛУЧЕНИЯ СПИСКОВ ДЛЯ HTML
    Route::prefix('html')->group(function () {
        Route::prefix('select')->group(function () {
+           Route::get('brands', [\App\Http\Controllers\Api\v1\Services\Html\Select\BrandSelectController::class, 'index']);
+           Route::get('devicetypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeviceTypeSelectController::class, 'index']);
+           Route::get('devicefilters', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeviceFilterSelectController::class, 'index']);
+           Route::get('marks', [\App\Http\Controllers\Api\v1\Services\Html\Select\MarkSelectController::class, 'index']);
+           Route::get('motortransmissions', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorTransmissionSelectController::class, 'index']);
+           Route::get('motordrivers', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorDriverSelectController::class, 'index']);
+           Route::get('motortypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorTypeSelectController::class, 'index']);
+           Route::get('motors', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorSelectController::class, 'index']);
            Route::get('toxic', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorToxicController::class, 'index']);
        });
    });

@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/motortransmissions')
+            axios.get('/api/services/html/select/motortransmissions')
             .then(res => {
                 this.data = res.data.data
             })

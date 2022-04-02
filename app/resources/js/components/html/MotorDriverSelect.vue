@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/motordrivers')
+            axios.get('/api/services/html/select/motordrivers')
             .then(res => {
                 this.data = res.data.data
             })

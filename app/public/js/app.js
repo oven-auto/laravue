@@ -5172,7 +5172,7 @@ __webpack_require__.r(__webpack_exports__);
         id: complectation.id,
         price: complectation.price
       };
-      axios.patch('/api/services/complectations/price', data, this.getConfig()).then(function (res) {})["catch"](function (errors) {})["finally"](function () {
+      axios.patch('/api/services/price/complectation', data, this.getConfig()).then(function (res) {})["catch"](function (errors) {})["finally"](function () {
         _this.statusPriceClick = 0;
       });
     },
@@ -7047,8 +7047,8 @@ __webpack_require__.r(__webpack_exports__);
     loadBrands: function loadBrands() {
       var _this = this;
 
-      axios.get('/api/brands').then(function (res) {
-        _this.brands = res.data.brands;
+      axios.get('/api/services/html/select/brands').then(function (res) {
+        _this.brands = res.data.data;
       })["catch"](function (error) {});
     }
   },
@@ -7534,38 +7534,12 @@ __webpack_require__.r(__webpack_exports__);
       if (this.actual == 1) str.push('actual=1');
       if (this.nonactual == 1) str.push('nonactual=1');
       str = '?' + str.join('&');
-      axios.get('/api/services/marks/namelist' + str).then(function (res) {
+      axios.get('/api/services/html/select/marks' + str).then(function (res) {
         _this.marks = res.data.data;
       })["catch"](function (error) {});
     }
   },
   props: ['name', 'value', 'brand', 'actual', 'nonactual', 'title'],
-  // {
-  //     name: {
-  //         type: String,
-  //         default: null
-  //     },
-  //     value: {
-  //         type: Number,
-  //         default: 0
-  //     },
-  //     brand: {
-  //         type: Number,
-  //         default: 0
-  //     },
-  //     actual: {
-  //         type: Number,
-  //         default: 0
-  //     },
-  //     nonactual: {
-  //         type: Number,
-  //         default: 0
-  //     },
-  //     title: {
-  //         type: String,
-  //         default: ''
-  //     }
-  // },
   computed: {
     selected: {
       get: function get() {
@@ -7621,7 +7595,7 @@ __webpack_require__.r(__webpack_exports__);
     loadData: function loadData() {
       var _this = this;
 
-      axios.get('/api/motordrivers').then(function (res) {
+      axios.get('/api/services/html/select/motordrivers').then(function (res) {
         _this.data = res.data.data;
       })["catch"](function (error) {});
     }
@@ -7769,7 +7743,7 @@ __webpack_require__.r(__webpack_exports__);
     loadData: function loadData() {
       var _this = this;
 
-      axios.get('/api/motortransmissions').then(function (res) {
+      axios.get('/api/services/html/select/motortransmissions').then(function (res) {
         _this.data = res.data.data;
       })["catch"](function (error) {});
     }
@@ -7834,28 +7808,22 @@ __webpack_require__.r(__webpack_exports__);
     loadData: function loadData() {
       var _this = this;
 
-      axios.get('/api/motortypes').then(function (res) {
+      axios.get('/api/services/html/select/motortypes').then(function (res) {
         _this.data = res.data.data;
       })["catch"](function (error) {});
     }
   },
-  props: {
-    name: {
-      type: String,
-      "default": null
-    },
-    value: {
-      type: Number,
-      "default": 0
-    }
-  },
+  props: ['name', 'value'],
   computed: {
     selected: {
       get: function get() {
+        if (this.value == null) return '';
         return this.value;
       },
       set: function set(val) {
-        this.$emit('input', val);
+        var res = val;
+        if (res == null) res = '';
+        this.$emit('input', res);
       }
     }
   }
@@ -8029,7 +7997,7 @@ __webpack_require__.r(__webpack_exports__);
     loadTypes: function loadTypes() {
       var _this = this;
 
-      axios.get('/api/devicetypes').then(function (res) {
+      axios.get('/api/services/html/select/devicetypes').then(function (res) {
         _this.types = res.data.data;
       })["catch"](function (error) {});
     }
@@ -8090,7 +8058,7 @@ __webpack_require__.r(__webpack_exports__);
     loadFilters: function loadFilters() {
       var _this = this;
 
-      axios.get('/api/devicefilters').then(function (res) {
+      axios.get('/api/services/html/select/devicefilters').then(function (res) {
         _this.filters = res.data.data;
       })["catch"](function (error) {});
     }
@@ -11756,7 +11724,7 @@ __webpack_require__.r(__webpack_exports__);
         id: pack.id,
         price: pack.price
       };
-      axios.patch('/api/services/packs/price', data, this.getConfig()).then(function (res) {})["catch"](function (errors) {})["finally"](function () {
+      axios.patch('/api/services/price/pack', data, this.getConfig()).then(function (res) {})["catch"](function (errors) {})["finally"](function () {
         _this.statusPriceClick = 0;
       });
     },
@@ -12526,6 +12494,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../spinner/SpinComponent */ "./resources/js/components/spinner/SpinComponent.vue");
+/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuedraggable */ "./node_modules/vuedraggable/dist/vuedraggable.umd.js");
+/* harmony import */ var vuedraggable__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuedraggable__WEBPACK_IMPORTED_MODULE_1__);
+//
+//
+//
 //
 //
 //
@@ -12562,10 +12535,12 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: 'property-list',
   components: {
-    Spin: _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_0__["default"]
+    Spin: _spinner_SpinComponent__WEBPACK_IMPORTED_MODULE_0__["default"],
+    draggable: (vuedraggable__WEBPACK_IMPORTED_MODULE_1___default())
   },
   data: function data() {
     return {
@@ -12579,20 +12554,56 @@ __webpack_require__.r(__webpack_exports__);
     this.loadProperty();
   },
   methods: {
-    loadProperty: function loadProperty() {
+    inputChanged: function inputChanged(value) {
+      var oldIndex = value.oldIndex;
+      var newIndex = value.newIndex;
+      var data = {
+        active: {
+          id: this.properties[newIndex].id
+        },
+        second: {
+          id: this.properties[oldIndex].id
+        }
+      };
+      this.changeSort(data);
+    },
+    changeSort: function changeSort(obj) {
       var _this = this;
+
+      this.loading = true;
+      axios.patch('/api/services/sort/properties', obj, getConfig()).then(function (res) {
+        _this.loadProperty();
+      })["catch"](function (error) {})["finally"](function () {
+        _this.loading = false;
+      });
+    },
+    getComponentData: function getComponentData() {
+      return {
+        on: {
+          update: this.inputChanged
+        },
+        attrs: {
+          wrap: true
+        },
+        props: {
+          value: this.activeNames
+        }
+      };
+    },
+    loadProperty: function loadProperty() {
+      var _this2 = this;
 
       axios.get('/api/properties').then(function (response) {
         if (response.data.status == 1) {
-          _this.properties = response.data.data;
-          _this.loading = false;
+          _this2.properties = response.data.data;
+          _this2.loading = false;
         } else {
-          _this.loading = false;
-          _this.notFound = true;
+          _this2.loading = false;
+          _this2.notFound = true;
         }
       })["catch"](function (errors) {
-        _this.loading = false;
-        _this.notFound = true;
+        _this2.loading = false;
+        _this2.notFound = true;
       });
     }
   }
@@ -13019,6 +13030,12 @@ window.isEmptyObject = function (obj) {
   }
 
   return true;
+};
+
+window.getConfig = function () {
+  return {
+    'content-type': 'multipart/form-data'
+  };
 };
 
 /***/ }),
@@ -82697,10 +82714,12 @@ var render = function () {
           _vm._v("Укажите параметр"),
         ]),
         _vm._v(" "),
-        _vm._l(_vm.brands, function (item) {
-          return _c("option", { domProps: { value: item.id } }, [
-            _vm._v("\n            " + _vm._s(item.name) + "\n        "),
-          ])
+        _vm._l(_vm.brands, function (item, i) {
+          return _c(
+            "option",
+            { key: "brandselect" + i, domProps: { value: item.id } },
+            [_vm._v("\n            " + _vm._s(item.name) + "\n        ")]
+          )
         }),
       ],
       2
@@ -83196,16 +83215,20 @@ var render = function () {
           _vm._v("Укажите параметр"),
         ]),
         _vm._v(" "),
-        _vm._l(_vm.marks, function (item) {
-          return _c("option", { domProps: { value: item.id } }, [
-            _vm._v(
-              "\n            " +
-                _vm._s(item.prefix) +
-                " " +
-                _vm._s(item.name) +
-                "\n        "
-            ),
-          ])
+        _vm._l(_vm.marks, function (item, i) {
+          return _c(
+            "option",
+            { key: "markselect" + i, domProps: { value: item.id } },
+            [
+              _vm._v(
+                "\n            " +
+                  _vm._s(item.prefix) +
+                  " " +
+                  _vm._s(item.name) +
+                  "\n        "
+              ),
+            ]
+          )
         }),
       ],
       2
@@ -83494,9 +83517,9 @@ var render = function () {
           _vm._v("Укажите параметр"),
         ]),
         _vm._v(" "),
-        _vm._l(_vm.data, function (item) {
-          return _c("option", { domProps: { value: item.id } }, [
-            _vm._v("\n            " + _vm._s(item.name) + "\n        "),
+        _vm._l(_vm.data, function (item, id) {
+          return _c("option", { domProps: { value: id } }, [
+            _vm._v("\n            " + _vm._s(item) + "\n        "),
           ])
         }),
       ],
@@ -83747,10 +83770,12 @@ var render = function () {
           _vm._v("Укажите параметр"),
         ]),
         _vm._v(" "),
-        _vm._l(_vm.filters, function (item) {
-          return _c("option", { domProps: { value: item.id } }, [
-            _vm._v("\n            " + _vm._s(item.name) + "\n        "),
-          ])
+        _vm._l(_vm.filters, function (item, i) {
+          return _c(
+            "option",
+            { key: "devicefilter" + i, domProps: { value: item.id } },
+            [_vm._v("\n            " + _vm._s(item.name) + "\n        ")]
+          )
         }),
       ],
       2
@@ -89208,37 +89233,73 @@ var render = function () {
       _vm._v(" "),
       _vm.loading
         ? _c("spin")
-        : _c("table", { staticClass: "table table-hover" }, [
-            _c("thead", { staticClass: "thead-dark" }, [
-              _c("tr", [
-                _c("th", { staticStyle: { width: "80px" } }, [_vm._v("#")]),
-                _vm._v(" "),
-                _c("th", [_vm._v("Название")]),
-              ]),
-            ]),
-            _vm._v(" "),
-            _c(
-              "tbody",
-              _vm._l(_vm.properties, function (property) {
-                return _c("tr", [
-                  _c(
-                    "td",
-                    [
-                      _c(
-                        "router-link",
-                        { attrs: { to: _vm.toEdit + property.id } },
-                        [_vm._v("\n                    Open\n                ")]
-                      ),
-                    ],
-                    1
-                  ),
+        : _c(
+            "table",
+            { staticClass: "table table-hover" },
+            [
+              _c("thead", { staticClass: "thead-dark" }, [
+                _c("tr", [
+                  _c("th", { staticStyle: { width: "80px" } }, [_vm._v("#")]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(property.name))]),
-                ])
-              }),
-              0
-            ),
-          ]),
+                  _c("th", [_vm._v("Название")]),
+                ]),
+              ]),
+              _vm._v(" "),
+              _c(
+                "draggable",
+                {
+                  attrs: {
+                    tag: "tbody",
+                    "component-data": _vm.getComponentData(),
+                  },
+                  model: {
+                    value: _vm.properties,
+                    callback: function ($$v) {
+                      _vm.properties = $$v
+                    },
+                    expression: "properties",
+                  },
+                },
+                _vm._l(_vm.properties, function (property) {
+                  return _c("tr", [
+                    _c(
+                      "td",
+                      [
+                        _c(
+                          "router-link",
+                          { attrs: { to: _vm.toEdit + property.id } },
+                          [
+                            _vm._v(
+                              "\n                    Open\n                "
+                            ),
+                          ]
+                        ),
+                      ],
+                      1
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "td",
+                      [
+                        _vm._v(
+                          "\n                " +
+                            _vm._s(property.name) +
+                            "\n                "
+                        ),
+                        _c("ion-icon", {
+                          staticClass: "drag-icon pr-3",
+                          attrs: { name: "ellipsis-vertical" },
+                        }),
+                      ],
+                      1
+                    ),
+                  ])
+                }),
+                0
+              ),
+            ],
+            1
+          ),
     ],
     1
   )

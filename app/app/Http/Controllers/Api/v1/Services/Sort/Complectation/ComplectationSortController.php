@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Complectation;
+namespace App\Http\Controllers\Api\v1\Services\Sort\Complectation;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;

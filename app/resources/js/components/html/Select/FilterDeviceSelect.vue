@@ -3,7 +3,7 @@
         <label>Группа оборудования</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in filters" :value="item.id">
+            <option v-for="(item,i) in filters" :value="item.id" :key="'devicefilter'+i">
                 {{ item.name }}
             </option>
         </select>
@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadFilters() {
-            axios.get('/api/devicefilters')
+            axios.get('/api/services/html/select/devicefilters')
             .then(res => {
                 this.filters = res.data.data
             })

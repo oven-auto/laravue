@@ -3,7 +3,7 @@
         <label>Бренд</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in brands" :value="item.id">
+            <option v-for="(item,i) in brands" :value="item.id" :key="'brandselect'+i">
                 {{ item.name }}
             </option>
         </select>
@@ -22,9 +22,9 @@ export default {
     },
     methods: {
         loadBrands() {
-            axios.get('/api/brands')
+            axios.get('/api/services/html/select/brands')
             .then(res => {
-                this.brands = res.data.brands
+                this.brands = res.data.data
             })
             .catch(error => {
 

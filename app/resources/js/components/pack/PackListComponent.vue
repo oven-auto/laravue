@@ -125,7 +125,7 @@ export default {
                 id: pack.id,
                 price: pack.price
             }
-            axios.patch('/api/services/packs/price', data, this.getConfig())
+            axios.patch('/api/services/price/pack', data, this.getConfig())
             .then(res => {
 
             }).catch(errors => {
