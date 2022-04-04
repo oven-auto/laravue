@@ -3,7 +3,7 @@
         <label>Тип привода</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in data" :value="item.id">
+            <option v-for="item in data" :value="item.id" :key="'motor-driver-select'+item.id">
                 {{ item.name }}
             </option>
         </select>

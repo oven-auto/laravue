@@ -3,7 +3,7 @@
         <label>Производство</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in data" :value="item.id">
+            <option v-for="item in data" :value="item.id" :key="'country'+item.id">
                 {{ item.country }} - {{ item.city }}
             </option>
         </select>
@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/countryfactories')
+            axios.get('/api/services/html/select/countryfactories')
             .then(res => {
                 this.data = res.data.data
             })

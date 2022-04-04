@@ -3,14 +3,8 @@
         <label>Мотор</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in motors" :value="item.id">
-                {{ item.name }}
-                {{ item.size }}
-                {{item.type.acronym}}
-                ({{ item.power}}л.с.)
-                {{item.valve}}кл.
-                {{item.transmission.acronym}}
-                {{item.driver.acronym}}
+            <option v-for="(item,id) in motors" :value="id" :key="'motor-select'+id">
+                {{ item }}
             </option>
         </select>
     </div>
@@ -34,7 +28,7 @@ export default {
             if(brand > 0)
                 str = '?brand_id=' + brand
 
-            axios.get('/api/motors' + str)
+            axios.get('/api/services/html/select/motors' + str)
             .then(res => {
                 this.motors = res.data.data
             })

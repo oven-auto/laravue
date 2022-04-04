@@ -26,7 +26,14 @@ export default {
     data() {
         return {
             colors: [],
-            currentColor: {}
+            currentColor: {
+                color: {
+                    id: 0,
+                    name: '',
+                    web: '',
+                    image: ''
+                }
+            }
         }
     },
     props: {
@@ -71,7 +78,15 @@ export default {
     },
     watch: {
         complectation(v){
-            this.currentColor = {id: 0}
+            this.currentColor = {
+                id: 0,
+                color: {
+                    id: 0,
+                    name: '',
+                    web: '',
+                    image: ''
+                }
+            }
             this.loadData()
         }
     },

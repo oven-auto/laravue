@@ -3,7 +3,7 @@
         <label>Тип кузова</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in data" :value="item.id">
+            <option v-for="item in data" :value="item.id" :key="'bodywork'+item.id">
                 {{ item.name }}
             </option>
         </select>
@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/bodyworks')
+            axios.get('/api/services/html/select/bodyworks')
             .then(res => {
                 this.data = res.data.data
             })

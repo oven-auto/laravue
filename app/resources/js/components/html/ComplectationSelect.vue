@@ -3,7 +3,7 @@
         <label>{{label}}</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
-            <option v-for="item in complectations" :value="item.id">
+            <option v-for="item in complectations" :value="item.id" :key="'complectation-select'+item.id">
                 {{ item.code }}
                 {{ item.name }}
                 {{ item.motor.size}} ( {{ item.motor.power }} л.с.)
@@ -32,7 +32,7 @@ export default {
             if(mark > 0)
                 str = '?mark_id=' + mark
 
-            axios.get('/api/complectations' + str)
+            axios.get('/api/services/html/select/complectations' + str)
             .then(res => {
                 this.complectations = res.data.data
             })
