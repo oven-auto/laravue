@@ -5,28 +5,16 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pack;
+use App\Http\Filters\PackFilter;
 
 class PackController extends Controller
 {
     public function index(Request $request)
     {
+        $data = $request->all();
         $query = Pack::fullData()->with('marks');
-
-        if($request->has('brand_id'))
-            $query->where('brand_id', $request->get('brand_id'));
-
-        if($request->has('complectation_id'))
-            $query->rightJoin('complectation_packs', 'complectation_packs.pack_id', '=', 'packs.id')
-                ->where('complectation_packs.complectation_id', $request->get('complectation_id'));
-
-        if($request->has('mark_id'))
-            $query->leftJoin('pack_marks', 'pack_marks.pack_id', '=', 'packs.id')
-                ->where('pack_marks.mark_id', $request->get('mark_id'));
-
-        if($request->has('code'))
-            $query->where('packs.code', 'like', '%'.$request->get('code').'%');
-
-        $packs = $query->get();
+        $filter = app()->make(PackFilter::class, ['queryParams' => array_filter($data)]);
+        $packs = $query->filter($filter)->get();
 
         if($packs->count())
             return response()->json([

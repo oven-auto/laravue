@@ -6,31 +6,22 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Device;
 use DB;
+use App\Http\Filters\DeviceFilter;
+
 class DeviceController extends Controller
 {
 
     public function index(Request $request)
     {
-        $query = Device::select(['devices.*','device_types.sort'])->fullData();
-        $query->leftJoin('device_types', 'device_types.id', 'devices.device_type_id');
-
-        if($request->has('brand_id'))
-            $query->leftJoin('device_brands', 'device_brands.device_id', '=', 'devices.id')
-                ->where('device_brands.brand_id', $request->get('brand_id'));
-
-        if($request->has('dops'))
-            $query->where('devices.device_type_id', 6);
-
-        if($request->has('name'))
-            $query->where('devices.name', 'like', '%' . $request->get('name') . '%');
-
-        if($request->has('device_type_id'))
-            $query->where('devices.device_type_id', $request->get('device_type_id'));
-
-        if($request->has('device_filter_id'))
-            $query->where('devices.device_filter_id', $request->get('device_filter_id'));
-
-        $devices = $query->orderBy('device_types.sort')->orderBy('devices.name')->get();
+        $data = $request->all();
+        $query = Device::select(['devices.*','device_types.sort'])
+            ->fullData()
+            ->leftJoin('device_types', 'device_types.id', 'devices.device_type_id');
+        $filter = app()->make(DeviceFilter::class, ['queryParams' => array_filter($data)]);
+        $devices = $query->filter($filter)
+            ->orderBy('device_types.sort')
+            ->orderBy('devices.name')
+            ->get();
 
         if($request->has('group') && $request->get('group') == 'type')
             $devices = $devices->groupBy('sort');

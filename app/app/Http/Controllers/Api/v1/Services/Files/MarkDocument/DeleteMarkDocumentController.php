@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Mark;
+namespace App\Http\Controllers\Api\v1\Services\Files\MarkDocument;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MarkDocument;
 use Storage;
 
-class MarkDocumentDeleteController extends Controller
+class DeleteMarkDocumentController extends Controller
 {
     public function index(Request $request)
     {

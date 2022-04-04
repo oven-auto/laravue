@@ -21,7 +21,7 @@ class CarBreadCrumbsController extends Controller
             $res['mark_id'] = Mark::where('id', $request->get('mark_id'))->pluck('name')->implode('');
 
         if($request->has('complectation_id'))
-            $res['complectation_id'] = Mark::where('id', $request->get('complectation_id'))->pluck('name')->implode('');
+            $res['complectation_id'] = Complectation::where('id', $request->get('complectation_id'))->pluck('name')->implode('');
 
         if($request->has('vin'))
             $res['vin'] = $request->get('vin');

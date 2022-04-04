@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Repositories\CarRepository;
+use App\Http\Filters\CarFilter;
 
 class CarController extends Controller
 {
@@ -17,21 +18,10 @@ class CarController extends Controller
 
     public function index(Request $request)
     {
+        $data = $request->all();
         $query = Car::with(['brand','color','mark','complectation','price']);
-
-        if($request->has('archive') && $request->get('archive') == 1)
-            $query->onlyTrashed()->with('fixedprice');
-
-        if($request->has('brand_id'))
-            $query->where('brand_id', $request->get('brand_id'));
-        if($request->has('mark_id'))
-            $query->where('mark_id', $request->get('mark_id'));
-        if($request->has('complectation_id'))
-            $query->where('complectation_id', $request->get('complectation_id'));
-        if($request->has('vin'))
-            $query->where('vin', 'like', '%'.$request->get('vin').'%');
-
-        $cars = $query->paginate(20);
+        $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
+        $cars = $query->filter($filter)->paginate(20);
 
         foreach($cars as $itemCar)
             if(strpos($itemCar->color->image, asset('storage')) === false)

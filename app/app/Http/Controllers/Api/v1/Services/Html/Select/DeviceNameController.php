@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Device;
+namespace App\Http\Controllers\Api\v1\Services\Html\Select;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Device;
 
-class DeviceNameListController extends Controller
+class DeviceNameController extends Controller
 {
     public function index(Request $request)
     {
@@ -15,7 +15,7 @@ class DeviceNameListController extends Controller
             ->whereIn('id', $ids)
             ->orderBy('device_type_id')
             ->orderBy('name')
-            ->pluck('name');
+            ->pluck('name','id');
         return response()->json([
             'status'=>1,
             'data'=>$nameDevices

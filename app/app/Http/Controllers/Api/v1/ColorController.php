@@ -5,21 +5,16 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Color;
+use \App\Http\Filters\ColorFilter;
 
 class ColorController extends Controller
 {
     public function index(Request $request)
     {
+        $data = $request->all();
         $query = Color::with('brand');
-
-        if($request->has('brand_id'))
-            $query->where('brand_id', $request->brand_id);
-        if($request->has('code'))
-            $query->where('colors.code', 'like', '%'.$request->get('code').'%');
-        if($request->has('name'))
-            $query->where('colors.name', 'like', '%'.$request->get('name').'%');
-
-        $colors = $query->get();
+        $filter = app()->make(ColorFilter::class, ['queryParams' => array_filter($data)]);
+        $colors = $query->filter($filter)->get();
 
         if($colors->count())
             return response()->json([

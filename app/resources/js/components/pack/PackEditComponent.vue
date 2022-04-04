@@ -208,7 +208,7 @@ export default {
         'pack.devices': {
             immediate: true,
             handler() {
-                axios.get('/api/services/devices/namelist?ids='+this.pack.devices.join(','))
+                axios.get('/api/services/html/select/devices?ids='+this.pack.devices.join(','))
                 .then((res) => {
                     this.installDevices = res.data.data
                 })

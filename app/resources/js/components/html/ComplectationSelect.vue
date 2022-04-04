@@ -41,24 +41,7 @@ export default {
             })
         }
     },
-    props: {
-        name: {
-            type: String,
-            default: null
-        },
-        value: {
-            type: Number,
-            default: 0
-        },
-        mark: {
-            type: Number,
-            default: 0
-        },
-        label: {
-            type: String,
-            default: 'Комлектация'
-        }
-    },
+    props: ['name','value','mark','label'],
     computed: {
         selected: {
             get() {

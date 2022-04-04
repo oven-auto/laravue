@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Interfaces\SortInterface;
 
-class Mark extends Model
+class Mark extends Model implements SortInterface
 {
     use HasFactory;
 

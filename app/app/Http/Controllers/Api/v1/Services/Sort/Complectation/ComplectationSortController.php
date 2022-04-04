@@ -5,32 +5,19 @@ namespace App\Http\Controllers\Api\v1\Services\Sort\Complectation;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complectation;
+use App\Services\SortService\SortChangeService;
 
 class ComplectationSortController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, SortChangeService $service)
     {
         $data = $request->all();
 
-        $activeComplectation = Complectation::find($data['active']['id']);
-        $secondComplectation = Complectation::find($data['second']['id']);
+        $result = $service->changeSort(new Complectation, $data);
 
-        $sortOld = $activeComplectation->sort;
-        $sortNew = $secondComplectation->sort;
-
-        $activeComplectation->sort = $sortNew;
-        $secondComplectation->sort = $sortOld;
-
-        $activeComplectation->save();
-        $secondComplectation->save();
-
-        $data = [
-            $activeComplectation->id=>$activeComplectation->sort,
-            $secondComplectation->id=>$secondComplectation->sort
-        ];
         return response()->json([
             'status'=>1,
-            'data'=>$data
+            'data'=>$result
         ]);
     }
 }

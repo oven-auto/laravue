@@ -10027,7 +10027,7 @@ h3 {
 
 .checkbox__text {
   position: relative;
-  padding: 6px 0 0 60px;
+  padding: 3px 6px 3px 60px;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -10035,7 +10035,7 @@ h3 {
 .checkbox__text:before {
   content: "";
   position: absolute;
-  top: 8px;
+  top: 5px;
   left: 0;
   width: 44px;
   height: 18px;
@@ -10048,7 +10048,7 @@ h3 {
 .checkbox__text:after {
   content: "";
   position: absolute;
-  top: 10px;
+  top: 7px;
   left: 2px;
   width: 14px;
   height: 14px;

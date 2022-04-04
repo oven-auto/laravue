@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\Filterable;
+use App\Models\Interfaces\SortInterface;
 
-class Complectation extends Model
+class Complectation extends Model implements SortInterface
 {
     use HasFactory;
+    use Filterable;
 
     protected $guarded = [];
 

@@ -71,8 +71,9 @@ Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
 
 Route::prefix('services')->group(function () {
-   Route::get('devices/namelist', [\App\Http\Controllers\Api\v1\Device\DeviceNameListController::class, 'index']);
-   Route::delete('marks/document', [\App\Http\Controllers\Api\v1\Mark\MarkDocumentDeleteController::class, 'index']);
+
+    //FILES
+    Route::delete('marks/document', [\App\Http\Controllers\Api\v1\Services\Files\MarkDocument\DeleteMarkDocumentController::class, 'index']);
 
 
    //МАРШРУТЫ ИЗМЕНЕНИЯ ЦЕНЫ
@@ -107,10 +108,10 @@ Route::prefix('services')->group(function () {
            Route::get('motortypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorTypeSelectController::class, 'index']);
            Route::get('motors', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorSelectController::class, 'index']);
            Route::get('toxic', [\App\Http\Controllers\Api\v1\Services\Html\Select\MotorToxicController::class, 'index']);
-
            Route::get('complectations', [\App\Http\Controllers\Api\v1\Services\Html\Select\ComplectationSelectController::class, 'index']);
            Route::get('bodyworks', [\App\Http\Controllers\Api\v1\Services\Html\Select\BodyWorkSelectController::class, 'index']);
            Route::get('countryfactories', [\App\Http\Controllers\Api\v1\Services\Html\Select\CountryFactorySelectController::class, 'index']);
+           Route::get('devices/', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeviceNameController::class, 'index']);
        });
    });
 });

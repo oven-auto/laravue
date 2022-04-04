@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\Filterable;
 
 class Device extends Model
 {
     use HasFactory;
+    use Filterable;
 
     protected $fillable = ['name', 'device_type_id', 'device_filter_id'];
 
