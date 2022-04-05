@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Services\Html\Color;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MarkColor;
 
-class MarkColorController extends Controller
+class ColorMarkController extends Controller
 {
     public function index(Request $request)
     {

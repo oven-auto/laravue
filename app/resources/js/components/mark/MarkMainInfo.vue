@@ -22,11 +22,11 @@
         </div>
         <div class="col-4">
             <div class="btn-group">
-                <div>
+                <div style="width: 70%;">
                     <label for="name">Название</label>
                     <input style="border-radius: 5px 0 0 5px;" type="text" name="name" v-model="mark.name" class="form-control"/>
                 </div>
-                <div style="width: 130px;">
+                <div style="width: 30%;">
                     <label for="name">Префикс</label>
                     <input style="border-radius: 0px 5px 5px 0px;"
                         type="text"
@@ -56,6 +56,28 @@
             </div>
         </div>
     </div>
+
+    <div class="row">
+        <div class="col">
+            <label class="checkbox " :title="'Статус'">
+                <input class="device-checkbox-toggle" type="checkbox" v-bind:value="mark.show_driver" v-model="mark.show_driver">
+                <div class="checkbox__text" style="">
+                    <div style="width: 200px;text-align: left;">
+                        {{ (mark.show_driver) ? 'Тип привода виден' : 'Тип привода спрятан' }}
+                    </div>
+                </div>
+            </label>
+
+            <label class="checkbox " :title="'Статус'">
+                <input class="device-checkbox-toggle" type="checkbox" v-bind:value="mark.show_toxic" v-model="mark.show_toxic">
+                <div class="checkbox__text" style="">
+                    <div style="width: 200px;text-align: left;">
+                        {{ (mark.show_toxic) ? 'Норма токсичности видна' : 'Норма токсичности спрятана' }}
+                    </div>
+                </div>
+            </label>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -73,6 +95,8 @@ export default {
         mark: {
             name: '',
             status: 0,
+            show_driver: 0,
+            show_toxic: 0,
             prefix: '',
             brand_id: 0,
             body_work_id: 0,

@@ -10,7 +10,7 @@ use DB;
 Class MarkRepository
 {
     const MARK_COL = [
-        'name', 'prefix', 'sort', 'status', 'brand_id', 'body_work_id', 'country_factory_id'
+        'name', 'prefix', 'sort', 'status', 'brand_id', 'body_work_id', 'country_factory_id', 'show_toxic', 'show_driver'
     ];
 
     public function saveMark(Mark $mark, $data = []) :void

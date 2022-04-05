@@ -21,15 +21,29 @@
 
                         <ComplectationSelect v-model="car.complectation_id" :mark="car.mark_id" name="complectation_id"></ComplectationSelect>
 
-                        <div >
-                            <label for="name">VIN</label>
-                            <input type="text" name="name" v-model="car.vin" class="form-control"/>
+                        <div class="row">
+                            <div class="col">
+                                <label for="name">VIN</label>
+                                <input type="text" name="name" v-model="car.vin" class="form-control"/>
+                            </div>
+                            <div class="col">
+                                <label for="name">Год выпуска</label>
+                                <select v-model="car.year" class="form-control">
+                                    <option selected disabled>Укажите параметр</option>
+                                    <option v-for="i in Array(20).fill().map((e, i) => i + 2010)" :value="i">
+                                        {{i}}
+                                    </option>
+                                </select>
+                            </div>
                         </div>
 
-                        <div >
-                            <label for="name">Год выпуска</label>
-                            <input type="text" name="name" v-model="car.year" class="form-control"/>
+                        <div class="row">
+                            <div class="col-6">
+                                <DeliveryType v-model="car.delivery_type_id" name="delivery_type_id"></DeliveryType>
+                            </div>
                         </div>
+
+
                     </div>
 
                     <div class="col-6">
@@ -119,11 +133,12 @@ import ComplectationSelect from '../html/ComplectationSelect';
 import CarColor from './CarColorComponent';
 import CarPack from './CarPackComponent';
 import CarDevice from './CarDeviceComponent';
+import DeliveryType from '../html/Select/DeliveryTypeSelect';
 
 export default {
     name: 'car-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColor, CarPack, CarDevice
+        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColor, CarPack, CarDevice, DeliveryType
     },
     data() {
         return {
@@ -136,7 +151,8 @@ export default {
                 year: '',
                 packs: [],
                 device_price: 0,
-                devices: []
+                devices: [],
+                delivery_type_id: 0,
             },
             packPrice: 0,
             complectPrice: 0,
@@ -253,7 +269,7 @@ export default {
 
         getComplectationPrice() {
             if(this.car.complectation_id > 0)
-                axios.get('/api/complectprice/'+this.car.complectation_id)
+                axios.get('/api/services/price/complectation/'+this.car.complectation_id)
                 .then( (res) => {
                     this.complectPrice = res.data.data
                 })

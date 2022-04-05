@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Back;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -48,15 +48,6 @@ class MotorTransmissionController extends Controller
             'status' => 1,
             'motortransmission' => $motortransmission,
             'message' => 'Трансмиссия изменена'
-        ]);
-    }
-
-    public function getTypes()
-    {
-        $types = \App\Models\TransmissionType::get();
-        return response()->json([
-            'status' => 1,
-            'data' => $types
         ]);
     }
 }

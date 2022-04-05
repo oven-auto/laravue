@@ -9,7 +9,7 @@ use DB;
 Class CarRepository {
 
     const CAR_COL = [
-        'brand_id', 'mark_id', 'complectation_id', 'mark_color_id', 'year', 'device_price', 'vin'
+        'brand_id', 'mark_id', 'complectation_id', 'mark_color_id', 'year', 'device_price', 'vin', 'delivery_type_id'
     ];
 
     public function save(Car $car, $data = [])
@@ -44,16 +44,23 @@ Class CarRepository {
 
     public function getCarArray(Car $car)
     {
-        $data['brand_id'] = $car->brand_id;
-        $data['mark_id'] = $car->mark_id;
-        $data['complectation_id'] = $car->complectation_id;
-        $data['color_id'] = $car->color->id;
-        $data['vin'] = $car->vin;
-        $data['year'] = $car->year;
-        $data['device_price'] = $car->device_price;
-        $data['packs'] = $car->packs->pluck('id');
-        $data['devices'] = $car->devices->pluck('id');
+        // $data['brand_id'] = $car->brand_id;
+        // $data['mark_id'] = $car->mark_id;
+        // $data['complectation_id'] = $car->complectation_id;
+        // $data['color_id'] = $car->color->id;
+        // $data['vin'] = $car->vin;
+        // $data['year'] = $car->year;
+        // $data['device_price'] = $car->device_price;
+        // $data['packs'] = $car->packs->pluck('id');
+        // $data['devices'] = $car->devices->pluck('id');
+        $packs = $car->packs->pluck('id');
+        $devices = $car->devices->pluck('id');
+        $color_id = $car->color->id;
 
-        return $data;
+        $car = $car->toArray();
+        $car['packs'] = $packs;
+        $car['devices'] = $devices;
+        $car['color_id'] = $color_id;
+        return $car;
     }
 }

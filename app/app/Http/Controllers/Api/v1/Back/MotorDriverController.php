@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Back;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -51,12 +51,5 @@ class MotorDriverController extends Controller
         ]);
     }
 
-    public function getTypes()
-    {
-        $types = \App\Models\DriverType::get();
-        return response()->json([
-            'status' => 1,
-            'data' => $types
-        ]);
-    }
+
 }

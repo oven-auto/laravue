@@ -111,7 +111,7 @@ export default {
 
         loadColor() {
             if(this.complectation > 0)
-                axios.get('/api/complectcolors?complectation_id=' + this.complectation)
+                axios.get('/api/services/html/color/complectation?complectation_id=' + this.complectation)
                 .then((res) => {
                         this.colors = res.data.data
                 })

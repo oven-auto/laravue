@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Back;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class BannerController extends Controller
     }
 
     public function index()
-    {   
+    {
         $banners = Banner::with('brand')->get();
         foreach($banners as $itemBanner)
             $itemBanner->image = asset('storage'.$itemBanner->image).'?'.date('dmYh');

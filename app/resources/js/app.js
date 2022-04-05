@@ -29,6 +29,14 @@ Vue.component('top-menu', require('./components/header/TopMenuComponent').defaul
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+Vue.directive('tooltip', function(el, binding){
+    $(el).tooltip({
+        title: binding.value,
+        placement: binding.arg,
+        trigger: 'hover'
+    })
+})
+
 import router from './router';
 
 const app = new Vue({

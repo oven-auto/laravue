@@ -66,7 +66,7 @@ export default {
         },
 
         loadData() {
-            axios.get('/api/markcolors?' + 'complectation_id='+this.complectation)
+            axios.get('/api/services/html/color/mark?' + 'complectation_id='+this.complectation)
             .then( (res) => {
                 this.colors = res.data.data
                 this.clickColor(this.currentColorId)

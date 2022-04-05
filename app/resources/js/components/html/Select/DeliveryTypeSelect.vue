@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label>Тип трансмиссии</label>
+        <label>Тип поставки</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in data" :value="item.id">
@@ -18,11 +18,11 @@ export default {
         }
     },
     mounted() {
-        this.loadData()
+        this.loadTypes()
     },
     methods: {
-        loadData() {
-            axios.get('/api/services/html/select/transmissiontypes')
+        loadTypes() {
+            axios.get('/api/services/html/select/deliverytypes')
             .then(res => {
                 this.data = res.data.data
             })
@@ -31,16 +31,7 @@ export default {
             })
         }
     },
-    props: {
-        name: {
-            type: String,
-            default: null
-        },
-        value: {
-            type: Number,
-            default: 0
-        }
-    },
+    props: ['name', 'value'],
     computed: {
         selected: {
             get() {
@@ -51,10 +42,5 @@ export default {
             },
         },
     },
-    // watch: {
-    //     selected(v){
-    //         this.$emit('input', v);
-    //     }
-    // },
 }
 </script>

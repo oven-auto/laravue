@@ -8,7 +8,7 @@ use App\Models\Complectation;
 
 class ComplectationPriceController extends Controller
 {
-    public function index(Request $request)
+    public function set(Request $request)
     {
         $data = $request->all();
         $complectation = Complectation::find($data['id']);
@@ -16,6 +16,14 @@ class ComplectationPriceController extends Controller
         $complectation->save();
         return response()->json([
             'data' => $complectation->price
+        ]);
+    }
+
+    public function get(Complectation $complectation)
+    {
+        $price = $complectation->price;
+        return response()->json([
+            'data' => $price
         ]);
     }
 }

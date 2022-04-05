@@ -22,7 +22,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/drivers/type')
+            axios.get('/api/services/html/select/drivertypes')
             .then(res => {
                 this.data = res.data.data
             })

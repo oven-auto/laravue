@@ -18,52 +18,31 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::resource('brands', \App\Http\Controllers\Api\v1\BrandController::class);
+//CRUD
+Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\Back')->group(function () {
+    Route::resource('brands', BrandController::class);
+    Route::resource('devicetypes', DeviceTypeController::class);
+    Route::resource('devicefilters', DeviceFilterController::class);
+    Route::resource('devices', DeviceController::class);
+    Route::resource('properties', PropertyController::class);
+    Route::resource('motortypes', MotorTypeController::class);
+    Route::resource('motortransmissions', MotorTransmissionController::class);
+    Route::resource('motordrivers', MotorDriverController::class);
+    Route::resource('motors', MotorController::class);
+    Route::resource('colors', ColorController::class);
+    Route::resource('packs', PackController::class);
+    Route::resource('bodyworks', BodyWorkController::class);
+    Route::resource('countryfactories', CountryFactoryController::class);
+    Route::resource('marks', MarkController::class);
+    Route::resource('complectations', ComplectController::class);
+    Route::resource('cars', CarController::class);
+    Route::resource('credits', CreditController::class);
+    Route::resource('banners', BannerController::class);
+    Route::resource('shortcuts', ShortcutController::class);
+    Route::resource('sectionpages', SectionPageController::class);
+    Route::resource('pages', PageController::class);
+});
 
-Route::resource('devicetypes', \App\Http\Controllers\Api\v1\DeviceTypeController::class);
-
-Route::resource('devicefilters', \App\Http\Controllers\Api\v1\DeviceFilterController::class);
-
-Route::resource('devices', \App\Http\Controllers\Api\v1\DeviceController::class);
-
-Route::resource('properties', \App\Http\Controllers\Api\v1\PropertyController::class);
-
-Route::resource('motortypes', \App\Http\Controllers\Api\v1\MotorTypeController::class);
-
-Route::resource('motortransmissions', \App\Http\Controllers\Api\v1\MotorTransmissionController::class);
-Route::get('transmissions/type', [\App\Http\Controllers\Api\v1\MotorTransmissionController::class, 'getTypes']);
-
-Route::resource('motordrivers', \App\Http\Controllers\Api\v1\MotorDriverController::class);
-Route::get('drivers/type', [\App\Http\Controllers\Api\v1\MotorDriverController::class, 'getTypes']);
-
-Route::resource('motors', \App\Http\Controllers\Api\v1\MotorController::class);
-
-Route::resource('colors', \App\Http\Controllers\Api\v1\ColorController::class);
-
-Route::resource('packs', \App\Http\Controllers\Api\v1\PackController::class);
-
-Route::resource('bodyworks', \App\Http\Controllers\Api\v1\BodyWorkController::class);
-
-Route::resource('countryfactories', \App\Http\Controllers\Api\v1\CountryFactoryController::class);
-
-Route::resource('marks', \App\Http\Controllers\Api\v1\MarkController::class);
-
-Route::resource('complectations', \App\Http\Controllers\Api\v1\ComplectController::class);
-Route::get('markcolors', [\App\Http\Controllers\Api\v1\MarkColorController::class, 'index']);
-Route::get('complectcolors', [\App\Http\Controllers\Api\v1\ComplectColorController::class, 'colorpack']);
-Route::get('complectprice/{complectation}', [\App\Http\Controllers\Api\v1\ComplectPriceController::class, 'price']);
-
-Route::resource('cars', \App\Http\Controllers\Api\v1\CarController::class);
-
-Route::resource('credits', \App\Http\Controllers\Api\v1\CreditController::class);
-
-Route::resource('banners', \App\Http\Controllers\Api\v1\BannerController::class);
-
-Route::resource('shortcuts', \App\Http\Controllers\Api\v1\ShortcutController::class);
-
-Route::resource('sectionpages', \App\Http\Controllers\Api\v1\SectionPageController::class);
-
-Route::resource('pages', \App\Http\Controllers\Api\v1\PageController::class);
 
 
 
@@ -76,10 +55,11 @@ Route::prefix('services')->group(function () {
     Route::delete('marks/document', [\App\Http\Controllers\Api\v1\Services\Files\MarkDocument\DeleteMarkDocumentController::class, 'index']);
 
 
-   //МАРШРУТЫ ИЗМЕНЕНИЯ ЦЕНЫ
+   //МАРШРУТЫ ЦЕНЫ
    Route::prefix('price')->group(function () {
         Route::patch('pack', [\App\Http\Controllers\Api\v1\Services\Price\PackPriceController::class, 'index']);
-        Route::patch('complectation', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'index']);
+        Route::patch('complectation', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'set']);
+        Route::get('complectation/{complectation}', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'get']);
    });
 
    //МАРШРУТЫ ИЗМЕНЕНИЯ СОРТИРОВКИ
@@ -112,6 +92,13 @@ Route::prefix('services')->group(function () {
            Route::get('bodyworks', [\App\Http\Controllers\Api\v1\Services\Html\Select\BodyWorkSelectController::class, 'index']);
            Route::get('countryfactories', [\App\Http\Controllers\Api\v1\Services\Html\Select\CountryFactorySelectController::class, 'index']);
            Route::get('devices/', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeviceNameController::class, 'index']);
+           Route::get('transmissiontypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\TransmissionTypeSelectController::class, 'index']);
+           Route::get('drivertypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DriverTypeSelectController::class, 'index']);
+           Route::get('deliverytypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryTypeSelectController::class, 'index']);
+       });
+       Route::prefix('color')->group(function () {
+            Route::get('mark', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorMarkController::class, 'index']);
+            Route::get('complectation', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorComplectationController::class, 'index']);
        });
    });
 });

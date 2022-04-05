@@ -135,6 +135,8 @@ export default {
             mark: {
                 name: '',
                 status: 0,
+                show_driver: 1,
+                show_toxic: 1,
                 prefix: '',
                 brand_id: 0,
                 body_work_id: 0,
@@ -243,7 +245,8 @@ export default {
                 this.mark.info.slogan = response.data.mark.info.slogan;
                 this.mark.info.description = response.data.mark.info.description;
                 this.mark.status = response.data.mark.status;
-
+                this.mark.show_driver = response.data.mark.show_driver;
+                this.mark.show_toxic = response.data.mark.show_toxic;
                 this.mark.document = response.data.mark.document;
 
                 this.mark.icon = response.data.mark.icon.image;
@@ -318,6 +321,8 @@ export default {
             formData.append('name',                 this.mark.name);
             formData.append('prefix',               this.mark.prefix);
             formData.append('status',               Number(this.mark.status));
+            formData.append('show_driver',          Number(this.mark.show_driver));
+            formData.append('show_toxic',          Number(this.mark.show_toxic));
             formData.append('brand_id',             this.mark.brand_id);
             formData.append('country_factory_id',   this.mark.country_factory_id);
             formData.append('body_work_id',         this.mark.body_work_id);

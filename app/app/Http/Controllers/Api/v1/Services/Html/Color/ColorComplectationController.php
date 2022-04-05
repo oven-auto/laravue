@@ -1,15 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1;
+namespace App\Http\Controllers\Api\v1\Services\Html\Color;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Complectation;
 
-class ComplectColorController extends Controller
+class ColorComplectationController extends Controller
 {
-    //вернет все цвета у которых установлены
-    public function colorpack(Request $request)
+    public function index(Request $request)
     {
         $data = [];
 

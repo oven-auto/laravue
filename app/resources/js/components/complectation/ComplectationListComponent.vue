@@ -28,8 +28,8 @@
 
                 <th>Название</th>
                 <th>Цена</th>
-                <th style="width: 100px;" colspan="2">
-                    <label class="checkbox " :title="'Статус'">
+                <th style="width: 100px; text-align:right" colspan="2">
+                    <label class="checkbox m-0" :title="'Статус'">
                         <input class="device-checkbox-toggle" type="checkbox" v-bind:value="status" v-model="status" @change="getByStatus()">
                         <div class="checkbox__text" style="">
                             <div>
@@ -59,14 +59,15 @@
                     {{item.motor.driver.acronym}}
                 </td>
 
-                <td >
+                <td class="p-0">
                     <div @click="showPriceModal(item.id)" v-if="statusPriceClick != item.id" style="width:150px;">
                         {{ formatPrice(item.price) }}
                     </div>
                     <div class="input-group" v-else style="width:150px;">
-                        <input type="text" class="form-control" v-model="item.price" aria-describedby="basic-addon2" onFocus="this.select()">
+                        <input type="text" class="p-0" v-model="item.price" aria-describedby="basic-addon2" onFocus="this.select()"
+                        style="display:block;width:60%;font-size: 14px;line-height: 10px;">
                         <div class="input-group-append">
-                            <button class="btn btn-secondary input-group-text" @click="changePrice(item)">OK</button>
+                            <button class="btn btn-secondary input-group-text p-0 px-1" style="" @click="changePrice(item)">OK</button>
                         </div>
                     </div>
                 </td>
@@ -284,5 +285,8 @@ export default {
 <style scoped>
 .complectation-table tr{
     cursor: pointer;
+}
+table td{
+    vertical-align: middle
 }
 </style>

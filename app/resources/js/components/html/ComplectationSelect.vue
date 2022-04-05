@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label>{{label}}</label>
+        <label>{{getLabel}}</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in complectations" :value="item.id" :key="'complectation-select'+item.id">
@@ -43,6 +43,9 @@ export default {
     },
     props: ['name','value','mark','label'],
     computed: {
+        getLabel() {
+            return this.label ?  this.label : 'Комплектация'
+        },
         selected: {
             get() {
                 return this.value;
