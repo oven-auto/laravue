@@ -36,9 +36,24 @@
                         <input type="text" name="name" v-model="complectation.code" class="form-control"/>
                     </div>
 
-                    <div >
-                        <label for="name">Цена</label>
-                        <input type="text" name="name" v-model="complectation.price" class="form-control"/>
+                    <div class="row">
+                        <div class="col">
+                            <label for="name">Цена</label>
+                            <input type="text" name="name" v-model="complectation.price" class="form-control"/>
+                        </div>
+
+                        <div class="col">
+                            <label for="name" class="d-block">&nbsp</label>
+                            <label class="checkbox m-0 mt-1" :title="'Статус цены'">
+                                <input class="device-checkbox-toggle" type="checkbox"
+                                    v-bind:value="complectation.price_status" v-model="complectation.price_status">
+                                <div class="checkbox__text" style="">
+                                    <div>
+                                        {{complectation.price_status ? 'Цена актуальна' : 'Цена уточняется'}}
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -208,7 +223,8 @@ export default {
                 devices: [],
                 packs: [],
                 colors: [],
-                colorPack: []
+                colorPack: [],
+                price_status: 1,
             },
 
             packs: [],
@@ -307,6 +323,7 @@ export default {
                 this.complectation.status = response.data.data.status;
                 this.complectation.sort = response.data.data.sort;
                 this.complectation.parent_id = response.data.data.parent_id;
+                this.complectation.price_status = response.data.data.price_status;
 
                 var arrayDev = [];
                 response.data.data.devices.forEach(function(item,i){
@@ -323,8 +340,8 @@ export default {
                 this.complectation.colors = response.data.data.mark_color;
 
                 var obj = {}
-                console.log(response.data.data.packs)
-                console.log(this.complectation.packs)
+                // console.log(response.data.data.packs)
+                // console.log(this.complectation.packs)
 
                 response.data.data.packs.forEach( ( item ) => {
                     if(item.colored && this.complectation.packs.includes(item.id))

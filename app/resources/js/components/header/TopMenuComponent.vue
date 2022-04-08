@@ -1,5 +1,5 @@
 <template>
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container">
         <a class="navbar-brand" href="#">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,8 +66,8 @@
                         Склад
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                        <router-link :to="'/cars/list/1'" class="dropdown-item">Актуальные</router-link>
-                        <router-link :to="'/cars/list/archive/1'" class="dropdown-item">Архив</router-link>
+                        <router-link :to="'/cars/list/1'" class="dropdown-item">Актуальный</router-link>
+                        <router-link :to="'/cars/list/archive/1'" class="dropdown-item">Архивный</router-link>
                     </div>
                 </li>
 

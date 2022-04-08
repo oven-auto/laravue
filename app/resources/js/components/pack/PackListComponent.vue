@@ -26,8 +26,6 @@
                     <th>#{{data.length}}</th>
                     <th>Цена</th>
                     <th>Код</th>
-                    <th>Название</th>
-                    <th>Бренд</th>
                     <th>Модель</th>
                     <th>Оборудование</th>
                 </tr>
@@ -41,29 +39,27 @@
                     </router-link>
                 </td>
 
-                <td>
-                    <div @click="showPriceModal(item.id)" v-if="statusPriceClick != item.id" style="width:130px;">
-                        {{ formatPrice(item.price) }}
-                    </div>
-                    <div class="input-group" v-else style="width:130px;">
-                        <input type="text" class="form-control" v-model="item.price" aria-describedby="basic-addon2" onFocus="this.select()">
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary input-group-text" @click="changePrice(item)">OK</button>
-                        </div>
-                    </div>
+                <td class="py-0 pr-0">
+                    <PriceChange v-model="item.price" :id="item.id" :url="'/api/services/price/pack'"></PriceChange>
                 </td>
 
-                <td>{{ item.code }}</td>
-                <td>{{ item.name }}</td>
                 <td>
-                    <brand-badge :brand="item.brand"></brand-badge>
+                    {{ item.code }}
+                    <div class="text-muted">{{ item.name }}</div>
                 </td>
+
                 <td>
-                    <span class="badge badge-dark" v-for="(mark,i) in item.marks" :key="'pack-marks'+i">
-                        {{mark.name}}
-                    </span>
+                    <div v-if="item.marks.length">
+                        <div v-for="(mark,i) in item.marks" :key="'pack-marks'+i">
+                            <brand-badge-mark :brand="item.brand" :mark="mark.name"></brand-badge-mark>
+                        </div>
+                    </div>
+                    <div v-else>
+                         <brand-badge :brand="item.brand" ></brand-badge>
+                    </div>
                 </td>
                 <td style="width: 50%;overflow:hidden;">
+
                     <span v-for="(device,k) in item.devices" class="badge badge-secondary mr-1" :key="'dliplp'+k">
                         {{ device.name }}
                     </span>
@@ -81,9 +77,11 @@
 
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
+import BrandBadgeMark from '../badge/BrandMarkBadge';
 import BrandBadge from '../badge/BrandBadge';
 import PackModalFilter from '../modal/PackFilterModal';
 import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
+import PriceChange from '../html/PriceChange/PriceChange';
 
 export default {
     name: 'color-list',
@@ -93,6 +91,8 @@ export default {
         BrandBadge,
         PackModalFilter,
         FilterBreadCrumbs,
+        PriceChange,
+        BrandBadgeMark
     },
 
     data() {
@@ -108,7 +108,6 @@ export default {
                 brand_id: 0,
                 mark_id: 0,
             },
-            statusPriceClick: 0,
         }
     },
     mounted() {
@@ -116,29 +115,6 @@ export default {
         this.loadData()
     },
     methods: {
-        showPriceModal(id) {
-            this.statusPriceClick = id
-        },
-
-        changePrice(pack) {
-            var data = {
-                id: pack.id,
-                price: pack.price
-            }
-            axios.patch('/api/services/price/pack', data, this.getConfig())
-            .then(res => {
-
-            }).catch(errors => {
-
-            }).finally(()=>{
-                this.statusPriceClick = 0
-            })
-        },
-
-        formatPrice(price)  {
-            return number_format(price,0,'',' ','руб.')
-        },
-
         //инициализировать объект поиска из параметров гет юрл строки
         initSearchFromUrl() {
             var i = 0

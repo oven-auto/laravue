@@ -19,11 +19,12 @@
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Название</th>
+                <th></th>
             </tr>
             </thead>
 
             <draggable v-model="types" tag="tbody" :component-data="getComponentData()">
-                <tr v-for="type in types">
+                <tr v-for="type in types" :key="'device_type_table'+type.id">
                     <td>
                         <router-link :to="toEdit + type.id">
                             Open
@@ -31,7 +32,13 @@
                     </td>
                     <td>
                         {{ type.name }}
-                        <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+
+                    </td>
+                    <td class="py-0">
+                        <div style="width: 80px; float:right;">
+                            <DeviceTypeCount :device_type_id="type.id"></DeviceTypeCount>
+                            <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+                        </div>
                     </td>
                 </tr>
             </draggable>
@@ -43,13 +50,15 @@
 import Spin from '../../spinner/SpinComponent';
 import Message from '../../alert/MessageComponent';
 import draggable from 'vuedraggable';
+import DeviceTypeCount from '../../indicators/DeviceTypeCount'
 
 export default {
     name: 'device-type-list',
     components: {
         Spin,
         Message,
-        draggable
+        draggable,
+        DeviceTypeCount
     },
     data() {
         return {
@@ -132,7 +141,5 @@ export default {
 </script>
 
 <style scoped>
-td{
-    vertical-align: middle;
-}
+
 </style>

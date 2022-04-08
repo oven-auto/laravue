@@ -16,15 +16,19 @@
         <!-- Styles -->
         <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 
-        <script type="module" src="https://unpkg.com/ionicons@5.0.0/dist/ionicons/ionicons.esm.js"></script>
+        <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
+        <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
     </head>
 
     <body class="bg-white">
         <div id="app">
             <top-menu></top-menu>
-            <div class="container pt-3">
+            <div style="height:55px;"></div>
+            <div class="container pt-3" style="min-height:78vh;">
                 <router-view></router-view>
             </div>
+
+            <div class="footer mt-3" style="min-height: 15vh;background:#333;"></div>
         </div>
     </body>
 

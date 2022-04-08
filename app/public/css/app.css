@@ -10027,7 +10027,7 @@ h3 {
 
 .checkbox__text {
   position: relative;
-  padding: 3px 6px 3px 60px;
+  padding: 3px 6px 3px 40px;
   cursor: pointer;
   white-space: nowrap;
 }
@@ -10037,7 +10037,7 @@ h3 {
   position: absolute;
   top: 5px;
   left: 0;
-  width: 44px;
+  width: 30px;
   height: 18px;
   border-radius: 13px;
   background: #CDD1DA;
@@ -10063,7 +10063,7 @@ h3 {
 }
 
 .checkbox input:checked + .checkbox__text:after {
-  left: 26px;
+  left: 14px;
 }
 
 .checkbox input:focus + .checkbox__text:before {
@@ -10074,8 +10074,73 @@ h3 {
   background-color: #eee;
 }
 
+.indicator-wrapper {
+  font-size: 24px;
+  display: inline-block;
+  position: absolute;
+  height: 24px;
+}
+
+.indicator-count {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  font-size: 10px;
+  background: #fff;
+  border-radius: 10px;
+  min-width: 20px;
+  height: 20px;
+  text-align: center;
+  padding-top: 2px;
+}
+
+.red-indicator {
+  color: #daa;
+  font-weight: normal;
+}
+
+.yellow-indicator {
+  color: #fc0;
+  font-weight: normal;
+}
+
+.green-indicator {
+  color: #38c172;
+  font-weight: normal;
+}
+
+.blue-indicator {
+  color: #3490dc;
+  font-weight: normal;
+}
+
+.red-count {
+  background: #daa;
+  color: #fff;
+  font-weight: normal;
+}
+
+.yellow-count {
+  background: #fc0;
+  color: #fff;
+  font-weight: normal;
+}
+
+.green-count {
+  background: #38c172;
+  color: #fff;
+  font-weight: normal;
+}
+
+.blue-count {
+  background: #3490dc;
+  color: #fff;
+  font-weight: normal;
+}
+
 .badge {
   padding: 5px;
+  text-align: left;
 }
 
 .h-title {
@@ -10085,9 +10150,13 @@ h3 {
 thead th {
   position: -webkit-sticky;
   position: sticky;
-  top: 0;
+  top: 55px;
   z-index: 5;
   background: rgba(20, 20, 20, 0.9);
+}
+
+.table td {
+  vertical-align: middle;
 }
 
 .badge-search {
@@ -10106,4 +10175,8 @@ thead th {
   right: 5%;
   top: 15px;
   font-size: 1.2rem;
+}
+
+.font-blood {
+  color: #ff3b30;
 }

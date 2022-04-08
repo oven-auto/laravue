@@ -28,8 +28,8 @@
                     <th>Модель</th>
                     <th>Год</th>
                     <th class="text-center">Цвет</th>
-                    <th colspan="1">Цена актуальная</th>
-                    <th colspan="1">Цена фиксированная</th>
+                    <th colspan="1">Прайс-лист</th>
+                    <th colspan="1">Цена продажи</th>
                     <th class="text-right">Дата архивации</th>
                 </tr>
             </thead>

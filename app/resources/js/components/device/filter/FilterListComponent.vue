@@ -19,6 +19,7 @@
                 <tr>
                     <th style="width: 80px;">#</th>
                     <th>Название</th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -32,7 +33,14 @@
                     <td>
                         {{ type.name }}
 
-                        <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+
+                    </td>
+
+                    <td class="py-0">
+                        <div style="width: 80px; float:right;">
+                            <DeviceFilterCount :device_filter_id="type.id"></DeviceFilterCount>
+                            <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+                        </div>
                     </td>
                 </tr>
             </draggable>
@@ -44,13 +52,15 @@
 import Spin from '../../spinner/SpinComponent';
 import Message from '../../alert/MessageComponent';
 import draggable from 'vuedraggable';
+import DeviceFilterCount from '../../indicators/DeviceFilterCount';
 
 export default {
     name: 'device-filter-list',
     components: {
         Spin,
         Message,
-        draggable
+        draggable,
+        DeviceFilterCount
     },
     data() {
         return {

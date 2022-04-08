@@ -41,8 +41,11 @@
                 <tr v-for="(item,i) in data" :key="'car'+i" class="small-text ">
                     <td><router-link :to="toEdit + item.id">Open </router-link></td>
                     <td>
-                        <div><big>{{item.vin}}</big></div>
-                        <div>{{item.complectation.code}}</div>
+                        <div v-if="loading==false">
+                            <div>{{ deliveryType(item.delivery_stage) }}</div>
+                            <big>{{item.vin}}</big>
+                            <div>{{item.complectation.code}}</div>
+                        </div>
                     </td>
 
                     <td>
@@ -66,6 +69,7 @@
                     </td>
                     <td>
                         <big>{{ formatPrice(item.price.full_price) }}</big>
+                        <div class="font-blood">{{item.complectation.price_status ? '' : 'На переоценке'}}</div>
                     </td>
                     <td class="text-right">
                        <span  class="badge badge-danger" @click="deleteCar(item.id, i)">В архив</span>
@@ -107,6 +111,9 @@ export default {
         ModalWindow,
         FilterBreadCrumbs
     },
+    computed: {
+
+    },
     data() {
         return {
             data: [],
@@ -128,6 +135,12 @@ export default {
     },
 
     methods: {
+        deliveryType(obj) {
+            if(obj.hasOwnProperty('stage'))
+                if(obj.stage.hasOwnProperty('name'))
+                    return obj.stage.name
+        },
+
         deleteCar(id, index) {
             var status = confirm('Уверены, что хотите поместить этот автомобиль в архив?')
             if(status) {
@@ -192,7 +205,7 @@ export default {
                     this.pageArray = []
                     this.succesMessage = res.data.message;
                 }
-                this.loading = false;
+                //this.loading = false;
             })
             .catch(errors => {
                 console.log(errors)

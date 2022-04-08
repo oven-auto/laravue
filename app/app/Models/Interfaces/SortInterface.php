@@ -2,6 +2,7 @@
 
 namespace App\Models\Interfaces;
 
-interface SortInterface {
+interface SortInterface
+{
 
 }

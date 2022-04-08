@@ -12,8 +12,11 @@
 
 @import 'color';
 
+@import 'indicators';
+
 .badge{
     padding: 5px;
+    text-align: left;
 }
 .h-title{
     font-size: 20px;
@@ -21,9 +24,12 @@
 thead th {
     position: -webkit-sticky;
     position: sticky;
-    top: 0;
+    top: 55px;
     z-index: 5;
     background: rgba(20,20,20,0.9);
+}
+.table td{
+    vertical-align: middle;
 }
 
 .badge-search{
@@ -39,4 +45,7 @@ thead th {
     right: 5%;
     top:15px;
     font-size: 1.2rem;
+}
+.font-blood{
+    color: #ff3b30;
 }

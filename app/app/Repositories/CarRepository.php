@@ -30,6 +30,18 @@ Class CarRepository {
                 $car->fill($mainData)->save();
                 $car->packs()->sync($data['packs']);
                 $car->devices()->sync($data['devices']);
+                $car->marker()->updateOrCreate(
+                    ['car_id' => $car->id],
+                    ['marker_id' => $data['marker_id']]
+                );
+                $car->delivery_stage()->updateOrCreate(
+                    ['car_id' => $car->id],
+                    ['delivery_stage_id' => $data['delivery_stage_id']]
+                );
+                $car->production()->updateOrCreate(
+                    ['car_id' => $car->id],
+                    ['production_at' => $data['production_at']]
+                );
 
                 return ['status' => true];
             });
@@ -44,23 +56,13 @@ Class CarRepository {
 
     public function getCarArray(Car $car)
     {
-        // $data['brand_id'] = $car->brand_id;
-        // $data['mark_id'] = $car->mark_id;
-        // $data['complectation_id'] = $car->complectation_id;
-        // $data['color_id'] = $car->color->id;
-        // $data['vin'] = $car->vin;
-        // $data['year'] = $car->year;
-        // $data['device_price'] = $car->device_price;
-        // $data['packs'] = $car->packs->pluck('id');
-        // $data['devices'] = $car->devices->pluck('id');
-        $packs = $car->packs->pluck('id');
-        $devices = $car->devices->pluck('id');
-        $color_id = $car->color->id;
-
-        $car = $car->toArray();
-        $car['packs'] = $packs;
-        $car['devices'] = $devices;
-        $car['color_id'] = $color_id;
-        return $car;
+        $data = $car->toArray();
+        $data['packs'] = $car->packs->pluck('id');
+        $data['devices'] = $car->devices->pluck('id');
+        $data['color_id'] = $car->color->id;
+        $data['marker_id'] = $car->marker->marker_id;
+        $data['delivery_stage_id'] = $car->delivery_stage->delivery_stage_id;
+        $data['production_at'] = $car->production->production_at;
+        return $data;
     }
 }

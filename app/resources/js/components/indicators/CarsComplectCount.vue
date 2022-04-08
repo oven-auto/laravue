@@ -1,13 +1,18 @@
 <template>
-<div v-if="!loading && data.length">
-    <span v-for="item in data"
-        data-placement="top"
-        class="badge ml-1"
-        v-tooltip:top="item.name"
-        :class="getCssClass(item.delivery_type_id)"
-        :key="'count_cars'+item.delivery_type_id">
-            {{item.count}}
-    </span>
+<div v-if="!loading && data.length" class="d-flex align-items-center">
+        <div v-for="item in data" :key="'count-car'+item.delivery_type_id" style="" class="d-flex align-items-center">
+            <div class=" ml-1" style="width:24px;height:24px;" v-tooltip:top="item.name">
+                <div class="indicator-wrapper">
+                <ion-icon
+                    class=""
+                    name="car-sport-outline"
+                    :class="getCssClass(item.delivery_type_id)"
+                >
+                </ion-icon>
+                <span class="indicator-count" :class="getCssCount(item.delivery_type_id)">{{item.count}}</span>
+                </div>
+            </div>
+        </div>
 </div>
 </template>
 
@@ -45,6 +50,26 @@ export default {
                     return ''
             }
         },
+
+        getCssCount(id) {
+            switch(id) {
+                case 1:
+                    return 'red-count'
+                    break
+                case 2:
+                    return 'yellow-count'
+                    break
+                case 3:
+                    return 'green-count'
+                    break
+                case 4:
+                    return 'blue-count'
+                    break
+                default:
+                    return ''
+            }
+        },
+
         loadData() {
             this.loading = true
             axios.get('/api/services/count/cars?'+this.complectParamStr)
@@ -65,29 +90,5 @@ export default {
 </script>
 
 <style scoped>
-    .indicator{
-        display: inline-block;
-        border-radius: 10px;
-        width: 30px;
-    }
-    .red-indicator{
-        background: #daa;
-        color: #fff;
-        font-weight: normal;
-    }
-    .yellow-indicator{
-        background: #fc0;
-        color: #fff;
-        font-weight: normal;
-    }
-    .green-indicator{
-        background: #5d5;
-        color: #fff;
-        font-weight: normal;
-    }
-    .blue-indicator{
-        background: #55d;
-        color: #fff;
-        font-weight: normal;
-    }
+
 </style>

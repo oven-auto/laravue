@@ -8,7 +8,7 @@ use DB;
 class ComplectationRepository
 {
     const COMPLECTATION_COL = [
-        'name', 'code', 'sort', 'status', 'brand_id', 'mark_id', 'motor_id', 'price', 'parent_id'
+        'name', 'code', 'sort', 'status', 'brand_id', 'mark_id', 'motor_id', 'price', 'parent_id', 'price_status'
     ];
 
     public function save(Complectation $complectation, $data= [])

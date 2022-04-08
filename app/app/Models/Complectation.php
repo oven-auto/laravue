@@ -5,12 +5,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Traits\PriceChangeable;
 use App\Models\Interfaces\SortInterface;
+use App\Models\Interfaces\HasPriceInterface;
 
-class Complectation extends Model implements SortInterface
+class Complectation extends Model implements SortInterface, HasPriceInterface
 {
     use HasFactory;
     use Filterable;
+    use PriceChangeable;
 
     protected $guarded = [];
 

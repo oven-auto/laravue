@@ -27,8 +27,8 @@
                 <th>Код</th>
 
                 <th>Название</th>
-                <th>Цена</th>
-                <th style="width: 100px; text-align:right" colspan="2">
+                <th colspan="2">Прайс-лист и публикация</th>
+                <th style="width: 100px; text-align:right" >
                     <label class="checkbox m-0" :title="'Статус'">
                         <input class="device-checkbox-toggle" type="checkbox" v-bind:value="status" v-model="status" @change="getByStatus()">
                         <div class="checkbox__text" style="">
@@ -59,26 +59,36 @@
                     {{item.motor.driver.acronym}}
                 </td>
 
-                <td class="p-0">
-                    <div @click="showPriceModal(item.id)" v-if="statusPriceClick != item.id" style="width:150px;">
-                        {{ formatPrice(item.price) }}
-                    </div>
-                    <div class="input-group" v-else style="width:150px;">
-                        <input type="text" class="p-0" v-model="item.price" aria-describedby="basic-addon2" onFocus="this.select()"
-                        style="display:block;width:60%;font-size: 14px;line-height: 10px;">
-                        <div class="input-group-append">
-                            <button class="btn btn-secondary input-group-text p-0 px-1" style="" @click="changePrice(item)">OK</button>
+                <td class="py-0" >
+                    <div class="row" style="width:200px;">
+                        <div class="col-8 d-flex align-items-center">
+                            <PriceChange :id="item.id" v-model="item.price" :url="'/api/services/price/complectation'"></PriceChange>
+                        </div>
+                        <div class="col-4">
+                            <label class="checkbox m-0">
+                                <input class="device-checkbox-toggle" type="checkbox"
+                                    v-bind:value="item.price_status" v-model="item.price_status"
+                                    @change="changeComplectPrice(item.id,item.price_status)"
+                                >
+                                <div class="checkbox__text" style="">
+                                    <div>
+                                        &nbsp
+                                    </div>
+                                </div>
+                            </label>
                         </div>
                     </div>
                 </td>
 
-                <td>
+                <td class="py-0">
                     <CarsComplectCount :complectation_id="item.id"></CarsComplectCount>
                 </td>
 
                 <td>
-                    <complectation-status v-model="item.status" :id="item.id"></complectation-status>
-                    <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+                    <div style="width: 100px;">
+                        <complectation-status v-model="item.status" :id="item.id"></complectation-status>
+                        <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
+                    </div>
                 </td>
             </tr>
             </draggable>
@@ -97,6 +107,7 @@ import ComplectationFilter from '../modal/ComplectationFilterModal';
 import BrandBadge from '../badge/BrandBadge';
 import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
 import CarsComplectCount from '../indicators/CarsComplectCount';
+import PriceChange from '../html/PriceChange/PriceChange';
 
 export default {
     name: 'complectation-list',
@@ -107,7 +118,8 @@ export default {
         BrandBadge,
         draggable,
         FilterBreadCrumbs,
-        CarsComplectCount
+        CarsComplectCount,
+        PriceChange
     },
     data() {
         return {
@@ -132,29 +144,24 @@ export default {
         this.loadData()
     },
     methods: {
-        showPriceModal(id) {
-            this.statusPriceClick = id
+        getByStatus() {
+            this.search.status = Number(this.status)
+            this.loadData()
         },
 
-        changePrice(complectation) {
-            var data = {
-                id: complectation.id,
-                price: complectation.price
-            }
-            axios.patch('/api/services/price/complectation', data, this.getConfig())
+        changeComplectPrice(id,price_status) {
+            var obj = {
+                id: id,
+                price_status: price_status
+            };
+            axios.patch('/api/services/price/complectation/pricestatus',obj)
             .then(res => {
 
             }).catch(errors => {
 
             }).finally(()=>{
-                this.statusPriceClick = 0
+
             })
-
-        },
-
-        getByStatus() {
-            this.search.status = Number(this.status)
-            this.loadData()
         },
 
         //инициализировать объект поиска из параметров гет юрл строки

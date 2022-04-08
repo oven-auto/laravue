@@ -1,6 +1,6 @@
 <template>
 <div>
-    <label>{{label}}: {{result}}</label>
+    <label>{{label}}: </label>
     <input type="date" class="form-control" v-model="result" >
 </div>
 </template>

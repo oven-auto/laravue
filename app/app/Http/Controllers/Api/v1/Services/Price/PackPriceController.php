@@ -5,17 +5,15 @@ namespace App\Http\Controllers\Api\v1\Services\Price;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pack;
+use App\Services\PriceService\PriceChangeService;
 
 class PackPriceController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request, PriceChangeService $service)
     {
-        $data = $request->all();
-        $pack = Pack::find($data['id']);
-        $pack->price = $data['price'];
-        $pack->save();
+        $service->changePrice(new Pack, $request->all());
         return response()->json([
-            'status' => 1
+            'status' => 1,
         ]);
     }
 }

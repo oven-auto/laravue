@@ -19,7 +19,7 @@ class CarController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
-        $query = Car::with(['brand','color','mark','complectation','price']);
+        $query = Car::with(['brand','color','mark','complectation','price','delivery_stage.stage']);
         $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
         $cars = $query->filter($filter)->paginate(20);
 

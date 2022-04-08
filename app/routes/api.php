@@ -60,6 +60,7 @@ Route::prefix('services')->group(function () {
         Route::patch('pack', [\App\Http\Controllers\Api\v1\Services\Price\PackPriceController::class, 'index']);
         Route::patch('complectation', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'set']);
         Route::get('complectation/{complectation}', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'get']);
+        Route::patch('complectation/pricestatus', [\App\Http\Controllers\Api\v1\Services\Price\ComplectationPriceController::class, 'pricestatus']);
    });
 
    //МАРШРУТЫ ИЗМЕНЕНИЯ СОРТИРОВКИ
@@ -74,6 +75,8 @@ Route::prefix('services')->group(function () {
    //МАРШРУТЫ ПОЛУЧЕНИЯ КОЛИЧЕСТВА
    Route::prefix('count')->group(function () {
        Route::get('cars', [\App\Http\Controllers\Api\v1\Services\Count\CarComplectCountController::class,'index']);
+       Route::get('devicefilters', [\App\Http\Controllers\Api\v1\Services\Count\DeviceFilterCountController::class, 'index']);
+       Route::get('devicetypes', [\App\Http\Controllers\Api\v1\Services\Count\DeviceTypeCountController::class, 'index']);
    });
 
     //МАРШРУТЫ ПОЛУЧЕНИЯ СПИСКОВ ДЛЯ HTML
@@ -95,6 +98,8 @@ Route::prefix('services')->group(function () {
            Route::get('transmissiontypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\TransmissionTypeSelectController::class, 'index']);
            Route::get('drivertypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DriverTypeSelectController::class, 'index']);
            Route::get('deliverytypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryTypeSelectController::class, 'index']);
+           Route::get('deliverystages', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryStageSelectController::class, 'index']);
+           Route::get('markers', [\App\Http\Controllers\Api\v1\Services\Html\Select\MarkerSelectController::class, 'index']);
        });
        Route::prefix('color')->group(function () {
             Route::get('mark', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorMarkController::class, 'index']);

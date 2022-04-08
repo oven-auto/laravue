@@ -40,6 +40,14 @@
                         <div class="row">
                             <div class="col-6">
                                 <DeliveryType v-model="car.delivery_type_id" name="delivery_type_id"></DeliveryType>
+
+                                <DeliveryStageSelect v-model="car.delivery_stage_id" name="delivery_stage_id"></DeliveryStageSelect>
+                            </div>
+
+                            <div class="col-6">
+                                <MarkerSelect v-model="car.marker_id" name="marker_id"></MarkerSelect>
+
+                                <DateInput v-model="car.production_at" :label="'Дата производства'"></DateInput>
                             </div>
                         </div>
 
@@ -135,10 +143,20 @@ import CarPack from './CarPackComponent';
 import CarDevice from './CarDeviceComponent';
 import DeliveryType from '../html/Select/DeliveryTypeSelect';
 
+import MarkerSelect from '../html/Select/MarkerSelect';
+import DeliveryStageSelect from '../html/Select/DeliveryStageSelect';
+import DateInput from '../html/DateInput'
+
 export default {
     name: 'car-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MarkSelect, ComplectationSelect, CarColor, CarPack, CarDevice, DeliveryType
+        Error,
+        Message,
+        Spin,
+        BrandSelect, MarkSelect, ComplectationSelect,
+        CarColor, CarPack, CarDevice,
+        DeliveryType,MarkerSelect,DeliveryStageSelect,
+        DateInput
     },
     data() {
         return {
@@ -153,6 +171,9 @@ export default {
                 device_price: 0,
                 devices: [],
                 delivery_type_id: 0,
+                marker_id: 0,
+                delivery_stage_id: 0,
+                production_at: 0
             },
             packPrice: 0,
             complectPrice: 0,

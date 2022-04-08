@@ -5,11 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Interfaces\HasPriceInterface;
+use App\Models\Traits\PriceChangeable;
 
-class Pack extends Model
+class Pack extends Model implements HasPriceInterface
 {
     use HasFactory;
     use Filterable;
+    use PriceChangeable;
 
     protected $guarded = [];
 

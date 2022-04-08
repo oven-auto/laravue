@@ -61,4 +61,19 @@ class Car extends Model
     {
         return $this->hasOne(\App\Models\CarFixedPrice::class,'car_id','id')->withDefault();
     }
+
+    public function marker()
+    {
+        return $this->hasOne(\App\Models\CarMarker::class)->withDefault();
+    }
+
+    public function delivery_stage()
+    {
+        return $this->hasOne(\App\Models\CarDelivery::class)->withDefault();
+    }
+
+    public function production()
+    {
+        return $this->hasOne(\App\Models\CarProduction::class)->withDefault();
+    }
 }
