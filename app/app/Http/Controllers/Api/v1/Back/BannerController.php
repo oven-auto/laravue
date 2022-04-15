@@ -17,7 +17,7 @@ class BannerController extends Controller
 
     public function index()
     {
-        $banners = Banner::with('brand')->get();
+        $banners = Banner::with('brand')->orderBy('sort')->get();
         foreach($banners as $itemBanner)
             $itemBanner->image = asset('storage'.$itemBanner->image).'?'.date('dmYh');
 

@@ -43,6 +43,16 @@ Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\Back')->group(functio
     Route::resource('pages', PageController::class);
 });
 
+Route::prefix('forms')->group(function() {
+    Route::get('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'index']);
+    Route::post('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'store']);
+    Route::put('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'update']);
+    Route::get('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'edit']);
+    Route::post('formcreate', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'store']);
+    Route::get('formedit/{id}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'edit']);
+    Route::put('formupdate/{id}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'update']);
+});
+
 
 
 
@@ -70,6 +80,7 @@ Route::prefix('services')->group(function () {
         Route::patch('devicetypes', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceTypeSortController::class, 'index']);
         Route::patch('devicefilters', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceFilterSortController::class, 'index']);
         Route::patch('properties', [\App\Http\Controllers\Api\v1\Services\Sort\Property\PropertySortController::class,'index']);
+        Route::patch('banners', [\App\Http\Controllers\Api\v1\Services\Sort\Banner\BannerSortController::class,'index']);
    });
 
    //МАРШРУТЫ ПОЛУЧЕНИЯ КОЛИЧЕСТВА

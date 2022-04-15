@@ -35,7 +35,7 @@ export default {
         getCssClass(id) {
             switch(id) {
                 case 1:
-                    return 'red-indicator'
+                    return 'blue-indicator'
                     break
                 case 2:
                     return 'yellow-indicator'
@@ -44,7 +44,7 @@ export default {
                     return 'green-indicator'
                     break
                 case 4:
-                    return 'blue-indicator'
+                    return 'red-indicator'
                     break
                 default:
                     return ''
@@ -54,7 +54,7 @@ export default {
         getCssCount(id) {
             switch(id) {
                 case 1:
-                    return 'red-count'
+                    return 'blue-count'
                     break
                 case 2:
                     return 'yellow-count'
@@ -63,7 +63,7 @@ export default {
                     return 'green-count'
                     break
                 case 4:
-                    return 'blue-count'
+                    return 'red-count'
                     break
                 default:
                     return ''

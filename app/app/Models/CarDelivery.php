@@ -17,4 +17,9 @@ class CarDelivery extends Model
     {
         return $this->hasOne(\App\Models\DeliveryStage::class,'id','delivery_stage_id')->withDefault();
     }
+
+    public function type()
+    {
+        return $this->hasOne(\App\Models\DeliveryType::class,'id','delivery_type_id')->withDefault();
+    }
 }

@@ -12,11 +12,15 @@
                             <brand-select v-model="search.brand_id"></brand-select>
                             <text-input v-model="search.vin" :label="'VIN'"></text-input>
                             <complectation-select v-model="search.complectation_id" :mark="search.mark_id"></complectation-select>
+                            <DeliveryType v-model="search.delivery_type_id"></DeliveryType>
+                            <DeliveryStage v-model="search.delivery_stage_id"></DeliveryStage>
+
                         </div>
 
                         <div class="col-6">
                             <MarkSelect v-model="search.mark_id" :actual="1" :title="'Актуальные модель'" :brand="search.brand_id"></MarkSelect>
                             <MarkSelect v-model="search.mark_id" :nonactual="1" :title="'Архивная модель'" :brand="search.brand_id"></MarkSelect>
+                            <CheckBox class="pt-2" v-model="search.revaluation" :label="'Переоценка'"></CheckBox>
                         </div>
                     </div>
                 </div>
@@ -41,11 +45,14 @@
     import BrandSelect from '../html/BrandSelect';
     import MarkSelect from '../html/MarkSelect';
     import ComplectationSelect from '../html/ComplectationSelect';
+    import DeliveryType from '../html/Select/DeliveryTypeSelect';
+    import DeliveryStage from '../html/Select/DeliveryStageSelect';
+    import CheckBox from '../checkbox/CheckBox';
 
     export default {
         name: "ModalWindow",
         components: {
-            TextInput, BrandSelect,MarkSelect,ComplectationSelect
+            TextInput, BrandSelect,MarkSelect,ComplectationSelect, DeliveryType, DeliveryStage,CheckBox
         },
         data: function () {
             return {
@@ -54,7 +61,10 @@
                     brand_id: 0,
                     mark_id: 0,
                     complectation_id: 0,
-                    vin: ''
+                    vin: '',
+                    delivery_type_id: 0,
+                    delivery_stage_id: 0,
+                    revaluation: 0
                 }
             }
         },
@@ -72,7 +82,9 @@
                 this.search.mark_id = 0
                 this.search.complectation_id = 0
                 this.search.vin = ''
-
+                this.search.delivery_type_id = 0
+                this.search.delivery_stage_id = 0
+                this.search.revaluation = 0
                 this.$emit('updateParent', this.search)
             },
 
@@ -119,7 +131,7 @@
         min-width: 1000px;
         max-width: 1000px;
         position: absolute;
-        top: 200px;
+        top: 300px;
         left: 50%;
         transform: translate(-50%, -50%);
 

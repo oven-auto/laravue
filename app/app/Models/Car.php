@@ -67,7 +67,7 @@ class Car extends Model
         return $this->hasOne(\App\Models\CarMarker::class)->withDefault();
     }
 
-    public function delivery_stage()
+    public function delivery()
     {
         return $this->hasOne(\App\Models\CarDelivery::class)->withDefault();
     }
@@ -75,5 +75,14 @@ class Car extends Model
     public function production()
     {
         return $this->hasOne(\App\Models\CarProduction::class)->withDefault();
+    }
+
+    public function scopeRelationList($query)
+    {
+        return $query->with(['brand','color','mark','complectation','price','production'])
+            ->with(['delivery'=>function($query){
+                $query->with(['stage','type']);
+            }
+        ]);
     }
 }

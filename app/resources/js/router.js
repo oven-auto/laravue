@@ -69,6 +69,10 @@ import pageEdit from './components/page/PageEditComponent';
 import carArchiveList from './components/cararchive/CarArchiveList';
 import carArchiveShow from './components/cararchive/CarArchiveShow';
 
+import FormSectionList from './components/form/section/FormSectionList';
+import FormSectionEdit from './components/form/section/FormSectionEdit';
+import FormEdit from './components/form/section/FormEdit';
+
 const routes = [
     {
         path: '/',
@@ -403,6 +407,29 @@ const routes = [
     {
         path: '/pages/edit/:id',
         component: pageEdit
+    },
+    ///////////
+    //FORMSECTION    ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/forms/list',
+        component: FormSectionList
+    },
+    {
+        path: '/forms/create',
+        component: FormSectionEdit
+    },
+    {
+        path: '/forms/edit/:id',
+        component: FormSectionEdit
+    },
+    {
+        path: '/forms/formcreate',
+        component: FormEdit
+    },
+    {
+        path: '/forms/formedit/:id',
+        component: FormEdit
     },
 
 

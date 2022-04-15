@@ -48,6 +48,13 @@
                     <div class="text-muted">{{ item.name }}</div>
                 </td>
 
+                <td style="width: 50%;overflow:hidden;">
+
+                    <span v-for="(device,k) in item.devices" class="badge badge-secondary mr-1" :key="'dliplp'+k">
+                        {{ device.name }}
+                    </span>
+                </td>
+
                 <td>
                     <div v-if="item.marks.length">
                         <div v-for="(mark,i) in item.marks" :key="'pack-marks'+i">
@@ -58,12 +65,7 @@
                          <brand-badge :brand="item.brand" ></brand-badge>
                     </div>
                 </td>
-                <td style="width: 50%;overflow:hidden;">
 
-                    <span v-for="(device,k) in item.devices" class="badge badge-secondary mr-1" :key="'dliplp'+k">
-                        {{ device.name }}
-                    </span>
-                </td>
             </tr>
             </tbody>
 

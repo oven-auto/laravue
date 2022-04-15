@@ -9,7 +9,7 @@ use DB;
 Class CarRepository {
 
     const CAR_COL = [
-        'brand_id', 'mark_id', 'complectation_id', 'mark_color_id', 'year', 'device_price', 'vin', 'delivery_type_id'
+        'brand_id', 'mark_id', 'complectation_id', 'mark_color_id', 'year', 'device_price', 'vin'
     ];
 
     public function save(Car $car, $data = [])
@@ -34,9 +34,12 @@ Class CarRepository {
                     ['car_id' => $car->id],
                     ['marker_id' => $data['marker_id']]
                 );
-                $car->delivery_stage()->updateOrCreate(
+                $car->delivery()->updateOrCreate(
                     ['car_id' => $car->id],
-                    ['delivery_stage_id' => $data['delivery_stage_id']]
+                    [
+                        'delivery_stage_id' => $data['delivery_stage_id'],
+                        'delivery_type_id' => $data['delivery_type_id']
+                    ]
                 );
                 $car->production()->updateOrCreate(
                     ['car_id' => $car->id],
@@ -61,7 +64,8 @@ Class CarRepository {
         $data['devices'] = $car->devices->pluck('id');
         $data['color_id'] = $car->color->id;
         $data['marker_id'] = $car->marker->marker_id;
-        $data['delivery_stage_id'] = $car->delivery_stage->delivery_stage_id;
+        $data['delivery_stage_id'] = $car->delivery->delivery_stage_id;
+        $data['delivery_type_id'] = $car->delivery->delivery_type_id;
         $data['production_at'] = $car->production->production_at;
         return $data;
     }

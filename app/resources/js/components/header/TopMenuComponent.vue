@@ -91,6 +91,10 @@
                     <router-link :to="'/pages/list'" class="nav-link">Страницы</router-link>
                 </li>
 
+                <li class="nav-item">
+                    <router-link :to="'/forms/list'" class="nav-link">Формы</router-link>
+                </li>
+
                 <!-- <li v-for="link in links" class="nav-item {{ item.href ? '' : 'dropdown' }}">
                     <router-link :to="link.href" class="nav-link"> {{ link.title }}</router-link>
                 </li> -->

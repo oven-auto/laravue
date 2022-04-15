@@ -42,14 +42,14 @@
             </thead>
 
             <draggable v-model="complectations" tag="tbody" :component-data="getComponentData()">
-            <tr v-for="item in complectations" :key="item.id">
+            <tr v-for="item in complectations" :key="item.id" >
                 <td>
                     <router-link :to="toEdit + item.id">
                         Open
                     </router-link>
                 </td>
 
-                <td><brand-badge :brand="item.brand"></brand-badge> {{item.mark.name}}</td>
+                <td><brand-badge-mark :brand="item.brand" :mark="item.mark.name"></brand-badge-mark></td>
                 <td>{{ item.code }}</td>
 
                 <td>
@@ -108,6 +108,7 @@ import BrandBadge from '../badge/BrandBadge';
 import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
 import CarsComplectCount from '../indicators/CarsComplectCount';
 import PriceChange from '../html/PriceChange/PriceChange';
+import BrandBadgeMark from '../badge/BrandMarkBadge';
 
 export default {
     name: 'complectation-list',
@@ -119,7 +120,8 @@ export default {
         draggable,
         FilterBreadCrumbs,
         CarsComplectCount,
-        PriceChange
+        PriceChange,
+        BrandBadgeMark
     },
     data() {
         return {
@@ -137,6 +139,7 @@ export default {
             },
             now_page: this.$route.params.page,
             status: 1,
+            currentModelCssLine: 0,
         }
     },
     mounted() {
@@ -144,6 +147,8 @@ export default {
         this.loadData()
     },
     methods: {
+
+
         getByStatus() {
             this.search.status = Number(this.status)
             this.loadData()
@@ -295,5 +300,8 @@ export default {
 }
 table td{
     vertical-align: middle
+}
+.current-model-line td{
+    border-top: 1px solid #f00;
 }
 </style>

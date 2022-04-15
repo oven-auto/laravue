@@ -27,7 +27,7 @@
             </tr>
             </thead>
 
-            <tbody>
+            <draggable v-model="data" tag="tbody" :component-data="getComponentData()">
             <tr v-for="item in data">
                 <td>
                     <router-link :to="toEdit + item.id">
@@ -50,9 +50,10 @@
                 </td>
                 <td>
                     <BannerStatus v-model="item.status" :id="item.id"></BannerStatus>
+                    <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
                 </td>
             </tr>
-            </tbody>
+            </draggable>
         </table>
     </div>
 </template>
@@ -62,13 +63,15 @@
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import BannerStatus from './BannerStatus';
+import draggable from 'vuedraggable';
 
 export default {
     name: 'banner-list',
     components: {
         Spin,
         Message,
-        BannerStatus
+        BannerStatus,
+        draggable
     },
     data() {
         return {
@@ -84,6 +87,49 @@ export default {
         this.loadData()
     },
     methods: {
+
+         inputChanged(value) {
+            var oldIndex = value.oldIndex
+            var newIndex = value.newIndex
+
+            var data = {
+                active: {
+                    id: this.data[newIndex].id,
+                },
+                second: {
+                    id: this.data[oldIndex].id,
+                }
+            }
+            this.changeSort(data)
+        },
+
+        changeSort(obj) {
+            this.loading = true
+            axios.patch('/api/services/sort/banners', obj, this.getConfig())
+            .then((res)=>{
+                this.loadTypes()
+            })
+            .catch((error)=>{
+
+            })
+            .finally(()=>{
+                this.loading = false
+            })
+        },
+        getComponentData() {
+            return {
+                on: {
+                    update: this.inputChanged
+                },
+                attrs:{
+                    wrap: true
+                },
+                props: {
+                    value: this.activeNames
+                }
+            };
+        },
+
         loadData() {
             axios.get('/api/banners')
             .then(res => {
@@ -98,7 +144,13 @@ export default {
             .catch(errors => {
                 console.log(errors)
             })
-        }
+        },
+
+        getConfig() {
+            return {
+                'content-type': 'application-json'
+            }
+        },
     }
 }
 </script>

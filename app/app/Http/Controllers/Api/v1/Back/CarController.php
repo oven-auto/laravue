@@ -19,23 +19,19 @@ class CarController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
-        $query = Car::with(['brand','color','mark','complectation','price','delivery_stage.stage']);
+        $query = Car::select('cars.*')->relationList()->with('packs:code')->leftJoin('car_deliveries','car_deliveries.car_id','cars.id');
         $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
-        $cars = $query->filter($filter)->paginate(20);
+        $cars = $query->filter($filter)->paginate(2);
 
         foreach($cars as $itemCar)
             if(strpos($itemCar->color->image, asset('storage')) === false)
                 $itemCar->color->image =  $itemCar->color->image_date;
 
-        if($cars->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $cars,
-                'count' => $cars->count()
-            ]);
         return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного автомобиля'
+            'status' => $cars->count() ? 1 : 0,
+            'data' => $cars,
+            'count' => $cars->count(),
+            'message' => $cars->count() ? 'Количество автомобилей '.$cars->count() : 'Не нашлось ни одного автомобиля'
         ]);
     }
 

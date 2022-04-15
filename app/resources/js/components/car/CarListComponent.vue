@@ -42,18 +42,33 @@
                     <td><router-link :to="toEdit + item.id">Open </router-link></td>
                     <td>
                         <div v-if="loading==false">
-                            <div>{{ deliveryType(item.delivery_stage) }}</div>
+                            <div :class="getCssCount(item.delivery.delivery_type_id)">{{ (item.delivery.type.name) }}</div>
                             <big>{{item.vin}}</big>
                             <div>{{item.complectation.code}}</div>
                         </div>
                     </td>
 
                     <td>
-                        <div>{{ item.brand.name }} {{ item.mark.name }} </div>
-                        <div>{{ item.complectation.name }}{{ item.complectation.motor.size }} ({{ item.complectation.motor.power }}л.с.) </div>
-                        <div>{{ item.complectation.motor.transmission.acronym }}{{ item.complectation.motor.driver.acronym }}</div>
+                        <div>{{ item.brand.name }} {{ item.mark.name }} {{ item.complectation.name }}</div>
+                        <div>
+                            {{ item.complectation.motor.name }}
+                            {{ item.complectation.motor.size }}{{item.complectation.motor.type.acronym}}
+                            ({{ item.complectation.motor.power }}л.с.)
+                            {{ item.complectation.motor.valve }}кл.
+                            {{ item.complectation.motor.transmission.acronym }}
+                            {{ item.complectation.motor.driver.acronym }}
+                        </div>
+                        <div class="text-muted">
+                            <span v-for="(itemPack,i) in item.packs" :key="'car-pack'+item.id+'pack'+i">
+                                {{itemPack.code}}
+                            </span>
+                        </div>
                     </td>
-                    <td>{{item.year}}</td>
+                    <td>
+
+                        <div>{{ item.year }}</div>
+
+                    </td>
                     <td class="text-center">
                         <div>
                             {{ item.color.color.code }}
@@ -68,6 +83,7 @@
                         <div>Допы: {{ formatPrice(item.price.device_price) }}</div>
                     </td>
                     <td>
+                        <div>{{ (getStage(item)) }}</div>
                         <big>{{ formatPrice(item.price.full_price) }}</big>
                         <div class="font-blood">{{item.complectation.price_status ? '' : 'На переоценке'}}</div>
                     </td>
@@ -83,9 +99,9 @@
             <nav aria-label="Page navigation example">
             <ul class="pagination">
                 <li class="page-item"  v-bind:class="{active : (now_page == (index+1)) }" v-for="(item, index) in pageArray">
-                    <router-link class="page-link " :to="'/cars/list/'+(index+1) + '?'+ getUrlParamStr()" >
+                    <span class="page-link " @click="cnangePage(index+1)" >
                        {{ (index+1) }}
-                    </router-link>
+                    </span>
                 </li>
             </ul>
             </nav>
@@ -127,18 +143,35 @@ export default {
             currentPage: 1,
             pageArray: [],
             now_page: this.$route.params.page,
-            search: {},
+            search: {
+                brand_id : 0,
+                mark_id : 0,
+                complectation_id: 0,
+                vin : '',
+                delivery_type_id : 0,
+                delivery_stage_id : 0,
+                revaluation : 0,
+                page: 1
+            },
         }
     },
     mounted() {
+        this.initSearchFromUrl()
         this.loadData()
     },
 
     methods: {
-        deliveryType(obj) {
-            if(obj.hasOwnProperty('stage'))
-                if(obj.stage.hasOwnProperty('name'))
-                    return obj.stage.name
+        getDate(str) {
+            var date = new Date(str)
+            return date.getDate() +'.' + (date.getMonth()<10 ? '0'+date.getMonth() : date.getMonth() )  + '.' + date.getFullYear()
+        },
+        getStage(obj) {
+            if(isObject(obj.production.production_at))
+                return obj.delivery.stage.name;
+            var date = new Date(obj.production.production_at)
+            var dateStr = date.getDate() +'.' + (date.getMonth()<10 ? '0'+date.getMonth() : date.getMonth() )  + '.' + date.getFullYear()
+            if(obj.production.production_at!='')
+                return 'Сборка '+dateStr
         },
 
         deleteCar(id, index) {
@@ -155,29 +188,44 @@ export default {
             }
         },
 
-        getUrlParamStr() {
+        //инициализировать объект поиска из параметров гет юрл строки
+        initSearchFromUrl() {
             var i = 0
             var url = []
             for(var key in this.$route.query)
-                url.push(key+'='+this.$route.query[key])
-            return url.join('&')
+                this.search[key] = this.$route.query[key]
+            this.now_page = this.search.page
         },
-        showModal: function () {
-            this.$refs.modal.show = true
-            // this.$refs.modal.brand = this.mark.brand_id
-            // this.$refs.modal.loadData()
+        //Действие в ответ на действие в модали
+        getDataModal(data) {
+            this.search.page = 1
+            this.now_page = 1
+            this.loadData()
+        },
+        //Открыть модаль и передать ей объект поиска в свойство
+        showModal() {
+            this.$refs.modal.show = true;
+            this.$refs.modal.search = this.search;
+        },
+        //Объектпоиска в строку юрл
+        searchToUrl() {
+            var mas = this.search;
+            var str = '';
+            var objUrl = {}
+            for(var key in mas)
+                if(mas[key]) {
+                    str+=key+'='+mas[key]+'&';
+                    objUrl[key] = mas[key]
+                }
+            this.$router.push('/cars/list?123')
+            this.$router.replace({query: objUrl})
+            return str;
         },
 
-        getDataModal(data) {
-            this.search = data;
-            this.$router.push('/cars/list')
-            this.$router.push('/cars/list/'+1)
-            var obj = {}
-            for(var key in this.search){
-                if(this.search[key] > 0 && this.search[key] != '')
-                    obj[key] = this.search[key]
-            }
-            this.$router.push({query: obj})
+        cnangePage(i) {
+            this.search.page = i;
+            this.now_page = i
+            this.loadData()
         },
 
         formatPrice(price)
@@ -191,7 +239,7 @@ export default {
             var url = '/api/cars'
             url += '?page='+this.now_page
 
-            url += '&'+this.getUrlParamStr()
+            url += '&'+this.searchToUrl()
 
             axios.get(url)
             .then(res => {
@@ -205,7 +253,6 @@ export default {
                     this.pageArray = []
                     this.succesMessage = res.data.message;
                 }
-                //this.loading = false;
             })
             .catch(errors => {
                 console.log(errors)
@@ -213,14 +260,34 @@ export default {
             .finally(()=>{
                 this.loading = false
             })
-        }
+        },
+
+        getCssCount(id) {
+            switch(id) {
+                case 1:
+                    return 'blue-indicator'
+                    break
+                case 2:
+                    return 'yellow-indicator'
+                    break
+                case 3:
+                    return 'green-indicator'
+                    break
+                case 4:
+                    return 'red-indicator'
+                    break
+                default:
+                    return ''
+            }
+        },
     },
-    watch: {
-        '$route' (to, from) {
-            this.now_page = to.params.page
-            this.loadData()
-        }
-    }
+    // watch: {
+    //     '$route' (to, from) {
+    //         console.log('change route')
+    //         this.now_page = to.params.page
+    //         this.loadData()
+    //     }
+    // }
 }
 </script>
 
@@ -235,3 +302,6 @@ export default {
     font-size: 0.7rem;
 }
 </style>
+
+
+

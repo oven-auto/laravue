@@ -17,7 +17,10 @@ Class BannerRepository
             else
                 unset($data['image']);
 
-            $banner->fill($data)->save();
+            $banner->fill($data);
+            if(!$banner->id)
+                $banner->sort = Banner::max('sort')+1;;
+            $banner->save();
             $result = ['status' => 1];
         } catch(\Exception $e) {
             $result = ['status'=>0,'error'=>$e->getMessage()];

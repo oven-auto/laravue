@@ -51,6 +51,9 @@ export default {
             return str;
         },
     },
+    updated() {
+
+    },
     watch: {
         search: {
             handler(val){
