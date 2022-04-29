@@ -14,7 +14,11 @@ class PageController extends Controller
     	$sections = [];
 
     	if($request->has('brand_id')) {
-    		$sections = SectionPage::with('pages:id,title,section_page_id')->where('brand_id', $request->get('brand_id'))->get();
+    		$sections = SectionPage::with([
+                'pages:id,title,section_page_id',
+                'forms'])
+            ->where('brand_id', $request
+            ->get('brand_id'))->get();
     	}
 
     	return response()->json([

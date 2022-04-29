@@ -16,6 +16,7 @@ class CreateFormEventTable extends Migration
         Schema::create('form_events', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('title');
         });
     }
 

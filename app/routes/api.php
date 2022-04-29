@@ -49,8 +49,9 @@ Route::prefix('forms')->group(function() {
     Route::put('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'update']);
     Route::get('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'edit']);
     Route::post('formcreate', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'store']);
-    Route::get('formedit/{id}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'edit']);
-    Route::put('formupdate/{id}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'update']);
+    Route::get('formedit/{form}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'edit']);
+    Route::patch('formupdate/{form}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'update']);
+    Route::get('controlls', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class, 'controlls']);
 });
 
 
@@ -111,6 +112,8 @@ Route::prefix('services')->group(function () {
            Route::get('deliverytypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryTypeSelectController::class, 'index']);
            Route::get('deliverystages', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryStageSelectController::class, 'index']);
            Route::get('markers', [\App\Http\Controllers\Api\v1\Services\Html\Select\MarkerSelectController::class, 'index']);
+           Route::get('users', [\App\Http\Controllers\Api\v1\Services\Html\Select\UserSelectController::class, 'index']);
+           Route::get('formevents',[\App\Http\Controllers\Api\v1\Services\Html\Select\FormEventSelectController::class, 'index']);
        });
        Route::prefix('color')->group(function () {
             Route::get('mark', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorMarkController::class, 'index']);
@@ -134,26 +137,23 @@ Route::group(['prefix' => 'front'], function() {
 	Route::get('complectations/list', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'get']);
 	Route::get('complectations/show/{id}', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'show']);
 	Route::get('complectations/image/{id}', [\App\Http\Controllers\Api\v1\Front\ComplectationController::class, 'image']);
-
 	Route::get('packs/complectation/{id}', [\App\Http\Controllers\Api\v1\Front\Pack\PackComplectationController::class, 'get']);
 	Route::get('packs/car/{id}', [\App\Http\Controllers\Api\v1\Front\Pack\PackCarController::class, 'get']);
-
 	Route::get('devices/complectation/{id}',[\App\Http\Controllers\Api\v1\Front\Device\DeviceComplectationController::class, 'get']);
-
 	Route::get('credits', [\App\Http\Controllers\Api\v1\Front\CreditController::class, 'get']);
 	Route::get('cars', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'get']);
 	Route::get('car', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'show']);
 	Route::get('car/head', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'head']);
 	Route::get('car/image', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'image']);
 	Route::get('cars/count', [\App\Http\Controllers\Api\v1\Front\CarController::class, 'count']);
-
 	Route::get('transmissions/type', [\App\Http\Controllers\Api\v1\Front\TransmissionController::class, 'getTypes']);
 	Route::get('drivers/type', [\App\Http\Controllers\Api\v1\Front\DriverController::class, 'getTypes']);
-
 	Route::get('filters/device', [\App\Http\Controllers\Api\v1\Front\DeviceFilterController::class, 'get']);
-
 	Route::get('car/compare', [\App\Http\Controllers\Api\v1\Front\CarCompareController::class, 'compare']);
-
 	Route::get('sections/page/list', [\App\Http\Controllers\Api\v1\Front\PageController::class, 'sections']);
 	Route::get('page', [\App\Http\Controllers\Api\v1\Front\PageController::class, 'page']);
+
+  Route::group(['prefix'=>'forms'], function(){
+    Route::get('/get', [\App\Http\Controllers\Api\v1\Front\Form\FormController::class, 'get']);
+  });
 });

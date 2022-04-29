@@ -10,7 +10,7 @@ class FormSectionController extends Controller
 {
     public function index()
     {
-        $data = FormSection::orderBy('brand_id')->get();
+        $data = FormSection::with('form')->orderBy('brand_id')->get();
         $grouped = $data->groupBy('parent_id');
 
         foreach ($data as $key=>$item) {

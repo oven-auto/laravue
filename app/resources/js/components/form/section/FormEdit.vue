@@ -1,75 +1,147 @@
 <template>
 <div>
-    <div class="row">
-        <div class="col">
-            <div class="h-title">Новая форма</div>
+    <message v-if="succes" :message="succesMessage"></message>
+
+    <spin v-if="loading && urlId"></spin>
+
+    <error v-if="notFound"></error>
+
+    <div v-else>
+        <div class="row">
+            <div class="col">
+                <div class="h-title">Новая форма</div>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col">
-            <CheckBox v-model="form.firstname" :label="'Поле Фамилия'"></CheckBox>
-            <CheckBox v-model="form.lastname" :label="'Поле Имя'"></CheckBox>
-            <CheckBox v-model="form.fathername" :label="'Поле Отчество'"></CheckBox>
-            <CheckBox v-model="form.mark" :label="'Поле Марка'"></CheckBox>
-            <CheckBox v-model="form.test" :label="'Поле Тест-Драйв'"></CheckBox>
-            <CheckBox v-model="form.phone" :label="'Поле Телефон'"></CheckBox>
-            <CheckBox v-model="form.email" :label="'Поле Эл.почта'"></CheckBox>
-            <CheckBox v-model="form.comment" :label="'Поле Комменарий'"></CheckBox>
-            <CheckBox v-model="form.date" :label="'Поле Дата'"></CheckBox>
+        <div class="row">
+            <div class="col-6">
+                <InputBox v-model="form.name" :label="'Название'"></InputBox>
+
+                <TextBox v-model="form.description" :label="'Описание'"></TextBox>
+
+                <FormEventSelect v-model="form.form_event_id"></FormEventSelect>
+            </div>
+
+
+            <div class="col-6">
+                <FormControllCheckBox :value="form.bodies" @checkControlls="setControlls"></FormControllCheckBox>
+            </div>
         </div>
+
+        <div class="row">
+            <div class="col-6">
+                <UserCheckBox :value="form.recipients" @checkUsers="setUsers"></UserCheckBox>
+            </div>
+        </div>
+
+        <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
+            Изменить
+        </button>
+
+        <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
+            Создать
+        </button>
+
+        <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
     </div>
-
-    <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
-        Изменить
-    </button>
-
-    <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
-        Создать
-    </button>
-
-    <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
 </div>
 </template>
 
 <script>
+import Error from '../../alert/ErrorComponent';
+import Message from '../../alert/MessageComponent';
+import Spin from '../../spinner/SpinComponent';
+
 import CheckBox from '../../checkbox/CheckBox';
+import UserCheckBox from '../../checkbox/UsersCheckBox';
+import FormControllCheckBox from '../../checkbox/FormControllCheckbox';
+import InputBox from '../../html/TextInput';
+import TextBox from '../../html/TextArea';
+import FormEventSelect from '../../html/Select/FormEventSelect';
+
 export default {
     name: 'form-edit',
-    components: {CheckBox},
+    components: {CheckBox, UserCheckBox, InputBox,TextBox, FormEventSelect, Error, Message, Spin,FormControllCheckBox},
     data() {
         return {
+            loading: false,
             form: {
-                firstname: false,
-                lastname: false,
-                fathername: false,
-                mark: false,
-                test: false,
-                phone: false,
-                email: false,
-                comment: false,
-                date: false,
-                section_id: this.$route.params.section_id
+                bodies: [],
+                form_section_id: this.$route.query.section_id,
+                form_event_id: 0,
+                name: '',
+                description: '',
+                recipients: []
             },
+            controlls: {},
             urlId: this.$route.params.id,
+            succes: false,
+            succesMessage: null,
+            notFound: false,
         }
     },
     mounted() {
-
+        if(this.urlId)
+            this.loadData()
     },
 
     methods: {
+
+        setUsers(data) {
+            this.form.recipients = data.users
+        },
+
+        setControlls(data) {
+            this.form.bodies = data.controlls
+        },
+
+
         storeData() {
+            this.loading = true
             var url = '/api/forms/formcreate';
             axios.post(url, this.form)
             .then(res => {
-
+                this.$router.push('/forms/list')
+                this.$router.push('/forms/formedit/'+res.data.data.id)
+                this.urlId = res.data.data.id
+                this.succes = true
+                this.succesMessage = 'Успешно создано'
+                this.loadData()
             }).catch(errors => {
 
             }).finally(() => {
+                this.loading = false
+            })
+        },
 
+        updateData() {
+            this.loading = true
+            var url = '/api/forms/formupdate/'+this.urlId;
+            axios.patch(url, this.form)
+            .then(res => {
+                this.succes = true
+                this.succesMessage = 'Успешно изменено'
+                this.loadData()
+            }).catch(errors => {
+
+            }).finally(() => {
+                this.loading = false
+            })
+        },
+
+        loadData() {
+            this.loading = true
+            var url = '/api/forms/formedit/'+this.urlId
+            axios.get(url)
+            .then(res => {
+                this.form = res.data.data
+            }).catch(errors => {
+                this.notFound = true;
+            }).finally(()=>{
+                this.loading = false
             })
         }
+
     },
 }
 </script>

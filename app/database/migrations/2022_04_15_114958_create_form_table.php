@@ -17,7 +17,7 @@ class CreateFormTable extends Migration
             $table->id();
             $table->foreignId('brand_id');
             $table->foreignId('form_section_id');
-            $table->string('body', 1500);
+            //$table->string('body', 1500);
             $table->integer('form_event_id');
             $table->string('name');
             $table->text('description');

@@ -12,4 +12,14 @@ class FormSection extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function form()
+    {
+        return $this->hasMany(\App\Models\Form::class);
+    }
+
+    public function menuform()
+    {
+    	return $this->hasMany(\App\Models\Form::class)->where('menu_status',1);
+    }
 }

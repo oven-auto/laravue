@@ -22,4 +22,9 @@ class SectionPage extends Model
     {
         return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
     }
+
+    public function forms()
+    {
+        return $this->hasMany(\App\Models\Form::class)->where('menu_status', 1);
+    }
 }

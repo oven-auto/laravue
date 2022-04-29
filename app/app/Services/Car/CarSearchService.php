@@ -26,6 +26,8 @@ Class CarSearchService
                 $this->query->orderBy('car_prices.full_price', 'ASC');
             else if($data['order'] == 'max')
                 $this->query->orderBy('car_prices.full_price', 'DESC');
+        if(isset($data['car_ids']) && $data['car_ids'])
+            $this->query->whereIn('cars.id', $data['car_ids']);
 	}
 
 	public function prepare($data = []) 

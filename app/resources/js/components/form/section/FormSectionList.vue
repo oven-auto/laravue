@@ -30,6 +30,12 @@
                         <ion-icon class="icon blue-count" name="mail-open-outline" v-tooltip:top="'Создать форму'"></ion-icon>
                     </router-link>
                 </div>
+
+                <div v-if="item.form">
+                    <div v-for="(itemForm,k) in item.form" :style="'padding-left:'+(item.otstup+50)+'px'" :key="'itemform'+k">
+                        Форма: <router-link :to="'/forms/formedit/'+itemForm.id">{{itemForm.name}}</router-link>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
