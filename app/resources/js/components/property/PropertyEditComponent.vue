@@ -1,7 +1,6 @@
 <template>
 <div class="device-type-edit">
 
-    <message v-if="succes" :message="succesMessage"></message>
 
     <spin v-if="loading && urlId"></spin>
 
@@ -20,16 +19,10 @@
                 </div>
             </div>
 
-            <button v-if="urlId" @click.prevent="updateProperty(urlId)" type="button" class="btn btn-success">
-                Изменить
-            </button>
-
-            <button v-else @click.prevent="storeProperty()" type="button" class="btn btn-success">
-                Создать
-            </button>
-
-            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
+
+        <FormControll :id="urlId"></FormControll>
+
     </div>
 </div>
 </template>
@@ -73,7 +66,7 @@ export default {
             })
         },
 
-        updateProperty(id) {
+        updateData(id) {
             axios.post('/api/properties/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -81,6 +74,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadProperty(id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -88,7 +82,7 @@ export default {
             })
         },
 
-        storeProperty() {
+        storeData() {
             axios.post('/api/properties/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -96,6 +90,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadProperty(res.data.property.id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {

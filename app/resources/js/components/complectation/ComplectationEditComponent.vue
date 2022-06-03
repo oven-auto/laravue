@@ -1,8 +1,6 @@
 <template>
 <div class="device-type-edit">
 
-    <message v-if="succes" :message="succesMessage"></message>
-
     <spin v-if="loading && urlId"></spin>
 
     <error v-if="notFound"></error>
@@ -173,19 +171,11 @@
                     </div>
                 </div>
             </div>
-
-            <message v-if="succes" :message="succesMessage"></message>
-
-            <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
-                Изменить
-            </button>
-
-            <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
-                Создать
-            </button>
-
-            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
+
+
+        <FormControll :id="urlId"></FormControll>
+
     </div>
 </div>
 </template>
@@ -297,7 +287,7 @@ export default {
 
         getColors() {
             var param = 'mark_id=' + this.complectation.mark_id
-            axios.get('/api/markcolors?' + param)
+            axios.get('/api/services/html/color/mark?' + param)
             .then( (res) => {
                 this.complectation.colors = res.data.data
                 this.complectation.colors.forEach((color) => {
@@ -377,6 +367,7 @@ export default {
             })
             .finally(() => {
                 this.loading = false
+                makeToast(this,this.succesMessage)
             })
         },
 
@@ -401,6 +392,7 @@ export default {
             })
             .finally(()=> {
                 this.loading = false
+                makeToast(this,this.succesMessage)
             })
         },
 
@@ -458,6 +450,7 @@ export default {
             })
             .finally(()=>{
                 this.loading = false;
+                makeToast(this,'Родительская комплектация прогружена')
             })
         },
 

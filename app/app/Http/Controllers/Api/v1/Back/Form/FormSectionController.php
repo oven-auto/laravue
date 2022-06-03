@@ -54,4 +54,12 @@ class FormSectionController extends Controller
             'data' => $formsection
         ]);
     }
+
+    public function destroy(FormSection $section)
+    {
+        $section->delete();
+        return response()->json([
+            'status' => 1
+        ]);
+    }
 }

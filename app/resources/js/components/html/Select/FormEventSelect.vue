@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label>Событие</label>
+        <label>{{label ? label : 'Событие'}}</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="(item,i) in data" :value="item.id">
@@ -31,7 +31,7 @@ export default {
             })
         }
     },
-    props: ['name', 'value'],
+    props: ['name', 'value', 'label'],
     computed: {
         selected: {
             get() {

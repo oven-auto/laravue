@@ -14,16 +14,20 @@ class MotorSelectController extends Controller
         $query = Motor::fullData();
         if($request->has('brand_id'))
             $query->where('brand_id', $request->get('brand_id'));
-        $motors = $query->get();
-        foreach($motors as $item)
-            $data[$item->id] = $item->name.' '
-                .$item->size.''.$item->type->acronym
-                .' ('.$item->size.'л.с.) '
-                .$item->valve.'кл. '
-                .$item->transmission->acronym.' '
-                .$item->driver->acronym;
+
+        $motors = $query->orderBy('brand_id')
+            ->orderBy('power')
+            ->get();
+
+        // foreach($motors as $item)
+        //     $data[$item->id] = $item->name.' '
+        //         .$item->size.''.$item->type->acronym
+        //         .' ('.$item->power.'л.с.) '
+        //         .$item->valve.'кл. '
+        //         .$item->transmission->acronym.' '
+        //         .$item->driver->acronym;
         return response()->json([
-            'data' => $data,
+            'data' => $motors,
             'status' => 1
         ]);
     }

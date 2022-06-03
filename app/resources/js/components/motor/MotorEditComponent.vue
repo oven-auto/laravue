@@ -1,6 +1,5 @@
 <template>
     <div class="motor-type-edit">
-        <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
 
@@ -12,10 +11,21 @@
 
                 <div class="row pb-3">
                     <div class="col-6">
-                        <div >
-                            <label for="name">Название</label>
-                            <input type="text" name="name" v-model="motor.name" class="form-control"/>
-                        </div>
+
+                        <BrandSelect
+                            :name="'brand_id'"
+                            v-model="motor.brand_id"
+                        >
+                        </BrandSelect>
+
+                        <VInput :label="'Модель двигателя'" v-model="motor.name"></VInput>
+
+                        <MotorTypeSelect
+                            :name="'motor_type_id'"
+                            :label="'Тип двигателя'"
+                            v-model="motor.motor_type_id"
+                        >
+                        </MotorTypeSelect>
 
                         <div >
                             <label for="power">Мощность: {{ motor.power }}</label>
@@ -55,20 +65,18 @@
                                 step="8"
                             />
                         </div>
+
+                        <MotorToxic
+                            :name="'motor_toxic_id'"
+                            v-model="motor.motor_toxic_id"
+                        >
+                        </MotorToxic>
                     </div>
 
                     <div class="col-6">
-                        <BrandSelect
-                            :name="'brand_id'"
-                            v-model="motor.brand_id"
-                        >
-                        </BrandSelect>
 
-                        <MotorTypeSelect
-                            :name="'motor_type_id'"
-                            v-model="motor.motor_type_id"
-                        >
-                        </MotorTypeSelect>
+                        <VInput :label="'Модель КПП'" v-model="motor.transmission_name"></VInput>
+
 
                         <MotorTransmissionSelect
                             :name="'motor_transmission_id'"
@@ -82,24 +90,14 @@
                         >
                         </MotorDriverSelect>
 
-                        <MotorToxic
-                            :name="'motor_toxic_id'"
-                            v-model="motor.motor_toxic_id"
-                        >
-                        </MotorToxic>
+
                     </div>
                 </div>
 
-                <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
-                    Изменить
-                </button>
-
-                <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
-                    Создать
-                </button>
-
-                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
             </form>
+
+            <FormControll :id="urlId"></FormControll>
+
         </div>
     </div>
 </template>
@@ -113,11 +111,12 @@ import MotorTypeSelect from '../html/MotorTypeSelect.vue';
 import MotorTransmissionSelect from '../html/MotorTransmissionSelect.vue';
 import MotorDriverSelect from '../html/MotorDriverSelect.vue';
 import MotorToxic from '../html/Select/ToxicSelect';
+import VInput from '../html/TextInput';
 
 export default {
     name: 'motor-edit',
     components: {
-        Error, Message, Spin, BrandSelect, MotorTypeSelect,MotorTransmissionSelect,MotorDriverSelect,MotorToxic
+        Error, Message, Spin, BrandSelect, MotorTypeSelect,MotorTransmissionSelect,MotorDriverSelect,MotorToxic,VInput
     },
     data() {
         return {
@@ -130,7 +129,8 @@ export default {
                 motor_toxic_id: '',
                 size: 0,
                 power: 0,
-                valve: 0
+                valve: 0,
+                transmission_name: ''
             },
 
             notFound: false,
@@ -165,6 +165,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -180,6 +181,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.motor.id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -199,6 +201,7 @@ export default {
             formData.append('motor_transmission_id', this.motor.motor_transmission_id);
             formData.append('motor_driver_id', this.motor.motor_driver_id);
             formData.append('motor_toxic_id', this.motor.motor_toxic_id);
+            formData.append('transmission_name', this.motor.transmission_name);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

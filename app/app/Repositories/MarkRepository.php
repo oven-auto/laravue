@@ -31,9 +31,13 @@ Class MarkRepository
                 }
                 if (isset($data['icon'])) {
                     $this->saveIcon($mark, $data['icon']);
+                } else {
+                    $mark->icon()->create(['image' => '/mark/some/somecar.png']);
                 }
                 if (isset($data['banner'])) {
                     $this->saveBanner($mark, $data['banner']);
+                } else {
+                    $mark->banner()->create(['image' => '/mark/some/somecar.png']);
                 }
                 if (isset($data['document'])) {
                     $this->saveDocuments($mark, $data['document']);
@@ -75,8 +79,7 @@ Class MarkRepository
             $path = '/public/mark/'.$mark->slug;
             $urlPath = '/mark/'.$mark->slug;
 
-            $finalName = $urlPath.'/'.$file->move(Storage::path($path), $iconName)
-                ->getFilename();
+            $finalName = $urlPath.'/'.$file->move(Storage::path($path), $iconName)->getFilename();
             if ($mark->icon->id) {
                 $mark->icon()->update(['image' => $finalName]);
             } else {
@@ -94,7 +97,7 @@ Class MarkRepository
 
             $finalName = $urlPath.'/'.$file->move(Storage::path($path), $iconName)->getFilename();
 
-            if ($mark->icon->id) {
+            if ($mark->banner->id) {
                 $mark->banner()->update(['image' => $finalName]);
             } else {
                 $mark->banner()->create(['image' => $finalName]);
@@ -140,6 +143,11 @@ Class MarkRepository
                 $mark->markcolors()->create([
                     'color_id' => $colorId,
                     'image' => $urlPath.'/'.$file->move(Storage::path($path), $fileName)->getFilename()
+                ]);
+            } elseif($file == '') {
+                $mark->markcolors()->create([
+                    'color_id' => $colorId,
+                    'image' => '/mark/some/somecar.png'
                 ]);
             }
             $idArray[] = $colorId;

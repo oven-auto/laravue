@@ -21,7 +21,7 @@ class CarController extends Controller
         $data = $request->all();
         $query = Car::select('cars.*')->relationList()->with('packs:code')->leftJoin('car_deliveries','car_deliveries.car_id','cars.id');
         $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
-        $cars = $query->filter($filter)->paginate(2);
+        $cars = $query->filter($filter)->paginate(50);
 
         foreach($cars as $itemCar)
             if(strpos($itemCar->color->image, asset('storage')) === false)

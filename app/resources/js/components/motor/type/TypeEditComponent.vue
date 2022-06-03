@@ -1,6 +1,5 @@
 <template>
     <div class="motor-type-edit">
-        <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
 
@@ -23,17 +22,10 @@
                         </div>
                     </div>
                 </div>
-
-                <button v-if="urlId" @click.prevent="updateType(urlId)" type="button" class="btn btn-success">
-                    Изменить
-                </button>
-
-                <button v-else @click.prevent="storeType()" type="button" class="btn btn-success">
-                    Создать
-                </button>
-
-                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
             </form>
+
+            <FormControll :id="urlId"></FormControll>
+
         </div>
     </div>
 </template>
@@ -79,7 +71,7 @@ export default {
             })
         },
 
-        updateType(id) {
+        updateData(id) {
             axios.post('/api/motortypes/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -87,6 +79,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadType(id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -94,7 +87,7 @@ export default {
             })
         },
 
-        storeType() {
+        storeData() {
             axios.post('/api/motortypes/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -102,6 +95,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadType(res.data.type.id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {

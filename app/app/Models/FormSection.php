@@ -15,11 +15,11 @@ class FormSection extends Model
 
     public function form()
     {
-        return $this->hasMany(\App\Models\Form::class);
+        return $this->hasMany(\App\Models\Form::class)->orderBy('sort');
     }
 
     public function menuform()
     {
-    	return $this->hasMany(\App\Models\Form::class)->where('menu_status',1);
+    	return $this->hasMany(\App\Models\Form::class)->where('menu_status',1)->orderBy('sort');
     }
 }

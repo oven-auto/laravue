@@ -5,7 +5,7 @@
 
         <div class="row pb-3 d-flex align-items-center">
             <div class="col">
-                <div class="h-title">Список моторов</div>
+                <div class="h-title">Список агрегатов</div>
             </div>
             <div class="col text-right">
                 <router-link class="btn btn-primary" :to="'/motors/create'">Добавить новый мотор</router-link>
@@ -19,10 +19,11 @@
             <tr>
                 <th style="width: 80px;">#</th>
                 <th>Бренд</th>
-                <th>Название</th>
-                <th>Спецификация</th>
-                <th>Тип</th>
+                <th>Спецификация агрегата</th>
+                <th>Модель ДВС</th>
+                <th>Тип двигателя</th>
                 <th>Класс токсичности</th>
+                <th>Модель КПП</th>
             </tr>
             </thead>
 
@@ -34,10 +35,12 @@
                     </router-link>
                 </td>
                 <td><brand-badge :brand="item.brand"></brand-badge></td>
-                <td>{{ item.name }}</td>
+
                 <td>{{ item.size }}{{ item.type.acronym }} ({{ item.power }} л.с.) {{item.valve}} кл. {{ item.transmission.acronym }} {{ item.driver.acronym }}</td>
+                <td>{{ item.name }}</td>
                 <td>{{ item.type.name }}</td>
                 <td>{{item.toxic.name}}</td>
+                <td>{{item.transmission_name}}</td>
             </tr>
             </tbody>
         </table>

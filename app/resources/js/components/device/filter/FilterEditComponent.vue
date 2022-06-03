@@ -1,7 +1,6 @@
 <template>
 <div class="device-type-edit">
 
-    <message v-if="succes" :message="succesMessage"></message>
 
     <spin v-if="loading && urlId"></spin>
 
@@ -18,32 +17,13 @@
                         <input type="text" name="name" v-model="filter.name" class="form-control"/>
                     </div>
 
-                    <!-- <div class="pt-3">
-                        <label for="icon">Иконка</label>
 
-                        <div v-if="iconSrc" class="pb-3">
-                            <img :src="iconSrc" class="brand-icon">
-                        </div>
-
-                        <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="icon" name="icon" @change="onAttachmentChange">
-                            <label class="custom-file-label" for="icon">Выберите фаил</label>
-                            <div class="invalid-feedback">Example invalid custom file feedback</div>
-                        </div>
-                    </div> -->
                 </div>
             </div>
 
-            <button v-if="urlId" @click.prevent="updateFilter(urlId)" type="button" class="btn btn-success">
-                Изменить
-            </button>
-
-            <button v-else @click.prevent="storeFilter()" type="button" class="btn btn-success">
-                Создать
-            </button>
-
-            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
+
+        <FormControll :id="urlId"></FormControll>
     </div>
 </div>
 </template>
@@ -90,7 +70,7 @@ export default {
             })
         },
 
-        updateFilter(id) {
+        updateData(id) {
             axios.post('/api/devicefilters/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -98,6 +78,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadFilter(id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -105,7 +86,7 @@ export default {
             })
         },
 
-        storeFilter() {
+        storeData() {
             axios.post('/api/devicefilters/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -113,6 +94,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadFilter(res.data.filter.id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {

@@ -1,6 +1,5 @@
 <template>
 <div class="mark-edit">
-    <message v-if="succes" :message="succesMessage"></message>
 
     <spin v-if="loading && urlId"></spin>
 
@@ -24,6 +23,9 @@
                         <div v-if="mark.icon" class="pb-3">
                             <img :src="mark.icon" style="height: 200px;width:auto;">
                         </div>
+                        <div v-else class="pb-3">
+                            <img src="/images/somecar.png" style="height: 200px;width:auto;">
+                        </div>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentIcon">
                             <label class="custom-file-label" for="accessory">Выберите фаил</label>
@@ -37,6 +39,9 @@
                         </div>
                         <div v-if="mark.banner" class="pb-3">
                             <img :src="mark.banner" style="height: 200px;width:auto;">
+                        </div>
+                        <div v-else class="pb-3">
+                            <img src="/images/somecar.png" style="height: 200px;width:auto;">
                         </div>
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="accessory" name="accessory"  @change="onAttachmentBanner">
@@ -63,7 +68,7 @@
 
                     <div class="row mark-colors">
                         <div class="col-3" v-for="itemColor in mark.colors">
-                            <div class="item-color text-center">
+                            <div class="item-color text-center border my-3 p-3">
                                 <div>
                                     {{itemColor.code}}
                                 </div>
@@ -77,6 +82,9 @@
                                     <div v-if="itemColor.img">
                                         <img :src="itemColor.img" style="width:100%;">
                                     </div>
+                                    <div v-else class="pb-3">
+                                        <img src="/images/somecar.png" style="">
+                                    </div>
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input" v-bind:id="itemColor.id"  @change="onAttachmentColor">
                                         <label class="custom-file-label" for="accessory">Выберите фаил</label>
@@ -89,18 +97,10 @@
                 </div>
             </div>
 
-            <message v-if="succes" :message="succesMessage"></message>
 
-            <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
-                Изменить
-            </button>
-
-            <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
-                Создать
-            </button>
-
-            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
+
+        <FormControll :id="urlId"></FormControll>
     </div>
 
     <modal-window ref="modal" @updateParent="getDataModal"></modal-window>
@@ -124,10 +124,11 @@ import MarkDocumentVue from './MarkDocument.vue';
 import MarkProperties from './MarkProperties.vue';
 
 
+
 export default {
     name: 'mark-edit',
     components: {
-        Error, Message, Spin, ModalWindow, ColorIcon, MarkMainInfoVue, MarkDocumentVue, MarkProperties,
+        Error, Message, Spin, ModalWindow, ColorIcon, MarkMainInfoVue, MarkDocumentVue, MarkProperties
     },
     data() {
         return {
@@ -292,6 +293,7 @@ export default {
             })
             .finally( () => {
                 this.loading = true;
+                makeToast(this,this.succesMessage)
             })
         },
 
@@ -304,6 +306,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.mark.id);
+                    this.urlId = res.data.mark.id
                 }
             })
             .catch(errors => {
@@ -312,6 +315,7 @@ export default {
             })
             .finally( () => {
                 this.loading = true;
+                makeToast(this,this.succesMessage)
             })
         },
 
@@ -365,7 +369,7 @@ export default {
 </script>
 
 <style scoped>
-.mark-colors{
+.mark-colors img{
     width: 100%;
 }
 </style>

@@ -5,8 +5,18 @@
  */
 
 require('./bootstrap');
+
+import Vue from 'vue'
+import { BootstrapVue, IconsPlugin } from 'bootstrap-vue'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+Vue.use(BootstrapVue)
+
+import 'font-awesome/css/font-awesome.css';
+
 require('./function/isString');
 require('./function/numberFormat');
+require('./function/toast');
 
 window.Vue = require('vue').default;
 window.storageUrl = 'http://localhost:8280/storage/'
@@ -22,7 +32,7 @@ window.storageUrl = 'http://localhost:8280/storage/'
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('top-menu', require('./components/header/TopMenuComponent').default);
-
+Vue.component('FormControll', require('./components/button/editControll').default);
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application

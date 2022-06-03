@@ -1,7 +1,6 @@
 <template>
 <div class="country-factory-edit">
 
-    <message v-if="succes" :message="succesMessage"></message>
 
     <spin v-if="loading && urlId"></spin>
 
@@ -37,16 +36,10 @@
                 </div>
             </div>
 
-            <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
-                Изменить
-            </button>
-
-            <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
-                Создать
-            </button>
-
-            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
+
+        <FormControll :id="urlId"></FormControll>
+
     </div>
 </div>
 </template>
@@ -98,6 +91,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -113,6 +107,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.countryfactory.id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {

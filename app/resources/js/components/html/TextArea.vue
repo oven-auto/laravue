@@ -1,7 +1,9 @@
 <template>
-<div>
-    <label>{{label}}</label>
-    <textarea class="form-control" v-model="result"></textarea>
+<div style="" class="">
+        <label v-if="labelempty != 1">{{label}}</label>
+
+        <textarea v-if="css" :class="css" v-model="result" style="" :placeholder="placeholder"></textarea>
+        <textarea v-else class="form-control" v-model="result" style="" :placeholder="placeholder"></textarea>
 </div>
 </template>
 
@@ -13,7 +15,7 @@ export default {
             data: '',
         }
     },
-    props: ['label', 'value'],
+    props: ['label', 'value','labelempty','placeholder','css'],
     computed: {
         result: {
             get() {

@@ -52,7 +52,7 @@ class MarkController extends Controller
         return response()->json([
             'status' => 1,
             'mark' => $mark,
-            'message' => 'Марка создана'
+            'message' => 'Модель создана'
         ]);
     }
 
@@ -63,7 +63,7 @@ class MarkController extends Controller
         return response()->json([
             'status' => 1,
             'mark' => $mark,
-            'message' => 'Марка изменена'
+            'message' => 'Модель изменена'
         ]);
     }
 }

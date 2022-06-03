@@ -1,6 +1,6 @@
 <template>
     <div>
-        <label>Раздел</label>
+        <label>{{label ? label : 'Раздел'}}</label>
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in sectionpages" :value="item.id">
@@ -39,6 +39,10 @@ export default {
         value: {
             type: Number,
             default: 0
+        },
+        label: {
+            type: String,
+            default: ''
         }
     },
     computed: {

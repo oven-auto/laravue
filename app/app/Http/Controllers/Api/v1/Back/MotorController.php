@@ -15,7 +15,9 @@ class MotorController extends Controller
         if($request->has('brand_id'))
             $query->where('brand_id', $request->get('brand_id'));
 
-        $motors = $query->get();
+        $motors = $query->orderBy('brand_id')
+            ->orderBy('power')
+            ->get();
 
         if($motors->count())
             return response()->json([
@@ -25,7 +27,7 @@ class MotorController extends Controller
             ]);
         return response()->json([
             'status' => 0,
-            'message' => 'Не нашлось ни одного мотора'
+            'message' => 'Не нашлось ни одного агрегата'
         ]);
     }
 
@@ -43,7 +45,7 @@ class MotorController extends Controller
         return response()->json([
             'status' => 1,
             'motor' => $motor,
-            'message' => 'Мотор создан'
+            'message' => 'Спецификация агрегата создана'
         ]);
     }
 
@@ -53,7 +55,7 @@ class MotorController extends Controller
         return response()->json([
             'status' => 1,
             'motor' => $motor,
-            'message' => 'Мотор изменен'
+            'message' => 'Спецификация агрегата изменена'
         ]);
     }
 }

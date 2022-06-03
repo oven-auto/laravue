@@ -1,7 +1,6 @@
 <template>
 <div class="device-edit">
 
-    <message v-if="succes" :message="succesMessage"></message>
 
     <spin v-if="loading && urlId"></spin>
 
@@ -44,18 +43,10 @@
                 </div>
             </div>
 
-            <message v-if="succes" :message="succesMessage"></message>
 
-            <button v-if="urlId" @click.prevent="updateDevice(urlId)" type="button" class="btn btn-success">
-                Изменить
-            </button>
-
-            <button v-else @click.prevent="storeDevice()" type="button" class="btn btn-success">
-                Создать
-            </button>
-
-            <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
         </form>
+
+        <FormControll :id="urlId"></FormControll>
     </div>
 </div>
 </template>
@@ -130,7 +121,7 @@ export default {
 
 
 
-        updateDevice(id) {
+        updateData(id) {
             axios.post('/api/devices/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -138,6 +129,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadDevice(id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -145,7 +137,7 @@ export default {
             })
         },
 
-        storeDevice() {
+        storeData() {
             axios.post('/api/devices/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
@@ -153,6 +145,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadDevice(res.data.device.id);
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {

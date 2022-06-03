@@ -1,8 +1,8 @@
 <template>
 <div>
     <div class="row pb-3">
-        <div class="col-8"></div>
-        <div class="col-4 text-right">
+
+        <div class="col-4 text-left">
             <div>
                 <label class="checkbox " :title="'Статус'">
                     <input class="device-checkbox-toggle" type="checkbox" v-bind:value="mark.status" v-model="mark.status">

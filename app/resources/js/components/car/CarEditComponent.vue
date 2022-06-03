@@ -1,6 +1,5 @@
 <template>
     <div class="color-edit">
-        <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
 
@@ -113,9 +112,8 @@
                     </div>
                 </div>
 
-                <message v-if="succes" :message="succesMessage"></message>
 
-                <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
+                <!-- <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
                     Изменить
                 </button>
 
@@ -123,8 +121,10 @@
                     Создать
                 </button>
 
-                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
+                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a> -->
             </form>
+
+            <FormControll :id="urlId"></FormControll>
         </div>
     </div>
 </template>
@@ -250,6 +250,7 @@ export default {
             })
             .finally ( () => {
                 this.loading = false
+                makeToast(this,this.succesMessage)
             })
         },
 
@@ -277,6 +278,7 @@ export default {
             })
             .finally ( () => {
                 this.loading = false
+                makeToast(this,this.succesMessage)
             })
         },
 

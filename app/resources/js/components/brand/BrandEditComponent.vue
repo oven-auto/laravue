@@ -1,8 +1,6 @@
 <template>
     <div class="brand-edit">
 
-        <message v-if="succes" :message="succesMessage"></message>
-
         <spin v-if="loading && urlId"></spin>
 
         <error v-if="notFound"></error>
@@ -57,9 +55,7 @@
                     </div>
                 </div>
 
-                <message v-if="succes" :message="succesMessage"></message>
-
-                <button v-if="urlId" @click.prevent="updateBrand(urlId)" type="button" class="btn btn-success">
+                <!-- <button v-if="urlId" @click.prevent="updateBrand(urlId)" type="button" class="btn btn-success">
                     Изменить
                 </button>
 
@@ -67,8 +63,10 @@
                     Создать
                 </button>
 
-                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
+                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a> -->
             </form>
+
+            <FormControll :id="urlId"></FormControll>
         </div>
     </div>
 </template>
@@ -87,6 +85,7 @@ export default {
     },
     data() {
         return {
+            toastCount: 0,
             brand: {
                 name: null,
                 icon: null,
@@ -106,7 +105,7 @@ export default {
 
     mounted() {
         if(this.urlId)
-            this.loadBrand(this.urlId)
+            this.loadData(this.urlId)
     },
 
     methods: {
@@ -114,7 +113,7 @@ export default {
             this.brand.icon = e.target.files[0];
         },
 
-        loadBrand(id) {
+        loadData(id) {
             axios.get('/api/brands/' + id + '/edit')
             .then( response => {
                 this.loading = false;
@@ -129,15 +128,16 @@ export default {
             })
         },
 
-        updateBrand(id) {
+        updateData(id) {
             axios.post('/api/brands/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(id);
+                    this.loadData(id);
                     this.statusErrors = 0
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {
@@ -146,15 +146,16 @@ export default {
             })
         },
 
-        storeBrand() {
+        storeData() {
             axios.post('/api/brands/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.loadBrand(res.data.brand.id);
+                    this.loadData(res.data.brand.id);
                     this.statusErrors = 0
+                    makeToast(this,this.succesMessage)
                 }
             })
             .catch(errors => {

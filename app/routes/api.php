@@ -48,10 +48,12 @@ Route::prefix('forms')->group(function() {
     Route::post('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'store']);
     Route::put('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'update']);
     Route::get('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'edit']);
+    Route::delete('sections/{section}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'destroy']);
     Route::post('formcreate', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'store']);
     Route::get('formedit/{form}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'edit']);
     Route::patch('formupdate/{form}', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'update']);
     Route::get('controlls', [\App\Http\Controllers\Api\v1\Back\Form\FormController::class, 'controlls']);
+    Route::delete('formdelete/{form}',[\App\Http\Controllers\Api\v1\Back\Form\FormController::class,'destroy']);
 });
 
 
@@ -82,6 +84,7 @@ Route::prefix('services')->group(function () {
         Route::patch('devicefilters', [\App\Http\Controllers\Api\v1\Services\Sort\Device\DeviceFilterSortController::class, 'index']);
         Route::patch('properties', [\App\Http\Controllers\Api\v1\Services\Sort\Property\PropertySortController::class,'index']);
         Route::patch('banners', [\App\Http\Controllers\Api\v1\Services\Sort\Banner\BannerSortController::class,'index']);
+        Route::patch('forms', [\App\Http\Controllers\Api\v1\Services\Sort\Form\FormSortController::class,'index']);
    });
 
    //МАРШРУТЫ ПОЛУЧЕНИЯ КОЛИЧЕСТВА
@@ -114,6 +117,8 @@ Route::prefix('services')->group(function () {
            Route::get('markers', [\App\Http\Controllers\Api\v1\Services\Html\Select\MarkerSelectController::class, 'index']);
            Route::get('users', [\App\Http\Controllers\Api\v1\Services\Html\Select\UserSelectController::class, 'index']);
            Route::get('formevents',[\App\Http\Controllers\Api\v1\Services\Html\Select\FormEventSelectController::class, 'index']);
+           Route::get('test',[\App\Http\Controllers\Api\v1\Services\Html\Select\CarSelectController::class, 'index']);
+           Route::get('servicejob',[\App\Http\Controllers\Api\v1\Services\Html\Select\ServiceJobSelectController::class, 'index']);
        });
        Route::prefix('color')->group(function () {
             Route::get('mark', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorMarkController::class, 'index']);

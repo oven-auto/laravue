@@ -4,7 +4,7 @@
         <select v-model="selected" class="form-control">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in data" :value="item.id" :key="'country'+item.id">
-                {{ item.country }} - {{ item.city }}
+                {{ item.distributor }} ({{ item.country }}, {{ item.city }})
             </option>
         </select>
     </div>

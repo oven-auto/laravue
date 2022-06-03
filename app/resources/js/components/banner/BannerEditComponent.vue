@@ -1,6 +1,5 @@
 <template>
     <div class="color-edit">
-        <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
 
@@ -50,18 +49,9 @@
                     </div>
                 </div>
 
-                <message v-if="succes" :message="succesMessage"></message>
-
-                <button v-if="urlId" @click.prevent="updateData(urlId)" type="button" class="btn btn-success">
-                    Изменить
-                </button>
-
-                <button v-else @click.prevent="storeData()" type="button" class="btn btn-success">
-                    Создать
-                </button>
-
-                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a>
             </form>
+
+            <FormControll :id="urlId"></FormControll>
         </div>
     </div>
 </template>
@@ -142,6 +132,7 @@ export default {
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(id)
+                    makeToast(this,this.succesMessage)
                 } else {
                     this.succes = true;
                     this.succesMessage = res.data.message + ': ' + res.data.errors;
@@ -166,6 +157,7 @@ export default {
                     this.$router.push('/banners/edit/'+res.data.data.id)
                     this.urlId = res.data.data.id
                     this.loadData(res.data.data.id)
+                    makeToast(this,this.succesMessage)
                 } else {
                     this.succes = true;
                     this.succesMessage = res.data.message + ': ' + res.data.errors;

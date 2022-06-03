@@ -2,9 +2,11 @@
     <div>
         <label>Мотор</label>
         <select v-model="selected" class="form-control">
-            <option value="" selected >Укажите параметр</option>
-            <option v-for="(item,id) in motors" :value="id" :key="'motor-select'+id">
-                {{ item }}
+            <option value="" selected disabled>Укажите параметр</option>
+            <option v-for="(item,id) in motors" :value="item.id" :key="'motor-select'+id">
+                {{item.size}}{{item.type.acronym}} ({{item.power}} л.с.) {{item.valve}}-кл.
+                {{item.transmission.acronym}} {{item.driver.acronym}}
+                ({{item.name}} {{item.toxic.name}} + {{item.transmission_name}})
             </option>
         </select>
     </div>

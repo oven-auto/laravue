@@ -6,29 +6,32 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Form;
 use App\Models\FormSection;
+use App\Services\Form\FormRepository;
 
 class FormController extends Controller
 {
+    private $repository;
+
+    public function __construct(FormRepository $repository)
+    {
+        $this->repository = $repository;
+    }
+
     public function store(Request $request, Form $form)
     {
-        $section = FormSection::find($request->get('form_section_id'));
-        $form->fill($request->except(['recipients','bodies']));
-        //$form->body = json_encode($request->body);
-        $form->brand_id = $section->brand_id;
-        $form->save();
-        $form->recipients()->sync($request->get('recipients'));
-        $form->bodies()->sync($request->get('bodies'));
+        $data = $this->repository->save($form, $request->all());
+
         return response()->json([
-            'data' => $form,
-            'status' => 1
+            'message' => $data['status'] == 1 ? 'Форма создана' : $data['message'],
+            'status' => $data['status'],
+            'data' => $data['data']
         ]);
     }
 
-    public function edit(Form $form, Request $request)
+    public function edit($form, Request $request)
     {
-        $data = $form->toArray();
-        $data['bodies'] = $form->bodies->pluck('id');
-        $data['recipients'] = $form->recipients->pluck('id');
+        $data = $this->repository->getFormById($form);
+
         return response()->json([
             'data'=>$data,
             'status'=>1
@@ -37,22 +40,25 @@ class FormController extends Controller
 
     public function update(Form $form, Request $request)
     {
-        $section = FormSection::find($request->get('form_section_id'));
-        $form->fill($request->except(['recipients','bodies']));
-        //$form->body = json_encode($request->body);
-        $form->brand_id = $section->brand_id;
-        $form->save();
-        $form->recipients()->sync($request->get('recipients'));
-        $form->bodies()->sync($request->get('bodies'));
+        $data = $this->repository->save($form, $request->all());
+
         return response()->json([
-            'data' => $form,
+            'message' => $data['status'] == 1 ? 'Форма обновлена' : $data['message'],
+            'status' => $data['status'],
+            'data' => $data['data']
+        ]);
+    }
+
+    public function destroy(Form $form) {
+        $form->delete();
+        return response()->json([
             'status' => 1
         ]);
     }
 
     public function controlls()
     {
-        $data = \App\Models\FormControll::get();
+        $data = \App\Models\FormControllGroup::with('elements')->get();
         return response()->json([
             'data' => $data,
             'status' => $data->count() ? 1 : 0
