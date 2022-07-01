@@ -110,10 +110,12 @@ export default {
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
-            installDevices: []
+            installDevices: [],
+            previusPage: '/'
         }
     },
     mounted() {
+        this.previusPage = this.prevRoute.fullPath
         if(this.urlId)
             this.loadData(this.urlId)
     },
@@ -181,6 +183,9 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
+                    this.urlId = res.data.pack.id
+                    this.$router.push(this.previusPage)
+                    this.$router.push('/packs/edit/'+this.urlId)
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.pack.id);
@@ -211,6 +216,11 @@ export default {
                 })
             },
         }
-    }
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.prevRoute = from;
+        });
+    },
 }
 </script>

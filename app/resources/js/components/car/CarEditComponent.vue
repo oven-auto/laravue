@@ -182,6 +182,7 @@ export default {
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
+            previusPage: '/'
         }
     },
 
@@ -192,6 +193,7 @@ export default {
     },
 
     mounted() {
+        this.previusPage = this.prevRoute.fullPath
         if(this.urlId)
             this.loadData(this.urlId)
     },
@@ -261,7 +263,7 @@ export default {
                 if(res.data.status == 1) {
                     this.succes = true;
                     this.succesMessage = res.data.message;
-                    this.$router.push('/cars/list')
+                    this.$router.push(this.previusPage)
                     this.$router.push('/cars/edit/'+res.data.data.id)
                     this.urlId = res.data.data.id
                     this.loadData(res.data.data.id)
@@ -310,6 +312,11 @@ export default {
                 this.getComplectationPrice()
             },
         }
-    }
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.prevRoute = from;
+        });
+    },
 }
 </script>

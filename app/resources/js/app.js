@@ -17,6 +17,7 @@ import 'font-awesome/css/font-awesome.css';
 require('./function/isString');
 require('./function/numberFormat');
 require('./function/toast');
+require('./function/transformLaravelDate');
 
 window.Vue = require('vue').default;
 window.storageUrl = 'http://localhost:8280/storage/'

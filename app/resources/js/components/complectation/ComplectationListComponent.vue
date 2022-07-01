@@ -24,10 +24,11 @@
                 <th style="width: 80px;">#{{complectations.length}}</th>
 
                 <th>Модель</th>
-                <th>Код</th>
 
                 <th>Название</th>
-                <th colspan="2">Прайс-лист и публикация</th>
+                <th colspan="">Прайс-лист <br/>и публикация</th>
+                <th>Модератор</th>
+                <th></th>
                 <th style="width: 100px; text-align:right" >
                     <label class="checkbox m-0" :title="'Статус'">
                         <input class="device-checkbox-toggle" type="checkbox" v-bind:value="status" v-model="status" @change="getByStatus()">
@@ -49,10 +50,11 @@
                     </router-link>
                 </td>
 
-                <td><brand-badge-mark :brand="item.brand" :mark="item.mark.name"></brand-badge-mark></td>
-                <td>{{ item.code }}</td>
+                <td><brand-badge-mark :brand="item.brand" :mark="item.mark.name" :block="1"></brand-badge-mark></td>
+
 
                 <td>
+                    {{ item.code }}<br/>
                     {{ item.name }}
                     {{item.motor.size+item.motor.type.acronym}} ({{item.motor.power}}л.с.)  {{item.motor.valve}}кл.
                     {{item.motor.transmission.acronym}}
@@ -60,15 +62,12 @@
                 </td>
 
                 <td class="py-0" >
-                    <div class="row" style="width:200px;">
-                        <div class="col-8 d-flex align-items-center">
-                            <PriceChange :id="item.id" v-model="item.price" :url="'/api/services/price/complectation'"></PriceChange>
-                        </div>
-                        <div class="col-4">
-                            <label class="checkbox m-0">
+                    <div class="" style="width:200px;">
+                        <div class="">
+                            <label class="checkbox m-0 checkbox-red">
                                 <input class="device-checkbox-toggle" type="checkbox"
-                                    v-bind:value="item.price_status" v-model="item.price_status"
-                                    @change="changeComplectPrice(item.id,item.price_status)"
+                                    v-bind:value="Math.abs(item.price_status-1)" v-model="item.price_status"
+                                    @change="changeComplectPrice(item.id,item.price_status,item)"
                                 >
                                 <div class="checkbox__text" style="">
                                     <div>
@@ -77,6 +76,20 @@
                                 </div>
                             </label>
                         </div>
+
+                        <div v-if="item.price_status==1" class="text-danger">
+                            На переоценке
+                        </div>
+
+                        <PriceChange @priceSend="loadModerator(item.id,item)" v-else :id="item.id" v-model="item.price" :current="item" :url="'/api/services/price/complectation'"></PriceChange>
+
+                    </div>
+                </td>
+
+                <td>
+                    <div v-if="item.lastmoderator.user && item.lastmoderator.user.name">
+                        {{item.lastmoderator.user.name}}<br/>
+                        {{getCreateDate(item.lastmoderator.created_at)}}
                     </div>
                 </td>
 
@@ -140,28 +153,47 @@ export default {
             now_page: this.$route.params.page,
             status: 1,
             currentModelCssLine: 0,
+            currentChange: {}
         }
     },
     mounted() {
         this.initSearchFromUrl()
         this.loadData()
     },
-    methods: {
 
+    computed: {
+
+    },
+
+    methods: {
+        loadModerator(id,obj) {
+            axios.get('/api/moderator/complectation/'+id)
+            .then(res => {
+                obj.lastmoderator = res.data.data
+            }).catch(errors => {
+
+            }).finally(() => {
+
+            })
+        },
+
+        getCreateDate(str) {
+            return transformLaravelDate(str)
+        },
 
         getByStatus() {
             this.search.status = Number(this.status)
             this.loadData()
         },
 
-        changeComplectPrice(id,price_status) {
+        changeComplectPrice(id,price_status,itemObj) {
             var obj = {
                 id: id,
                 price_status: price_status
             };
             axios.patch('/api/services/price/complectation/pricestatus',obj)
             .then(res => {
-
+                this.loadModerator(id,itemObj)
             }).catch(errors => {
 
             }).finally(()=>{
@@ -208,20 +240,16 @@ export default {
             this.loading = true;
             axios.get('/api/complectations?'+this.searchToUrl())
             .then(response => {
-                if(response.data.status == 1) {
+                if(response.data.status == 1)
                     this.complectations = response.data.data;
-                    this.loading = false;
-                }
-                else{
+                else
                     this.complectations = []
-                    this.notFound = true;
-                }
-            })
-            .catch(errors => {
-                this.notFound = true;
-            })
-            .finally(()=>{
-                this.loading = false;
+                this.loading = false
+            }).catch(errors => {
+                console.table(errors)
+                this.succesMessage = errors.response.data.message
+            }).finally(() => {
+                makeToast(this,this.succesMessage)
             })
         },
 
@@ -282,6 +310,7 @@ export default {
         },
     },
     watch: {
+
         // '$route' (to, from) {
         //     this.now_page = to.params.page
         //     this.loadData()

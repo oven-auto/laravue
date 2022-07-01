@@ -15,7 +15,8 @@ class MotorTypeController extends Controller
             return response()->json([
                 'status' => 1,
                 'data' => $motortypes,
-                'count' => $motortypes->count()
+                'count' => $motortypes->count(),
+                'message' => 'Найдено '.$motortypes->count().' едениц типов мотора'
             ]);
         return response()->json([
             'status' => 0,

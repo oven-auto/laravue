@@ -23,3 +23,15 @@ window.getConfig = function() {
         'content-type': 'multipart/form-data'
     }
 }
+
+window.errorsToStr = function(errors) {
+    var mas = [];
+    if(errors.response.data.errors != undefined) {
+        var messages = errors.response.data.errors
+        for(var i in messages) {
+            mas.push(messages[i])
+        }
+    }else if(errors.response.data.message != undefined)
+        mas.push(errors.response.data.message)
+    return mas
+}

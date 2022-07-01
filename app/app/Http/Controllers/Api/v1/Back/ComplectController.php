@@ -17,7 +17,7 @@ class ComplectController extends Controller
     public function index(Request $request)
     {
         $data = $request->all();
-        $query = Complectation::with(['motor','brand','mark']);
+        $query = Complectation::with(['motor','brand','mark','lastmoderator.user']);
         $filter = app()->make(ComplectationFilter::class, ['queryParams' => array_filter($data)]);
         $complectations = $query->filter($filter)
             ->orderBy('mark_id')

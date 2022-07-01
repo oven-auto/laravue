@@ -92,9 +92,11 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
+                    this.urlId = res.data.type.id
+                    this.$router.push('/motortypes/list')
+                    this.$router.push('/motortypes/edit/'+this.urlId)
                     this.succesMessage = res.data.message;
-                    this.loadType(res.data.type.id);
+                    this.loadType(this.urlId);
                     makeToast(this,this.succesMessage)
                 }
             })
@@ -120,6 +122,6 @@ export default {
                 'content-type': 'multipart/form-data'
             }
         },
-    }
+    },
 }
 </script>

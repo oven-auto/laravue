@@ -17,14 +17,14 @@
         <table v-else class="table table-hover">
             <thead class="thead-dark">
                 <tr>
-                    <th style="width: 80px;">#</th>
+                    <th style="width: 80px;">#{{types.length}}</th>
                     <th>Название</th>
                     <th></th>
                 </tr>
             </thead>
 
             <draggable v-model="types" tag="tbody" :component-data="getComponentData()">
-                <tr v-for="type in types">
+                <tr v-for="(type,i) in types">
                     <td>
                         <router-link :to="toEdit + type.id">
                             Open
@@ -36,9 +36,9 @@
 
                     </td>
 
-                    <td class="py-0">
+                    <td class="">
                         <div style="width: 80px; float:right;">
-                            <DeviceFilterCount :device_filter_id="type.id"></DeviceFilterCount>
+                            <DeviceFilterCount :device_filter_id="type.id" :index="i" @deleteTrigger="deleteRow"></DeviceFilterCount>
                             <ion-icon class="drag-icon" name="ellipsis-vertical"></ion-icon>
                         </div>
                     </td>
@@ -119,17 +119,14 @@ export default {
         },
         loadTypes() {
             axios.get('/api/devicefilters')
-            .then(res => {
-                if(res.data.status == 1)
-                    this.types = res.data.data;
-                else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                }
-                this.loading = false;
-            })
-            .catch(errors => {
-                console.log(errors)
+            .then(response => {
+                this.types = response.data.data;
+                this.message = response.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                this.loading = false
+                makeToast(this,this.message)
             })
         },
         getConfig() {
@@ -137,6 +134,11 @@ export default {
                 'content-type': 'application-json'
             }
         },
+
+        deleteRow(data) {
+            this.types.splice(data.index,1)
+            makeToast(this,data.message)
+        }
     }
 }
 </script>

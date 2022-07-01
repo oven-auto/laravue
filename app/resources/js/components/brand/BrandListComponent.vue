@@ -14,7 +14,7 @@
         <table v-else class="table table-hover">
             <thead class="thead-dark">
             <tr>
-                <th style="width: 80px;">#</th>
+                <th style="width: 80px;">#{{data.length}}</th>
                 <th>Название</th>
                 <th>Системное имя</th>
                 <th>Цвет</th>
@@ -22,7 +22,7 @@
             </thead>
 
             <tbody>
-            <tr v-for="brand in brands">
+            <tr v-for="brand in data">
                 <td>
                     <router-link :to="toEdit + brand.id">
                         Open
@@ -52,26 +52,26 @@ export default {
         return {
             toEdit: '/brands/edit/',
             loading: true,
-            brands: [],
-            notFound: false,
+            data: [],
+            message: ''
         }
     },
     mounted() {
         this.loadBrands()
     },
     methods: {
+
+
         loadBrands() {
             axios.get('/api/brands')
                 .then(response => {
-                    if(response.data.status == 1)
-                    {
-                        this.brands = response.data.brands;
-                        this.loading = false;
-                    }
-                })
-                .catch(errors => {
+                    this.data = response.data.data;
+                    this.message = response.data.message;
+                }).catch(errors => {
+                    this.message = errorsToStr(errors)
+                }).finally(() => {
+                    makeToast(this,this.message)
                     this.loading = false;
-                    this.notFound = true;
                 })
         }
     }

@@ -17,7 +17,7 @@ class CreatePagesTable extends Migration
             $table->id();
             $table->foreignId('section_page_id')->constrained()->onDelete('cascade');
             $table->string('title');
-            $table->longText('text');
+            $table->longText('text')->nullable();
             $table->boolean('status')->default(0);
             //$table->text('images')->nullable();
             $table->timestamps();

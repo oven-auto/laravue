@@ -17,4 +17,9 @@ class Page extends Model
     {
         return $this->hasOne(\App\Models\SectionPage::class, 'id', 'section_page_id')->withDefault();
     }
+
+    public function tools()
+    {
+        return $this->hasMany(\App\Models\PageTool::class);
+    }
 }

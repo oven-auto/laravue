@@ -12,7 +12,8 @@ class ColorMarkController extends Controller
     {
         $time = '?'. date('dmyhms');
 
-        $query = MarkColor::with('color');
+        $query = MarkColor::with('color')
+            ->leftJoin('colors','colors.id','=','mark_colors.color_id');
 
         if($request->has('mark_id'))
             $query->where('mark_id', $request->get('mark_id'));
@@ -21,7 +22,7 @@ class ColorMarkController extends Controller
             $query->rightJoin('complectation_colors', 'complectation_colors.mark_color_id', '=', 'mark_colors.id')
                 ->where('complectation_colors.complectation_id', $request->get('complectation_id'));
 
-        $markcolors = $query->get();
+        $markcolors = $query->orderBy('colors.name')->get();
 
         foreach($markcolors as $item) {
             $item->image = asset('storage'.$item->image) . $time;

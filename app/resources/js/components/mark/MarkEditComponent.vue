@@ -53,7 +53,7 @@
 
             <div class="row pb-5">
                 <div class="col-12 mb-3">
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-6">
                             <div class="h5">
                                 Палитра
@@ -67,8 +67,8 @@
                     </div>
 
                     <div class="row mark-colors">
-                        <div class="col-3" v-for="itemColor in mark.colors">
-                            <div class="item-color text-center border my-3 p-3">
+                        <div class="col-3 mb-3" v-for="itemColor in mark.colors">
+                            <div class="item-color text-center border p-3 d-flex flex-column" style="height: 100%;">
                                 <div>
                                     {{itemColor.code}}
                                 </div>
@@ -78,14 +78,14 @@
                                         {{itemColor.name}}
                                     </small>
                                 </div>
-                                <div>
+                                <div class="">
                                     <div v-if="itemColor.img">
                                         <img :src="itemColor.img" style="width:100%;">
                                     </div>
                                     <div v-else class="pb-3">
                                         <img src="/images/somecar.png" style="">
                                     </div>
-                                    <div class="custom-file">
+                                    <div class="custom-file ">
                                         <input type="file" class="custom-file-input" v-bind:id="itemColor.id"  @change="onAttachmentColor">
                                         <label class="custom-file-label" for="accessory">Выберите фаил</label>
                                         <div class="invalid-feedback">Example invalid custom file feedback</div>
@@ -103,7 +103,7 @@
         <FormControll :id="urlId"></FormControll>
     </div>
 
-    <modal-window ref="modal" @updateParent="getDataModal"></modal-window>
+    <modal-window ref="color-list-modal" @updateParent="getDataModal"></modal-window>
 
 </div>
 </template>
@@ -199,10 +199,10 @@ export default {
         },
 
         showModal: function () {
-            this.$refs.modal.show = true
-            this.$refs.modal.brand = this.mark.brand_id
-            this.$refs.modal.colors = this.mark.colors
-            this.$refs.modal.loadData()
+            this.$refs['color-list-modal'].$refs['color-list-modal'].show()
+            this.$refs['color-list-modal'].brand = this.mark.brand_id
+            this.$refs['color-list-modal'].colors = this.mark.colors
+            this.$refs['color-list-modal'].loadData()
         },
 
 
@@ -303,10 +303,14 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
+
+                    this.urlId = res.data.mark.id
+                    this.$router.push('/marks/list')
+                    this.$router.push('/marks/edit/'+this.urlId)
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.mark.id);
-                    this.urlId = res.data.mark.id
+
                 }
             })
             .catch(errors => {

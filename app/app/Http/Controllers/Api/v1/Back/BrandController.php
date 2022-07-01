@@ -3,94 +3,46 @@
 namespace App\Http\Controllers\Api\v1\Back;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Brand;
-use Storage;
+use App\Http\Resources\Brand\BrandEditResource;
+use App\Http\Resources\Brand\BrandEditCollectionResource;
+use App\Repositories\Brand\BrandRepository;
+use Illuminate\Http\Request;
+use App\Http\Requests\Brand\BrandCreateRequest;
+use App\Http\Requests\Brand\BrandUpdateRequest;
 
 class BrandController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    private $repo;
+
+    public function __construct(BrandRepository $repo)
     {
-        $brands = Brand::get();
-        return response()->json([
-            'status' => 1,
-            'brands' => $brands
-        ]);
+        $this->repo = $repo;
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Brand $brand, \App\Http\Requests\Brand\BrandCreateRequest $request)
+    public function index(Request $request)
     {
-        $data = $request->only(['name','brand_color', 'font_color']);
-        if($request->has('icon')) {
-            $iconName = date('Ymdhis').'.'.$request->icon->getClientOriginalExtension();
-            $data['icon'] = $request->icon
-                ->move(Storage::path('/public/brand/'), $iconName)
-                ->getFilename();
-        }
-    	$brand = $brand->create($data);
-        return response()->json([
-            'status' => 1,
-            'brand' => $brand,
-            'message' => 'Новый бренд создан'
-        ]);
+        $brands = $this->repo->getAll();
+        return new BrandEditCollectionResource($brands);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    public function store(Brand $brand, BrandCreateRequest $request)
+    {
+        $brand = $this->repo->save($brand, $request->all());
+        return new BrandEditResource($brand);
+    }
+
     public function edit(Brand $brand)
     {
-        return response()->json([
-            'brand' => $brand,
-            'status' => 1,
-            'icon_src' => asset('storage/brand/'.$brand->icon)
-        ]);
+        return new BrandEditResource($brand);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Brand $brand, \App\Http\Requests\Brand\BrandUpdateRequest $request)
+    public function update(Brand $brand, BrandUpdateRequest $request)
     {
-        $data = $request->only(['name','brand_color', 'font_color']);
-        if($request->hasFile('icon')) {
-            $iconName = date('Ymdhis').'.'.$request->icon->getClientOriginalExtension();
-            $data['icon'] = $request->icon
-                ->move(Storage::path('/public/brand/'), $iconName)
-                ->getFilename();
-        }
-    	$brand->update($data);
-        return response()->json([
-            'status' => 1,
-            'brand' => $brand,
-            'message' => 'Бренд изменен'
-        ]);
+        $brand = $this->repo->save($brand, $request->all());
+        return new BrandEditResource($brand);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function destroy($id)
     {
         //

@@ -133,16 +133,14 @@ export default {
         loadData() {
             axios.get('/api/banners')
             .then(res => {
-                if(res.data.status == 1)
-                    this.data = res.data.data;
-                else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                }
+                this.data = res.data.data;
+                this.succesMessage = res.data.message;
                 this.loading = false;
-            })
-            .catch(errors => {
-                console.log(errors)
+            }).catch(errors => {
+                console.table(errors)
+                this.succesMessage = errors.response.data.message
+            }).finally(() => {
+                makeToast(this,this.succesMessage)
             })
         },
 

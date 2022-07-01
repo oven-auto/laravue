@@ -4,8 +4,6 @@
 
     <spin v-if="loading && urlId"></spin>
 
-    <error v-if="notFound"></error>
-
     <div v-else>
         <form>
             <div class="h5">{{ device.name ? device.name : 'Новое оборудование' }}</div>
@@ -27,19 +25,43 @@
                         <HtmlMultiSelect
                             :name="'brand_id'"
                             :data="brands"
-                            v-model="device.brand_id"
+                            v-model="device.brands"
                             :placeholder="'Не выбрано'">
                         </HtmlMultiSelect>
                     </div>
 
                     <div class="pt-3">
-                        <DeviceTypeSelect v-model="device.device_type_id"></DeviceTypeSelect>
+                        <div class="row">
+                            <div class="col">
+                                <DeviceTypeSelect v-model="device.device_type_id" :label="'Категория оборудования'"></DeviceTypeSelect>
+                            </div>
+
+                            <div class="col">
+                                <vRange v-model="device.install_target" :min="0" :max="1" :step="0.01" :label="'ЦКУ'" :title="'Целевой коэффициент установки'"></vRange>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="pt-3">
                         <DeviceFilterSelect v-model="device.device_filter_id"></DeviceFilterSelect>
                     </div>
 
+                    <CheckBox class="pt-3" v-model="device.tuning" :label="'Использовать в тюнинге'"></CheckBox>
+
+                </div>
+
+                <div class="col-6">
+                    <label for="icon">Изображение</label>
+
+                    <div v-if="device.image" class="pb-3">
+                        <img :src="device.image" class="brand-icon" style="width:100%;">
+                    </div>
+
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" id="icon" name="icon" @change="onAttachmentChange">
+                        <label class="custom-file-label" for="icon">Выберите фаил</label>
+                        <div class="invalid-feedback">Example invalid custom file feedback</div>
+                    </div>
                 </div>
             </div>
 
@@ -60,11 +82,14 @@ import HtmlSelect from '../html/HtmlSelect';
 import HtmlMultiSelect from '../html/HtmlMultiSelect';
 import DeviceFilterSelect from '../html/Select/FilterDeviceSelect';
 import DeviceTypeSelect from '../html/Select/DeviceTypeSelect';
+import CheckBox from '../checkbox/CheckBox';
+import vText from '../html/TextInput'
+import vRange from '../html/RangeInput'
 
 export default {
     name: 'device-filter-edit',
     components: {
-        Error, Message, Spin, HtmlSelect, HtmlMultiSelect,DeviceFilterSelect,DeviceTypeSelect,
+        Error, Message, Spin, HtmlSelect, HtmlMultiSelect,DeviceFilterSelect,DeviceTypeSelect,CheckBox,vText,vRange
     },
     data() {
         return {
@@ -72,84 +97,84 @@ export default {
                 name: '',
                 device_type_id: '',
                 device_filter_id: '',
-                brand_id: []
+                brands: [],
+                tuning: '',
+                install_target: 0,
+                image: ''
             },
-            types: [],
-            filters: [],
+
             brands: [],
-            notFound: false,
             loading: true,
             urlId: this.$route.params.id,
-            succes: false,
-            succesMessage: null,
+            message: null,
+            previusPage: '/'
         }
     },
 
 
     mounted() {
-        this.loadTypes();
-        this.loadFilters();
+        this.previusPage = this.prevRoute.fullPath
         this.loadBrands();
 
         if(this.urlId)
-            this.loadDevice(this.urlId);
+            this.loadDevice();
     },
 
     methods: {
-        loadDevice(id) {
-            axios.get('/api/devices/' + id + '/edit')
+
+        onAttachmentChange (e) {
+            this.device.image = e.target.files[0];
+        },
+
+        loadDevice() {
+            this.loading = true
+            axios.get('/api/devices/' + this.urlId + '/edit')
             .then( response => {
-
-                this.loading = false;
-                this.device.name =              response.data.device.name ?? '';
-                this.device.device_type_id =    response.data.device.device_type_id ?? '';
-                this.device.device_filter_id =  response.data.device.device_filter_id ?? '';
-
-                response.data.device.brands.forEach( (item, i) => {
-                    this.device.brand_id.push(item.id)
-                })
-
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
+                if(response.data.status == 1)
+                    this.device = response.data.data
+                else
+                    this.message = response.data.message
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                makeToast(this, this.message)
+                this.loading = false
             })
         },
 
-
-
-
-
-
         updateData(id) {
-            axios.post('/api/devices/' + id, this.getFormData('patch'), this.getConfig())
+            this.loading = true
+            axios.post('/api/devices/' + this.urlId, this.getFormData('patch'), this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadDevice(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
+                this.device = res.data.data
+                this.message = res.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                makeToast(this,this.message)
+                this.loading = false
             })
         },
 
         storeData() {
+            this.loading = true
             axios.post('/api/devices/', this.getFormData(), this.getConfig())
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadDevice(res.data.device.id);
-                    makeToast(this,this.succesMessage)
+                    this.urlId = res.data.data.id
+                    this.$router.push('/devices/list')
+                    this.$router.push('/devices/edit/'+this.urlId)
+                    this.device = res.data.data
+                    this.message = res.data.message;
+                } else {
+                    this.message = res.data.message;
                 }
-            })
-            .catch(errors => {
-                console.log(errors)
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                this.loading = false
+                makeToast(this,this.message)
             })
         },
 
@@ -159,13 +184,15 @@ export default {
 
 
         getFormData(method = '') {
-
             var formData = new FormData();
-            formData.append('name', this.device.name);
+            formData.append('name',                 this.device.name);
             formData.append('device_type_id',       this.device.device_type_id);
-            formData.append('device_filter_id',     this.device.device_filter_id);
+            formData.append('device_filter_id',     this.device.device_filter_id ?? '');
+            formData.append('tuning',               Number(this.device.tuning))
+            formData.append('install_target',       this.device.install_target);
+            formData.append('image',                this.device.image)
 
-            Object.values(this.device.brand_id).forEach(item => {
+            Object.values(this.device.brands).forEach(item => {
                 formData.append('brand_id[]', item)
             })
 
@@ -180,44 +207,21 @@ export default {
             }
         },
 
-
-
-
-
-
-
-        loadTypes() {
-            axios.get('/api/devicetypes')
-            .then(res => {
-                if(res.data.status == 1)
-                    this.types = res.data.data;
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
-        },
-
-        loadFilters() {
-            axios.get('/api/devicefilters')
-            .then(res => {
-                if(res.data.status == 1)
-                    this.filters = res.data.data;
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
-        },
-
         loadBrands() {
             axios.get('/api/brands')
             .then(response => {
                 if(response.data.status == 1)
-                    this.brands = response.data.brands;
+                    this.brands = response.data.data;
             })
             .catch(errors => {
                 this.loading = false;
             })
         },
-    }
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.prevRoute = from;
+        });
+    },
 }
 </script>

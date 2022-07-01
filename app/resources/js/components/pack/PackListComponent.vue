@@ -28,6 +28,7 @@
                     <th>Код</th>
                     <th>Модель</th>
                     <th>Оборудование</th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -66,12 +67,16 @@
                     </div>
                 </td>
 
+                <td>
+                    <i class="fa fa-close text-danger" @click="deletePack(item,i)"></i>
+                </td>
+
             </tr>
             </tbody>
 
         </table>
 
-        <PackModalFilter ref="modal" @updateParent="getDataModal"></PackModalFilter>
+        <PackModalFilter ref="pack-filter-modal" @updateParent="getDataModal"></PackModalFilter>
     </div>
 </template>
 
@@ -117,6 +122,20 @@ export default {
         this.loadData()
     },
     methods: {
+        deletePack(obj, index) {
+            var status = confirm('Вы действительно хотите удалить эту строку?')
+            if(status) {
+                axios.delete('/api/packs/'+obj.id)
+                .then((res)=>{
+                    this.data.splice(index,1)
+                    makeToast(this,res.data.message)
+                }).catch((errors) => {
+
+                }).finally(() => {
+
+                })
+            }
+        },
         //инициализировать объект поиска из параметров гет юрл строки
         initSearchFromUrl() {
             var i = 0
@@ -130,8 +149,8 @@ export default {
         },
         //Открыть модаль и передать ей объект поиска в свойство
         showModalPackFilter() {
-            this.$refs.modal.show = true;
-            this.$refs.modal.search = this.search;
+            this.$refs['pack-filter-modal'].$refs['pack-filter-modal'].show()
+            this.$refs['pack-filter-modal'].search = this.search
         },
         //Объект поиска в строку юрл
         searchToUrl() {
@@ -154,9 +173,10 @@ export default {
                 if(res.data.status == 1)
                     this.data = res.data.data;
                 else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
+                    this.data = [];
                 }
+                this.succesMessage = res.data.message;
+                makeToast(this,this.succesMessage)
                 this.loading = false;
             })
             .catch(errors => {

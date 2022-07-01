@@ -183,15 +183,15 @@ export default {
                     this.succes = true;
                     this.data = []
                     this.pageArray = []
-                    this.succesMessage = res.data.message;
+
                 }
+                this.succesMessage = res.data.message;
                 this.loading = false;
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
-            .finally(()=>{
-                this.loading = false
+            }).catch(errors => {
+                console.table(errors)
+                this.succesMessage = errors.response.data.message
+            }).finally(() => {
+                makeToast(this,this.succesMessage)
             })
         }
     },

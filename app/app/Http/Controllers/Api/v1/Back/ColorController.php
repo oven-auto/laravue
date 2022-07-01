@@ -14,13 +14,14 @@ class ColorController extends Controller
         $data = $request->all();
         $query = Color::with('brand');
         $filter = app()->make(ColorFilter::class, ['queryParams' => array_filter($data)]);
-        $colors = $query->filter($filter)->get();
+        $colors = $query->filter($filter)->orderBy('brand_id')->orderBy('name')->get();
 
         if($colors->count())
             return response()->json([
                 'status' => 1,
                 'data' => $colors,
-                'count' => $colors->count()
+                'count' => $colors->count(),
+                'message' => 'Найдено '.$colors->count().' цвета'
             ]);
         return response()->json([
             'status' => 0,

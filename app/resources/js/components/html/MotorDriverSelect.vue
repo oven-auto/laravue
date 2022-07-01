@@ -31,16 +31,7 @@ export default {
             })
         }
     },
-    props: {
-        name: {
-            type: String,
-            default: null
-        },
-        value: {
-            type: Number,
-            default: 0
-        }
-    },
+    props: ['name', 'value'],
     computed: {
         selected: {
             get() {

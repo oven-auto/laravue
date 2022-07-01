@@ -30,7 +30,7 @@ export default {
     },
     computed: {
         statusStr() {
-            return this.current ? 'Актуально' : 'Отключена';
+            return this.current ? 'Актуальная' : 'Архивная';
         },
         current: {
             get() {

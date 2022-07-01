@@ -1,10 +1,5 @@
 <template>
-<div v-if="show" class="v-modal-shadow" @click.self="closeModal">
-    <div class="v-modal">
-        <div class="v-modal-close" @click="closeModal">&#10006;</div>
-        <slot name="title">
-            <h3 class="v-modal-title">Заголовок</h3>
-        </slot>
+<b-modal ref="pack-filter-modal" size="lg" hide-footer :title="'Поиск опций'">
         <slot name="body">
             <div class="v-modal-content">
                 <div class="row">
@@ -23,17 +18,24 @@
         </slot>
         <slot name="footer">
             <div class="v-modal-footer">
-                <button class="btn btn-primary" @click="acceptFilter">
-                    Найти
-                </button>
+                <div class="row">
+                    <div class="col-6"></div>
 
-                <button class=" btn btn-danger" @click="clearFilter">
-                    Очистить
-                </button>
+                    <div class="col-3">
+                        <button class="btn btn-primary btn-block" @click="acceptFilter">
+                            Найти
+                        </button>
+                    </div>
+
+                    <div class="col-3">
+                        <button class=" btn btn-danger btn-block" @click="clearFilter">
+                            Очистить
+                        </button>
+                    </div>
+                </div>
             </div>
         </slot>
-    </div>
-</div>
+</b-modal>
 </template>
 
 <script>
@@ -43,7 +45,7 @@ import BrandSelect from '../html/BrandSelect';
 import MarkSelect from '../html/MarkSelect';
 
 export default {
-    name: 'device-filter-modal',
+    name: 'pack-filter-modal',
     components: {TextInput,BrandSelect,MarkSelect},
     data() {
         return {
@@ -57,14 +59,14 @@ export default {
     },
     methods: {
         closeModal: function () {
-            this.show = false
+            this.$refs['pack-filter-modal'].hide()
         },
         acceptFilter() {
-            this.show = false
+            this.closeModal()
             this.$emit('updateParent', this.search)
         },
         clearFilter() {
-            this.show = false;
+            this.closeModal()
             this.search.code = '';
             this.search.brand_id = 0;
             this.search.mark_id = 0;

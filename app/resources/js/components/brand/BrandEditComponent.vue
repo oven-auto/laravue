@@ -3,17 +3,15 @@
 
         <spin v-if="loading && urlId"></spin>
 
-        <error v-if="notFound"></error>
-
         <div v-else>
             <form>
-                <div class="h5">{{ brand.name ? brand.name : 'Новый бренд' }}</div>
+                <div class="h5">{{ data.name ? data.name : 'Новый бренд' }}</div>
 
                 <div class="row pb-3">
                     <div class="col-6">
                         <div >
                             <label for="name">Название</label>
-                            <input type="text" name="name" v-model="brand.name" class="form-control"/>
+                            <input type="text" name="name" v-model="data.name" class="form-control"/>
                         </div>
 
                         <div class="pt-3">
@@ -21,12 +19,12 @@
 
                             <div class="pb-3">
                                 <label for="name">Цвет бренда</label>
-                                <input type="color" v-model="brand.brand_color" class="form-control" required>
+                                <input type="color" v-model="data.brand_color" class="form-control" required>
                             </div>
 
                             <div class="">
                                 <label for="name">Цвет текста</label>
-                                <input type="color" v-model="brand.font_color" class="form-control" required>
+                                <input type="color" v-model="data.font_color" class="form-control" required>
                             </div>
                         </div>
                     </div>
@@ -34,8 +32,8 @@
                     <div class="col-6">
                         <label for="icon">Иконка</label>
 
-                        <div v-if="iconSrc" class="pb-3">
-                            <img :src="iconSrc" class="brand-icon">
+                        <div v-if="data.icon" class="pb-3">
+                            <img :src="data.icon" class="brand-icon">
                         </div>
 
                         <div class="custom-file">
@@ -45,25 +43,6 @@
                         </div>
                     </div>
                 </div>
-
-                <div class=" py-3">
-                    <div class="alert alert-warning alert-dismissible fade show" role="alert" v-if="statusErrors">
-                        {{httpErrors.length}}
-                        <div v-for="err in httpErrors" :key="err+'err'">
-                            {{err}}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- <button v-if="urlId" @click.prevent="updateBrand(urlId)" type="button" class="btn btn-success">
-                    Изменить
-                </button>
-
-                <button v-else @click.prevent="storeBrand()" type="button" class="btn btn-success">
-                    Создать
-                </button>
-
-                <a class="btn btn-secondary" @click="$router.go(-1)">Назад</a> -->
             </form>
 
             <FormControll :id="urlId"></FormControll>
@@ -85,64 +64,54 @@ export default {
     },
     data() {
         return {
-            toastCount: 0,
-            brand: {
+            data: {
                 name: null,
                 icon: null,
                 brand_color: null,
                 font_color: null
             },
-            iconSrc: null,
-            notFound: false,
             loading: true,
             urlId: this.$route.params.id,
-            succes: false,
-            succesMessage: null,
-            httpErrors: {},
-            statusErrors: 0
+            message: null,
         }
     },
 
     mounted() {
         if(this.urlId)
-            this.loadData(this.urlId)
+            this.loadData()
     },
 
     methods: {
         onAttachmentChange (e) {
-            this.brand.icon = e.target.files[0];
+            this.data.icon = e.target.files[0];
         },
 
-        loadData(id) {
-            axios.get('/api/brands/' + id + '/edit')
+        loadData() {
+            this.loading = true
+            axios.get('/api/brands/' + this.urlId + '/edit')
             .then( response => {
-                this.loading = false;
-                this.brand.name = response.data.brand.name;
-                this.iconSrc = response.data.icon_src;
-                this.brand.brand_color = response.data.brand.brand_color;
-                this.brand.font_color = response.data.brand.font_color;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
+                if(response.data.status == 1)
+                    this.data = response.data.data;
+                else
+                    this.message = response.data.message
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                makeToast(this, this.message)
+                this.loading = false
             })
         },
 
-        updateData(id) {
-            axios.post('/api/brands/' + id, this.getFormData('patch'), this.getConfig())
+        updateData() {
+            axios.post('/api/brands/' + this.urlId, this.getFormData('patch'), this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                    this.statusErrors = 0
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                this.httpErrors = errors.response.data.errors,
-                this.statusErrors = 1
+                this.data = res.data.data
+                this.message = res.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                makeToast(this,this.message)
+                this.loading = false
             })
         },
 
@@ -151,26 +120,29 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(res.data.brand.id);
-                    this.statusErrors = 0
-                    makeToast(this,this.succesMessage)
+                    this.urlId = res.data.data.id
+                    this.$router.push('/brands/list')
+                    this.$router.push('/brands/edit/'+this.urlId)
+                    this.data = res.data.data
+                    this.message = res.data.message;
+                } else {
+                    this.message = res.data.message;
                 }
-            })
-            .catch(errors => {
-                this.httpErrors = errors.response.data.errors
-                this.statusErrors = 1
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                this.loading = false
+                makeToast(this,this.message)
             })
         },
 
         getFormData(method = '') {
             var formData = new FormData();
 
-            formData.append('name', this.brand.name);
-            formData.append('icon', this.brand.icon);
-            formData.append('brand_color', this.brand.brand_color);
-            formData.append('font_color', this.brand.font_color);
+            formData.append('name', this.data.name);
+            formData.append('icon', this.data.icon);
+            formData.append('brand_color', this.data.brand_color);
+            formData.append('font_color', this.data.font_color);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

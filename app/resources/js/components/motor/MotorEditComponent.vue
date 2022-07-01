@@ -3,8 +3,6 @@
 
         <spin v-if="loading && urlId"></spin>
 
-        <error v-if="notFound"></error>
-
         <div v-else>
             <form>
                 <div class="h5">{{ motor.name ? motor.name : 'Новый тип мотора' }}</div>
@@ -133,43 +131,51 @@ export default {
                 transmission_name: ''
             },
 
-            notFound: false,
             loading: true,
             urlId: this.$route.params.id,
-            succes: false,
-            succesMessage: null,
+            message: null,
+            previusPage: '/'
         }
     },
     mounted() {
+        this.previusPage = this.prevRoute.fullPath
         if(this.urlId)
-            this.loadData(this.urlId);
+            this.loadData();
     },
+
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.prevRoute = from;
+        });
+    },
+
     methods: {
-        loadData(id) {
-            axios.get('/api/motors/' + id + '/edit')
+        loadData() {
+            this.loading = true
+            axios.get('/api/motors/' + this.urlId + '/edit')
             .then( response => {
-                this.loading = false;
-                this.motor = response.data.motor;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
+                if(response.data.status == 1)
+                    this.motor = response.data.data
+                else
+                    this.message = response.data.message
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                makeToast(this, this.message)
+                this.loading = false
             })
         },
 
         updateData(id) {
             axios.post('/api/motors/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
+                this.motor = res.data.data
+                this.message = res.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                makeToast(this,this.message)
+                this.loading = false
             })
         },
 
@@ -178,14 +184,19 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(res.data.motor.id);
-                    makeToast(this,this.succesMessage)
+                    this.urlId = res.data.data.id
+                    this.$router.push('/motors/list')
+                    this.$router.push('/motors/edit/'+this.urlId)
+                    this.motor = res.data.data
+                    this.message = res.data.message;
+                } else {
+                    this.message = res.data.message;
                 }
-            })
-            .catch(errors => {
-                console.log(errors)
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                this.loading = false
+                makeToast(this,this.message)
             })
         },
 
@@ -201,7 +212,7 @@ export default {
             formData.append('motor_transmission_id', this.motor.motor_transmission_id);
             formData.append('motor_driver_id', this.motor.motor_driver_id);
             formData.append('motor_toxic_id', this.motor.motor_toxic_id);
-            formData.append('transmission_name', this.motor.transmission_name);
+            formData.append('transmission_name', this.motor.transmission_name ?? '');
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

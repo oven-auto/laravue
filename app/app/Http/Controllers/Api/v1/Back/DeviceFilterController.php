@@ -5,57 +5,44 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DeviceFilter;
+use App\Http\Resources\Device\Filter\FilterListCollection;
+use App\Http\Resources\Device\Filter\FilterEditResource;
+use App\Repositories\Device\FilterRepository;
 
 class DeviceFilterController extends Controller
 {
+    private $repo;
+
+    public function __construct(FilterRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index()
     {
-        $devicefilters = DeviceFilter::orderBy('sort')->get();
-        if($devicefilters->count())
-            return response()->json([
-                'status' => 1,
-                'count' => $devicefilters->count(),
-                'data' => $devicefilters
-            ]);
-        return response()->json([
-            'status' => 0,
-            'count' => $devicefilters->count(),
-            'message' => 'Не нашлось ни одного фильтра оборудования'
-        ]);
+        $devicefilters =  $this->repo->getAllSort();
+        return new FilterListCollection($devicefilters);
     }
 
     public function store(DeviceFilter $devicefilter, Request $request)
     {
-        $devicefilter->fill($request->input());
-        $devicefilter->sort = DeviceFilter::max('sort')+1;
-        $devicefilter->save();
-        return response()->json([
-            'status' => 1,
-            'filter' => $devicefilter,
-            'message' => 'Новый фильтр оборудования создан'
-        ]);
+        $this->repo->save($devicefilter, $request->all());
+        return new FilterEditResource($devicefilter);
     }
 
     public function edit(DeviceFilter $devicefilter)
     {
-        return response()->json([
-            'status' => 1,
-            'filter' => $devicefilter
-        ]);
+        return new FilterEditResource($devicefilter);
     }
 
     public function update(DeviceFilter $devicefilter, Request $request)
     {
-        $devicefilter->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'filter' => $devicefilter,
-            'message' => 'Фильтр оборудования изменен'
-        ]);
+        $this->repo->save($devicefilter, $request->all());
+        return new FilterEditResource($devicefilter);
     }
 
-    public function destroy($id)
+    public function destroy(DeviceFilter $devicefilter)
     {
-        //
+        return $this->repo->delete($devicefilter);
     }
 }

@@ -25,7 +25,8 @@ class BannerController extends Controller
             return response()->json([
                 'status' => 1,
                 'data' => $banners,
-                'count' => $banners->count()
+                'count' => $banners->count(),
+                'message' => 'Найдено '.$banners->count().' банеров'
             ]);
         return response()->json([
             'status' => 0,

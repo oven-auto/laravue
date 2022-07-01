@@ -40,17 +40,24 @@
     </table> -->
 
     <draggable v-model="marks" tag="div" :component-data="getComponentData()" class="row marks-row">
-        <div class="col-3 "  v-for="mark in marks" >
+        <div class="col-3 mb-3"  v-for="(mark,i) in marks" :key="'mark-list'+i">
             <router-link :to="toEdit + mark.id">
-            <div class="border rounded py-3 mark-col">
+            <div class="border rounded py-3 mark-col  d-flex justify-content-center" style="height: 100%;">
 
                 <div :class="{'gray-image': mark.status==0}">
 
-                    <div class="text-center">
-                        {{mark.predix}}
-                        {{mark.brand.name}}
-                        <b>{{mark.name}}</b>
-                        <ion-icon class="drag-icon pr-3" name="ellipsis-vertical"></ion-icon>
+                        <div class="pl-3">
+                            {{mark.brand.name}}
+                            <ion-icon class="drag-icon pr-3" name="ellipsis-vertical"></ion-icon>
+                        </div>
+
+
+
+                    <div class="text-left pl-3" style="white-space:nowrap; overflow:hidden;">
+
+
+                        <b>{{mark.prefix}} {{mark.name}}</b>
+
                     </div>
                     <img :src="(mark.icon.image)" >
                     <div class="text-muted text-center">

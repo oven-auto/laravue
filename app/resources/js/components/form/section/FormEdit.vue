@@ -77,7 +77,24 @@
             </div>
         </div>
 
-        <WidgetEdit :form="form"></WidgetEdit>
+        <div class="row border  mb-3" style="background: #efefef;" >
+            <div class="col" style="background: #666;color:#ddd">
+                <label class="checkbox " :title="'Статус'" style="margin: 0px;">
+                    <input class="device-checkbox-toggle" type="checkbox" v-bind:value="form.widget_status" v-model="form.widget_status">
+                    <div class="checkbox__text" style="">
+                        <div style="width: 200px;text-align: left;">
+                            {{ (form.widget_status) ? 'Виджет включен' : 'Виджет выключен' }}
+                        </div>
+                    </div>
+                </label>
+            </div>
+
+            <div class="col-12 pb-3" v-if="form.widget_status">
+                <WidgetEdit  :form="form" v-model="form.widget"></WidgetEdit>
+            </div>
+        </div>
+
+
 
         <FormControll :id="urlId"></FormControll>
 
@@ -120,6 +137,23 @@ export default {
                 menu_status: '',
                 section_page_id: 0,
                 title: '',
+                widget_status: 0,
+                widget: {
+                    banner: {
+                        image: '',
+                        position: ''
+                    },
+                    body: {
+                        text: ''
+                    },
+                    badges: [],
+                    badge_align: 'left',
+                    badge_line: 0,
+                    badge_table: 0,
+                    badge_number: 0,
+                    badge_position: 1,
+                    description: ''
+                }
             },
 
             controlls: {},
@@ -207,9 +241,33 @@ export default {
             formData.append('description',      this.form.description);
             formData.append('name',             this.form.name);
             formData.append('recipients',       this.form.recipients);
-            formData.append('section_page_id',       this.form.section_page_id);
-            formData.append('banner',       this.form.banner);
-            formData.append('color',       this.form.color);
+            formData.append('section_page_id',  this.form.section_page_id);
+            formData.append('banner',           this.form.banner);
+            formData.append('color',            this.form.color);
+            formData.append('widget_status',    Number(this.form.widget_status));
+            if(this.form.widget_status) {
+                formData.append('widget[badge_align]',      this.form.widget.badge_align)
+                formData.append('widget[badge_line]',       Number(this.form.widget.badge_line))
+                formData.append('widget[badge_table]',      Number(this.form.widget.badge_table))
+                formData.append('widget[badge_number]',     Number(this.form.widget.badge_number))
+                formData.append('widget[badge_position]',   this.form.widget.badge_position)
+                formData.append('widget[description]',      this.form.widget.description)
+
+                formData.append('widget[banner][image]',    this.form.widget.banner.image)
+                formData.append('widget[banner][position]', this.form.widget.banner.position)
+
+                formData.append('widget[body][text]', this.form.widget.body.text)
+
+                this.form.widget.badges.forEach((item,i) => {
+                    formData.append('widget[badges]['+i+'][image]', item.image || '')
+                    formData.append('widget[badges]['+i+'][icon]', item.icon || '')
+                    formData.append('widget[badges]['+i+'][size]', item.size || '')
+                    formData.append('widget[badges]['+i+'][color]', item.color || '')
+                    formData.append('widget[badges]['+i+'][description]', item.description || '')
+                })
+            } else {
+
+            }
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

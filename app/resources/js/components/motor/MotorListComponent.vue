@@ -9,6 +9,11 @@
             </div>
             <div class="col text-right">
                 <router-link class="btn btn-primary" :to="'/motors/create'">Добавить новый мотор</router-link>
+                <button class="btn btn-success" @click="showModalFilter">Поиск</button>
+            </div>
+
+            <div class="col-12" >
+                <FilterBreadCrumbs :search="search" :type="'motors'" @updateParent="getDataModal"></FilterBreadCrumbs>
             </div>
         </div>
 
@@ -17,7 +22,7 @@
         <table v-else class="table table-hover">
             <thead class="thead-dark">
             <tr>
-                <th style="width: 80px;">#</th>
+                <th style="width: 80px;">#{{motors.length}}</th>
                 <th>Бренд</th>
                 <th>Спецификация агрегата</th>
                 <th>Модель ДВС</th>
@@ -44,6 +49,9 @@
             </tr>
             </tbody>
         </table>
+
+        <MotorFilterModal ref="motor-filter-modal" @updateParent="getDataModal"></MotorFilterModal>
+
     </div>
 </template>
 
@@ -52,13 +60,17 @@
 import Spin from '../spinner/SpinComponent';
 import Message from '../alert/MessageComponent';
 import BrandBadge from '../badge/BrandBadge';
+import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
+import MotorFilterModal from '../modal/MotorFilterModal'
 
 export default {
     name: 'motor-list',
     components: {
         Spin,
         Message,
-        BrandBadge
+        BrandBadge,
+        MotorFilterModal,
+        FilterBreadCrumbs
     },
     data() {
         return {
@@ -68,27 +80,67 @@ export default {
             notFound: false,
             succes: false,
             succesMessage: null,
+            search: {
+                name: '',
+                brand_id: 0,
+                motor_transmission_id: 0,
+                motor_driver_id: 0,
+                motor_type_id: 0,
+                motor_toxic_id: 0
+            }
         }
     },
     mounted() {
-        this.loadTypes()
+        //this.search = {name: ''}
+        this.initSearchFromUrl()
+        this.loadData()
     },
     methods: {
-        loadTypes() {
-            axios.get('/api/motors')
-            .then(res => {
-                if(res.data.status == 1)
-                    this.motors = res.data.data;
-                else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
+
+        showModalFilter() {
+            this.$refs['motor-filter-modal'].$refs['motor-filter-modal'].show()
+            this.$refs['motor-filter-modal'].search = this.search
+        },
+
+        initSearchFromUrl() {
+            var i = 0
+            var url = []
+            for(var key in this.$route.query)
+                this.search[key] = this.$route.query[key]
+        },
+
+        getDataModal(data) {
+            //this.search = data
+            this.loadData()
+        },
+
+        //Объект поиска в строку юрл
+        searchToUrl() {
+            var mas = this.search;
+            var str = '';
+            var objUrl = {}
+            for(var key in mas)
+                if(mas[key]) {
+                    str+=key+'='+mas[key]+'&';
+                    objUrl[key] = mas[key]
                 }
-                this.loading = false;
+            this.$router.push('/motors/list?123')
+            this.$router.replace({query: objUrl})
+            return str;
+        },
+
+        loadData() {
+            axios.get('/api/motors?' + this.searchToUrl())
+            .then(response => {
+                this.motors = response.data.data;
+                this.message = response.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                this.loading = false
+                makeToast(this,this.message)
             })
-            .catch(errors => {
-                console.log(errors)
-            })
-        }
+        },
     }
 }
 </script>

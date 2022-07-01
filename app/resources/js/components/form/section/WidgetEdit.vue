@@ -2,25 +2,28 @@
     <section>
         <div class="row pt-3">
             <div class="col">
-                <img :src="''">
+                <div >
+                    <img :src="value.banner.image" v-if="value.banner.image" style="height: 100px;">
+                </div>
             </div>
             <div class="col">
-                <TextBox v-model="widget.description" :label="'Описание'"></TextBox>
+                <TextBox v-model="value.description" :label="'Описание'"></TextBox>
             </div>
         </div>
 
         <div class="row">
             <div class="col">
+
                 <label for="icon">Банер</label>
                 <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="icon" name="icon" @change="onAttachmentChange">
+                    <input type="file" class="custom-file-input" @change="onAttachmentChange">
                     <label class="custom-file-label" for="icon">Выберите фаил</label>
                     <div class="invalid-feedback">Example invalid custom file feedback</div>
                 </div>
             </div>
             <div class="col">
                 <label for="icon">Расположение банера</label>
-                <select class="form-control">
+                <select class="form-control" v-model="value.banner.position">
                     <option selected disabled>Укажите параметр</option>
                     <option value="left">Слева от описания</option>
                     <option value="right">Справа от описания</option>
@@ -33,34 +36,44 @@
                 <div class="border ">
                     <div class="badge-control-header border-bottom p-1 px-3">
                         <span>
-                            <i class="fa fa-align-left" aria-hidden="true"></i>
+                            <button class="fa fa-align-left" aria-hidden="true" @click="badgeAlign('left')"></button>
                         </span>
                         <span>
-                            <i class="fa fa-align-center" aria-hidden="true"></i>
+                            <button class="fa fa-align-center" aria-hidden="true" @click="badgeAlign('center')"></button>
                         </span>
                         <span>
-                            <i class="fa fa-align-right" aria-hidden="true"></i>
+                            <button class="fa fa-align-right" aria-hidden="true" @click="badgeAlign('right')"></button>
                         </span>
                         <span>
-                            <i class="fa fa-align-justify" aria-hidden="true"></i>
+                            <button class="fa fa-align-justify" aria-hidden="true" @click="badgeAlign('justify')"></button>
                         </span>
 
+
+
                         <span style="display:inline-block;">
-                            <CheckBox :label="'Связать линиями'" :v-model="form.title"></CheckBox>
+                            <CheckBox :label="'Связать линиями'" v-model="value.badge_line"></CheckBox>
                         </span>
                         <span style="display:inline-block;">
-                            <CheckBox :label="'Объеденить в таблицу'" :v-model="form.title"></CheckBox>
+                            <CheckBox :label="'Объеденить в таблицу'" v-model="value.badge_table"></CheckBox>
                         </span>
                         <span style="display:inline-block;">
-                            <CheckBox :label="'Пронумеровать'" :v-model="form.title"></CheckBox>
+                            <CheckBox :label="'Пронумеровать'" v-model="value.badge_number"></CheckBox>
                         </span>
-                        <button class="btn btn-dark" @click="addBadge()">Добавить бейдж</button>
+
+
+
+                        <button class="btn btn-dark" @click="addBadge()">
+                            Добавить бейдж
+                        </button>
                     </div>
 
                     <div class="row py-3 px-3">
-                        <div class="col-2" v-for="(item,i) in widget.badges" :key="'badge-block'+i" >
+                        <div class="col-2" v-for="(item,i) in value.badges" :key="'badge-block'+i" >
                             <div class="border badge-control">
-
+                                <div>
+                                    <img v-if="item.image" :src="item.urlimage" style="width:100%;">
+                                    <i v-if="item.icon" :style="{'font-size':'50px'}" :class="item.icon"></i>
+                                </div>
                                 <div class="custom-file">
                                     <input
                                         type="file"
@@ -95,9 +108,12 @@
                         <div class="col-6 ">
                             <div class="p-3">
                                 <label>Расположение иконок</label>
-                                <select class="form-control">
+                                <select class="form-control" v-model="value.badge_position">
                                     <option selected disabled>Укажите параметр</option>
-                                    <option value="1">1</option>
+                                    <option value="1">По умолчанию</option>
+                                    <option value="2">Вместо банера</option>
+                                    <option value="3">Под описанием</option>
+                                    <option value="4">Над описанием</option>
                                 </select>
                             </div>
                         </div>
@@ -109,7 +125,7 @@
         <div class="row mt-3">
             <div class="col">
                 <VueEditor
-                    v-model="widget.body.text"
+                    v-model="value.body.text"
                     :editorOptions="editorSettings"
                 ></VueEditor>
             </div>
@@ -139,32 +155,24 @@ export default {
                     blotFormatter: {}
                 }
             },
-            widget: {
-                banner: {
-                    image: '',
-                    position: ''
-                },
-                body: {
-                    text: ''
-                },
-                badges: []
-            }
         }
     },
-    props: ['form'],
+    props: ['form', 'value'],
     methods: {
-        onAttachmentChange() {
-
+        onAttachmentChange(e) {
+            this.value.banner.image = e.target.files[0]
         },
         onAttachmentBadgeFile(e) {
             var i = e.target.getAttribute('index')
-            console.log(i)
-            this.widget.badges[i].image = e.target.files[0]
+            this.value.badges[i].image = e.target.files[0]
         },
         addBadge() {
-            this.widget.badges.push({
+            this.value.badges.push({
                 image: '', icon: '', size: '', color: '', description: ''
             })
+        },
+        badgeAlign(param) {
+            this.value.badge_align = param
         }
     }
 }

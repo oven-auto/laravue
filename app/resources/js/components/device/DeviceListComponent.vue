@@ -1,8 +1,6 @@
 <template>
     <div id="device-type-list">
 
-        <message v-if="succes" :message="succesMessage"></message>
-
         <div class="row pb-3 d-flex align-items-center">
             <div class="col">
                 <div class="h-title">Список оборудования</div>
@@ -27,26 +25,53 @@
                 <tr>
                     <th style="width: 80px;">#{{devices.length}}</th>
                     <th>Название</th>
+                    <th>ЦКУ</th>
                     <th>Фильтр</th>
                     <th>Тип</th>
                     <th>Бренд</th>
+                    <th></th>
                 </tr>
             </thead>
 
             <tbody>
-                <tr v-for="device in devices">
+                <tr v-for="(device,i) in devices" :key="'devicelist'+i">
                     <td>
                         <router-link :to="toEdit + device.id">
                             Open
                         </router-link>
                     </td>
-                    <td>{{ device.name }}</td>
-                    <td style="">{{ device.filter.name }}</td>
+                    <td>
+                        <span v-if="device.image_count" style="border-bottom: dashed 1px #333" @click="showModalImage(device)">
+                            {{ device.name }}
+                        </span>
+                        <span v-else>{{device.name}}</span>
+                    </td>
+                    <td>
+                        <div v-if="device.install_target">
+                            <span class="badge badge-grey" title="Целевой коеффициент установки">
+                                ЦКУ: {{device.install_target}}
+                            </span>
+                            <br/>
+                            <span class="badge badge-success" title="Фактический коеффициент установки">
+                                ФКУ: {{device.install_target}}
+                            </span>
+                        </div>
+                    </td>
+                    <td style="">
+                        <div v-if="device.filter.name">
+                            {{ device.filter.name }}
+                        </div>
+
+                        <div v-else class="text-very-muted">
+                            Фильтр не присвоен
+                        </div>
+                    </td>
                     <td style="width:150px;">
-                        <span
-                            class="badge"
-                           >
+                        <span class="badge">
                             {{device.type.name }}
+                        </span>
+                        <span class="badge text-success d-block text-left">
+                            {{device.tuning ? 'Доступно в тюнинге' : ''}}
                         </span>
                     </td>
                     <td style="width:100px;">
@@ -54,11 +79,16 @@
                             <brand-badge :brand="brand"></brand-badge>
                         </div>
                     </td>
+                    <td class="text-right">
+                        <i class="fa fa-close text-danger" @click="deleteObj(device,i)"></i>
+                    </td>
                 </tr>
             </tbody>
         </table>
 
-        <DeviceFilterModal ref="modal" @updateParent="getDataModal"></DeviceFilterModal>
+        <DeviceFilterModal ref="device-filter-modal" @updateParent="getDataModal"></DeviceFilterModal>
+
+        <DeviceImageModal ref="device-image-modal"></DeviceImageModal>
 
     </div>
 </template>
@@ -69,6 +99,7 @@ import Message from '../alert/MessageComponent';
 import BrandBadge from '../badge/BrandBadge';
 import DeviceFilterModal from '../modal/DeviceFilterModal';
 import FilterBreadCrumbs from '../html/breadcrumbs/FilterBreadCrumbs';
+import DeviceImageModal from '../modal/DeviceImage'
 
 export default {
     name: 'device-list',
@@ -78,21 +109,21 @@ export default {
         BrandBadge,
         DeviceFilterModal,
         FilterBreadCrumbs,
+        DeviceImageModal
     },
     data() {
         return {
             devices: [],
             loading: true,
             toEdit: '/devices/edit/',
-            notFound: false,
-            succes: false,
-            succesMessage: null,
-            currentTypeId: 0,
+            message: null,
             search: {
                 name: '',
                 brand_id: 0,
                 device_type_id: 0,
                 device_filter_id: 0,
+                tuning: 0,
+                install_target: 0,
             },
         }
     },
@@ -101,6 +132,27 @@ export default {
         this.loadData()
     },
     methods: {
+        showModalImage(device) {
+            this.$refs['device-image-modal'].$refs['device-image-modal'].show()
+            this.$refs['device-image-modal'].device = device
+        },
+        deleteObj(obj,i) {
+            var status = confirm('Вы действительно хотите удалить эту строку?')
+            if(status) {
+                this.loading = true
+                axios.delete('/api/devices/'+obj.id)
+                .then((res)=>{
+                    this.devices.splice(i,1)
+                    this.message = response.data.message;
+                }).catch((errors) => {
+                    this.message = errorsToStr(errors)
+                }).finally(() => {
+                    this.loading = false
+                    makeToast(this,this.message)
+                })
+            }
+        },
+
         //инициализировать объект поиска из параметров гет юрл строки
         initSearchFromUrl() {
             var i = 0
@@ -114,8 +166,8 @@ export default {
         },
         //Открыть модаль и передать ей объект поиска в свойство
         showModalDeviceFilter() {
-            this.$refs.modal.show = true;
-            this.$refs.modal.search = this.search;
+            this.$refs['device-filter-modal'].$refs['device-filter-modal'].show()
+            this.$refs['device-filter-modal'].search = this.search
         },
         //Объектпоиска в строку юрл
         searchToUrl() {
@@ -133,18 +185,16 @@ export default {
         },
 
         loadData() {
+            this.loading = true
             axios.get('/api/devices?'+this.searchToUrl())
-            .then(res => {
-                if(res.data.status == 1)
-                    this.devices = res.data.data;
-                else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                }
-                this.loading = false;
-            })
-            .catch(errors => {
-                console.log(errors)
+            .then(response => {
+                this.devices = response.data.data;
+                this.message = response.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                this.loading = false
+                makeToast(this,this.message)
             })
         }
     }

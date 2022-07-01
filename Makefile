@@ -82,4 +82,10 @@ laravel-migrate-rollback:
 composer-update:
 	sudo docker exec php-f-sshop composer update
 
+laravel-clear:
+	sudo docker exec php-f-sshop php artisan cache:clear
+	sudo docker exec php-f-sshop php artisan config:clear
+	sudo docker exec php-f-sshop php artisan route:cache
+
+
 #testtest

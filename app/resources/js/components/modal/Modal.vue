@@ -1,15 +1,12 @@
 <template>
-    <div v-if="show" class="v-modal-shadow" @click.self="closeModal">
-        <div class="v-modal">
-            <div class="v-modal-close" @click="closeModal">&#10006;</div>
-            <slot name="title">
-                <h3 class="v-modal-title">Заголовок</h3>
-            </slot>
+<b-modal ref="color-list-modal" size="lg" hide-footer :title="'Список цветов'">
             <slot name="body">
                 <div class="v-modal-content">
-                    <div class="row d-flex align-items-center">
+                    <div class="row">
                         <div class="col-2 mb-3 text-center" v-for="item in data">
-                            <div class="item-color" @click="checkColor(item)" :class="{'active-color': colors.find(col => col.id == item.id)}">
+                            <div style="height: 100%;" class="item-color d-flex flex-column"
+                                @click="checkColor(item)"
+                                :class="{'active-color': colors.find(col => col.id == item.id)}">
                                 <div>
                                     {{item.code}}
                                 </div>
@@ -31,15 +28,14 @@
                     </button>
                 </div>
             </slot>
-        </div>
-    </div>
+</b-modal>
 </template>
 
 <script>
     import ColorIcon from '../html/ColorIcon';
 
     export default {
-        name: "ModalWindow",
+        name: "color-list-modal",
         components: {
             ColorIcon
         },
@@ -67,7 +63,7 @@
             },
 
             closeModal: function () {
-                this.show = false
+                this.$refs['color-list-modal'].hide()
             },
 
             loadData() {

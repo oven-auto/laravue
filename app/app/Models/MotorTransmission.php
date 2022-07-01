@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\Createable;
 
 class MotorTransmission extends Model
 {
-    use HasFactory;
+    use HasFactory,Createable;
 
     protected $fillable = ['name', 'acronym', 'transmission_type_id'];
 

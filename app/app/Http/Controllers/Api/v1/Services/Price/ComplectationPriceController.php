@@ -11,9 +11,14 @@ class ComplectationPriceController extends Controller
 {
     public function set(Request $request, PriceChangeService $service)
     {
-        $service->changePrice(new Complectation, $request->all());
+        $complectation = $service->changePrice(new Complectation, $request->all());
+        // $complectation->lastmoderator->user;
+        // $complectation->motor;
+        // $complectation->brand;
+        // $complectation->mark;
         return response()->json([
-            'status' => 1
+            'status' => 1,
+            'data' => $complectation,
         ]);
     }
 

@@ -50,7 +50,7 @@
 
         </table>
 
-        <ColorFilterModal ref="modal" @updateParent="getDataModal"></ColorFilterModal>
+        <ColorFilterModal ref="color-filter-modal" @updateParent="getDataModal"></ColorFilterModal>
     </div>
 </template>
 
@@ -106,8 +106,8 @@ export default {
         },
         //Открыть модаль и передать ей объект поиска в свойство
         showModalColorFilter() {
-            this.$refs.modal.show = true;
-            this.$refs.modal.search = this.search;
+            this.$refs['color-filter-modal'].$refs['color-filter-modal'].show()
+            this.$refs['color-filter-modal'].search = this.search
         },
         //Объект поиска в строку юрл
         searchToUrl() {
@@ -129,13 +129,15 @@ export default {
                 if(res.data.status == 1)
                     this.data = res.data.data;
                 else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
+                    this.data = [];
                 }
+                this.succesMessage = res.data.message;
                 this.loading = false;
-            })
-            .catch(errors => {
-                console.log(errors)
+            }).catch(errors => {
+                console.table(errors)
+                this.succesMessage = errors.response.data.message
+            }).finally(() => {
+                makeToast(this,this.succesMessage)
             })
         }
     }

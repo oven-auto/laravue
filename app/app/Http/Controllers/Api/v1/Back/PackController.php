@@ -20,7 +20,8 @@ class PackController extends Controller
             return response()->json([
                 'status' => 1,
                 'data' => $packs,
-                'count' => $packs->count()
+                'count' => $packs->count(),
+                'message' => "Найдено ".$packs->count()." опций"
             ]);
         return response()->json([
             'status' => 0,
@@ -60,6 +61,17 @@ class PackController extends Controller
             'status' => 1,
             'pack' => $pack,
             'message' => 'Пакет изменен'
+        ]);
+    }
+
+    public function destroy(Pack $pack)
+    {
+        $name = $pack->code;
+        $pack->delete();
+        return response()->json([
+            'data' => '',
+            'status' => 1,
+            'message' => 'Пакет с кодом '.$name.' удален'
         ]);
     }
 }

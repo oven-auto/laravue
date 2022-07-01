@@ -61,4 +61,14 @@ class Complectation extends Model implements SortInterface, HasPriceInterface
     {
         return $this->hasMany(\App\Models\Car::class, 'complectation_id', 'id');
     }
+
+    public function moderator()
+    {
+        return $this->hasMany(\App\Models\ComplectationModerator::class);
+    }
+
+    public function lastModerator()
+    {
+        return $this->hasOne(\App\Models\ComplectationModerator::class)->orderBy('id','DESC')->withDefault();
+    }
 }

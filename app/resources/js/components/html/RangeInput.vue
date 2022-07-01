@@ -1,6 +1,6 @@
 <template>
 <div>
-    <label>{{label}}: {{result}}</label>
+    <label :title="title">{{label}}: {{result}}</label>
     <input type="range" class="form-control" v-model="result" :step="step" :min="min" :max="max">
 </div>
 </template>
@@ -32,6 +32,10 @@ export default {
         max: {
             type: Number,
            default: 100
+        },
+        title: {
+            type: String,
+            default: ''
         }
     },
     computed: {

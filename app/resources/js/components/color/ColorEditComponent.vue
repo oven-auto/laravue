@@ -81,9 +81,11 @@ export default {
             urlId: this.$route.params.id,
             succes: false,
             succesMessage: null,
+            previusPage: '/'
         }
     },
     mounted() {
+        this.previusPage = this.prevRoute.fullPath
         if(this.urlId)
             this.loadData(this.urlId)
     },
@@ -136,8 +138,11 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
+                    this.$router.push(this.previusPage)
+                    this.$router.push('/colors/edit/'+res.data.color.id)
                     this.succes = true;
                     this.succesMessage = res.data.message;
+                    this.urlId = res.data.color.id
                     this.loadData(res.data.color.id);
                 }
             }).catch(errors => {
@@ -170,6 +175,12 @@ export default {
                 'content-type': 'multipart/form-data'
             }
         },
-    }
+    },
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+            vm.prevRoute = from;
+        });
+    },
+
 }
 </script>

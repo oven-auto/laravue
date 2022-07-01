@@ -50,7 +50,7 @@ export default {
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -60,29 +60,29 @@ export default {
     methods: {
         loadFilter(id) {
             axios.get('/api/devicefilters/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.filter.name = response.data.filter.name;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
+             .then( response => {
+                if(response.data.status == 1)
+                    this.filter = response.data.data
+                else
+                    this.message = response.data.message
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                makeToast(this, this.message)
+                this.loading = false
             })
         },
 
-        updateData(id) {
-            axios.post('/api/devicefilters/' + id, this.getFormData('patch'), this.getConfig())
+        updateData() {
+            axios.post('/api/devicefilters/' + this.urlId, this.getFormData('patch'), this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadFilter(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
+                this.filter = res.data.data
+                this.message = res.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                makeToast(this,this.message)
+                this.loading = false
             })
         },
 
@@ -91,14 +91,19 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadFilter(res.data.filter.id);
-                    makeToast(this,this.succesMessage)
+                    this.urlId = res.data.data.id
+                    this.$router.push('/devicefilters/list')
+                    this.$router.push('/devicefilters/edit/'+this.urlId)
+                    this.filter = res.data.data
+                    this.message = res.data.message;
+                } else {
+                    this.message = res.data.message;
                 }
-            })
-            .catch(errors => {
-                console.log(errors)
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                this.loading = false
+                makeToast(this,this.message)
             })
         },
 

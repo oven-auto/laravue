@@ -26,6 +26,18 @@ class DeviceBreadCrumbsController extends Controller
         if($request->has('name'))
             $res['name'] = $request->get('name');
 
+        if($request->has('tuning'))
+            if($request->get('tuning') == 1)
+                $res['tuning'] = 'Только тюнинг';
+            elseif($request->get('tuning')==2)
+                $res['tuning'] = 'Все кроме тюнинга';
+
+        if($request->has('install_target'))
+            if($request->get('install_target') == 1)
+                $res['install_target'] = 'Только с ЦКУ';
+            elseif($request->get('install_target')==2)
+                $res['install_target'] = 'Все кроме ЦКУ';
+
         return response()->json([
             'data' => $res
         ]);

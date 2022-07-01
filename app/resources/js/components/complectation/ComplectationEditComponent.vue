@@ -132,8 +132,8 @@
             </div>
 
             <div class="row py-3" v-if="complectation.colors">
-                <div class="col-3 item-complect-color" v-for="markcolors in complectation.colors">
-                    <div class="text-center mb-1 rounded border p-2">
+                <div class="col-3 item-complect-color mb-3" v-for="markcolors in complectation.colors">
+                    <div class="text-center rounded border p-2 flex-column d-flex" style="height: 100%;">
                         <div>
                             <label class="checkbox d-flex align-items-center" :title="markcolors.color.code">
                                 <input

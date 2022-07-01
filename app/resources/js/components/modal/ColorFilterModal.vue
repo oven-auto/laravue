@@ -1,10 +1,5 @@
 <template>
-<div v-if="show" class="v-modal-shadow" @click.self="closeModal">
-    <div class="v-modal">
-        <div class="v-modal-close" @click="closeModal">&#10006;</div>
-        <slot name="title">
-            <h3 class="v-modal-title">Заголовок</h3>
-        </slot>
+<b-modal ref="color-filter-modal" size="lg" hide-footer :title="'Поиск цветов'">
         <slot name="body">
             <div class="v-modal-content">
                 <div class="row">
@@ -30,8 +25,7 @@
                 </button>
             </div>
         </slot>
-    </div>
-</div>
+</b-modal>
 </template>
 
 <script>
@@ -55,14 +49,14 @@ export default {
     },
     methods: {
         closeModal: function () {
-            this.show = false
+            this.$refs['color-filter-modal'].hide()
         },
         acceptFilter() {
-            this.show = false
+            this.closeModal()
             this.$emit('updateParent', this.search)
         },
         clearFilter() {
-            this.show = false;
+            this.closeModal()
             this.search.code = '';
             this.search.brand_id = 0;
             this.search.name = '';

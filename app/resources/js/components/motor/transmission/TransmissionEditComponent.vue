@@ -100,9 +100,11 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
+                    this.urlId = res.data.motortransmission.id
+                    this.$router.push('/motortransmissions/list')
+                    this.$router.push('/motortransmissions/edit/'+this.urlId)
                     this.succesMessage = res.data.message;
-                    this.loadType(res.data.motortransmission.id);
+                    this.loadType(this.urlId);
                     makeToast(this,this.succesMessage)
                 }
             })

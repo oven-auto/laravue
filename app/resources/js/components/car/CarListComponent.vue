@@ -251,14 +251,14 @@ export default {
                     this.succes = true;
                     this.data = []
                     this.pageArray = []
-                    this.succesMessage = res.data.message;
                 }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
-            .finally(()=>{
                 this.loading = false
+                this.succesMessage = res.data.message;
+            }).catch(errors => {
+                console.table(errors)
+                this.succesMessage = errors.response.data.message
+            }).finally(() => {
+                makeToast(this,this.succesMessage)
             })
         },
 

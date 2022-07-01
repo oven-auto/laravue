@@ -1,38 +1,63 @@
 <template>
-<div v-if="show" class="v-modal-shadow" @click.self="closeModal">
-    <div class="v-modal">
-        <div class="v-modal-close" @click="closeModal">&#10006;</div>
-        <slot name="title">
-            <h3 class="v-modal-title">Заголовок</h3>
-        </slot>
-        <slot name="body">
-            <div class="v-modal-content">
-                <div class="row">
-                    <div class="col-6">
-                        <text-input v-model="search.name" :label="'Название'"></text-input>
-                        <brand-select v-model="search.brand_id"></brand-select>
-                    </div>
 
-                    <div class="col-6">
-                        <DeviceTypeSelect v-model="search.device_type_id"></DeviceTypeSelect>
-                        <FilterDeviceSelect v-model="search.device_filter_id"></FilterDeviceSelect>
+    <b-modal ref="device-filter-modal" size="lg" hide-footer :title="'Поиск оборудования'">
+        <div class="d-block text-left">
+            <slot name="body">
+                <div class="v-modal-content">
+                    <div class="row">
+                        <div class="col-6">
+                            <text-input v-model="search.name" :label="'Название'" class=""></text-input>
+                            <brand-select v-model="search.brand_id" class="pt-3"></brand-select>
+
+                            <div class="pt-3">
+                                <label>Тюнинг</label>
+                                <select v-model="search.tuning" class="form-control">
+                                    <option value="0">Все оборудование</option>
+                                    <option value="1">Только тюнинг</option>
+                                    <option value="2">Все кроме тюнинга</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <DeviceTypeSelect v-model="search.device_type_id" class=""></DeviceTypeSelect>
+                            <FilterDeviceSelect v-model="search.device_filter_id" class="pt-3"></FilterDeviceSelect>
+
+                            <div class="pt-3">
+                                <label>Целевой коэффициент установки</label>
+                                <select v-model="search.install_target" class="form-control">
+                                    <option value="0">Все оборудование</option>
+                                    <option value="1">Только с ЦКУ</option>
+                                    <option value="2">Все кроме ЦКУ</option>
+                                </select>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
-            </div>
-        </slot>
-        <slot name="footer">
-            <div class="v-modal-footer">
-                <button class="btn btn-primary" @click="acceptFilter">
-                    Найти
-                </button>
+            </slot>
+            <slot name="footer">
+                <div class="v-modal-footer">
+                    <div class="row">
+                        <div class="col-6"></div>
+                        <div class="col-3">
+                            <button class="btn btn-primary btn-block" @click="acceptFilter">
+                                Найти
+                            </button>
+                        </div>
+                        <div class="col-3">
+                            <button class=" btn btn-danger btn-block" @click="clearFilter">
+                                Очистить
+                            </button>
+                        </div>
+                    </div>
 
-                <button class=" btn btn-danger" @click="clearFilter">
-                    Очистить
-                </button>
-            </div>
-        </slot>
-    </div>
-</div>
+
+
+                </div>
+            </slot>
+        </div>
+    </b-modal>
 </template>
 
 <script>
@@ -53,23 +78,27 @@ export default {
                 brand_id: 0,
                 device_type_id: 0,
                 device_filter_id: 0,
+                tuning: 0,
+                install_target: 0,
             },
         }
     },
     methods: {
         closeModal: function () {
-            this.show = false
+            this.$refs['device-filter-modal'].hide()
         },
         acceptFilter() {
-            this.show = false
+            this.closeModal()
             this.$emit('updateParent', this.search)
         },
         clearFilter() {
-            this.show = false;
+            this.closeModal()
             this.search.name = '';
             this.search.brand_id = 0;
             this.search.device_filter_id = 0;
             this.search.device_type_id = 0;
+            this.search.tuning = 0
+            this.search.install_target = 0
             this.$emit('updateParent', this.search);
         }
     }

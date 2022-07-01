@@ -15,7 +15,8 @@ class MotorDriverController extends Controller
             return response()->json([
                 'status' => 1,
                 'data' => $motordrivers,
-                'count' => $motordrivers->count()
+                'count' => $motordrivers->count(),
+                'message' => 'Найдено '.$motordrivers->count().' едениц типов привода'
             ]);
         return response()->json([
             'status' => 0,

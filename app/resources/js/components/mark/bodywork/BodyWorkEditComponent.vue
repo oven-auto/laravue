@@ -87,6 +87,9 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
+                    this.urlId = res.data.bodywork.id
+                    this.$router.push('/bodyworks/list')
+                    this.$router.push('/bodyworks/edit/'+this.urlId)
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.bodywork.id);

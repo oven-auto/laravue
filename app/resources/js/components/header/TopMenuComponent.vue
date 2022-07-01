@@ -1,7 +1,9 @@
 <template>
 <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
     <div class="container">
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="#">
+            <img src="http://192.168.1.98:8280/storage/system/logo.png" style="height: 40px;">
+        </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -18,9 +20,9 @@
 
                         <div class="dropdown-divider"></div>
 
-                        <router-link :to="'/devicetypes/list'" class="dropdown-item">Типы оборудование</router-link>
-                        <router-link :to="'/devicefilters/list'" class="dropdown-item">Фильтры по оборудованию</router-link>
                         <router-link :to="'/devices/list'" class="dropdown-item">Оборудование</router-link>
+                        <router-link :to="'/devicetypes/list'" class="dropdown-item">Категории оборудования</router-link>
+                        <router-link :to="'/devicefilters/list'" class="dropdown-item">Фильтры по оборудованию</router-link>
 
                         <div class="dropdown-divider"></div>
 
@@ -99,6 +101,11 @@
                     <router-link :to="link.href" class="nav-link"> {{ link.title }}</router-link>
                 </li> -->
             </ul>
+
+            <ul class="navbar-nav ml-auto">
+                <li><span class="nav-link" @click="login">Вход</span></li>
+                <li><span class="nav-link" @click="logout">Выход</span></li>
+            </ul>
         </div>
     </div>
 </nav>
@@ -113,6 +120,22 @@ export default {
 
             ]
         }
+    },
+    methods: {
+        login(){
+            window.location.href = '/login';
+        },
+
+        logout() {
+            axios.get('/api/exit')
+            .then(res => {
+                window.location.href = '/login';
+            }).catch(errors => {
+
+            }).finally(() => {
+
+            })
+        },
     }
 }
 </script>

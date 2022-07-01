@@ -15,7 +15,8 @@ class MotorTransmissionController extends Controller
             return response()->json([
                 'status' => 1,
                 'data' => $motortransmissions,
-                'count' => $motortransmissions->count()
+                'count' => $motortransmissions->count(),
+                'message' => 'Найдено '.$motortransmissions->count().' едениц типов трансмиссии'
             ]);
         return response()->json([
             'status' => 0,

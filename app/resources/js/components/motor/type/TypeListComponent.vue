@@ -17,7 +17,7 @@
         <table v-else class="table table-hover">
             <thead class="thead-dark">
             <tr>
-                <th style="width: 80px;">#</th>
+                <th style="width: 80px;">#{{types.length}}</th>
                 <th>Название</th>
                 <th>Абревиатура</th>
             </tr>
@@ -68,14 +68,15 @@ export default {
             .then(res => {
                 if(res.data.status == 1)
                     this.types = res.data.data;
-                else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                }
-                this.loading = false;
+                else
+                    this.types = []
+                this.succesMessage = res.data.message;
+                makeToast(this,this.succesMessage)
             })
             .catch(errors => {
                 console.log(errors)
+            }).finally(()=>{
+                this.loading = false
             })
         }
     }

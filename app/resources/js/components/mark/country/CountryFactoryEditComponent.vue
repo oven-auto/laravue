@@ -104,6 +104,9 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
+                    this.urlId = res.data.countryfactory.id
+                    this.$router.push('/countryfactories/list')
+                    this.$router.push('/countryfactories/edit/'+this.urlId)
                     this.succes = true;
                     this.succesMessage = res.data.message;
                     this.loadData(res.data.countryfactory.id);

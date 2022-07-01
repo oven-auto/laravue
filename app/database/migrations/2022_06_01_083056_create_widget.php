@@ -19,8 +19,10 @@ class CreateWidget extends Migration
             $table->boolean('badge_line')->default(false);
             $table->boolean('badge_table')->default(false);
             $table->boolean('badge_number')->default(false);
-            $table->boolean('badge_align')->default(false);
-            $table->boolean('badge_position')->default(false);
+            $table->string('badge_align')->default('');
+            $table->integer('badge_position')->default(1);
+            $table->text('description')->default('');
+            $table->boolean('widget_status')->default(0);
         });
     }
 

@@ -49,7 +49,7 @@ export default {
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -58,30 +58,30 @@ export default {
     },
     methods: {
         loadType(id) {
-            axios.get('/api/devicetypes/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.type.name = response.data.type.name;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
+            axios.get('/api/devicetypes/' + this.urlId + '/edit')
+             .then( response => {
+                if(response.data.status == 1)
+                    this.type = response.data.data
+                else
+                    this.message = response.data.message
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(() => {
+                makeToast(this, this.message)
+                this.loading = false
             })
         },
 
         updateData(id) {
             axios.post('/api/devicetypes/' + id, this.getFormData('patch'), this.getConfig())
             .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadType(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
+                this.type = res.data.data
+                this.message = res.data.message;
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                makeToast(this,this.message)
+                this.loading = false
             })
         },
 
@@ -90,14 +90,19 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadType(res.data.type.id);
-                    makeToast(this,this.succesMessage)
+                    this.urlId = res.data.data.id
+                    this.$router.push('/devicetypes/list')
+                    this.$router.push('/devicetypes/edit/'+this.urlId)
+                    this.type = res.data.data
+                    this.message = res.data.message;
+                } else {
+                    this.message = res.data.message;
                 }
-            })
-            .catch(errors => {
-                console.log(errors)
+            }).catch(errors => {
+                this.message = errorsToStr(errors)
+            }).finally(()=>{
+                this.loading = false
+                makeToast(this,this.message)
             })
         },
 
@@ -105,7 +110,6 @@ export default {
             var formData = new FormData();
 
             formData.append('name', this.type.name);
-            //formData.append('icon', this.type.icon);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

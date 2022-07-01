@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\Filterable;
+use App\Models\Traits\Createable;
 
 class Motor extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable, Createable;
 
     protected $guarded = [];
 

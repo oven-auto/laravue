@@ -18,9 +18,18 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::get('exit', function() {
+    Auth::logout();
+
+    return response()->json([
+        'message' => 'Выход успешен'
+    ]);
+});
+
 //CRUD
-Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\Back')->group(function () {
-    Route::resource('brands', BrandController::class);
+Route::prefix('')->middleware('auth:sanctum')->namespace('\App\Http\Controllers\Api\v1\Back')->group(function () {
+    Route::resource('brands',  BrandController::class);
+    //Route::resource('brands',  BrandController::class);
     Route::resource('devicetypes', DeviceTypeController::class);
     Route::resource('devicefilters', DeviceFilterController::class);
     Route::resource('devices', DeviceController::class);
@@ -43,7 +52,7 @@ Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\Back')->group(functio
     Route::resource('pages', PageController::class);
 });
 
-Route::prefix('forms')->group(function() {
+Route::prefix('forms')->middleware('auth:sanctum')->group(function() {
     Route::get('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'index']);
     Route::post('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'store']);
     Route::put('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'update']);
@@ -57,12 +66,16 @@ Route::prefix('forms')->group(function() {
 });
 
 
+Route::get('moderator/complectation/{complectation}', [\App\Http\Controllers\Api\v1\Complectation\LastModeratorComplectationController::class, 'index']);
 
 
 
 
-
-Route::prefix('services')->group(function () {
+Route::prefix('services')->middleware('auth:sanctum')->group(function () {
+    //IMAGES
+    Route::prefix('images')->group(function() {
+        Route::get('devices', [\App\Http\Controllers\Api\v1\Services\Images\DeviceImageController::class, 'index']);
+    });
 
     //FILES
     Route::delete('marks/document', [\App\Http\Controllers\Api\v1\Services\Files\MarkDocument\DeleteMarkDocumentController::class, 'index']);
@@ -119,6 +132,7 @@ Route::prefix('services')->group(function () {
            Route::get('formevents',[\App\Http\Controllers\Api\v1\Services\Html\Select\FormEventSelectController::class, 'index']);
            Route::get('test',[\App\Http\Controllers\Api\v1\Services\Html\Select\CarSelectController::class, 'index']);
            Route::get('servicejob',[\App\Http\Controllers\Api\v1\Services\Html\Select\ServiceJobSelectController::class, 'index']);
+           Route::get('forms', [\App\Http\Controllers\Api\v1\Services\Html\Select\FormSelectController::class, 'index']);
        });
        Route::prefix('color')->group(function () {
             Route::get('mark', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorMarkController::class, 'index']);
@@ -133,6 +147,7 @@ Route::prefix('breadcrumbs')->group(function(){
     Route::get('colors/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\ColorBreadCrumbsController::class, 'title']);
     Route::get('complectations/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\ComplectationBreadCrumbsController::class, 'title']);
     Route::get('cars/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\CarBreadCrumbsController::class, 'title']);
+    Route::get('motors/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\MotorBreadCrumbsController::class, 'title']);
 });
 
 Route::group(['prefix' => 'front'], function() {

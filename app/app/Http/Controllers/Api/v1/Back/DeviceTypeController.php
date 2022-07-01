@@ -5,58 +5,44 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\DeviceType;
+use App\Http\Resources\Device\Type\TypeListCollection;
+use App\Http\Resources\Device\Type\TypeEditResource;
+use App\Repositories\Device\TypeRepository;
 
 class DeviceTypeController extends Controller
 {
+    private $repo;
+
+    public function __construct(TypeRepository $repo)
+    {
+        $this->repo = $repo;
+    }
 
     public function index()
     {
-        $types = DeviceType::orderBy('sort')->get();
-        if($types->count())
-            return response()->json([
-                'status' => 1,
-                'count' => $types->count(),
-                'data' => $types
-            ]);
-        return response()->json([
-            'status' => 0,
-            'count' => $types->count(),
-            'message' => 'Не нашлось ни одного типа оборудования'
-        ]);
+        $types = $this->repo->getAllSort();
+        return new TypeListCollection($types);
     }
 
     public function store(DeviceType $devicetype, Request $request)
     {
-        $devicetype->fill($request->input());
-        $devicetype->sort = DeviceType::max('sort')+1;
-        $devicetype->save();
-        return response()->json([
-            'status' => 1,
-            'type' => $devicetype,
-            'message' => 'Новый тип оборудования создан'
-        ]);
+        $this->repo->save($devicetype, $request->all());
+        return new TypeEditResource($devicetype);
     }
 
     public function edit(DeviceType $devicetype)
     {
-        return response()->json([
-            'status' => 1,
-            'type' => $devicetype
-        ]);
+        return new TypeEditResource($devicetype);
     }
 
     public function update(DeviceType $devicetype, Request $request)
     {
-        $devicetype->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'type' => $devicetype,
-            'message' => 'Тип оборудования изменен'
-        ]);
+        $this->repo->save($devicetype, $request->all());
+        return new TypeEditResource($devicetype);
     }
 
-    public function destroy($id)
+    public function destroy(DeviceType $devicetype)
     {
-        //
+        return $this->repo->delete($devicetype);
     }
 }

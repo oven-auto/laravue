@@ -11,5 +11,6 @@ Class PriceChangeService
             $model = $model->find($data['id']);
             $model->changePrice($data['price']);
         }
+        return $model;
     }
 }

@@ -14,7 +14,7 @@
 <script>
 
 export default {
-    name: 'text-input',
+    name: 'check-box-input',
     data() {
         return {
             data: '',
@@ -24,7 +24,6 @@ export default {
     computed: {
         result: {
             get() {
-                console.log(this.value)
                 return this.value;
             },
             set(val) {

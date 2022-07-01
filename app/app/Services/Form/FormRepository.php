@@ -5,61 +5,74 @@ use App\Models\Form;
 use Illuminate\Http\UploadedFile;
 use App\Models\FormSection;
 use Storage;
+use App\Models\Widget;
+use App\Services\Form\WidgetRepository;
 
 Class FormRepository
 {
+    private $widgetService;
+
+    public function __construct(WidgetRepository $repo)
+    {
+        $this->widgetService = $repo;
+    }
+
+    public function saveRecipient($data)
+    {
+
+    }
+
+    public function saveBodies($data)
+    {
+
+    }
+
     public function save(Form $form, $data = [])
     {
         $result = [];
         try {
-            if(isset($data['banner']) && $data['banner'] instanceof UploadedFile)
-                $data['banner'] = $this->saveImage($data['banner']);
-            else
-                unset($data['banner']);
-
-            $bodies = explode(',', $data['bodies']);
-            $recipients = explode(',', $data['recipients']);
-            unset($data['bodies'], $data['recipients']);
-
             $section = FormSection::find($data['form_section_id']);
             $form->brand_id = $section->brand_id;
 
-            $form->fill($data);
+            $form->fill(array_diff_key($data, array_flip(['bodies','recipients','widget'])));
+            $form->sort = Form::max('sort')+1;
             $form->save();
 
-            if( count($recipients ))
-                $form->recipients()->sync($recipients);
+            if( ($data['recipients']))
+                $form->recipients()->sync(explode(',', $data['recipients']));
 
-            if( count($bodies))
-                $form->bodies()->sync($bodies);
-            $result = ['status' => 1, 'data'=>$form];
+            if( ($data['bodies']))
+                $form->bodies()->sync(explode(',', $data['bodies']));
+
+            $this->widgetService->saveWidget($form, $data['widget']);
+
+             $result = ['status' => 1, 'data'=>$form];
         } catch(\Exception $e) {
             $result = ['status' => 0, 'message' => $e->getMessage(), 'data'=>[]];
         }
         return $result;
     }
 
-    public function saveImage($file)
-    {
-        $bannerName = 'form_'.date('dmyhms').'.'.$file->getClientOriginalExtension();
-        $path = '/public/form/';
-        $finalName = '/form/'.$file->move(Storage::path($path), $bannerName)->getFilename();
-        return $finalName;
-    }
-
     public function getFormById($id)
     {
         $form = Form::find($id);
-        $form->banner = $form->banner ? asset('storage/'.$form->banner) . '?'.date('dmYh') : '';
+
         $data = $form->toArray();
         $data['bodies'] = $form->bodies->pluck('id');
         $data['recipients'] = $form->recipients->pluck('id');
+        $data['widget'] = $form->widget;
+        $data['widget']['banner'] = $form->widget->banner;
+        $data['widget']['banner']->image = $data['widget']['banner']->image ? asset('storage/'.$data['widget']['banner']->image) . '?'.date('dmYh') : '';
+        $data['widget']['body'] = $form->widget->body;
+        $data['widget']['badges'] = $form->widget->badges;
+        foreach($data['widget']['badges'] as $item)
+            $item->urlimage = $item->image ? asset('storage/'.$item->image)  : '';
         return $data;
     }
 
     public function findBy($data = [])
     {
-        $query = Form::select('forms.*');
+        $query = Form::select('forms.*')->with('widget');
 
     	if(isset($data['id']))
     		$query->where('forms.id',$data['id']);
@@ -75,7 +88,7 @@ Class FormRepository
         $form->banner = $form->banner ? asset('storage/'.$form->banner) . '?'.date('dmYh') : '';
         $result = $form->toArray();
         $result['bodies'] = $form->bodies->groupBy('form_controll_group_id');
-        
+
         return $result;
     }
 }

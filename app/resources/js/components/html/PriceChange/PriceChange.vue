@@ -20,7 +20,7 @@ export default {
             statusPriceClick: false,
         }
     },
-    props: ['id','value','url'],
+    props: ['id','value','url','current'],
     computed: {
         selected: {
             get() {
@@ -43,7 +43,7 @@ export default {
             }
             axios.patch(this.url, data, this.getConfig())
             .then(res => {
-
+                this.$emit('priceSend')
             }).catch(errors => {
 
             }).finally(()=>{
@@ -61,6 +61,6 @@ export default {
                 'content-type': 'application-json'
             }
         },
-    }
+    },
 }
 </script>

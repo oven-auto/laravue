@@ -97,9 +97,11 @@ export default {
             .then(res => {
                 if(res.data.status)
                 {
-                    this.succes = true;
+                    this.urlId = res.data.motordriver.id
+                    this.$router.push('/motordrivers/list')
+                    this.$router.push('/motordrivers/edit/'+this.urlId)
                     this.succesMessage = res.data.message;
-                    this.loadType(res.data.motordriver.id);
+                    this.loadType(this.urlId);
                     makeToast(this,this.succesMessage)
                 }
             })

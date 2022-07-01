@@ -21,6 +21,16 @@ body{
     padding: 5px;
     text-align: left;
 }
+
+.badge-grey{
+    background-color: #eee;
+    color: #333;
+}
+
+.text-very-muted{
+    color: #ccc;
+}
+
 .h-title{
     font-size: 20px;
 }
@@ -41,7 +51,7 @@ thead th {
     font-weight: normal;
 }
 .drag-icon{
-    float:right;font-size: 1.2rem;
+    float:right;font-size: 1.2rem;margin-top: 3px;
 }
 .drag-icon-top-left{
     position: absolute;
