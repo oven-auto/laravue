@@ -109,7 +109,7 @@ export default {
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
             installDevices: [],
             previusPage: '/'
         }
@@ -132,75 +132,38 @@ export default {
         },
 
         loadData(id) {
-            axios.get('/api/packs/' + id + '/edit')
-            .then( response => {
-
-                this.loading = false;
-
-                this.pack.name = response.data.pack.name;
-                this.pack.code = response.data.pack.code;
-                this.pack.price = response.data.pack.price;
-                this.pack.brand_id = response.data.pack.brand_id;
-                this.pack.colored = response.data.pack.colored;
-
-                var arrayDev = [];
-                response.data.pack.devices.forEach(function(item,i){
-                    arrayDev.push(item.id);
-                })
-                this.pack.devices = arrayDev;
-
-                var arrayMark = [];
-                response.data.pack.marks.forEach(function(item,i){
-                    arrayMark.push(item.id);
-                })
-                this.pack.marks = arrayMark;
-
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/packs/' + this.urlId + '/edit', 'pack', 'message')
         },
 
         updateData(id) {
-            axios.patch('/api/packs/' + id, this.pack, this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/packs/' + this.urlId, this.getFormData('patch'), 'pack', 'message')
         },
 
         storeData() {
-            axios.post('/api/packs/', this.pack, this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.pack.id
-                    this.$router.push(this.previusPage)
-                    this.$router.push('/packs/edit/'+this.urlId)
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(res.data.pack.id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/packs/', this.getFormData(), 'pack', 'message', 'urlId', 'packs')
         },
 
-        getConfig() {
-            return {
-                'content-type': 'application/json'
-            }
+        getFormData(method = '') {
+            var formData = new FormData();
+
+            formData.append('name', this.pack.name);
+            formData.append('code', this.pack.code);
+            formData.append('price', this.pack.price);
+            formData.append('colored', Number(this.pack.colored));
+            formData.append('brand_id', this.pack.brand_id);
+
+            this.pack.devices.forEach(itemDevice => {
+                formData.append('devices[]', itemDevice)
+            })
+
+            this.pack.marks.forEach(itemMark => {
+                formData.append('marks[]', itemMark)
+            })
+
+            if(method == 'patch')
+                formData.append("_method", "PATCH");
+
+            return formData;
         },
     },
     watch: {

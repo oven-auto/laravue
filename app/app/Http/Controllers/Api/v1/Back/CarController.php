@@ -5,108 +5,53 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Car;
-use App\Repositories\CarRepository;
-use App\Http\Filters\CarFilter;
+use App\Repositories\Car\CarRepository;
+use App\Http\Resources\Car\CarListCollection;
+use App\Http\Resources\Car\CarArchiveCollection;
+use App\Http\Resources\Car\CarEditResource;
+use App\Http\Resources\Car\CarArchiveEditResource;
 
 class CarController extends Controller
 {
 
     public function __construct(CarRepository $repository)
     {
-        $this->repository = $repository;
+        $this->repo = $repository;
     }
 
     public function index(Request $request)
     {
-        $data = $request->all();
-        $query = Car::select('cars.*')->relationList()->with('packs:code')->leftJoin('car_deliveries','car_deliveries.car_id','cars.id');
-        $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
-        $cars = $query->filter($filter)->paginate(50);
-
-        foreach($cars as $itemCar)
-            if(strpos($itemCar->color->image, asset('storage')) === false)
-                $itemCar->color->image =  $itemCar->color->image_date;
-
-        return response()->json([
-            'status' => $cars->count() ? 1 : 0,
-            'data' => $cars,
-            'count' => $cars->count(),
-            'message' => $cars->count() ? 'Количество автомобилей '.$cars->count() : 'Не нашлось ни одного автомобиля'
-        ]);
+        $cars = $this->repo->filter($request->all(), 15)->withQueryString();
+        if($request->has('archive'))
+            return new CarArchiveCollection($cars);
+        return new CarListCollection($cars);
     }
 
     public function edit(Car $car)
     {
-        $data = $this->repository->getCarArray($car);
-
-        return response()->json([
-            'status' => 1,
-            'data' =>$data
-        ]);
+        return new CarEditResource($car);
     }
 
     public function show($id)
     {
-        $data = Car::withTrashed()->with(['brand','complectation','devices','packs','mark','color','price','fixedprice'])->find($id);
-        return response()->json([
-            'status' => 1,
-            'data' =>$data
-        ]);
+        $car = $this->repo->getTrashById($id);
+        return new CarArchiveEditResource($car);
     }
 
     public function store(Car $car, Request $request)
     {
-        $result = $this->repository->save($car, $request->all());
-
-        if($result['status'])
-            return response()->json([
-                'status' => 1,
-                'data' => $car,
-                'message' => 'Автомобиль создан'
-            ]);
-        else
-            return response()->json([
-                'status' => 0,
-                'data' => $car,
-                'errors' => $result['error'],
-                'message' => 'Произошла ошибка'
-            ]);
+        $this->repo->save($car, $request->all());
+        return new CarEditResource($car);
     }
 
     public function update(Car $car, Request $request)
     {
-        $result = $this->repository->save($car, $request->all());
-
-        if($result['status'])
-            return response()->json([
-                'status' => 1,
-                'data' => $car,
-                'message' => 'Автомобиль изменен'
-            ]);
-        else
-            return response()->json([
-                'status' => 0,
-                'data' => $car,
-                'errors' => $result['error'],
-                'message' => 'Произошла ошибка'
-            ]);
+        $result = $this->repo->save($car, $request->all());
+        return new CarEditResource($car);
     }
 
     public function destroy(Car $car, Request $request)
     {
-        $car->fixedprice()->updateOrCreate(
-            [
-                'car_id'=>$car->id
-            ],
-            [
-                'body_price'=>$car->complectation->price,
-                'packs_price' => $car->price->pack_price,
-                'equipments_price' => $car->device_price
-            ]
-        );
-        $car->delete();
-        return response()->json([
-            'data'=>1
-        ]);
+        return $this->repo->delete($car);
     }
 }

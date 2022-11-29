@@ -46,7 +46,7 @@ export default {
             toEdit: '/bodyworks/edit/',
             loading: true,
             bodyworks: [],
-            notFound: false,
+            message: ''
         }
     },
     mounted() {
@@ -54,21 +54,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/bodyworks')
-            .then(response => {
-                if(response.data.status == 1) {
-                    this.bodyworks = response.data.data;
-                    this.loading = false;
-                }
-                else{
-                    this.loading = false;
-                    this.notFound = true;
-                }
-            })
-            .catch(errors => {
-                this.loading = false;
-                this.notFound = true;
-            })
+            list(this, '/api/bodyworks', 'bodyworks', 'message')
         }
     }
 }

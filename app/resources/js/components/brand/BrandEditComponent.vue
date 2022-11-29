@@ -86,54 +86,16 @@ export default {
             this.data.icon = e.target.files[0];
         },
 
-        loadData() {
-            this.loading = true
-            axios.get('/api/brands/' + this.urlId + '/edit')
-            .then( response => {
-                if(response.data.status == 1)
-                    this.data = response.data.data;
-                else
-                    this.message = response.data.message
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                makeToast(this, this.message)
-                this.loading = false
-            })
+        loadData(id) {
+            edit(this, '/api/brands/' + this.urlId + '/edit', 'data', 'message')
         },
 
-        updateData() {
-            axios.post('/api/brands/' + this.urlId, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                this.data = res.data.data
-                this.message = res.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                makeToast(this,this.message)
-                this.loading = false
-            })
+        updateData(id) {
+            update(this, '/api/brands/' + this.urlId, this.getFormData('patch'), 'data', 'message')
         },
 
         storeData() {
-            axios.post('/api/brands/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.data.id
-                    this.$router.push('/brands/list')
-                    this.$router.push('/brands/edit/'+this.urlId)
-                    this.data = res.data.data
-                    this.message = res.data.message;
-                } else {
-                    this.message = res.data.message;
-                }
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            storage(this, '/api/brands/', this.getFormData(), 'data', 'message', 'urlId', 'brands')
         },
 
         getFormData(method = '') {
@@ -148,12 +110,6 @@ export default {
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     }
 }

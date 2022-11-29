@@ -10,9 +10,7 @@ class ColorMarkController extends Controller
 {
     public function index(Request $request)
     {
-        $time = '?'. date('dmyhms');
-
-        $query = MarkColor::with('color')
+        $query = MarkColor::select('mark_colors.*')->with('color')
             ->leftJoin('colors','colors.id','=','mark_colors.color_id');
 
         if($request->has('mark_id'))
@@ -22,21 +20,8 @@ class ColorMarkController extends Controller
             $query->rightJoin('complectation_colors', 'complectation_colors.mark_color_id', '=', 'mark_colors.id')
                 ->where('complectation_colors.complectation_id', $request->get('complectation_id'));
 
-        $markcolors = $query->orderBy('colors.name')->get();
+        $markcolors = $query->get();
 
-        foreach($markcolors as $item) {
-            $item->image = asset('storage'.$item->image) . $time;
-        }
-
-        if($markcolors->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $markcolors,
-                'count' => $markcolors->count()
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного предустановленного цвета для этой модели'
-        ]);
+        return \App\Http\Resources\Complectation\ColorComplectationResource::collection($markcolors);
     }
 }

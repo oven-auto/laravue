@@ -130,16 +130,8 @@ export default {
         },
 
         loadData() {
-            axios.get('/api/motors?' + this.searchToUrl())
-            .then(response => {
-                this.motors = response.data.data;
-                this.message = response.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            var url = '/api/motors?' + this.searchToUrl()
+            list(this, url, 'motors','message')
         },
     }
 }

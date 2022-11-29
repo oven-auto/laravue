@@ -59,70 +59,26 @@ export default {
     },
     methods: {
         loadFilter(id) {
-            axios.get('/api/devicefilters/' + id + '/edit')
-             .then( response => {
-                if(response.data.status == 1)
-                    this.filter = response.data.data
-                else
-                    this.message = response.data.message
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                makeToast(this, this.message)
-                this.loading = false
-            })
+            edit(this, '/api/devicefilters/' + this.urlId + '/edit', 'filter', 'message')
         },
 
-        updateData() {
-            axios.post('/api/devicefilters/' + this.urlId, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                this.filter = res.data.data
-                this.message = res.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                makeToast(this,this.message)
-                this.loading = false
-            })
+        updateData(id) {
+            update(this, '/api/devicefilters/' + this.urlId, this.getFormData('patch'), 'filter', 'message')
         },
 
         storeData() {
-            axios.post('/api/devicefilters/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.data.id
-                    this.$router.push('/devicefilters/list')
-                    this.$router.push('/devicefilters/edit/'+this.urlId)
-                    this.filter = res.data.data
-                    this.message = res.data.message;
-                } else {
-                    this.message = res.data.message;
-                }
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            storage(this, '/api/devicefilters/', this.getFormData(), 'filter', 'message', 'urlId', 'devicefilters')
         },
 
         getFormData(method = '') {
             var formData = new FormData();
 
             formData.append('name', this.filter.name);
-            //formData.append('icon', this.type.icon);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     }
 }

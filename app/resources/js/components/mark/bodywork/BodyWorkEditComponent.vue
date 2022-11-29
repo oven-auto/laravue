@@ -4,7 +4,6 @@
 
     <spin v-if="loading && urlId"></spin>
 
-    <error v-if="notFound"></error>
 
     <div v-else>
         <form>
@@ -42,11 +41,9 @@ export default {
             bodywork: {
                 name: null,
             },
-            notFound: false,
             loading: true,
             urlId: this.$route.params.id,
-            succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -55,50 +52,15 @@ export default {
     },
     methods: {
         loadData(id) {
-            axios.get('/api/bodyworks/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.bodywork.name = response.data.bodywork.name;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/bodyworks/' + this.urlId + '/edit', 'bodywork', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/bodyworks/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/bodyworks/' + this.urlId, this.getFormData('patch'), 'bodywork', 'message')
         },
 
         storeData() {
-            axios.post('/api/bodyworks/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.bodywork.id
-                    this.$router.push('/bodyworks/list')
-                    this.$router.push('/bodyworks/edit/'+this.urlId)
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(res.data.bodywork.id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/bodyworks/', this.getFormData(), 'bodywork', 'message', 'urlId', 'bodyworks')
         },
 
         getFormData(method = '') {

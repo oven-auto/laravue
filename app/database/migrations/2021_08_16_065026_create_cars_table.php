@@ -22,6 +22,7 @@ class CreateCarsTable extends Migration
             $table->integer('year');
             $table->integer('device_price')->default(0);
             $table->string('vin', 17);
+            $table->integer('purchase', 0);
         });
     }
 

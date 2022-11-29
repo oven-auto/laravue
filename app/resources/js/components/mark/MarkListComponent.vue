@@ -91,6 +91,7 @@ export default {
             loading: true,
             marks: [],
             notFound: false,
+            message: ''
         }
     },
     mounted() {
@@ -143,22 +144,9 @@ export default {
         writeImage(url) {
             return storageUrl+url;
         },
+
         loadData() {
-            axios.get('/api/marks')
-            .then(response => {
-                if(response.data.status == 1) {
-                    this.marks = response.data.data;
-                    this.loading = false;
-                }
-                else{
-                    this.loading = false;
-                    this.notFound = true;
-                }
-            })
-            .catch(errors => {
-                this.loading = false;
-                this.notFound = true;
-            })
+            list(this, '/api/marks','marks','message')
         },
 
         getConfig() {

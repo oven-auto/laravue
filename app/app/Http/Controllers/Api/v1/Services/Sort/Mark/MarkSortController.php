@@ -11,9 +11,7 @@ class MarkSortController extends Controller
 {
     public function index(Request $request, SortChangeService $service)
     {
-        $data = $request->all();
-
-        $result = $service->changeSort(new Mark, $data);
+        $result = $service->changeSort(new Mark, $request->all());
 
         return response()->json([
             'status'=>1,

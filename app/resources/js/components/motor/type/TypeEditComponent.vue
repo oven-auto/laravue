@@ -3,8 +3,6 @@
 
         <spin v-if="loading && urlId"></spin>
 
-        <error v-if="notFound"></error>
-
         <div v-else>
             <form>
                 <div class="h5">{{ type.name ? type.name : 'Новый тип оборудования' }}</div>
@@ -50,7 +48,7 @@ export default {
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -59,50 +57,15 @@ export default {
     },
     methods: {
         loadType(id) {
-            axios.get('/api/motortypes/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.type.name = response.data.motortype.name;
-                this.type.acronym = response.data.motortype.acronym;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/motortypes/' + id + '/edit', 'type', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/motortypes/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadType(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/motortypes/' + id, this.getFormData('patch'), 'type', 'message')
         },
 
         storeData() {
-            axios.post('/api/motortypes/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.type.id
-                    this.$router.push('/motortypes/list')
-                    this.$router.push('/motortypes/edit/'+this.urlId)
-                    this.succesMessage = res.data.message;
-                    this.loadType(this.urlId);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/motortypes/', this.getFormData(), 'type', 'message', 'urlId', 'motortypes')
         },
 
         getFormData(method = '') {
@@ -115,12 +78,6 @@ export default {
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     },
 }

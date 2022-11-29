@@ -51,7 +51,7 @@ export default {
         return {
             toEdit: '/countryfactories/edit/',
             loading: true,
-            bodyworks: [],
+            countryfactories: [],
             notFound: false,
         }
     },
@@ -60,21 +60,7 @@ export default {
     },
     methods: {
         loadData() {
-            axios.get('/api/countryfactories')
-            .then(response => {
-                if(response.data.status == 1) {
-                    this.countryfactories = response.data.data;
-                    this.loading = false;
-                }
-                else{
-                    this.loading = false;
-                    this.notFound = true;
-                }
-            })
-            .catch(errors => {
-                this.loading = false;
-                this.notFound = true;
-            })
+            list(this, '/api/countryfactories', 'countryfactories', 'message')
         }
     }
 }

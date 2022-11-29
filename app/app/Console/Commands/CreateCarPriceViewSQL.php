@@ -44,9 +44,15 @@ class CreateCarPriceViewSQL extends Command
                 IFNULL(complectations.price,0) as complectation_price,
                 IFNULL(cars.device_price,0) as device_price,
                 IFNULL(sum(packs.price),0) as pack_price,
-
+                (
+                    IFNULL(complectations.price,0) +
+                    IFNULL(cars.device_price,0) +
+                    IFNULL(sum(packs.price),0) -
+                    IFNULL(cars.device_cost,0) -
+                    IFNULL(cars.purchase,0)
+                ) as margin_price,
                 (IFNULL(complectations.price,0) + IFNULL(cars.device_price,0) +  IFNULL(sum(packs.price),0)) as full_price
-                
+
             FROM cars
             LEFT JOIN complectations on complectations.id = cars.complectation_id
             LEFT JOIN car_packs on car_packs.car_id = cars.id

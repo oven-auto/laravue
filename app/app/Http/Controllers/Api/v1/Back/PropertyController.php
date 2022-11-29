@@ -5,51 +5,38 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Property;
+use App\Http\Resources\Property\PropertyListCollection;
+use App\Http\Resources\Property\PropertyEditResource;
 
 class PropertyController extends Controller
 {
+    private $repo;
+
+    public function __construct(\App\Repositories\Property\PropertyRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index()
     {
-        $properties = Property::orderBy('sort')->get();
-        if($properties->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $properties,
-                'count' => $properties->count()
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного характеристики'
-        ]);
+        $properties = $this->repo->getAll(['sort' => 'sort']);
+        return new PropertyListCollection($properties);
     }
 
     public function edit(Property $property)
     {
-        return response()->json([
-            'status' => 1,
-            'property' => $property
-        ]);
+        return new PropertyEditResource($property);
     }
 
     public function store(Property $property, Request $request)
     {
-        $data = $request->all();
-        $data['sort'] = Property::max('sort')+1;
-        $property->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'property' => $property,
-            'message' => 'Характеристика создана'
-        ]);
+        $this->repo->save($property, $request->input());
+        return new PropertyEditResource($property);
     }
 
     public function update(Property $property, Request $request)
     {
-        $property->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'property' => $property,
-            'message' => 'Характеристика изменена'
-        ]);
+        $this->repo->save($property, $request->input());
+        return new PropertyEditResource($property);
     }
 }

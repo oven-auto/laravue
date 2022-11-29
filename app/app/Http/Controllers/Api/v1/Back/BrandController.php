@@ -45,6 +45,6 @@ class BrandController extends Controller
 
     public function destroy($id)
     {
-        //
+
     }
 }

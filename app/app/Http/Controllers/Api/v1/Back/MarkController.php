@@ -6,64 +6,39 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mark;
 use Storage;
+use App\Http\Resources\Mark\MarkListCollection;
+use App\Http\Resources\Mark\MarkEditResource;
+use  \App\Repositories\Mark\MarkRepository;
 
 class MarkController extends Controller
 {
+    private $repo;
+
+    public function __construct(MarkRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index(Request $request)
     {
-        $query = Mark::with(['icon', 'bodywork', 'brand']);
-
-        if($request->has('brand_id'))
-            $query->where('brand_id', $request->get('brand_id'));
-
-        $marks = $query->orderBy('status','DESC')->orderBy('sort')->get();
-        foreach($marks as $item) {
-            $item->icon->image =  asset('storage'.$item->icon->image);
-        }
-
-        if($marks->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $marks,
-                'count' => $marks->count()
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одной модели'
-        ]);
+        $marks = $this->repo->getAll($request->all());
+        return new MarkListCollection($marks);
     }
 
-    public function edit(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
+    public function edit(Mark $mark, Request $request)
     {
-        $service->loadFullData($mark);
-
-        return response()->json([
-            'status' => 1,
-            'mark' => $mark->toArray()
-        ]);
+        return new MarkEditResource($mark);
     }
 
-    public function store(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
+    public function store(Mark $mark, Request $request)
     {
-        $data = $request->all();
-        $data['sort'] = Mark::max('sort')+1;
-        $service->saveMark($mark, $data);
-
-        return response()->json([
-            'status' => 1,
-            'mark' => $mark,
-            'message' => 'Модель создана'
-        ]);
+        $this->repo->saveMark($mark, $request->all());
+        return new MarkEditResource($mark);
     }
 
-    public function update(Mark $mark, Request $request, \App\Repositories\MarkRepository $service)
+    public function update(Mark $mark, Request $request)
     {
-        $service->saveMark($mark, $request->all());
-
-        return response()->json([
-            'status' => 1,
-            'mark' => $mark,
-            'message' => 'Модель изменена'
-        ]);
+        $this->repo->saveMark($mark, $request->all());
+        return new MarkEditResource($mark);
     }
 }

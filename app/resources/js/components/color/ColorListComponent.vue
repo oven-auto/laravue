@@ -1,8 +1,5 @@
 <template>
     <div id="color-list">
-
-        <message v-if="succes" :message="succesMessage"></message>
-
         <div class="row pb-3 d-flex align-items-center">
             <div class="col">
                 <div class="h-title">Палитра цветов</div>
@@ -33,7 +30,7 @@
             </thead>
 
             <tbody>
-            <tr v-for="item in data">
+            <tr v-for="item in data" :key="'color'+item.id">
                 <td>
                     <router-link :to="toEdit + item.id">
                         Open
@@ -78,9 +75,7 @@ export default {
             data: [],
             loading: true,
             toEdit: '/colors/edit/',
-            notFound: false,
-            succes: false,
-            succesMessage: null,
+            message: null,
             search: {
                 code: '',
                 name: '',
@@ -123,22 +118,10 @@ export default {
             this.$router.replace({query: objUrl})
             return str;
         },
+
         loadData() {
-            axios.get('/api/colors?'+this.searchToUrl())
-            .then(res => {
-                if(res.data.status == 1)
-                    this.data = res.data.data;
-                else {
-                    this.data = [];
-                }
-                this.succesMessage = res.data.message;
-                this.loading = false;
-            }).catch(errors => {
-                console.table(errors)
-                this.succesMessage = errors.response.data.message
-            }).finally(() => {
-                makeToast(this,this.succesMessage)
-            })
+            var url = '/api/colors?'+this.searchToUrl()
+            list(this, url, 'data','message')
         }
     }
 }

@@ -32,7 +32,7 @@ class CarFilter extends AbstractFilter
     public function revaluation(Builder $builder, $value)
     {
         $builder->leftJoin('complectations', 'complectations.id', 'cars.complectation_id')
-            ->where('complectations.price_status', 0);
+            ->where('complectations.price_status', 1);
     }
 
     public function deliveryTypeId(Builder $builder, $value)

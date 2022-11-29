@@ -16,30 +16,36 @@
         </div>
     </div>
     <div class=" row">
-        <div class="col-8 text-right">
-            <div class="h5 mb-0 pt-4">Цена доп. оборудования</div>
+        <div class="col">
+            <Vinput v-model="installPriceComputed" v-on:input="returnData" :label="'Цена установки ДО'"></Vinput>
         </div>
-        <div class="col pt-3">
-            <input type="number" class="form-control" v-model="installPriceComputed" v-on:input="returnData">
+
+        <div class="col">
+            <Vinput v-model="costPriceComputed" v-on:input="returnData" :label="'Себестоимость ДО'"></Vinput>
         </div>
     </div>
 </div>
 </template>
 
 <script>
+import Vinput from '../html/TextInput';
+
 export default {
+    components: {Vinput},
     name: 'car-device',
     data() {
         return {
             devices: [],
             install: [],
-            price: 0
+            price: 0,
+            cost: 0,
         }
     },
     mounted() {
         this.loadData()
         this.price = this.devicePrice
         this.install = this.installProp
+        this.cost = this.costPrice
     },
     computed: {
 
@@ -53,15 +59,28 @@ export default {
             set(val) {
                 this.price = val;
             },
+        },
+
+        costPriceComputed: {
+            get() {
+                var res = parseInt(this.cost)
+                if(isNumeric(res))
+                    return res;
+                return 0;
+            },
+            set(val) {
+                this.cost = val;
+            },
         }
     },
-    props: ['installProp', 'devicePrice'],
+    props: ['installProp', 'devicePrice', 'costPrice'],
 
     methods: {
         returnData() {
             this.$emit('updateDevice', {
                 devices: this.install,
-                price: isNumeric(parseInt(this.price)) ?  parseInt(this.price) : 0
+                price: isNumeric(parseInt(this.price)) ?  parseInt(this.price) : 0,
+                cost: isNumeric(parseInt(this.cost)) ?  parseInt(this.cost) : 0,
             })
         },
 
@@ -91,10 +110,12 @@ export default {
         installProp(v) {
             this.price = this.devicePrice
             this.install = this.installProp
+            this.cost = this.costPrice
         },
         devicePrice(v) {
             this.price = this.devicePrice
             this.install = this.installProp
+            this.cost = this.costPrice
         }
     }
 }

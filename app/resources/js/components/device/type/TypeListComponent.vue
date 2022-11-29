@@ -118,16 +118,7 @@ export default {
         },
 
         loadTypes() {
-            axios.get('/api/devicetypes')
-            .then(response => {
-                this.types = response.data.data;
-                this.message = response.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            list(this, '/api/devicetypes', 'types', 'message')
         },
 
         getConfig() {

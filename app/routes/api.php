@@ -50,6 +50,7 @@ Route::prefix('')->middleware('auth:sanctum')->namespace('\App\Http\Controllers\
     Route::resource('shortcuts', ShortcutController::class);
     Route::resource('sectionpages', SectionPageController::class);
     Route::resource('pages', PageController::class);
+    Route::resource('clients', Client\ClientController::class);
 });
 
 Route::prefix('forms')->middleware('auth:sanctum')->group(function() {
@@ -123,6 +124,7 @@ Route::prefix('services')->middleware('auth:sanctum')->group(function () {
            Route::get('bodyworks', [\App\Http\Controllers\Api\v1\Services\Html\Select\BodyWorkSelectController::class, 'index']);
            Route::get('countryfactories', [\App\Http\Controllers\Api\v1\Services\Html\Select\CountryFactorySelectController::class, 'index']);
            Route::get('devices/', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeviceNameController::class, 'index']);
+           Route::get('groupdevices/', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeviceGroupController::class, 'index']);
            Route::get('transmissiontypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\TransmissionTypeSelectController::class, 'index']);
            Route::get('drivertypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DriverTypeSelectController::class, 'index']);
            Route::get('deliverytypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryTypeSelectController::class, 'index']);
@@ -148,6 +150,7 @@ Route::prefix('breadcrumbs')->group(function(){
     Route::get('complectations/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\ComplectationBreadCrumbsController::class, 'title']);
     Route::get('cars/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\CarBreadCrumbsController::class, 'title']);
     Route::get('motors/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\MotorBreadCrumbsController::class, 'title']);
+    Route::get('clients/title', [\App\Http\Controllers\Api\v1\BreadCrumbs\ClientBreadCrumbsController::class, 'title']);
 });
 
 Route::group(['prefix' => 'front'], function() {

@@ -1,7 +1,7 @@
 <template>
     <div>
         <label>{{getLabel}}</label>
-        <select v-model="selected" class="form-control">
+        <select v-model="selected" class="form-control" @change="changeComplectation">
             <option value="" selected >Укажите параметр</option>
             <option v-for="item in complectations" :value="item.id" :key="'complectation-select'+item.id">
                 {{ item.code }}
@@ -27,6 +27,12 @@ export default {
     },
 
     methods: {
+        changeComplectation() {
+            this.$emit('changeParent', {
+                //id: this.selected
+            })
+        },
+
         loadData(mark='') {
             var str = '';
             if(mark > 0)

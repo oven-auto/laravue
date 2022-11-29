@@ -7,12 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
 use App\Models\Interfaces\HasPriceInterface;
 use App\Models\Traits\PriceChangeable;
+use App\Models\Traits\Createable;
 
 class Pack extends Model implements HasPriceInterface
 {
     use HasFactory;
     use Filterable;
     use PriceChangeable;
+    use Createable;
 
     protected $guarded = [];
 

@@ -73,6 +73,9 @@ import FormSectionList from './components/form/section/FormSectionList';
 import FormSectionEdit from './components/form/section/FormSectionEdit';
 import FormEdit from './components/form/section/FormEdit';
 
+import ClientList from './components/client/ClientListComponent';
+import ClientEdit from './components/client/ClientEditComponent';
+
 const routes = [
     {
         path: '/',
@@ -430,6 +433,22 @@ const routes = [
     {
         path: '/forms/formedit/:id',
         component: FormEdit
+    },
+
+    ///////////
+    //CLIENT CRUD   ///////////////////////////////////////////////////////////////////////////////////////////
+    ///////////
+    {
+        path: '/clients/list',
+        component: ClientList
+    },
+    {
+        path: '/clients/create',
+        component: ClientEdit
+    },
+    {
+        path: '/clients/edit/:id',
+        component: ClientEdit
     },
 
 

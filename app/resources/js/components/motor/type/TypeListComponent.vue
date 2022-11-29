@@ -56,7 +56,7 @@ export default {
             toEdit: '/motortypes/edit/',
             notFound: false,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -64,20 +64,7 @@ export default {
     },
     methods: {
         loadTypes() {
-            axios.get('/api/motortypes')
-            .then(res => {
-                if(res.data.status == 1)
-                    this.types = res.data.data;
-                else
-                    this.types = []
-                this.succesMessage = res.data.message;
-                makeToast(this,this.succesMessage)
-            })
-            .catch(errors => {
-                console.log(errors)
-            }).finally(()=>{
-                this.loading = false
-            })
+            list(this, '/api/motortypes', 'types', 'message')
         }
     }
 }

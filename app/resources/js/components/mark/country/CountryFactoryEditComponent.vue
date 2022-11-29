@@ -4,8 +4,6 @@
 
     <spin v-if="loading && urlId"></spin>
 
-    <error v-if="notFound"></error>
-
     <div v-else>
         <form>
             <div class="h5">{{ countryfactory.country ? countryfactory.country : 'Новое происхождение' }}</div>
@@ -59,11 +57,9 @@ export default {
             countryfactory: {
 
             },
-            notFound: false,
             loading: true,
             urlId: this.$route.params.id,
-            succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -72,56 +68,29 @@ export default {
     },
     methods: {
         loadData(id) {
-            axios.get('/api/countryfactories/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.countryfactory = response.data.countryfactory;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/countryfactories/' + this.urlId + '/edit', 'countryfactory', 'message')
         },
 
         updateData(id) {
-            axios.patch('/api/countryfactories/' + id, this.countryfactory, this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/countryfactories/' + this.urlId, this.getFormData('patch'), 'countryfactory', 'message')
         },
 
         storeData() {
-            axios.post('/api/countryfactories/', this.countryfactory, this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.countryfactory.id
-                    this.$router.push('/countryfactories/list')
-                    this.$router.push('/countryfactories/edit/'+this.urlId)
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(res.data.countryfactory.id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/countryfactories/', this.getFormData(), 'countryfactory', 'message', 'urlId', 'countryfactories')
         },
 
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
+        getFormData(method = '') {
+            var formData = new FormData();
+
+            formData.append('country', this.countryfactory.country);
+            formData.append('city', this.countryfactory.city);
+            formData.append('distributor', this.countryfactory.distributor);
+            formData.append('logistic', this.countryfactory.logistic);
+
+            if(method == 'patch')
+                formData.append("_method", "PATCH");
+
+            return formData;
         },
     }
 }

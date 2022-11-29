@@ -1,10 +1,6 @@
 <template>
-    <div v-if="show" class="v-modal-shadow" @click.self="closeModal">
-        <div class="v-modal">
-            <div class="v-modal-close" @click="closeModal">&#10006;</div>
-            <slot name="title">
-                <h3 class="v-modal-title">Заголовок</h3>
-            </slot>
+    <b-modal ref="car_filter_modal" size="lg" hide-footer :title="'Поиск клиента'">
+        <div class="d-block text-left">
             <slot name="body">
                 <div class="v-modal-content">
                     <div class="row">
@@ -37,7 +33,7 @@
                 </div>
             </slot>
         </div>
-    </div>
+    </b-modal>
 </template>
 
 <script>

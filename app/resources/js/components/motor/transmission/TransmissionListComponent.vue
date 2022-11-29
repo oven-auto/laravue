@@ -56,7 +56,7 @@ export default {
             toEdit: '/motortransmissions/edit/',
             notFound: false,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -64,21 +64,7 @@ export default {
     },
     methods: {
         loadTypes() {
-            axios.get('/api/motortransmissions')
-            .then(res => {
-                if(res.data.status == 1)
-                    this.transmissions = res.data.data;
-                else
-                    this.transmissions = []
-                this.succesMessage = res.data.message;
-                makeToast(this,this.succesMessage)
-
-            })
-            .catch(errors => {
-                console.log(errors)
-            }).finally(()=>{
-                this.loading = false;
-            })
+            list(this, '/api/motortransmissions', 'transmissions', 'message')
         }
     }
 }

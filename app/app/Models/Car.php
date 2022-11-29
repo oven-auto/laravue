@@ -6,12 +6,14 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Traits\Createable;
 
 class Car extends Model
 {
     use HasFactory;
     use SoftDeletes;
     use Filterable;
+    use Createable;
 
     protected $guarded = [];
 
@@ -64,7 +66,7 @@ class Car extends Model
 
     public function marker()
     {
-        return $this->hasOne(\App\Models\CarMarker::class)->withDefault();
+        return $this->hasOne(\App\Models\CarMarker::class)->orderBy('id','DESC')->withDefault();
     }
 
     public function delivery()
@@ -75,6 +77,16 @@ class Car extends Model
     public function production()
     {
         return $this->hasOne(\App\Models\CarProduction::class)->withDefault();
+    }
+
+    public function worksheet()
+    {
+        return $this->hasOne(\App\Models\Worksheet::class, 'car_id', 'id');
+    }
+
+    public function client()
+    {
+        return $this->hasOneThrough(\App\Models\Client::class, \App\Models\Worksheet::class, 'car_id', 'id', 'id', 'client_id')->withDefault();
     }
 
     public function scopeRelationList($query)

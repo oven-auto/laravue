@@ -19,13 +19,16 @@ class MarkListResource extends JsonResource
     {
         return [
             'name' => $this->name,
-            'prefix' => $this->prefix, 
-            'id' => $this->id, 
+            'prefix' => $this->prefix,
+            'id' => $this->id,
             'body_work_id' => $this->body_work_id,
             'slug' => $this->slug,
+            'sort' => $this->sort,
+            'status' => $this->status,
             'icon' => new MarkIconResource($this->icon),
             'bodywork' => new BodyWorkResource($this->bodywork),
-            'basecomplectation' => new MarkBaseComplectationResource($this->basecomplectation)
+            'basecomplectation' => new MarkBaseComplectationResource($this->basecomplectation),
+            'brand' => new \App\Http\Resources\Brand\BrandResource($this->brand),
         ];
     }
 }

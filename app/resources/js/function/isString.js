@@ -25,6 +25,9 @@ window.getConfig = function() {
 }
 
 window.errorsToStr = function(errors) {
+    if(errors.response.status == 401)
+        window.location.href = '/login'
+
     var mas = [];
     if(errors.response.data.errors != undefined) {
         var messages = errors.response.data.errors
@@ -34,4 +37,8 @@ window.errorsToStr = function(errors) {
     }else if(errors.response.data.message != undefined)
         mas.push(errors.response.data.message)
     return mas
+}
+
+window.phone_format = function(phone) {
+    return phone.replace(/^(\d)(\d{3})(\d{3})(\d{2})(\d{2})$/, '+$1($2)$3-$4-$5')
 }

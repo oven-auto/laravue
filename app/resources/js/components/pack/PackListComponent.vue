@@ -26,8 +26,8 @@
                     <th>#{{data.length}}</th>
                     <th>Цена</th>
                     <th>Код</th>
-                    <th>Модель</th>
                     <th>Оборудование</th>
+                    <th>Модель</th>
                     <th></th>
                 </tr>
             </thead>
@@ -109,7 +109,7 @@ export default {
             toEdit: '/packs/edit/',
             notFound: false,
             succes: false,
-            succesMessage: null,
+            message: null,
             search: {
                 code: '',
                 brand_id: 0,
@@ -168,22 +168,7 @@ export default {
         },
 
         loadData() {
-            axios.get('/api/packs?' + this.searchToUrl())
-            .then(res => {
-                if(res.data.status == 1)
-                    this.data = res.data.data;
-                else {
-                    this.data = [];
-                }
-                this.succesMessage = res.data.message;
-                makeToast(this,this.succesMessage)
-                this.loading = false;
-            })
-            .catch(errors => {
-                console.log(errors)
-            }).finally( () => {
-
-            })
+            list(this,'/api/packs?' + this.searchToUrl(), 'data', 'message')
         },
 
         getConfig() {

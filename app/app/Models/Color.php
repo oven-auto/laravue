@@ -5,11 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Traits\Createable;
 
 class Color extends Model
 {
-    use HasFactory;
-    use Filterable;
+    use HasFactory, Filterable, Createable;
 
     protected $guarded = [];
 

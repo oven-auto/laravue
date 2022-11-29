@@ -20,7 +20,7 @@
             </thead>
 
             <draggable v-model="properties" tag="tbody" :component-data="getComponentData()" >
-            <tr v-for="property in properties">
+            <tr v-for="property in properties" :key="'property'+property.id">
                 <td>
                     <router-link :to="toEdit + property.id">
                         Open
@@ -52,6 +52,7 @@ export default {
             loading: true,
             properties: [],
             notFound: false,
+            message: '',
         }
     },
     mounted() {
@@ -103,21 +104,7 @@ export default {
         },
 
         loadProperty() {
-            axios.get('/api/properties')
-                .then(response => {
-                    if(response.data.status == 1) {
-                        this.properties = response.data.data;
-                        this.loading = false;
-                    }
-                    else{
-                        this.loading = false;
-                        this.notFound = true;
-                    }
-                })
-                .catch(errors => {
-                    this.loading = false;
-                    this.notFound = true;
-                })
+            list(this, '/api/properties', 'properties', 'message')
         }
     }
 }

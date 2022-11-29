@@ -27,7 +27,7 @@
 
             <thead class="thead-dark">
                 <tr>
-                    <th style="width: 80px;">#{{data.length}}</th>
+                    <th style="width: 80px;">#{{data.total}}</th>
                     <th>VIN</th>
                     <th>Модель</th>
                     <th>Год</th>
@@ -38,58 +38,119 @@
             </thead>
 
             <tbody>
-                <tr v-for="(item,i) in data" :key="'car'+i" class="small-text ">
-                    <td><router-link :to="toEdit + item.id">Open </router-link></td>
+                <tr v-for="(item,i) in data.cars" :key="'car'+i" class="small-text ">
+                    <td>
+                        <router-link :to="toEdit + item.id">
+                            <img :src="item.color.img">
+                        </router-link>
+                    </td>
+
+
                     <td>
                         <div v-if="loading==false">
                             <div :class="getCssCount(item.delivery.delivery_type_id)">{{ (item.delivery.type.name) }}</div>
-                            <big>{{item.vin}}</big>
-                            <div>{{item.complectation.code}}</div>
+                            <div>
+                                <router-link :to="'/marks/edit/'+item.mark.id">
+                                    {{ item.brand.name }} {{ item.mark.name }}
+                                </router-link>
+                            </div>
+                            <div>{{item.vin}}</div>
+                            <div>{{ item.year }}</div>
                         </div>
                     </td>
 
                     <td>
-                        <div>{{ item.brand.name }} {{ item.mark.name }} {{ item.complectation.name }}</div>
                         <div>
-                            {{ item.complectation.motor.name }}
+                            <router-link :to="'/complectations/edit/'+item.complectation.id">{{ item.complectation.name }}</router-link>
+                        </div>
+                        <div>
                             {{ item.complectation.motor.size }}{{item.complectation.motor.type.acronym}}
                             ({{ item.complectation.motor.power }}л.с.)
                             {{ item.complectation.motor.valve }}кл.
                             {{ item.complectation.motor.transmission.acronym }}
                             {{ item.complectation.motor.driver.acronym }}
                         </div>
+                        <div>{{item.complectation.code}}</div>
                         <div class="text-muted">
-                            <span v-for="(itemPack,i) in item.packs" :key="'car-pack'+item.id+'pack'+i">
-                                {{itemPack.code}}
-                            </span>
+                            <div v-if="item.packs.length">
+                                <span v-for="(itemPack,i) in item.packs" :key="'car-pack'+item.id+'pack'+i">
+                                    {{itemPack.code}}
+                                </span>
+                            </div>
+                            <div v-else>
+                                Опции отсутствуют
+                            </div>
                         </div>
                     </td>
-                    <td>
 
-                        <div>{{ item.year }}</div>
-
-                    </td>
-                    <td class="text-center">
-                        <div>
-                            {{ item.color.color.code }}
-                        </div>
-                        <div>
-                            <img :src="item.color.image">
-                        </div>
-                    </td>
                     <td>
                         <div>Кузов: {{ formatPrice(item.price.complectation_price) }}</div>
                         <div>Опции: {{ formatPrice(item.price.pack_price) }}</div>
+                        <div>Воздух: 0 руб.</div>
                         <div>Допы: {{ formatPrice(item.price.device_price) }}</div>
                     </td>
+
+                    <td>
+                        <div>
+                            Прайс:
+                            <span v-if="!item.complectation.price_status">{{ formatPrice(item.price.full_price) }}</span>
+                            <span v-else class="font-blood">Переоценка</span>
+                        </div>
+
+                        <div>
+                            Выручка: ??? руб.
+                        </div>
+                        <div>
+                            Закупка:
+                            {{ formatPrice(item.purchase) }}
+                        </div>
+                        <div>
+                            Маржа:
+                            {{formatPrice(item.price.margin_price)}}
+                        </div>
+                    </td>
+
                     <td>
                         <div>{{ (getStage(item)) }}</div>
-                        <big>{{ formatPrice(item.price.full_price) }}</big>
-                        <div class="font-blood">{{item.complectation.price_status ? '' : 'На переоценке'}}</div>
+                        <div>
+                            <div v-if="item.marker">{{item.marker}}</div>
+                            <div v-else>Без контрмарки</div>
+                        </div>
+                        <div>{{item.client ? 'Клиентский' : 'Свободный'}}</div>
+                        <div>Оплачен</div>
                     </td>
-                    <td class="text-right">
-                       <span  class="badge badge-danger" @click="deleteCar(item.id, i)">В архив</span>
+
+                    <td>
+                        <div v-if="item.client.id">
+                            <div>
+                                <router-link :to="'/clients/edit/'+item.client.id">
+                                    {{item.client.lastname+' '+item.client.firstname}}
+                                </router-link>
+                            </div>
+                            <div>
+                                {{phone_format(item.client.phone)}}
+                            </div>
+                            <div>
+                                {{item.client.email}}
+                            </div>
+                            <div>
+                                Менеджер
+                            </div>
+                        </div>
+
+                        <div v-else>
+                            <div>Покупатель</div>
+                            <div>Телефон</div>
+                            <div>Email</div>
+                            <div>Менеджер</div>
+                        </div>
                     </td>
+
+                    <td class="text-right ">
+                        <span  class="badge badge-danger" @click="deleteCar(item.id, i)">В архив</span>
+                    </td>
+
+
                 </tr>
             </tbody>
 
@@ -98,7 +159,7 @@
         <div class="">
             <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item"  v-bind:class="{active : (now_page == (index+1)) }" v-for="(item, index) in pageArray">
+                <li class="page-item"  v-bind:class="{active : (now_page == (index+1)) }" v-for="(item, index) in data.last_page">
                     <span class="page-link " @click="cnangePage(index+1)" >
                        {{ (index+1) }}
                     </span>
@@ -107,7 +168,7 @@
             </nav>
         </div>
 
-        <modal-window ref="modal" @updateParent="getDataModal"></modal-window>
+        <modal-window ref="car_filter_modal" @updateParent="getDataModal"></modal-window>
 
     </div>
 </template>
@@ -156,11 +217,20 @@ export default {
         }
     },
     mounted() {
+
+        if(this.now_page == undefined){
+            this.now_page = 1
+        }
+
         this.initSearchFromUrl()
         this.loadData()
     },
 
     methods: {
+        phone_format(phone) {
+            return phone_format(phone)
+        },
+
         getDate(str) {
             var date = new Date(str)
             return date.getDate() +'.' + (date.getMonth()<10 ? '0'+date.getMonth() : date.getMonth() )  + '.' + date.getFullYear()
@@ -171,7 +241,7 @@ export default {
             var date = new Date(obj.production.production_at)
             var dateStr = date.getDate() +'.' + (date.getMonth()<10 ? '0'+date.getMonth() : date.getMonth() )  + '.' + date.getFullYear()
             if(obj.production.production_at!='')
-                return 'Сборка '+dateStr
+                return 'Сборка: '+dateStr
         },
 
         deleteCar(id, index) {
@@ -179,11 +249,12 @@ export default {
             if(status) {
                 axios.delete('/api/cars/'+id)
                 .then(res => {
-                    this.data.splice(index, 1)
+                    this.message = res.data.message
+                    this.data.cars.splice(index, 1)
                 }).catch(errors => {
-
+                    makeToast(this,'Ошибка!')
                 }).finally(() => {
-
+                    makeToast(this,this.message)
                 })
             }
         },
@@ -194,7 +265,8 @@ export default {
             var url = []
             for(var key in this.$route.query)
                 this.search[key] = this.$route.query[key]
-            this.now_page = this.search.page
+            if(this.search.page)
+                this.now_page = this.search.page
         },
         //Действие в ответ на действие в модали
         getDataModal(data) {
@@ -204,8 +276,8 @@ export default {
         },
         //Открыть модаль и передать ей объект поиска в свойство
         showModal() {
-            this.$refs.modal.show = true;
-            this.$refs.modal.search = this.search;
+            this.$refs.car_filter_modal.$refs.car_filter_modal.show();
+            this.$refs.car_filter_modal.search = this.search;
         },
         //Объектпоиска в строку юрл
         searchToUrl() {
@@ -234,32 +306,10 @@ export default {
         },
 
         loadData( ) {
-            this.loading = true
-
             var url = '/api/cars'
             url += '?page='+this.now_page
-
             url += '&'+this.searchToUrl()
-
-            axios.get(url)
-            .then(res => {
-                if(res.data.status == 1) {
-                    this.data = res.data.data.data;
-                    this.pageArray = new Array(res.data.data.last_page)
-                }
-                else {
-                    this.succes = true;
-                    this.data = []
-                    this.pageArray = []
-                }
-                this.loading = false
-                this.succesMessage = res.data.message;
-            }).catch(errors => {
-                console.table(errors)
-                this.succesMessage = errors.response.data.message
-            }).finally(() => {
-                makeToast(this,this.succesMessage)
-            })
+            list(this, url, 'data', 'message')
         },
 
         getCssCount(id) {
@@ -281,17 +331,11 @@ export default {
             }
         },
     },
-    // watch: {
-    //     '$route' (to, from) {
-    //         console.log('change route')
-    //         this.now_page = to.params.page
-    //         this.loadData()
-    //     }
-    // }
 }
 </script>
 
 <style scoped>
+
 .car-list-table td{
     vertical-align: middle;
 }
@@ -301,6 +345,8 @@ export default {
 .small-text{
     font-size: 0.7rem;
 }
+
+
 </style>
 
 

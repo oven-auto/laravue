@@ -17,7 +17,9 @@ export default {
 
     computed: {
         emptySearch() {
-            return isEmptyObject(this.search)
+            var mas = this.search
+            delete mas.page
+            return isEmptyObject(mas)
         }
     },
 

@@ -3,8 +3,6 @@
 
         <spin v-if="loading && urlId"></spin>
 
-        <error v-if="notFound"></error>
-
         <div v-else>
             <form>
                 <div class="h5">{{ driver.name ? driver.name : 'Новый тип привода' }}</div>
@@ -21,7 +19,7 @@
                             <input type="text" name="name" v-model="driver.acronym" class="form-control"/>
                         </div>
 
-                        <DriverType v-model="driver.type"></DriverType>
+                        <DriverType v-model="driver.driver_type_id"></DriverType>
                     </div>
                 </div>
             </form>
@@ -48,13 +46,13 @@ export default {
             driver: {
                 name: '',
                 acronym: '',
-                type: '',
+                driver_type_id: '',
             },
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -63,51 +61,15 @@ export default {
     },
     methods: {
         loadType(id) {
-            axios.get('/api/motordrivers/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.driver.name = response.data.motordriver.name;
-                this.driver.acronym = response.data.motordriver.acronym;
-                this.driver.type = response.data.motordriver.driver_type_id
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/motordrivers/' + id + '/edit', 'driver', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/motordrivers/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadType(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/motordrivers/' + id, this.getFormData('patch'), 'driver', 'message')
         },
 
         storeData() {
-            axios.post('/api/motordrivers/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.motordriver.id
-                    this.$router.push('/motordrivers/list')
-                    this.$router.push('/motordrivers/edit/'+this.urlId)
-                    this.succesMessage = res.data.message;
-                    this.loadType(this.urlId);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/motordrivers/', this.getFormData(), 'driver', 'message', 'urlId', 'motordrivers')
         },
 
         getFormData(method = '') {
@@ -115,18 +77,12 @@ export default {
 
             formData.append('name', this.driver.name);
             formData.append('acronym', this.driver.acronym==null?'':this.driver.acronym);
-            formData.append('driver_type_id', this.driver.type);
+            formData.append('driver_type_id', this.driver.driver_type_id);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     }
 }

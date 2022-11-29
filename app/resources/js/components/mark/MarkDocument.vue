@@ -143,7 +143,7 @@ export default {
 
         getFormData(method = '') {
             var formData = new FormData();
-            formData.append('mark_id', this.mark.document.mark_id)
+            formData.append('mark_id', this.mark.id)
             formData.append('type', this.type)
             formData.append("_method", "delete");
             return formData

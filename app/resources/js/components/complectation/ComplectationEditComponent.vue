@@ -47,7 +47,7 @@
                                     v-bind:value="complectation.price_status" v-model="complectation.price_status">
                                 <div class="checkbox__text" style="">
                                     <div>
-                                        {{complectation.price_status ? 'Цена актуальна' : 'Цена уточняется'}}
+                                        Переоценка
                                     </div>
                                 </div>
                             </label>
@@ -71,6 +71,7 @@
                         v-model="complectation.parent_id"
                         :mark="complectation.mark_id"
                         :label="'Родительская комплектация'"
+                        @changeParent="loadParentData"
                     ></ComplectationSelect>
 
                 </div>
@@ -140,7 +141,8 @@
                                     class="item-color-input device-checkbox-toggle"
                                     type="checkbox"
                                     v-bind:value="markcolors.id"
-                                    v-model="markcolors.installColor"
+                                    v-model="complectation.install_colors"
+                                    @change="ClearColorPack(markcolors)"
                                 >
                                 <div class="checkbox__text" style="">
                                     {{markcolors.color.code}}
@@ -159,8 +161,8 @@
                                         type="checkbox"
                                         v-bind:value="coloredPack.id"
                                         :color-id="markcolors.id"
-                                        v-on:change="addColorToColorPack()"
-                                        v-model="markcolors.installColorPack"
+
+                                        v-model="markcolors.color_pack"
                                     >
                                     <div class="checkbox__text" style="">
                                         {{coloredPack.code}}
@@ -215,16 +217,17 @@ export default {
                 colors: [],
                 colorPack: [],
                 price_status: 1,
+                install_colors: [],
             },
 
             packs: [],
             markcolors: [],
-            coloredOptions: {},
+            //coloredOptions: {},
             notFound: false,
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
             firstLoad: false,
         }
     },
@@ -238,14 +241,25 @@ export default {
     },
 
     computed: {
+        coloredOptions() {
+            var arr = {}
+            this.packs.forEach( ( item ) => {
+                if(item.colored && this.complectation.packs.includes(item.id))
+                    arr[item.id] = item;
+            })
+            return arr
+        }
 
     },
 
     methods: {
+        ClearColorPack(obj) {
+            if(!this.complectation.install_colors.includes(obj.id))
+                obj.color_pack = []
+        },
+
         setDivices(data) {
             this.complectation.devices = data.devices
-        },
-        addColorToColorPack() {
         },
 
         appendColoredOption(pack){
@@ -290,10 +304,6 @@ export default {
             axios.get('/api/services/html/color/mark?' + param)
             .then( (res) => {
                 this.complectation.colors = res.data.data
-                this.complectation.colors.forEach((color) => {
-                    color.installColor = color.id,
-                    color.installColorPack = []
-                })
             })
             .catch( (errors) => {
 
@@ -301,154 +311,70 @@ export default {
         },
 
         loadData(id) {
-            axios.get('/api/complectations/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.complectation.name = response.data.data.name;
-                this.complectation.code = response.data.data.code;
-                this.complectation.price = response.data.data.price;
-                this.complectation.brand_id = response.data.data.brand_id;
-                this.complectation.mark_id = response.data.data.mark_id;
-                this.complectation.motor_id = response.data.data.motor_id;
-                this.complectation.status = response.data.data.status;
-                this.complectation.sort = response.data.data.sort;
-                this.complectation.parent_id = response.data.data.parent_id;
-                this.complectation.price_status = response.data.data.price_status;
-
-                var arrayDev = [];
-                response.data.data.devices.forEach(function(item,i){
-                    arrayDev.push(item.id);
-                })
-                this.complectation.devices = arrayDev;
-
-                var arrayPack = [];
-                response.data.data.packs.forEach( (item,i) => {
-                    arrayPack.push(item.id);
-                })
-                this.complectation.packs = arrayPack;
-
-                this.complectation.colors = response.data.data.mark_color;
-
-                var obj = {}
-                // console.log(response.data.data.packs)
-                // console.log(this.complectation.packs)
-
-                response.data.data.packs.forEach( ( item ) => {
-                    if(item.colored && this.complectation.packs.includes(item.id))
-                        this.coloredOptions[item.id] = item;
-                })
-
-            })
-            .catch(errors => {
-                console.log(errors)
-                this.notFound = true;
-                this.loading = false;
-            })
-            .finally(()=>{
-                this.firstLoad = false
-            })
+            edit(this, '/api/complectations/' + this.urlId + '/edit', 'complectation', 'message')
         },
 
         updateData(id) {
-            this.loading = false;
-            axios.patch('/api/complectations/' + id, this.complectation, this.getConfig())
-            .then(res => {
-                if(res.data.status == 1) {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id)
-                } else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message + ': ' + res.data.errors;
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
-            .finally(() => {
-                this.loading = false
-                makeToast(this,this.succesMessage)
-            })
+            update(this, '/api/complectations/' + this.urlId, this.getFormData('patch'), 'complectation', 'message' )
         },
 
         storeData() {
-            this.loading = true
-            axios.post('/api/complectations/', this.complectation, this.getConfig())
-            .then(res => {
-                if(res.data.status == 1) {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.$router.push('/complectations/list')
-                    this.$router.push('/complectations/edit/'+res.data.data.id)
-                    this.urlId = res.data.data.id
-                    this.loadData(res.data.data.id)
-                } else {
-                    this.succes = true;
-                    this.succesMessage = res.data.message + ': ' + res.data.errors;
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
-            .finally(()=> {
-                this.loading = false
-                makeToast(this,this.succesMessage)
-            })
+            storage(this, '/api/complectations/', this.getFormData(), 'complectation', 'message', 'urlId', 'complectations')
         },
 
-        getConfig() {
-            return {
-                'content-type': 'application-json'
-            }
+        getFormData(method = '') {
+            var formData = new FormData();
+            formData.append('name',                     this.complectation.name)
+            formData.append('code',                     this.complectation.code)
+            formData.append('price',                    this.complectation.price)
+            formData.append('brand_id',                 this.complectation.brand_id)
+            formData.append('mark_id',                  this.complectation.mark_id)
+            formData.append('motor_id',                 this.complectation.motor_id)
+            formData.append('status',                   this.complectation.status)
+            formData.append('parent_id',                this.complectation.parent_id)
+            formData.append('price_status',             Number(this.complectation.price_status))
+
+            this.complectation.devices.forEach(function(item) {
+                formData.append('devices[]', item)
+            })
+
+            this.complectation.packs.forEach(function(item){
+                formData.append('packs[]', item)
+            })
+
+            this.complectation.install_colors.forEach(function(item){
+                formData.append('install_colors[]', item)
+            })
+
+            this.complectation.colors.forEach(color => {
+                if(this.complectation.install_colors.includes(color.id) && color.color_pack.length)
+                    color.color_pack.forEach(itemPackId => {
+                        if(this.complectation.packs.includes(itemPackId))
+                            formData.append('color_pack['+color.id+'][]', itemPackId)
+                    })
+            })
+
+            if(method == 'patch')
+                formData.append("_method", "PATCH");
+
+            return formData
         },
 
-        loadParentData() {
+        loadParentData(data) {
             this.loading = true
-
             axios.get('/api/complectations/' + this.complectation.parent_id + '/edit')
             .then( response => {
-                if(response.data.status == 1) {
-                    this.complectation.sort = response.data.data.sort
-                    var arrayDev = [];
-                    response.data.data.devices.forEach(function(item,i){
-                        arrayDev.push(item.id);
-                    })
-                    this.complectation.devices = arrayDev;
-
-                    var arrayPack = [];
-                    response.data.data.packs.forEach( (item,i) => {
-                        arrayPack.push(item.id);
-                    })
-                    this.complectation.packs = arrayPack;
-
-                    this.complectation.colors = response.data.data.mark_color;
-
-                    var obj = {}
-                    response.data.data.packs.forEach( ( item ) => {
-                        if(item.colored)
-                            this.coloredOptions[item.id] = item;
-                    })
-                } else {
-                    this.complectation.sort = 0
-                    this.complectation.devices = []
-                    this.complectation.packs = []
-                    this.complectation.colors.forEach((item)=>{
-                        item.installColor = false
-                        item.installColorPack = []
-                    })
-                }
-            })
-            .catch(errors => {
-                this.complectation.sort = 0
-                this.complectation.devices = []
-                this.complectation.packs = []
-                this.complectation.colors.forEach((item)=>{
-                    item.installColor = false
-                    item.installColorPack = []
-                })
+                this.complectation.brand_id = response.data.data.brand_id
+                this.complectation.mark_id = response.data.data.mark_id
+                this.complectation.motor_id = response.data.data.motor_id
+                this.complectation.devices = response.data.data.devices
+                this.complectation.packs = response.data.data.packs
+                this.complectation.install_colors = response.data.data.install_colors
+                this.complectation.color_pack = response.data.data.color_pack
+            }).catch(errors => {
+                makeToast(this,'Родительская комплектация не прогружена. Подробнее ошибка в консоли F12')
                 console.log(errors)
-            })
-            .finally(()=>{
+            }).finally(()=>{
                 this.loading = false;
                 makeToast(this,'Родительская комплектация прогружена')
             })
@@ -457,10 +383,6 @@ export default {
     },
 
     watch: {
-        'complectation.parent_id'(val){
-            if(!this.firstLoad)
-                this.loadParentData();
-        },
         'complectation.brand_id': {
             immediate: true,
             handler() {

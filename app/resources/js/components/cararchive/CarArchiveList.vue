@@ -35,7 +35,7 @@
             </thead>
 
             <tbody>
-                <tr v-for="item in data" class="small-text ">
+                <tr v-for="item in data.cars" class="small-text ">
                     <td><router-link :to="toEdit + item.id">Open </router-link></td>
                     <td>
                         <div><big>{{item.vin}}</big></div>
@@ -50,10 +50,10 @@
                     <td>{{item.year}}</td>
                     <td class="text-center">
                         <div>
-                            {{ item.color.color.code }}
+                            {{ item.color.code }}
                         </div>
                         <div>
-                            <img :src="item.color.image">
+                            <img :src="item.color.img">
                         </div>
                     </td>
                     <td>
@@ -80,10 +80,10 @@
         <div class="">
             <nav aria-label="Page navigation example">
             <ul class="pagination">
-                <li class="page-item"  v-bind:class="{active : (now_page == (index+1)) }" v-for="(item, index) in pageArray">
-                    <router-link class="page-link " :to="'/cars/list/'+(index+1) + '?'+ getUrlParamStr()" >
+                <li class="page-item"  v-bind:class="{active : (now_page == (index+1)) }" v-for="(item, index) in data.last_page">
+                    <span class="page-link " @click="cnangePage(index+1)" >
                        {{ (index+1) }}
-                    </router-link>
+                    </span>
                 </li>
             </ul>
             </nav>
@@ -132,7 +132,10 @@ export default {
     methods: {
         getDate(str) {
             var date = new Date(str)
-            return date.getDate() +'.' + (date.getMonth()<10 ? '0'+date.getMonth() : date.getMonth() )  + '.' + date.getFullYear()
+            var day = date.getDate()
+            var month = date.getMonth()+1
+            var year = date.getFullYear()
+            return day +'.' + (month<10 ? '0'+month : month )  + '.' + year
         },
 
         getUrlParamStr() {
@@ -166,33 +169,10 @@ export default {
         },
 
         loadData( ) {
-            this.loading = true
-
             var url = '/api/cars'
             url += '?page='+this.now_page+'&archive=1'
-
             url += '&'+this.getUrlParamStr()
-
-            axios.get(url)
-            .then(res => {
-                if(res.data.status == 1) {
-                    this.data = res.data.data.data;
-                    this.pageArray = new Array(res.data.data.last_page)
-                }
-                else {
-                    this.succes = true;
-                    this.data = []
-                    this.pageArray = []
-
-                }
-                this.succesMessage = res.data.message;
-                this.loading = false;
-            }).catch(errors => {
-                console.table(errors)
-                this.succesMessage = errors.response.data.message
-            }).finally(() => {
-                makeToast(this,this.succesMessage)
-            })
+            list(this, url, 'data', 'message')
         }
     },
     watch: {

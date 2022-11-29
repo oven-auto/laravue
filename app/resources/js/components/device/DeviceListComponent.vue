@@ -185,17 +185,8 @@ export default {
         },
 
         loadData() {
-            this.loading = true
-            axios.get('/api/devices?'+this.searchToUrl())
-            .then(response => {
-                this.devices = response.data.data;
-                this.message = response.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            var url = '/api/devices?'+this.searchToUrl()
+            list(this, url, 'devices', 'message')
         }
     }
 }

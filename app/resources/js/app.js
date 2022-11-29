@@ -18,6 +18,7 @@ require('./function/isString');
 require('./function/numberFormat');
 require('./function/toast');
 require('./function/transformLaravelDate');
+require('./function/standartQuery');
 
 window.Vue = require('vue').default;
 window.storageUrl = 'http://localhost:8280/storage/'

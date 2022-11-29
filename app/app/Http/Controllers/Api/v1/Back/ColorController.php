@@ -5,55 +5,38 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Color;
-use \App\Http\Filters\ColorFilter;
+use App\Http\Resources\Color\ColorListCollection;
+use App\Http\Resources\Color\ColorEditResource;
 
 class ColorController extends Controller
 {
+    private $repo;
+
+    public function __construct(\App\Repositories\Color\ColorRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index(Request $request)
     {
-        $data = $request->all();
-        $query = Color::with('brand');
-        $filter = app()->make(ColorFilter::class, ['queryParams' => array_filter($data)]);
-        $colors = $query->filter($filter)->orderBy('brand_id')->orderBy('name')->get();
-
-        if($colors->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $colors,
-                'count' => $colors->count(),
-                'message' => 'Найдено '.$colors->count().' цвета'
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного цвета'
-        ]);
+        $colors = $this->repo->filter($request->input());
+        return new ColorListCollection($colors);
     }
 
     public function edit(Color $color)
     {
-        return response()->json([
-            'status' => 1,
-            'color' => $color
-        ]);
+        return new ColorEditResource($color);
     }
 
     public function store(Color $color, Request $request)
     {
-        $color->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'color' => $color,
-            'message' => 'Цвет создан'
-        ]);
+        $this->repo->save($color, $request->input());
+        return new ColorEditResource($color);
     }
 
     public function update(Color $color, Request $request)
     {
-        $color->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'color' => $color,
-            'message' => 'Цвет изменен'
-        ]);
+        $this->repo->save($color, $request->input());
+        return new ColorEditResource($color);
     }
 }

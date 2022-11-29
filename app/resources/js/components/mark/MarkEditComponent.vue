@@ -205,27 +205,19 @@ export default {
             this.$refs['color-list-modal'].loadData()
         },
 
-
+        //цепляем картинку иконки
         onAttachmentIcon (e) {
             this.mark.icon= e.target.files[0]
-
-            // if ( e.target.files[0].type.match('image.*') ) {
-            //     var reader = new FileReader();
-            //     reader.onload = function(e) {
-            //         me.closest('.color-check').find('img').attr('src', e.target.result);
-            //     }
-            //     reader.readAsDataURL(e.target.files[0]);
-            // } else
-            //     console.log('is not image mime type');
         },
 
-
+        //цепляем картинку баннера
         onAttachmentBanner (e) {
             this.mark.banner = e.target.files[0]
         },
+
+        //цепляем картинку цвета и записываем в выбранный цвет
         onAttachmentColor(e) {
             var colorId = e.target.getAttribute('id')
-
             this.mark.colors.forEach(function(item,i){
                 if(colorId == item.id)
                     item.img = e.target.files[0]
@@ -235,99 +227,22 @@ export default {
 
 
         loadData(id) {
-            this.loading = true;
-            axios.get('/api/marks/' + id + '/edit')
-            .then( response => {
-                this.mark.name = response.data.mark.name;
-                this.mark.prefix = response.data.mark.prefix ? response.data.mark.prefix : '';
-                this.mark.brand_id = response.data.mark.brand_id;
-                this.mark.body_work_id = response.data.mark.body_work_id;
-                this.mark.country_factory_id = response.data.mark.country_factory_id;
-                this.mark.info.slogan = response.data.mark.info.slogan;
-                this.mark.info.description = response.data.mark.info.description;
-                this.mark.status = response.data.mark.status;
-                this.mark.show_driver = response.data.mark.show_driver;
-                this.mark.show_toxic = response.data.mark.show_toxic;
-                this.mark.document = response.data.mark.document;
-
-                this.mark.icon = response.data.mark.icon.image;
-
-                this.mark.banner = response.data.mark.banner.image;
-
-                this.mark.colors = []
-                Array.from(response.data.mark.markcolors).forEach((item, i) => {
-                    this.mark.colors.push({
-                        id: item.color_id,
-                        name: item.color.name,
-                        code: item.color.code,
-                        web: item.color.web,
-                        img: item.image
-                    })
-                });
-
-                this.mark.properties = response.data.mark.properties
-
-            })
-            .catch(errors => {
-                this.notFound = true;
-            })
-            .finally( () => {
-                this.loading = false;
-            })
+            edit(this, '/api/marks/' + this.urlId + '/edit', 'mark', 'message')
         },
 
         updateData(id) {
-            this.loading = true;
-            axios.post('/api/marks/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                }
-            })
-            .catch(errors => {
-                this.loading = false;
-                console.log(errors)
-            })
-            .finally( () => {
-                this.loading = true;
-                makeToast(this,this.succesMessage)
-            })
+            update(this, '/api/marks/' + this.urlId, this.getFormData('patch'), 'mark', 'message')
         },
 
         storeData() {
-            this.loading = true;
-            axios.post('/api/marks/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-
-                    this.urlId = res.data.mark.id
-                    this.$router.push('/marks/list')
-                    this.$router.push('/marks/edit/'+this.urlId)
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(res.data.mark.id);
-
-                }
-            })
-            .catch(errors => {
-                this.loading = false;
-                console.log(errors)
-            })
-            .finally( () => {
-                this.loading = true;
-                makeToast(this,this.succesMessage)
-            })
+            storage(this, '/api/marks/', this.getFormData(), 'mark', 'message', 'urlId', 'marks')
         },
 
         getFormData(method = '') {
             var formData = new FormData();
 
             formData.append('name',                 this.mark.name);
-            formData.append('prefix',               this.mark.prefix);
+            formData.append('prefix',               this.mark.prefix ?? '');
             formData.append('status',               Number(this.mark.status));
             formData.append('show_driver',          Number(this.mark.show_driver));
             formData.append('show_toxic',          Number(this.mark.show_toxic));

@@ -18,7 +18,9 @@ class BrandResource extends JsonResource
             'icon' => $this->icon_date,
             'id' => $this->id,
             'name' => $this->name,
-            'slug' => $this->slug
+            'slug' => $this->slug,
+            'brand_color' => $this->brand_color,
+            'font_color' => $this->font_color
         ];
     }
 }

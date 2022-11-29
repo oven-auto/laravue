@@ -5,50 +5,31 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MotorType;
+use App\Http\Resources\Motor\TypeListCollection;
+use App\Http\Resources\Motor\TypeEditResource;
 
 class MotorTypeController extends Controller
 {
     public function index()
     {
         $motortypes = MotorType::get();
-        if($motortypes->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $motortypes,
-                'count' => $motortypes->count(),
-                'message' => 'Найдено '.$motortypes->count().' едениц типов мотора'
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного тип мотора'
-        ]);
+        return new TypeListCollection($motortypes);
     }
 
     public function edit(MotorType $motortype)
     {
-        return response()->json([
-            'status' => 1,
-            'motortype' => $motortype
-        ]);
+        return new TypeEditResource($motortype);
     }
 
     public function store(MotorType $motortype, Request $request)
     {
         $motortype->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'motortype' => $motortype,
-            'message' => 'Тип создан'
-        ]);
+        return new TypeEditResource($motortype);
     }
 
     public function update(MotorType $motortype, Request $request)
     {
         $motortype->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'motortype' => $motortype,
-            'message' => 'motor изменен'
-        ]);
+        return new TypeEditResource($motortype);
     }
 }

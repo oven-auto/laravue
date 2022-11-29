@@ -1,10 +1,7 @@
 <template>
 <div class="color-edit">
-        <message v-if="succes" :message="succesMessage"></message>
 
         <spin v-if="loading && urlId"></spin>
-
-        <error v-if="notFound"></error>
 
         <div v-else class="row">
             <div class="col-12">
@@ -78,18 +75,7 @@ export default {
 
     methods: {
         loadData() {
-            this.loading = true
-            axios.get('/api/cars/' + this.urlId )
-            .then( response => {
-                this.car = response.data.data
-            })
-            .catch(errors => {
-                console.log(errors)
-                this.notFound = true;
-            })
-            .finally( () => {
-                this.loading = false;
-            })
+            edit(this, '/api/cars/' + this.urlId, 'car', 'message')
         }
     }
 }

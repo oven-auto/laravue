@@ -98,58 +98,15 @@ export default {
         },
 
         loadData(id) {
-            axios.get('/api/colors/' + id + '/edit')
-            .then( response => {
-                var colorsData = response.data.color.web.split(':');
-                this.loading = false;
-                this.color = response.data.color;
-                this.color.web_main = colorsData[0];
-                if(colorsData.length > 1)
-                {
-                    this.sub_color = true;
-                    this.color.web_sub = colorsData[1];
-                }
-
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/colors/' + this.urlId + '/edit', 'color', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/colors/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadData(id);
-                }
-            }).catch(errors => {
-                console.log(errors)
-            }).finally(()=>{
-                makeToast(this,this.succesMessage)
-            })
+            update(this, '/api/colors/' + this.urlId, this.getFormData('patch'), 'color', 'message')
         },
 
         storeData() {
-            axios.post('/api/colors/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.$router.push(this.previusPage)
-                    this.$router.push('/colors/edit/'+res.data.color.id)
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.urlId = res.data.color.id
-                    this.loadData(res.data.color.id);
-                }
-            }).catch(errors => {
-                console.log(errors)
-            }).finally(() => {
-                makeToast(this,this.succesMessage)
-            })
+            storage(this, '/api/colors/', this.getFormData(), 'color', 'message', 'urlId', 'colors')
         },
 
         getFormData(method = '') {
@@ -168,12 +125,6 @@ export default {
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     },
     beforeRouteEnter(to, from, next) {

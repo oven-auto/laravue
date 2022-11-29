@@ -15,7 +15,8 @@ class CreateDevicesImage extends Migration
     {
         Schema::create('device_images', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('device_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            $table->foreignId('car_id')->constrained()->onDelete('cascade');
             $table->string('image', 1000)->nullable();
         });
     }

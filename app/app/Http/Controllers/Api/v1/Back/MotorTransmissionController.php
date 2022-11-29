@@ -5,50 +5,31 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MotorTransmission;
+use App\Http\Resources\Motor\TransmissionListCollection;
+use App\Http\Resources\Motor\TransmissionEditResource;
 
 class MotorTransmissionController extends Controller
 {
     public function index()
     {
         $motortransmissions = MotorTransmission::get();
-        if($motortransmissions->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $motortransmissions,
-                'count' => $motortransmissions->count(),
-                'message' => 'Найдено '.$motortransmissions->count().' едениц типов трансмиссии'
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного тип трансмиссий'
-        ]);
+        return new TransmissionListCollection($motortransmissions);
     }
 
     public function edit(MotorTransmission $motortransmission)
     {
-        return response()->json([
-            'status' => 1,
-            'motortransmission' => $motortransmission
-        ]);
+        return new TransmissionEditResource($motortransmission);
     }
 
     public function store(MotorTransmission $motortransmission, Request $request)
     {
         $motortransmission->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'motortransmission' => $motortransmission,
-            'message' => 'Трансмиссия создана'
-        ]);
+        return new TransmissionEditResource($motortransmission);
     }
 
     public function update(MotorTransmission $motortransmission, Request $request)
     {
         $motortransmission->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'motortransmission' => $motortransmission,
-            'message' => 'Трансмиссия изменена'
-        ]);
+        return new TransmissionEditResource($motortransmission);
     }
 }

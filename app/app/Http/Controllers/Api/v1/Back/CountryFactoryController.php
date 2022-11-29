@@ -5,49 +5,31 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\CountryFactory;
+use App\Http\Resources\CountryFactory\CountryFactoryEditResource;
+use App\Http\Resources\CountryFactory\CountryFactoryListCollection;
 
 class CountryFactoryController extends Controller
 {
     public function index()
     {
         $countryfactories = CountryFactory::get();
-        if($countryfactories->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $countryfactories,
-                'count' => $countryfactories->count()
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного места сборки'
-        ]);
+        return new CountryFactoryListCollection($countryfactories);
     }
 
     public function edit(CountryFactory $countryfactory)
     {
-        return response()->json([
-            'status' => 1,
-            'countryfactory' => $countryfactory
-        ]);
+        return new CountryFactoryEditResource($countryfactory);
     }
 
     public function store(CountryFactory $countryfactory, Request $request)
     {
         $countryfactory->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'countryfactory' => $countryfactory,
-            'message' => 'Место сборки создано'
-        ]);
+        return new CountryFactoryEditResource($countryfactory);
     }
 
     public function update(CountryFactory $countryfactory, Request $request)
     {
         $countryfactory->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'countryfactory' => $countryfactory,
-            'message' => 'Место сборки изменено'
-        ]);
+        return new CountryFactoryEditResource($countryfactory);
     }
 }

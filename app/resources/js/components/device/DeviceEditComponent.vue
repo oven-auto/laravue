@@ -126,62 +126,17 @@ export default {
             this.device.image = e.target.files[0];
         },
 
-        loadDevice() {
-            this.loading = true
-            axios.get('/api/devices/' + this.urlId + '/edit')
-            .then( response => {
-                if(response.data.status == 1)
-                    this.device = response.data.data
-                else
-                    this.message = response.data.message
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                makeToast(this, this.message)
-                this.loading = false
-            })
+        loadDevice(id) {
+            edit(this, '/api/devices/' + this.urlId + '/edit', 'device', 'message')
         },
 
         updateData(id) {
-            this.loading = true
-            axios.post('/api/devices/' + this.urlId, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                this.device = res.data.data
-                this.message = res.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                makeToast(this,this.message)
-                this.loading = false
-            })
+            update(this, '/api/devices/' + this.urlId, this.getFormData('patch'), 'device', 'message')
         },
 
         storeData() {
-            this.loading = true
-            axios.post('/api/devices/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.data.id
-                    this.$router.push('/devices/list')
-                    this.$router.push('/devices/edit/'+this.urlId)
-                    this.device = res.data.data
-                    this.message = res.data.message;
-                } else {
-                    this.message = res.data.message;
-                }
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            storage(this, '/api/devices/', this.getFormData(), 'device', 'message', 'urlId', 'devices')
         },
-
-
-
-
-
 
         getFormData(method = '') {
             var formData = new FormData();
@@ -199,12 +154,6 @@ export default {
             if(method == 'patch')
                 formData.append("_method", "PATCH");
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'application/json'
-            }
         },
 
         loadBrands() {

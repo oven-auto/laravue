@@ -3,8 +3,6 @@
 
         <spin v-if="loading && urlId"></spin>
 
-        <error v-if="notFound"></error>
-
         <div v-else>
             <form>
                 <div class="h5">{{ transmission.name ? transmission.name : 'Новый тип трансмиссии' }}</div>
@@ -22,7 +20,7 @@
                         </div>
 
                         <div>
-                            <TransmissionType v-model="transmission.type"></TransmissionType>
+                            <TransmissionType v-model="transmission.transmission_type_id"></TransmissionType>
                         </div>
                     </div>
                 </div>
@@ -57,7 +55,7 @@ export default {
             loading: true,
             urlId: this.$route.params.id,
             succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -66,51 +64,15 @@ export default {
     },
     methods: {
         loadType(id) {
-            axios.get('/api/motortransmissions/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.transmission.name = response.data.motortransmission.name;
-                this.transmission.acronym = response.data.motortransmission.acronym;
-                this.transmission.type = response.data.motortransmission.transmission_type_id
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/motortransmissions/' + id + '/edit', 'transmission', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/motortransmissions/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadType(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/motortransmissions/' + id, this.getFormData('patch'), 'transmission', 'message')
         },
 
         storeData() {
-            axios.post('/api/motortransmissions/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.motortransmission.id
-                    this.$router.push('/motortransmissions/list')
-                    this.$router.push('/motortransmissions/edit/'+this.urlId)
-                    this.succesMessage = res.data.message;
-                    this.loadType(this.urlId);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/motortransmissions/', this.getFormData(), 'transmission', 'message', 'urlId', 'motortransmissions')
         },
 
         getFormData(method = '') {
@@ -118,7 +80,7 @@ export default {
 
             formData.append('name', this.transmission.name);
             formData.append('acronym', this.transmission.acronym==null?'':this.transmission.acronym);
-            formData.append('transmission_type_id', this.transmission.type);
+            formData.append('transmission_type_id', this.transmission.transmission_type_id);
 
             if(method == 'patch')
                 formData.append("_method", "PATCH");

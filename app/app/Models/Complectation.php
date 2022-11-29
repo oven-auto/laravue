@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
 use App\Models\Traits\PriceChangeable;
+use App\Models\Traits\Createable;
 use App\Models\Interfaces\SortInterface;
 use App\Models\Interfaces\HasPriceInterface;
 
@@ -14,6 +15,7 @@ class Complectation extends Model implements SortInterface, HasPriceInterface
     use HasFactory;
     use Filterable;
     use PriceChangeable;
+    use Createable;
 
     protected $guarded = [];
 

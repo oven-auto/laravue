@@ -150,54 +150,16 @@ export default {
     },
 
     methods: {
-        loadData() {
-            this.loading = true
-            axios.get('/api/motors/' + this.urlId + '/edit')
-            .then( response => {
-                if(response.data.status == 1)
-                    this.motor = response.data.data
-                else
-                    this.message = response.data.message
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                makeToast(this, this.message)
-                this.loading = false
-            })
+        loadData(id) {
+            edit(this, '/api/motors/' + this.urlId + '/edit', 'motor', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/motors/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                this.motor = res.data.data
-                this.message = res.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                makeToast(this,this.message)
-                this.loading = false
-            })
+            update(this, '/api/motors/' + this.urlId, this.getFormData('patch'), 'motor', 'message')
         },
 
         storeData() {
-            axios.post('/api/motors/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.data.id
-                    this.$router.push('/motors/list')
-                    this.$router.push('/motors/edit/'+this.urlId)
-                    this.motor = res.data.data
-                    this.message = res.data.message;
-                } else {
-                    this.message = res.data.message;
-                }
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            storage(this, '/api/motors/', this.getFormData(), 'motor', 'message', 'urlId', 'motors')
         },
 
         getFormData(method = '') {
@@ -218,12 +180,6 @@ export default {
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     }
 }

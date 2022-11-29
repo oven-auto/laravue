@@ -63,16 +63,7 @@ export default {
 
 
         loadBrands() {
-            axios.get('/api/brands')
-                .then(response => {
-                    this.data = response.data.data;
-                    this.message = response.data.message;
-                }).catch(errors => {
-                    this.message = errorsToStr(errors)
-                }).finally(() => {
-                    makeToast(this,this.message)
-                    this.loading = false;
-                })
+            list(this, '/api/brands', 'data', 'message')
         }
     }
 }

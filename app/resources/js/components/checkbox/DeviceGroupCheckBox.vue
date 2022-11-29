@@ -9,7 +9,6 @@
     <div v-for="(typeGroup,g) in devices" :key="'group'+g" class="row" style="width: 100%;">
         <div class="col-4" v-for="(chunk,k) in chunkArray(typeGroup, Math.ceil(typeGroup.length/3))" :key="'chunk'+k">
             <div v-for="(itemDevice,i) in chunk" :key="'chunk-device'+i" >
-
                 <div v-if="i == 0">
                     <div class="p-1 mb-1" style="background: #eee;">{{itemDevice.type.name}}</div>
                 </div>
@@ -78,7 +77,7 @@ export default {
         },
         getDevices() {
             var param = 'brand_id='+this.brand+'&group=type'
-            axios.get('/api/devices?' + param)
+            axios.get('/api/services/html/select/groupdevices?' + param)
             .then(res => {
                 for(var i in res.data.data)
                     for(var k in res.data.data[i])

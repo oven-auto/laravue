@@ -153,7 +153,8 @@ export default {
             now_page: this.$route.params.page,
             status: 1,
             currentModelCssLine: 0,
-            currentChange: {}
+            currentChange: {},
+            message: ''
         }
     },
     mounted() {
@@ -236,21 +237,10 @@ export default {
         formatPrice(price) {
             return number_format(price,0,'',' ','руб.')
         },
+
         loadData() {
-            this.loading = true;
-            axios.get('/api/complectations?'+this.searchToUrl())
-            .then(response => {
-                if(response.data.status == 1)
-                    this.complectations = response.data.data;
-                else
-                    this.complectations = []
-                this.loading = false
-            }).catch(errors => {
-                console.table(errors)
-                this.succesMessage = errors.response.data.message
-            }).finally(() => {
-                makeToast(this,this.succesMessage)
-            })
+            var url = '/api/complectations?'+this.searchToUrl()
+            list(this, url, 'complectations','message')
         },
 
         inputChanged(value) {

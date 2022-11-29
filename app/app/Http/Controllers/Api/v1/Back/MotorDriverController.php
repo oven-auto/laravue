@@ -5,51 +5,32 @@ namespace App\Http\Controllers\Api\v1\Back;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\MotorDriver;
+use App\Http\Resources\Motor\DriverListCollection;
+use App\Http\Resources\Motor\DriverEditResource;
 
 class MotorDriverController extends Controller
 {
     public function index()
     {
         $motordrivers = MotorDriver::get();
-        if($motordrivers->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $motordrivers,
-                'count' => $motordrivers->count(),
-                'message' => 'Найдено '.$motordrivers->count().' едениц типов привода'
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного типа привода'
-        ]);
+        return new DriverListCollection($motordrivers);
     }
 
     public function edit(MotorDriver $motordriver)
     {
-        return response()->json([
-            'status' => 1,
-            'motordriver' => $motordriver
-        ]);
+        return new DriverEditResource($motordriver);
     }
 
     public function store(MotorDriver $motordriver, Request $request)
     {
         $motordriver->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'motordriver' => $motordriver,
-            'message' => 'Привод создан'
-        ]);
+        return new DriverEditResource($motordriver);
     }
 
     public function update(MotorDriver $motordriver, Request $request)
     {
         $motordriver->fill($request->input())->save();
-        return response()->json([
-            'status' => 1,
-            'motordriver' => $motordriver,
-            'message' => 'Привод изменен'
-        ]);
+        return new DriverEditResource($motordriver);
     }
 
 

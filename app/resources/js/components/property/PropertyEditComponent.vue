@@ -4,8 +4,6 @@
 
     <spin v-if="loading && urlId"></spin>
 
-    <error v-if="notFound"></error>
-
     <div v-else>
         <form>
             <div class="h5">{{ property.name ? property.name : 'Новый тип оборудования' }}</div>
@@ -42,11 +40,9 @@ export default {
             property: {
                 name: null,
             },
-            notFound: false,
             loading: true,
             urlId: this.$route.params.id,
-            succes: false,
-            succesMessage: null,
+            message: null,
         }
     },
     mounted() {
@@ -55,47 +51,15 @@ export default {
     },
     methods: {
         loadProperty(id) {
-            axios.get('/api/properties/' + id + '/edit')
-            .then( response => {
-                this.loading = false;
-                this.property.name = response.data.property.name;
-            })
-            .catch(errors => {
-                this.notFound = true;
-                this.loading = false;
-            })
+            edit(this, '/api/properties/' + this.urlId + '/edit', 'property', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/properties/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadProperty(id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            update(this, '/api/properties/' + this.urlId, this.getFormData('patch'), 'property', 'message')
         },
 
         storeData() {
-            axios.post('/api/properties/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.succes = true;
-                    this.succesMessage = res.data.message;
-                    this.loadProperty(res.data.property.id);
-                    makeToast(this,this.succesMessage)
-                }
-            })
-            .catch(errors => {
-                console.log(errors)
-            })
+            storage(this, '/api/properties/', this.getFormData(), 'property', 'message', 'urlId', 'properties')
         },
 
         getFormData(method = '') {
@@ -107,12 +71,6 @@ export default {
                 formData.append("_method", "PATCH");
 
             return formData;
-        },
-
-        getConfig() {
-            return {
-                'content-type': 'multipart/form-data'
-            }
         },
     }
 }

@@ -58,52 +58,15 @@ export default {
     },
     methods: {
         loadType(id) {
-            axios.get('/api/devicetypes/' + this.urlId + '/edit')
-             .then( response => {
-                if(response.data.status == 1)
-                    this.type = response.data.data
-                else
-                    this.message = response.data.message
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(() => {
-                makeToast(this, this.message)
-                this.loading = false
-            })
+            edit(this, '/api/devicetypes/' + this.urlId + '/edit', 'type', 'message')
         },
 
         updateData(id) {
-            axios.post('/api/devicetypes/' + id, this.getFormData('patch'), this.getConfig())
-            .then(res => {
-                this.type = res.data.data
-                this.message = res.data.message;
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                makeToast(this,this.message)
-                this.loading = false
-            })
+            update(this, '/api/devicetypes/' + this.urlId, this.getFormData('patch'), 'type', 'message')
         },
 
         storeData() {
-            axios.post('/api/devicetypes/', this.getFormData(), this.getConfig())
-            .then(res => {
-                if(res.data.status)
-                {
-                    this.urlId = res.data.data.id
-                    this.$router.push('/devicetypes/list')
-                    this.$router.push('/devicetypes/edit/'+this.urlId)
-                    this.type = res.data.data
-                    this.message = res.data.message;
-                } else {
-                    this.message = res.data.message;
-                }
-            }).catch(errors => {
-                this.message = errorsToStr(errors)
-            }).finally(()=>{
-                this.loading = false
-                makeToast(this,this.message)
-            })
+            storage(this, '/api/devicetypes/', this.getFormData(), 'type', 'message', 'urlId', 'devicetypes')
         },
 
         getFormData(method = '') {

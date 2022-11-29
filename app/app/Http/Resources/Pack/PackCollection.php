@@ -16,7 +16,9 @@ class PackCollection extends ResourceCollection
     {
         return [
             'data' => $this->collection,
-            'status' => $this->collection->count()
+            'status' => $this->collection->count() ? 1 : 0,
+            'message' => 'Найдено '.$this->collection->count().' опций',
+            'count' => $this->collection->count()
         ];
     }
 }

@@ -6,72 +6,44 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Pack;
 use App\Http\Filters\PackFilter;
+use App\Http\Resources\Pack\PackListCollection;
+use App\Http\Resources\Pack\PackEditResource;
+use App\Repositories\Pack\PackRepository;
 
 class PackController extends Controller
 {
+    private $repo;
+
+    public function __construct(PackRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     public function index(Request $request)
     {
-        $data = $request->all();
-        $query = Pack::fullData()->with('marks');
-        $filter = app()->make(PackFilter::class, ['queryParams' => array_filter($data)]);
-        $packs = $query->filter($filter)->get();
-
-        if($packs->count())
-            return response()->json([
-                'status' => 1,
-                'data' => $packs,
-                'count' => $packs->count(),
-                'message' => "Найдено ".$packs->count()." опций"
-            ]);
-        return response()->json([
-            'status' => 0,
-            'message' => 'Не нашлось ни одного пакета'
-        ]);
+        $packs = $this->repo->filter($request->all());
+        return new PackListCollection($packs);
     }
 
     public function edit(Pack $pack)
     {
-        $pack->devices;
-        $pack->marks;
-
-        return response()->json([
-            'status' => 1,
-            'pack' => $pack
-        ]);
+        return new PackEditResource($pack);
     }
 
     public function store(Pack $pack, Request $request)
     {
-        $pack->fill($request->except('devices','marks'))->save();
-        $pack->devices()->sync($request->get('devices'));
-        $pack->marks()->sync($request->get('marks'));
-        return response()->json([
-            'status' => 1,
-            'pack' => $pack,
-            'message' => 'Пакет создан'
-        ]);
+        $this->repo->save($pack, $request->all());
+        return new PackEditResource($pack);
     }
 
     public function update(Pack $pack, Request $request)
     {
-        $pack->fill($request->except('devices','marks'))->save();
-        $pack->devices()->sync($request->get('devices'));
-        $pack->marks()->sync($request->get('marks'));
-        return response()->json([
-            'status' => 1,
-            'pack' => $pack,
-            'message' => 'Пакет изменен'
-        ]);
+        $this->repo->save($pack, $request->all());
+        return new PackEditResource($pack);
     }
 
     public function destroy(Pack $pack)
     {
-        $name = $pack->code;
-        $pack->delete();
-        return response()->json([
-            'data' => '',
-            'status' => 1,
-            'message' => 'Пакет с кодом '.$name.' удален'
-        ]);
+        return $this->repo->destroy($pack);
     }
 }
