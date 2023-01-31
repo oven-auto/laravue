@@ -22,21 +22,23 @@ use Illuminate\Support\Facades\Auth;
 
 
 
-Auth::routes();
+//Auth::routes();
 
 // Страница создания токена
-Route::get('dashboard', function () {
-    if(Auth::check() && Auth::user()->role === 1){
-        return auth()
-            ->user()
-            ->createToken('auth_token', ['admin'])
-            ->plainTextToken;
-    }
-    return redirect("/home");
-})->middleware('auth');
+// Route::get('dashboard', function () {
+//     if(Auth::check() && Auth::user()->role === 1){
+//         return auth()
+//             ->user()
+//             ->createToken('auth_token', ['admin'])
+//             ->plainTextToken;
+//     }
+//     return redirect("/home");
+// })->middleware('auth');
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get( '/{any}', function() {
-    return view('layouts.admin');
-})->where('any', '.*');
+// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('phpinfo', function() {
+    phpinfo();
+});
+// Route::get( '/{any}', function() {
+//     return view('layouts.admin');
+// })->where('any', '.*');

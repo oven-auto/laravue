@@ -19,7 +19,7 @@ class BrandEditCollectionResource extends ResourceCollection
             'data' => $this->collection,
             'status' => $this->collection->count() ? 1 : 0,
             'message' => 'Найдено '.$this->collection->count().' бренда',
-            'count' => $this->collection->count()
+            'count' => $this->collection->count(),
         ];
     }
 }

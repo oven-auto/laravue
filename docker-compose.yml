@@ -32,6 +32,7 @@ services:
       - mysql-sshop
       - redis-sshop
     environment:
+      - "UPLOAD_LIMIT=20M"
       - "DB_PORT=3306"
       - "DB_HOST=mysql-sshop"
       - "REDIS_PORT=6379"
@@ -63,7 +64,7 @@ services:
   mysql-sshop:
     container_name: mysql-sshop
     image: mysql:5.7
-    command: --sql_mode=""
+    command: --sql_mode="ONLY_FULL_GROUP_BY"
     volumes: 
       - ./docker/images/mysql:/var/lib/mysql
     environment:

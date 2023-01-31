@@ -87,5 +87,7 @@ laravel-clear:
 	sudo docker exec php-f-sshop php artisan config:clear
 	sudo docker exec php-f-sshop php artisan route:cache
 
+laravel-command:
+	sudo docker exec php-f-sshop php artisan $(command):$(action)
 
 #testtest

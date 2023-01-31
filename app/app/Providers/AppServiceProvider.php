@@ -28,5 +28,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CarFixedPrice::observe(\App\Observers\FixedCarPrice::class);
         \App\Models\Complectation::observe(\App\Observers\ComplectationChangePriceObserver::class);
         \App\Models\CarMarker::observe(\App\Observers\CarMarkerObserver::class);
+        \App\Models\Trafic::observe(\App\Observers\TraficObserver::class);
+        \App\Models\Worksheet::observe(\App\Observers\WorksheetObserver::class);
     }
 }

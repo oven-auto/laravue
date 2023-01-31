@@ -14,20 +14,40 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+// Route::fallback(function(){
+//     return response()->json([
+//         'message' => 'Данные не найдены',
+//         'success' => false,
+//     ], 404);
+// });
+
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+Route::prefix('auth')->namespace('\App\Http\Controllers\Api\v1\Auth')->group(function() {
+    Route::get('login', function () {
+        return response()->json([
+            'success' =>true,
+            'message' => 'Открывай форму логина'
+        ]);
+    })->name('login');
+    Route::post('login', 'LoginController@index');
+    Route::get('logout', 'LogoutController@index');
+    Route::get('check', 'LoginController@check')->middleware(['corsing','userfromtoken']);
+    Route::post('register', 'RegisterController@register');
+});
+
+
 
 Route::get('exit', function() {
     Auth::logout();
-
     return response()->json([
         'message' => 'Выход успешен'
     ]);
 });
 
 //CRUD
-Route::prefix('')->middleware('auth:sanctum')->namespace('\App\Http\Controllers\Api\v1\Back')->group(function () {
+Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\Back')->group(function () {
     Route::resource('brands',  BrandController::class);
     //Route::resource('brands',  BrandController::class);
     Route::resource('devicetypes', DeviceTypeController::class);
@@ -53,7 +73,7 @@ Route::prefix('')->middleware('auth:sanctum')->namespace('\App\Http\Controllers\
     Route::resource('clients', Client\ClientController::class);
 });
 
-Route::prefix('forms')->middleware('auth:sanctum')->group(function() {
+Route::prefix('forms')->group(function() {
     Route::get('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'index']);
     Route::post('sections', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'store']);
     Route::put('sections/{formsection}', [\App\Http\Controllers\Api\v1\Back\Form\FormSectionController::class,'update']);
@@ -72,7 +92,7 @@ Route::get('moderator/complectation/{complectation}', [\App\Http\Controllers\Api
 
 
 
-Route::prefix('services')->middleware('auth:sanctum')->group(function () {
+Route::prefix('services')->group(function () {
     //IMAGES
     Route::prefix('images')->group(function() {
         Route::get('devices', [\App\Http\Controllers\Api\v1\Services\Images\DeviceImageController::class, 'index']);
@@ -179,4 +199,72 @@ Route::group(['prefix' => 'front'], function() {
   Route::group(['prefix'=>'forms'], function(){
     Route::get('/get', [\App\Http\Controllers\Api\v1\Front\Form\FormController::class, 'get']);
   });
+});
+
+Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
+    Route::get('zones', 'TraficZoneController@index');
+    Route::get('chanels', 'TraficChanelController@index');
+    Route::get('sexlist', 'TraficSexController@index');
+    Route::get('companies', 'TraficCompanyController@index');
+    Route::get('structures/{brand_id}', 'TraficStructureController@index');
+    Route::get('appeals/{id}', 'TraficAppealController@index');
+    Route::get('needs/{id}', 'TraficNeedController@index');
+    Route::get('tasks', 'TraficTaskController@index');
+    Route::get('users/{structure_id}', 'TraficUserController@index');
+    Route::get('statuses', 'TraficStatusController@index');
+
+    //кол-во всех трафикаов
+    Route::get('count', 'TraficCountController@index');
+
+    //список всех трафиков
+    Route::get('list','TraficController@index')
+        ->middleware(['permission.trafic:trafic_list']);
+
+    //создание трафика
+    Route::post('create', 'TraficController@store')
+        ->middleware(['permission.trafic:trafic_add']);
+
+    //упустить трафик
+    Route::patch('close/{trafic}', 'TraficController@close')
+        ->middleware([
+            'permission.trafic:trafic_close',
+            'permission.trafic.change:trafic_close_alien',
+        ]);
+
+    //показать загруженные фаилы трафика
+    Route::post('files/{trafic}', 'TraficFileController@load')
+        ->middleware(['permission.trafic:trafic_files_show']);
+
+    //загрузить фаилы в трафик
+    Route::get('files/{trafic}', 'TraficFileController@show')
+        ->middleware(['permission.trafic:trafic_files_load']);
+
+    //пометить трафик как удаленный
+    Route::delete('{trafic}', 'TraficController@delete')
+        ->middleware([
+            'permission.trafic:trafic_softdelete',
+            'permission.trafic.change:trafic_softdelete_alien',
+        ]);
+
+    //просмотр трафика
+    Route::get('{trafic}', 'TraficController@edit')
+        ->middleware(['permission.trafic:trafic_show']);
+
+    //изменение трафика
+    Route::patch('{trafic}', 'TraficController@update')
+        ->middleware([
+            'permission.trafic:trafic_edit',
+            'permission.trafic.change:trafic_change_alien',
+        ]);
+});
+
+Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
+    Route::middleware(['worksheet.create'])->post('create', 'WorksheetController@store');
+});
+
+Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function() {
+    Route::get('users', 'UserController@index');
+    Route::get('zones', 'ZoneController@index');
+    Route::get('chanels', 'ChanelController@index');
+    Route::get('structures', 'StructureController');
 });

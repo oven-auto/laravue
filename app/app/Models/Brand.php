@@ -18,4 +18,6 @@ class Brand extends Model
     {
     	return asset('storage/'.$this->icon) . '?' . date('dmyhm');
     }
+
+
 }

@@ -29,6 +29,15 @@ return [
 
     'max_age' => 0,
 
-    'supports_credentials' => false,
+    'supports_credentials' => true,
 
+    'trusted' => [
+        'http://192.168.1.130',
+        'http://192.168.1.130:8080',
+        'http://192.168.1.130:8082',
+        'http://localhost',
+        'http://localhost:8080',
+        'http://localhost:8082',
+        'http://192.168.1.98:8280'
+    ],
 ];
