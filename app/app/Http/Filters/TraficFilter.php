@@ -100,25 +100,25 @@ class TraficFilter extends AbstractFilter
     //Начало обработки [dd.mm.yyyy]
     public function processingStart(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.processing_at','<=', $this->formatDate($value));
+        $builder->whereDate('trafics.processing_at','>=', $this->formatDate($value));
     }
 
     //Конец обработки [dd.mm.yyyy]
     public function processingEnd(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.processing_at','>=', $this->formatDate($value));
+        $builder->whereDate('trafics.processing_at','<=', $this->formatDate($value));
     }
 
     //Начало создания [dd.mm.yyyy]
     public function createStart(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.created_at','<=', $this->formatDate($value));
+        $builder->whereDate('trafics.created_at','>=', $this->formatDate($value));
     }
 
     //Конец создания [dd.mm.yyyy]
     public function createEnd(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.created_at','>=', $this->formatDate($value));
+        $builder->whereDate('trafics.created_at','<=', $this->formatDate($value));
     }
 
     //Авторы [user_id, ... , user_id]
@@ -223,7 +223,7 @@ class TraficFilter extends AbstractFilter
                 ->where(  'trafics.phone',      'LIKE', "%$value%")
                 ->orWhere('trafics.firstname',  'LIKE', "%$value%")
                 ->orWhere('trafics.lastname',   'LIKE', "%$value%")
-                ->orWhere('trafics.id',                   $value);
+                ->orWhere('trafics.id',         'LIKE', "%$value%");
         });
     }
 }

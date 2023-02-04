@@ -56,6 +56,21 @@ class Trafic extends Model
         return $phone;
     }
 
+    public function getFormatedPhoneAttribute()
+    {
+        $phone = '';
+        $from = $this->phone;
+        if($this->phone)
+            $phone = sprintf("+%s (%s) %s %s-%s",
+                substr($from, 0, 1),
+                substr($from, 1, 3),
+                substr($from, 3, 3),
+                substr($from, 7, 2),
+                substr($from, 9)
+            );
+        return $phone;
+    }
+
     public function status()
     {
         return $this->hasOne(\App\Models\TraficStatus::class, 'id', 'trafic_status_id')->withDefault();
@@ -113,10 +128,10 @@ class Trafic extends Model
         return $this->hasOneThrough(
             \App\Models\Structure::class,
             \App\Models\CompanyStructure::class,
-            'structure_id',
+            'id',
             'id',
             'company_structure_id',
-            'id'
+            'structure_id'
         );
     }
 

@@ -66,8 +66,15 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'userfromtoken' => \App\Http\Middleware\UserWithTokenMiddleware::class,
         'corsing' => \App\Http\Middleware\CorsMiddleware::class,
-        'worksheet.create' => \App\Http\Middleware\Worksheet\WorksheetCreatingMiddleware::class,
-        'permission.trafic' => \App\Http\Middleware\Permissions\TraficPermissionMiddleware::class,
-        'permission.trafic.change' => \App\Http\Middleware\Permissions\TraficChangeMiddleware::class,
+
+        'worksheet.create.base' => \App\Http\Middleware\Permissions\Worksheet\WorksheetBasePerm::class,
+
+        'permission.trafic.list' => \App\Http\Middleware\Permissions\Trafic\TraficList::class,
+        'permission.trafic.create' => \App\Http\Middleware\Permissions\Trafic\TraficCreate::class,
+        'permission.trafic.show' => \App\Http\Middleware\Permissions\Trafic\TraficShow::class,
+        'permission.trafic.showalien' => \App\Http\Middleware\Permissions\Trafic\TraficShowAlien::class,
+
+        'permission.worksheet.create' => \App\Http\Middleware\Permissions\Worksheet\WorksheetCreate::class,
+
     ];
 }

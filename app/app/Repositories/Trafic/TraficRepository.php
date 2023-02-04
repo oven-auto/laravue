@@ -58,10 +58,10 @@ Class TraficRepository
                     $trafic->task_id                        = $data['trafic_action_id'];
 
                 if(isset($data['begin_at']))
-                    $trafic->begin_at                       = date('Y-m-d h:i',\strtotime($data['begin_at']));
+                    $trafic->begin_at                       = date('Y-m-d H:i',\strtotime($data['begin_at']));
 
                 if(isset($data['end_at']))
-                    $trafic->end_at                         = date('Y-m-d h:i',\strtotime($data['end_at']));
+                    $trafic->end_at                         = date('Y-m-d H:i',\strtotime($data['end_at']));
 
                 if(isset($data['manager_id']))
                     $trafic->manager_id                     = $data['manager_id'];
@@ -80,40 +80,39 @@ Class TraficRepository
             });
     }
 
-    public function filter($data = [])
+    private function filter($data = [])
     {
-        $result = DB::transaction(function () use ($data){
-            $structures = \App\Models\UserCompanyStructure::where('user_id', Auth::user()->id)->pluck('company_structure_id');
-            $query = Trafic::select('trafics.*')->with('needs')->withTrashed();
-            $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
+        $query = Trafic::select('trafics.*')->with('needs')->withTrashed();
+        $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
+        return $query
+            ->filter($filter)
+            ->orderBy(DB::raw('trafics.manager_id IS NULL'),'DESC')
+            ->orderBy('trafics.created_at','DESC')
+            ->groupBy('trafics.id');
+    }
 
-            return $query
-                ->filter($filter)
-                ->orderBy(DB::raw('trafics.manager_id IS NULL'),'DESC')
-                ->orderBy('trafics.created_at','DESC')
-                ->whereIn('trafics.company_structure_id', $structures)
-                ->groupBy('trafics.id')
+    public function paginate($data = [])
+    {
+        $query = $this->filter($data);
+        $result = $query->simplePaginate(10);
+        return $result;
+    }
 
-                ->simplePaginate(20);
-        });
-
+    public function export($data = [])
+    {
+        $query = $this->filter($data);
+        $result = $query->get();
         return $result;
     }
 
     public function counter($data = [])
     {
-        $structures = \App\Models\UserCompanyStructure::where('user_id', Auth::user()->id)->pluck('company_structure_id');
-
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
-
         $sub = Trafic::query()->withTrashed();
         $sub->filter($filter)
-            ->whereIn('trafics.company_structure_id', $structures)
             ->groupBy('trafics.id')
             ->get();
-
         $result = DB::query()->fromSub($sub, 'cr')->count();
-
         return $result;
     }
 

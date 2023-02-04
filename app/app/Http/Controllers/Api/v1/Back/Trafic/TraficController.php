@@ -22,7 +22,7 @@ class TraficController extends Controller
 
     public function index(Request $request)
     {
-        $result = $this->service->filter($request->all());
+        $result = $this->service->paginate($request->all());
         return new TraficEditCollection($result);
     }
 

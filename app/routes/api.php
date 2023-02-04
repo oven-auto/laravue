@@ -210,56 +210,66 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('appeals/{id}', 'TraficAppealController@index');
     Route::get('needs/{id}', 'TraficNeedController@index');
     Route::get('tasks', 'TraficTaskController@index');
-    Route::get('users/{structure_id}', 'TraficUserController@index');
+    Route::get('users/{structure_id}/{appeal_id}', 'TraficUserController@index');
     Route::get('statuses', 'TraficStatusController@index');
 
-    //кол-во всех трафикаов
-    Route::get('count', 'TraficCountController@index');
+    //кол-во всех трафикаов +
+    Route::get('count', 'TraficCountController@index')
+        ->middleware(['permission.trafic.list:trafic_list']);
 
-    //список всех трафиков
+    //список всех трафиков +
     Route::get('list','TraficController@index')
-        ->middleware(['permission.trafic:trafic_list']);
+        ->middleware(['permission.trafic.list:trafic_list']);
 
-    //создание трафика
+    //создание трафика +
     Route::post('create', 'TraficController@store')
-        ->middleware(['permission.trafic:trafic_add']);
+        ->middleware(['permission.trafic.create:trafic_add']);
 
-    //упустить трафик
+    //упустить трафик +
     Route::patch('close/{trafic}', 'TraficController@close')
         ->middleware([
-            'permission.trafic:trafic_close',
-            'permission.trafic.change:trafic_close_alien',
+            'permission.trafic.show:trafic_close',
+            'permission.trafic.showalien:trafic_close_alien'
         ]);
 
-    //показать загруженные фаилы трафика
+    //показать загруженные фаилы трафика +
     Route::post('files/{trafic}', 'TraficFileController@load')
-        ->middleware(['permission.trafic:trafic_files_show']);
+        ->middleware(['permission.trafic.show:trafic_files_load',]);
 
-    //загрузить фаилы в трафик
+    //загрузить фаилы в трафик +
     Route::get('files/{trafic}', 'TraficFileController@show')
-        ->middleware(['permission.trafic:trafic_files_load']);
+        ->middleware(['permission.trafic.show:trafic_files_show',]);
 
-    //пометить трафик как удаленный
+    //пометить трафик как удаленный +
     Route::delete('{trafic}', 'TraficController@delete')
         ->middleware([
-            'permission.trafic:trafic_softdelete',
-            'permission.trafic.change:trafic_softdelete_alien',
+            'permission.trafic.show:trafic_softdelete',
+            'permission.trafic.showalien:trafic_softdelete_alien'
         ]);
 
-    //просмотр трафика
+    //просмотр трафика +
     Route::get('{trafic}', 'TraficController@edit')
-        ->middleware(['permission.trafic:trafic_show']);
+        ->middleware([
+            'permission.trafic.show:trafic_show',
+            'permission.trafic.showalien:trafic_show_alien'
+        ]);
 
-    //изменение трафика
+    //изменение трафика +
     Route::patch('{trafic}', 'TraficController@update')
         ->middleware([
-            'permission.trafic:trafic_edit',
-            'permission.trafic.change:trafic_change_alien',
+            'permission.trafic.show:trafic_update',
+            'permission.trafic.showalien:trafic_update_alien'
         ]);
+
+
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
-    Route::middleware(['worksheet.create'])->post('create', 'WorksheetController@store');
+    Route::post('create', 'WorksheetController@store')
+        ->middleware([
+            'worksheet.create.base',
+            'permission.worksheet.create'
+        ]);
 });
 
 Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function() {

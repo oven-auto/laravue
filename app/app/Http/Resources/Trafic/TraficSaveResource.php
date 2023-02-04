@@ -17,9 +17,9 @@ class TraficSaveResource extends JsonResource
         return [
             'data' => [
                 'id' => $this->id,
-                'created_at' => $this->created_at->format('d.m.Y h:i'),
-                'updated_at' => $this->updated_at->format('d.m.Y h:i'),
-                'time' => $this->created_at->format('d.m.Y h:i'),
+                'created_at' => $this->created_at->format('d.m.Y H:i'),
+                'updated_at' => $this->updated_at->format('d.m.Y H:i'),
+                'time' => $this->created_at->format('d.m.Y H:i'),
                 'author_id' => [
                     'id' => $this->author->id,
                     'name' => $this->author->cut_name,
@@ -65,8 +65,8 @@ class TraficSaveResource extends JsonResource
                     'name' => $this->task->name,
                 ],
                 'trafic_interval' => $this->interval,
-                'begin_at' => $this->begin_at->format('d.m.Y h:i'),
-                'end_at' => $this->end_at->format('d.m.Y h:i'),
+                'begin_at' => $this->begin_at->format('d.m.Y H:i'),
+                'end_at' => $this->end_at->format('d.m.Y H:i'),
                 'manager_id' => [
                     'id' => $this->manager->id,
                     'name' => $this->manager->cut_name
