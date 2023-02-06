@@ -28,6 +28,7 @@ services:
       dockerfile: docker/php-fpm.docker
     volumes:
       - ./app/:/var/www
+      - ./docker/docker.ini:/usr/local/etc/php/conf.d/docker.ini
     links: 
       - mysql-sshop
       - redis-sshop
