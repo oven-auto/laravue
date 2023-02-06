@@ -112,4 +112,3 @@ services:
         MYSQL_USERNAME: app
         MYSQL_ROOT_PASSWORD: secret
         MYSQL_PORT_3306_TCP_ADDR: mysql-sshop
-  
