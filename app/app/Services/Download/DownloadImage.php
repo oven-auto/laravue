@@ -44,16 +44,20 @@ Class DownloadImage
         return $path;
     }
 
-    public function save()
+    public function save($timeSufix = true)
     {
         if($this->file instanceof UploadedFile)
-            return $this->load();
+            return $this->load($timeSufix);
         throw new Exception('Не выбран фаил');
     }
 
-    private function load()
+    private function load($timeSufix = true)
     {
-        $fileName = $this->prefix.'_'.date('dmyhms').'.'.$this->file->getClientOriginalExtension();
+        $sufix = '';
+        if($timeSufix == true)
+            $sufix = date('dmyhms');
+
+        $fileName = $this->prefix.'_'.$sufix.'.'.$this->file->getClientOriginalExtension();
 
         $path = $this->storagePath($this->root);
 

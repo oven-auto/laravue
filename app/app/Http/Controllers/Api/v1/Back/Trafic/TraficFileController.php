@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Services\Download\DownloadImage;
+use Storage;
 
 class TraficFileController extends Controller
 {
@@ -23,6 +24,8 @@ class TraficFileController extends Controller
         $arr['trafic_id'] = $trafic->id;
 
         $arr = [];
+        $file = '';
+        $newFile = '';
 
         if ($request->file('record') instanceof UploadedFile) {
             $arr['record'] = $this->loadService
@@ -30,8 +33,16 @@ class TraficFileController extends Controller
                 ->setCatalog('trafic')
                 ->setPathName($trafic->id)
                 ->setPrefix($trafic->id.'_trafic_record')
-                ->save();
+                ->save(false);
+
+            if(Storage::disk('public')->exists($arr['record'])) {
+                $basePath = '/var/www/storage/app/public';
+                $file = $basePath.$arr['record'];
+                $newFile = $basePath.substr($arr['record'], 0, \strrpos($arr['record'],'.')).'.mp3';
+                $res = shell_exec('ffmpeg -i '.$file.' '.$newFile);
+                $arr['record'] = substr($arr['record'], 0, \strrpos($arr['record'],'.')).'.mp3';
             }
+        }
 
         if ($request->file('audit') instanceof UploadedFile)
             $arr['audit'] = $this->loadService
@@ -49,7 +60,10 @@ class TraficFileController extends Controller
         return response()->json([
             'data' => $trafic->processing,
             'success' => 1,
-            'message' => 'Фаилы добавлены'
+            'message' => 'Фаилы добавлены',
+            'file' => $file,
+            'file2' => $newFile,
+            'res' => $res
         ]);
     }
 
