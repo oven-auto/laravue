@@ -14,10 +14,10 @@
     h2{
         text-align: center;
         font-size:22px;
-        margin-bottom:50px;
+        margin-bottom:0px;
     }
     body{
-        background:#f2f2f2;
+        /* background:#f2f2f2; */
         font-family: "DejaVu Sans" !important;
     }
     .section{
@@ -34,17 +34,26 @@
         <div class="col-md-12 p-2">
             <div class="">
                 <div class="">
-                    <h2>Обращение № {{$id}}</h2>
+
                 </div>
                 <div class="panel-body">
                     <div class="main-div">
-                            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
-                        quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
-                        cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non
-                        proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-                        </div>
+                        <table class="table">
+                            <tr>
+                                <td>
+                                    <h2>Обращение </h2>
+                                </td>
+                                <td>
+                                    <h2>№ {{$trafic->id}}</h2>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    Автор: {{$trafic->author->cut_name}}
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </div>
                 <div class="text-center pdf-btn">
                   <a href="#" class="btn btn-primary">Generate PDF</a>
