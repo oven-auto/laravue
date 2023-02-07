@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use App\Services\Download\DownloadImage;
 use Storage;
+use App\Http\Requests\Trafic\TraficProcessing;
 
 class TraficFileController extends Controller
 {
@@ -17,7 +18,7 @@ class TraficFileController extends Controller
         $this->loadService = $service;
     }
 
-    public function load($trafic, Request $request)
+    public function load($trafic, TraficProcessing $request)
     {
         $trafic = \App\Models\Trafic::withTrashed()->findOrFail($trafic);
 

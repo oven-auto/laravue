@@ -19,6 +19,7 @@
         <th align="center">Назначенное <br>действие</th>
         <th align="center">Клиент</th>
         <th align="center">Номер <br> телефона</th>
+        <th align="center">Комментарий</th>
     </tr>
     </thead>
     <tbody>
@@ -38,6 +39,7 @@
             <td> {{$item->task->name}} </td>
             <td> {{$item->lastname.' '.$item->firstname.' '.$item->fathername}} </td>
             <td> {{$item->formated_phone}} </td>
+            <td> {{$item->comment}}</td>
         </tr>
     @endforeach
     </tbody>

@@ -5,6 +5,7 @@ namespace App\Exceptions;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Validation\ValidationException;
 
 class Handler extends ExceptionHandler
 {
@@ -42,6 +43,22 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+        if($exception instanceof ValidationException) {
+            $errors = [];
+
+            foreach($exception->errors() as $item)
+                $errors[] = $item[0];
+
+            return response()->json([
+                'message' => implode(PHP_EOL,$errors),
+                'success' => 0,
+                'error' => implode(', ', [
+                    'Фаил где поймал исключение: '.$exception->getFile(),
+                    'Cтрока с исключением: '.$exception->getLine(),
+                ])
+            ], 415);
+        }
+
         return response()->json([
             'message' => $exception->getMessage(),
             'success' => 0,
