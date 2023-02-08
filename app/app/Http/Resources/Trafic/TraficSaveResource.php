@@ -47,7 +47,7 @@ class TraficSaveResource extends JsonResource
                     'name' => $this->salon->name,
                 ],
                 'trafic_section_id' => [
-                    'id' => $this->structure->id,
+                    'id' => $this->company_structure_id,
                     'name' => $this->structure->name,
                 ],
                 'trafic_appeal_id' => [
