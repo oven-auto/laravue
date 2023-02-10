@@ -43,8 +43,6 @@ class TraficExport implements FromView, ShouldAutoSize, WithStyles//FromCollecti
 
     public function view(): View
     {
-        //$trafics = Trafic::fullest()->get();
-
         return view('export.trafic', [
             'trafics' => $this->data
         ]);

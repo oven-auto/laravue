@@ -10,6 +10,9 @@ docker-build:
 docker-down:
 	sudo docker-compose down
 
+docker-rebuild:
+	sudo docker-compose up -d --no-deps --build $(name)
+
 #запустить тестовые тесты laravel
 laravel-test:
 	sudo docker-compose exec php-f-sshop vendor/bin/phpunit
