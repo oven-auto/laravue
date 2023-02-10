@@ -201,6 +201,11 @@ Route::group(['prefix' => 'front'], function() {
   });
 });
 
+Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
+    Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@export')
+        ->middleware(['permission.trafic.list:trafic_export']);
+});
+
 Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
     Route::get('zones', 'TraficZoneController@index');
     Route::get('chanels', 'TraficChanelController@index');
@@ -260,8 +265,6 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
             'permission.trafic.show:trafic_update',
             'permission.trafic.showalien:trafic_update_alien'
         ]);
-
-
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {

@@ -40,14 +40,14 @@ Route::get('phpinfo', function() {
     phpinfo();
 });
 
-Route::prefix('export')->group(function () {
-    Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
-});
+// Route::prefix('export')->middleware(['corsing','userfromtoken'])->group(function () {
+//     Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
+// });
 
 Route::prefix('pdf')->group(function () {
     Route::get('trafics/{trafic}', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficPDFController');
 });
 
-Route::get( '/{any}', function() {
-    return view('layouts.admin');
-})->where('any', '.*');
+// Route::get( '/{any}', function() {
+//     return view('layouts.admin');
+// })->where('any', '.*');

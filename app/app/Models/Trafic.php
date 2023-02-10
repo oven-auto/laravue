@@ -171,4 +171,5 @@ class Trafic extends Model
     {
         return $this->hasOne(\App\Models\TraficProcessing::class, 'trafic_id', 'id')->withDefault();
     }
+
 }

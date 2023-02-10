@@ -7,10 +7,11 @@ use Illuminate\Http\Request;
 use Excel;
 use App\Exports\TraficExport;
 use App\Repositories\Trafic\TraficRepository;
+use Auth;
 
 class TraficExportController extends Controller
 {
-    public function __invoke(Request $request, TraficRepository $service)
+    public function export(Request $request, TraficRepository $service)
     {
         $data = $service->export($request->all());
         $export = TraficExport::setData($data);
