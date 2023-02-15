@@ -23,7 +23,7 @@ class TraficShowAlien
 
         //Проверка что трафик с заданным id есть
         if(!$trafic)
-            throw new \Exception('Нет такого трафика');
+            throw new \Exception('Нет такого трафика '.$request->trafic);
 
         //Проверка что есть права либо что ответсвенный за трафик тот же кто залогенен
         $boolRes = ($userPermissions->contains('slug', $permission)
