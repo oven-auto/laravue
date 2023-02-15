@@ -57,11 +57,7 @@ class TraficController extends Controller
             return (new TraficSaveResource($trafic))
                 ->additional(['message' => 'Трафик упущен']);
 
-        return response()->json([
-            'message' => 'Нельзя упускать трафик без ответственного',
-            'error' => '-',
-            'success' => 0
-        ], 406);
+        throw new \Exception('Нельзя упускать трафик без ответственного');
     }
 
     public function delete($trafic)

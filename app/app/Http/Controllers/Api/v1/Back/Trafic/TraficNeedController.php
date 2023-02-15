@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\TraficAppeal;
 use DB;
 use App\Models\TraficProduct;
+use App\Http\Resources\Trafic\TraficSexCollection;
 
 class TraficNeedController extends Controller
 {
@@ -14,19 +15,16 @@ class TraficNeedController extends Controller
     {
         $traficAppeal = TraficAppeal::with(['company.brands','structure','appeal'])->findOrFail($trafic_appeal_id);
 
-        $data = TraficProduct::select('number','name')
+        $appeals = TraficProduct::select('number','name')
             ->where('appeal_id', $traficAppeal->appeal_id)
             ->where('company_id', $traficAppeal->company->id)
             ->orderBy('number')
             ->get();
 
-        $arr = [];
-        foreach($data as $item)
-            $arr[] = ['id' => $item->number, 'name' => $item->name];
+        $data = $appeals->map(function($item) {
+            return (object) ['id' => $item->number, 'name' => $item->name];
+        });
 
-        return response()->json([
-            'data' => $arr,
-            'success' => 1,
-        ]);
+        return new TraficSexCollection($data);
     }
 }

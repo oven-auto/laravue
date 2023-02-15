@@ -6,11 +6,11 @@ use Illuminate\Http\UploadedFile;
 
 Class DownloadImage
 {
-    private $file;
-    private $prefix = 'ovenauto';
-    private $catalog;
-    private $pathName;
-    private $root = '/public';
+    protected $file;
+    protected $prefix = 'ovenauto';
+    protected $catalog;
+    protected $pathName;
+    protected $root = '/public';
 
     public function setFile(UploadedFile $file)
     {
@@ -51,7 +51,7 @@ Class DownloadImage
         throw new Exception('Не выбран фаил');
     }
 
-    private function load($timeSufix = true)
+    protected function load($timeSufix = true)
     {
         $sufix = '';
         if($timeSufix == true)

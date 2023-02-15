@@ -5,15 +5,18 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
 </head>
 <style type="text/css">
-    @font-face {
-        /* font-family: "DejaVu Sans";
+    /* @font-face {
+        font-family: "Cantarell";
         font-style: normal;
         font-weight: 400;
-        src: url("/fonts/dejavu-sans/DejaVuSans.ttf"); */
-    }
+        src: url("/fonts/Cantarell.otf");
+    } */
     body{
         /* background:#f2f2f2; */
         font-family: "DejaVu Sans" !important;
+    }
+    h1{
+
     }
     .client h2{
         font-weight: normal;
@@ -39,12 +42,13 @@
         border: 3px solid red;
         font-size: 30px;
         padding:5px;
+        line-height: 30px;
     }
 </style>
 <body>
     <div class="">
-        <div class="">
-            <h1>Обращение {{$trafic->id}}</h1>
+        <div style="font-size: 30px;margin:0px;padding:0px;">
+            Обращение {{$trafic->id}}
         </div>
     </div>
 
@@ -99,7 +103,7 @@
     <div class="pt-3">
         <div><b>Назначенное действие:</b></div>
         <div>
-            {{$trafic->task->name}} ●
+            Контроль ●
             {{$trafic->interval}} мин. ●
             {{$trafic->begin_at->format('d.m.Y (H:i)')}} - {{$trafic->end_at->format('d.m.Y (H:i)')}}
         </div>

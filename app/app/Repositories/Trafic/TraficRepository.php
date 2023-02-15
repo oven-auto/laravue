@@ -15,26 +15,23 @@ Class TraficRepository
     {
 
             return DB::transaction(function () use ($trafic, $data){
-                if(isset($data['author_id']))
-                    $trafic->author_id                      = $data['author_id'];
 
-                if(isset($data['firstname']))
-                    $trafic->firstname                      = $data['firstname'];
+                if(!$trafic->created_at)
+                    $trafic->created_at                 = isset($data['time']) ? date('Y-m-d H:i',\strtotime($data['time'])) : '';
 
-                if(isset($data['lastname']))
-                    $trafic->lastname                       = $data['lastname'];
+                $trafic->author_id                      = isset($data['author_id']) ? $data['author_id'] : '';
 
-                if(isset($data['fathername']))
-                    $trafic->fathername                     = $data['fathername'];
+                $trafic->firstname                      = isset($data['firstname']) ? $data['firstname'] : '';
 
-                if(isset($data['phone']))
-                    $trafic->phone                          = preg_replace("/[^,.0-9]/", '', $data['phone']);
+                $trafic->lastname                       = isset($data['lastname']) ? $data['lastname'] : '';
 
-                if(isset($data['email']))
-                    $trafic->email                          = $data['email'];
+                $trafic->fathername                     = isset($data['fathername']) ? $data['fathername'] : '';
 
-                if(isset($data['comment']))
-                    $trafic->comment                        = $data['comment'];
+                $trafic->phone                          = isset($data['phone']) ?preg_replace("/[^,.0-9]/", '', $data['phone']) : '';
+
+                $trafic->email                          = isset($data['email']) ? $data['email'] : '';
+
+                $trafic->comment                        = isset($data['comment']) ? $data['comment'] : '';
 
                 if(isset($data['trafic_sex_id']))
                     $trafic->trafic_sex_id                  = $data['trafic_sex_id'];
@@ -54,8 +51,8 @@ Class TraficRepository
                 if(isset($data['trafic_appeal_id']))
                     $trafic->trafic_appeal_id               = $data['trafic_appeal_id'];
 
-                if(isset($data['trafic_action_id']))
-                    $trafic->task_id                        = $data['trafic_action_id'];
+                // if(isset($data['trafic_action_id']))
+                //     $trafic->task_id                        = $data['trafic_action_id'];
 
                 if(isset($data['begin_at']))
                     $trafic->begin_at                       = date('Y-m-d H:i',\strtotime($data['begin_at']));
@@ -82,7 +79,7 @@ Class TraficRepository
 
     private function filter($data = [])
     {
-        $query = Trafic::select('trafics.*')->with('needs')->withTrashed();
+        $query = Trafic::select('trafics.*')->withTrashed();
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
         return $query
             ->filter($filter)
@@ -94,6 +91,11 @@ Class TraficRepository
     public function paginate($data = [])
     {
         $query = $this->filter($data);
+        $query->with([
+            'needs', 'sex', 'zone', 'chanel.myparent',
+            'salon', 'structure', 'appeal', 'manager',
+            'author', 'worksheet', 'processing', 'files'
+        ]);
         $result = $query->simplePaginate(10);
         return $result;
     }

@@ -60,10 +60,7 @@ class TraficSaveResource extends JsonResource
                         'name' => $item->name
                     ];
                 }),
-                'trafic_action_id' => [
-                    'id' => $this->task->id,
-                    'name' => $this->task->name,
-                ],
+
                 'trafic_interval' => $this->interval,
                 'begin_at' => $this->begin_at->format('d.m.Y H:i'),
                 'end_at' => $this->end_at->format('d.m.Y H:i'),
@@ -72,11 +69,28 @@ class TraficSaveResource extends JsonResource
                     'name' => $this->manager->cut_name
                 ],
                 'status' => $this->trafic_status_id,
-                'processing' => [
-                    'record' => asset('storage/'.$this->processing->record) . '?' . date('dmyhm'),
-                    'audit' => asset('storage/'.$this->processing->audit) . '?' . date('dmyhm'),
-                    'result' => $this->processing->result,
-                ],
+                'processing' => $this->processing->map(function($item){
+                    return [
+                        'id' => $item->id,
+                        'scenario' => $item->standart->name,
+                        'user' => $item->user->cut_name,
+                        //'record' => $item->getFile('record'),
+                        //'audit' => $item->getFile('audit'),
+                        'result' => $item->procent,
+                        'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
+                        'status' => $item->status_result,
+                    ];
+                }),
+                'files' => $this->files->map(function($item) {
+                    return [
+                        'id' => $this->id,
+                        'name' => $item->name,
+                        'file' => $item->getFile('filepath'),
+                        'user' => $item->user->cut_name,
+                        'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
+                    ];
+                }),
+                'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : '',
             ],
             'success' => $this->id ? 1 : 0,
         ];

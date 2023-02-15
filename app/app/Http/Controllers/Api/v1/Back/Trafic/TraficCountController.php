@@ -18,6 +18,7 @@ class TraficCountController extends Controller
     public function index(Request $request)
     {
         $count = $this->service->counter($request->all());
+
         return response()->json([
             'data' => $count,
             'success' => 1,

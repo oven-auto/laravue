@@ -51,3 +51,9 @@ Route::prefix('pdf')->group(function () {
 // Route::get( '/{any}', function() {
 //     return view('layouts.admin');
 // })->where('any', '.*');
+
+Route::get('test', function() {
+    return view('pdf.trafic', [
+        'trafic' => \App\Models\Trafic::find(362)
+    ]);
+});

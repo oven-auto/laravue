@@ -201,65 +201,94 @@ Route::group(['prefix' => 'front'], function() {
   });
 });
 
+
+Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function() {
+    Route::get('users', 'UserController@index');
+    Route::get('zones', 'ZoneController@index');
+    Route::get('chanels', 'ChanelController@index');
+    Route::get('structures', 'StructureController');
+});
+
+/**
+ * ЭКСПОРТЫ
+ */
 Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
     Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@export')
         ->middleware(['permission.trafic.list:trafic_export']);
 });
 
+/**
+ * ТРАФИК
+ */
 Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
+    //получить список зон трафика
     Route::get('zones', 'TraficZoneController@index');
+    //получить список каналов трафика
     Route::get('chanels', 'TraficChanelController@index');
+    //получить список полов объекта трафика
     Route::get('sexlist', 'TraficSexController@index');
+    //получить список компаний трафика
     Route::get('companies', 'TraficCompanyController@index');
+    //получить список структур выбраной компании трафика, brand_id это id компании
     Route::get('structures/{brand_id}', 'TraficStructureController@index');
+    //получить список обращений указаной структуры компании трафика, id - структура
     Route::get('appeals/{id}', 'TraficAppealController@index');
+    //получить список товаров и услуг, в зависимости от выбранного обращения трафика, id - обращения
     Route::get('needs/{id}', 'TraficNeedController@index');
-    Route::get('tasks', 'TraficTaskController@index');
+    //получить список задач трафика - !!!с 14-02-23 не используется!!!
+    /**/Route::get('tasks', 'TraficTaskController@index');
+    //получить список пользователей являющихся сотрудниками указанной структуры трафика и
+    //обрабатывающими указанное обращение, structure_id - структура, appeal_id - обращение
     Route::get('users/{structure_id}/{appeal_id}', 'TraficUserController@index');
+    //получить список статусов трафика
     Route::get('statuses', 'TraficStatusController@index');
+    //получить список типов аудита трафика
+    Route::get('standarts', 'StandartController');
 
     //кол-во всех трафикаов +
     Route::get('count', 'TraficCountController@index')
         ->middleware(['permission.trafic.list:trafic_list']);
 
-    //список всех трафиков +
+    //список всех трафиков
     Route::get('list','TraficController@index')
         ->middleware(['permission.trafic.list:trafic_list']);
 
-    //создание трафика +
+    //создание трафика
     Route::post('create', 'TraficController@store')
         ->middleware(['permission.trafic.create:trafic_add']);
 
-    //упустить трафик +
+    //упустить трафик
     Route::patch('close/{trafic}', 'TraficController@close')
         ->middleware([
             'permission.trafic.show:trafic_close',
             'permission.trafic.showalien:trafic_close_alien'
         ]);
 
-    //показать загруженные фаилы трафика +
-    Route::post('files/{trafic}', 'TraficFileController@load')
+    //загрузить загруженные аудиты трафика
+    Route::post('audit/{trafic}', 'TraficAuditController@load')
         ->middleware(['permission.trafic.show:trafic_files_load',]);
 
-    //загрузить фаилы в трафик +
-    Route::get('files/{trafic}', 'TraficFileController@show')
+    //показать фаилы аудит трафика, id = конкретного аудита
+    Route::get('audit/{trafic_processing}', 'TraficAuditController@show')
         ->middleware(['permission.trafic.show:trafic_files_show',]);
 
-    //пометить трафик как удаленный +
+    Route::post('files/{trafic}', 'TraficFileController');
+
+    //пометить трафик как удаленный
     Route::delete('{trafic}', 'TraficController@delete')
         ->middleware([
             'permission.trafic.show:trafic_softdelete',
             'permission.trafic.showalien:trafic_softdelete_alien'
         ]);
 
-    //просмотр трафика +
+    //просмотр трафика
     Route::get('{trafic}', 'TraficController@edit')
         ->middleware([
             'permission.trafic.show:trafic_show',
             'permission.trafic.showalien:trafic_show_alien'
         ]);
 
-    //изменение трафика +
+    //изменение трафика
     Route::patch('{trafic}', 'TraficController@update')
         ->middleware([
             'permission.trafic.show:trafic_update',
@@ -275,9 +304,4 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
         ]);
 });
 
-Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function() {
-    Route::get('users', 'UserController@index');
-    Route::get('zones', 'ZoneController@index');
-    Route::get('chanels', 'ChanelController@index');
-    Route::get('structures', 'StructureController');
-});
+

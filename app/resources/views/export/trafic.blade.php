@@ -16,7 +16,6 @@
         <th align="center">Салон</th>
         <th align="center">Подразделение</th>
         <th align="center">Цель <br> обращения</th>
-        <th align="center">Назначенное <br>действие</th>
         <th align="center">Клиент</th>
         <th align="center">Номер <br> телефона</th>
         <th align="center">Комментарий</th>
@@ -36,7 +35,6 @@
             <td> {{$item->salon->name}} </td>
             <td> {{$item->structure->name}} </td>
             <td> {{$item->appeal->name}} </td>
-            <td> {{$item->task->name}} </td>
             <td> {{$item->lastname.' '.$item->firstname.' '.$item->fathername}} </td>
             <td> {{$item->formated_phone}} </td>
             <td> {{$item->comment}}</td>

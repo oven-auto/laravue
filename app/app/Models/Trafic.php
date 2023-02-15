@@ -81,8 +81,8 @@ class Trafic extends Model
         return $query->with([
             'sex','zone','chanel',
             'salon','structure','appeal',
-            'task','manager','author',
-            'needs', 'worksheet.client','processing'
+            'manager','author',
+            'needs', 'worksheet.client','processing', 'files'
         ]);
     }
 
@@ -147,10 +147,10 @@ class Trafic extends Model
         );
     }
 
-    public function task()
-    {
-        return $this->hasOne(\App\Models\Task::class, 'id','task_id')->withDefault();
-    }
+    // public function task()
+    // {
+    //     return $this->hasOne(\App\Models\Task::class, 'id','task_id')->withDefault();
+    // }
 
     public function manager()
     {
@@ -169,7 +169,12 @@ class Trafic extends Model
 
     public function processing()
     {
-        return $this->hasOne(\App\Models\TraficProcessing::class, 'trafic_id', 'id')->withDefault();
+        return $this->hasMany(\App\Models\TraficProcessing::class, 'trafic_id', 'id')->with('standart');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(\App\Models\TraficFile::class, 'trafic_id', 'id');
     }
 
 }

@@ -74,4 +74,22 @@ class User extends Authenticatable
     {
        return $this->belongsToMany(\App\Models\Permission::class, 'user_permissions', 'user_id', 'permission_id');
     }
+
+    //настройка вывода столбиков, с учетом количества назначеного трафика за день, за месяц на менеджере
+    public function scopeCounterSelect($query)
+    {
+        $query->select(
+            'users.id','users.name','users.lastname',
+            \DB::raw('sum(case when date(trafics.created_at) = curdate() then 1 else 0 end) as d_count'),
+            \DB::raw('sum(
+                    case when
+                        year(trafics.created_at) = year(now()) and
+                        month(trafics.created_at) = month(now())
+                    then 1
+                    else 0
+                    end
+                ) as m_count
+            ')
+        );
+    }
 }

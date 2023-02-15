@@ -11,4 +11,10 @@ class CompanyStructure extends Model
 
     public $timestamps = false;
 
+    protected $with = ['structure'];
+
+    public function structure()
+    {
+        return $this->hasOne(\App\Models\Structure::class,'id','structure_id')->withDefault();
+    }
 }

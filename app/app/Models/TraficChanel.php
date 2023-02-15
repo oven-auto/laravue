@@ -14,4 +14,9 @@ class TraficChanel extends Model
     public function childrens(){
         return $this->hasMany(\App\Models\TraficChanel::class, 'parent', 'id');
     }
+
+    public function myparent()
+    {
+        return $this->hasOne(\App\Models\TraficChanel::class, 'id', 'parent')->withDefault();
+    }
 }

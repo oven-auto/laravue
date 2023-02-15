@@ -11,22 +11,14 @@ class TraficPDFController extends Controller
 {
     public function __invoke(Trafic $trafic)
     {
-        //header('Content-Type: application/pdf');
-        //header("Content-Disposition", "inline; filename=trafic.pdf");
-        //header('Content-Disposition: inline; filename="trafic.pdf"');
         $pdf = PDF::loadView('pdf.trafic', [
             'trafic' =>$trafic
         ]);
-        // return response()->json([
-        //     'data' => $pdf
-        // ]);
-        // header('Content-type: application/pdf');
-        // header('Content-Description: File Transfer');
-        // header('Content-Disposition: attachment; filename="demo.pdf"');
-        // header('Content-Transfer-Encoding: binary');
 
+        //Скачивание
         //return $pdf->download('trafic.pdf');
 
+        //Открыть в браузере
         return $pdf->stream('trafic.pdf', ['Attachment' => 0]);
     }
 }
