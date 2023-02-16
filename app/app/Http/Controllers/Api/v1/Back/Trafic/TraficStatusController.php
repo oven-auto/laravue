@@ -17,6 +17,6 @@ class TraficStatusController extends Controller
                 'id' => $item->id,
             ];
         });
-        return new TraficSexCollection($data);
+        return new TraficSexCollection($result);
     }
 }
