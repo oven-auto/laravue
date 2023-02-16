@@ -53,7 +53,20 @@ Route::prefix('pdf')->group(function () {
 // })->where('any', '.*');
 
 Route::get('test', function() {
-    return view('pdf.trafic', [
-        'trafic' => \App\Models\Trafic::find(362)
+    $value = [1,3,7];
+    $chanels = \App\Models\TraficChanel::select('*')
+        ->leftJoin('trafic_chanels as jtc', function($join){
+            $join->on('jtc.parent','=','trafic_chanels.id');
+            $join->orWhere(function($query) {
+                $query->where('trafic_chanels.parent', \DB::raw('0'));
+                $query->where('trafic_chanels.id', \DB::raw('jtc.id'));
+            });
+        })
+        ->whereIn('trafic_chanels.id', $value)
+        ->groupBy('jtc.id')
+        ->groupBy('trafic_chanels.id')
+        ->pluck('id');
+    return response()->json([
+        'data' => $chanels
     ]);
 });
