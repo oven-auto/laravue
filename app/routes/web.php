@@ -53,8 +53,8 @@ Route::prefix('pdf')->group(function () {
 // })->where('any', '.*');
 
 Route::get('test', function() {
-    $value = [1,3,7];
-    $chanels = \App\Models\TraficChanel::select('*')
+    $value = [29];
+    $chanels = \App\Models\TraficChanel::select('trafic_chanels.*')
         ->leftJoin('trafic_chanels as jtc', function($join){
             $join->on('jtc.parent','=','trafic_chanels.id');
             $join->orWhere(function($query) {
@@ -63,9 +63,8 @@ Route::get('test', function() {
             });
         })
         ->whereIn('trafic_chanels.id', $value)
-        ->groupBy('jtc.id')
         ->groupBy('trafic_chanels.id')
-        ->pluck('id');
+        ->toSql();
     return response()->json([
         'data' => $chanels
     ]);
