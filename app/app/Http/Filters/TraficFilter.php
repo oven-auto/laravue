@@ -188,16 +188,9 @@ class TraficFilter extends AbstractFilter
     //Заданные каналы трафика [chanel_id, ... , chanel_id]
     public function chanelId(Builder $builder, $value)
     {
-        $chanels = \App\Models\TraficChanel::select('trafic_chanels.*')
-            ->leftJoin('trafic_chanels as jtc', function($join){
-                $join->on('jtc.parent','=','trafic_chanels.id');
-                $join->orWhere(function($query) {
-                    $query->where('trafic_chanels.parent', \DB::raw('0'));
-                    $query->where('trafic_chanels.id', \DB::raw('jtc.id'));
-                });
-            })
+        $chanels = \App\Models\TraficChanel::select('trafic_chanels.id')
             ->whereIn('trafic_chanels.id', $value)
-            ->groupBy('trafic_chanels.id')
+            ->orWhereIn('trafic_chanels.parent', $value)
             ->pluck('id');
         $builder->whereIn('trafics.trafic_chanel_id', $chanels);
     }

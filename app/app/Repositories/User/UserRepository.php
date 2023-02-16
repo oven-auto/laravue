@@ -13,8 +13,9 @@ Class UserRepository
             ->leftJoin('appeal_users', 'appeal_users.user_id', '=', 'users.id')
             ->leftJoin('trafic_appeals', 'trafic_appeals.appeal_id', '=',  'appeal_users.appeal_id')
             ->leftJoin('trafics', 'trafics.manager_id','users.id')
+            ->leftJoin('user_company_structures', 'user_company_structures.user_id', 'users.id')
             ->where('trafic_appeals.id', $appeal_id)
-            ->where('trafic_appeals.company_structure_id', $structure_id)
+            ->where('user_company_structures.company_structure_id', $structure_id)
             ->groupBy('users.id')
             ->get();
 
