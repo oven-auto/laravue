@@ -12,13 +12,13 @@ class TraficSexCollection extends ResourceCollection
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
-    public function toArray($request)
+    public function toArray($request, $str='')
     {
         return [
             'data' => $this->collection,
             'success' => $this->collection->count() ? 1 : 0,
-            'message' => 'Найдено '.$this->collection->count().' элементов',
-            'count' => $this->collection->count()
+            'message' =>'Найдено '.$this->collection->count().' элементов',
+            'count' => $this->collection->count(),
         ];
     }
 }

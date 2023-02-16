@@ -22,7 +22,7 @@ class TraficSaveResource extends JsonResource
                 'time' => $this->created_at->format('d.m.Y H:i'),
                 'author_id' => [
                     'id' => $this->author->id,
-                    'name' => $this->author->cut_name,
+                    'name' => $this->author->lastname.' '.$this->author->name
                 ],
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
@@ -66,7 +66,7 @@ class TraficSaveResource extends JsonResource
                 'end_at' => $this->end_at->format('d.m.Y H:i'),
                 'manager_id' => [
                     'id' => $this->manager->id,
-                    'name' => $this->manager->cut_name
+                    'name' => $this->manager->lastname.' '.$this->manager->name
                 ],
                 'status' => $this->trafic_status_id,
                 'processing' => $this->processing->map(function($item){

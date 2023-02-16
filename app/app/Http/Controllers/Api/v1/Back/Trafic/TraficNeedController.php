@@ -25,6 +25,8 @@ class TraficNeedController extends Controller
             return (object) ['id' => $item->number, 'name' => $item->name];
         });
 
-        return new TraficSexCollection($data);
+        return (new TraficSexCollection($data))->additional([
+            'error' => 'Товаров или услуг не найдено'
+        ]);
     }
 }
