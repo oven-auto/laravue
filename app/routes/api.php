@@ -47,9 +47,8 @@ Route::get('exit', function() {
 });
 
 //CRUD
-Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\Back')->group(function () {
+Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\CMS')->group(function () {
     Route::resource('brands',  BrandController::class);
-    //Route::resource('brands',  BrandController::class);
     Route::resource('devicetypes', DeviceTypeController::class);
     Route::resource('devicefilters', DeviceFilterController::class);
     Route::resource('devices', DeviceController::class);

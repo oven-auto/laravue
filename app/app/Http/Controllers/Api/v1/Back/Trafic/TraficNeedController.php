@@ -15,10 +15,13 @@ class TraficNeedController extends Controller
     {
         $traficAppeal = TraficAppeal::with(['company.brands','structure','appeal'])->findOrFail($trafic_appeal_id);
 
-        $appeals = TraficProduct::select('number','name')
-            ->where('appeal_id', $traficAppeal->appeal_id)
-            ->where('company_id', $traficAppeal->company->id)
-            ->orderBy('number')
+        $query = TraficProduct::select('number','name')
+            ->where('appeal_id', $traficAppeal->appeal_id);
+
+        if($traficAppeal->appeal_id == 1)
+            $query->where('company_id', $traficAppeal->company->id);
+
+        $appeals = $query->orderBy('number')
             ->get();
 
         $data = $appeals->map(function($item) {
