@@ -295,6 +295,13 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
         ]);
 });
 
+/**
+ * КЛИЕНТЫ
+ */
+Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
+    Route::get('types', 'ClientTypeController');
+});
+
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
     Route::post('create', 'WorksheetController@store')
         ->middleware([

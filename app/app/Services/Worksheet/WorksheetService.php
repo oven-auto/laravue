@@ -6,7 +6,7 @@ use App\Models\Worksheet;
 use App\Models\Client;
 use App\Models\Trafic;
 use App\Models\ClientPhone;
-use App\Services\Client\ClientService;
+use App\Repositories\Client\ClientRepository;
 
 class WorksheetService
 {
@@ -14,7 +14,7 @@ class WorksheetService
     {
         $trafic = Trafic::with('status')->find($trafic_id);
 
-        $clientService = new ClientService();
+        $clientService = new ClientRepository();
         $client = $clientService->findOrCreate($trafic);
 
         $worksheet = \App\Models\Worksheet::create([

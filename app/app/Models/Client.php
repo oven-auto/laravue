@@ -23,6 +23,25 @@ class Client extends Model
         return $this->hasMany(\App\Models\ClientEmail::class, 'client_id', 'id');
     }
 
+    public function type()
+    {
+        return $this->hasOne(\App\Models\ClientType::class,'id','client_type_id')->withDefault();
+    }
+
+    public function sex()
+    {
+        return $this->hasOne(\App\Models\TraficSex::class,'id','client_sex_id')->withDefault();
+    }
+
+    public function zone()
+    {
+        return $this->hasOne(\App\Models\TraficZone::class,'id','client_zone_id')->withDefault();
+    }
+
+
+
+
+
     public static function findByPhone($phone_number)
     {
         $result = self::select('clients.*')
