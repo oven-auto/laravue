@@ -9,6 +9,10 @@ use App\Http\Resources\Trafic\TraficSexCollection;
 
 class StandartController extends Controller
 {
+    /**
+     * Метод вернет справочник-список всех типов(сценариев) стандартов аудита
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function __invoke()
     {
         $standarts = AuditStandart::select('id','name','target')->where('trafic',1)->get();

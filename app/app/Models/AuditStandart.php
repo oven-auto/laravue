@@ -12,4 +12,10 @@ class AuditStandart extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public const STATUSES = [
+        ['id'=>1, 'name' => 'Пройден'],
+        ['id'=>2, 'name' => 'Не пройден'],
+        ['id'=>3, 'name' => 'Отсутсвует'],
+    ];
 }

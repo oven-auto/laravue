@@ -13,6 +13,12 @@ class Client extends Model
 
     protected $guarded = [];
 
+    public static function getColumnsName()
+    {
+        $client = new Client();
+        return $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+    }
+
     public function phones()
     {
         return $this->hasMany(\App\Models\ClientPhone::class, 'client_id', 'id');
@@ -38,7 +44,10 @@ class Client extends Model
         return $this->hasOne(\App\Models\TraficZone::class,'id','client_zone_id')->withDefault();
     }
 
-
+    public function passport()
+    {
+        return $this->hasOne(\App\Models\ClientPassport::class, 'client_id', 'id')->withDefault();
+    }
 
 
 

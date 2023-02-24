@@ -52,20 +52,4 @@ Route::prefix('pdf')->group(function () {
 //     return view('layouts.admin');
 // })->where('any', '.*');
 
-Route::get('test', function() {
-    $value = [29];
-    $chanels = \App\Models\TraficChanel::select('trafic_chanels.*')
-        ->leftJoin('trafic_chanels as jtc', function($join){
-            $join->on('jtc.parent','=','trafic_chanels.id');
-            $join->orWhere(function($query) {
-                $query->where('trafic_chanels.parent', \DB::raw('0'));
-                $query->where('trafic_chanels.id', \DB::raw('jtc.id'));
-            });
-        })
-        ->whereIn('trafic_chanels.id', $value)
-        ->groupBy('trafic_chanels.id')
-        ->toSql();
-    return response()->json([
-        'data' => $chanels
-    ]);
-});
+Route::get('test', '\App\Http\Controllers\HomeController@test');

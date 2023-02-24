@@ -7,6 +7,12 @@ use \App\Repositories\Trafic\AppealRepository;
 
 class TraficAppealController extends Controller
 {
+    /**
+     * Метод вернет справочник-список всех вариатов обращений, которые допустимы в структуре компании c id = $id
+     * @param int $id id структуры компании
+     * @param AppealRepository service Репазиторий обращений
+     * @return \Illuminate\Http\JsonResponse
+     */
     public function index($id, AppealRepository $service)
     {
         $data = $service->getAppealByCompanyStructure($id);

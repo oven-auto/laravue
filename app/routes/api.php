@@ -243,6 +243,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('statuses', 'TraficStatusController@index');
     //получить список типов аудита трафика
     Route::get('standarts', 'StandartController');
+    //Получить список статусов аудита пройден\не пройден\отсутсвует
+    Route::get('auditresults', 'AuditStatusListController');
 
     //кол-во всех трафикаов +
     Route::get('count', 'TraficCountController@index')
@@ -265,6 +267,10 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     //загрузить загруженные аудиты трафика
     Route::post('audit/{trafic}', 'TraficAuditController@load')
+        ->middleware(['permission.trafic.show:trafic_files_load',]);
+
+    //Изменить загруженные аудиты трафика
+    Route::patch('audit/{trafic_processing}', 'TraficAuditController@update')
         ->middleware(['permission.trafic.show:trafic_files_load',]);
 
     //показать фаилы аудит трафика, id = конкретного аудита
@@ -300,6 +306,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
     Route::get('types', 'ClientTypeController');
+    Route::post('create', 'ClientController@store');
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {

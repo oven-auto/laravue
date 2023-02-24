@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api\v1\Back;
+namespace App\Http\Controllers\Api\v1\CMS;
 
 use App\Repositories\Device\DeviceRepository;
 use App\Http\Controllers\Controller;

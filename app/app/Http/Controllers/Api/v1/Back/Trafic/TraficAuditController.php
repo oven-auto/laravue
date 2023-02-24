@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Trafic;
 use App\Http\Requests\Trafic\TraficProcessing as TPRequest;
+use App\Http\Requests\Trafic\TraficProcessingUpdate;
 use App\Models\TraficProcessing;
 
 class TraficAuditController extends Controller
@@ -21,6 +22,8 @@ class TraficAuditController extends Controller
     {
         $this->repository->saveTraficAudit($trafic, $request->input(),$request->allFiles());
 
+        $trafic = $trafic->fresh();
+
         return response()->json([
             'data' => $trafic->processing->map(function($item){
                 return [
@@ -31,10 +34,35 @@ class TraficAuditController extends Controller
                     'result' => $item->procent,
                     'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
                     'status' => $item->status_result,
+                    'id' => $item->id,
                 ];
             }),
             'success' => 1,
             'message' => 'Аудит сохранен',
+        ]);
+    }
+
+    public function update(TraficProcessing $trafic_processing, TraficProcessingUpdate $request)
+    {
+        $this->repository->updateTraficAudit($trafic_processing, $request->input(),$request->allFiles());
+
+        $trafic = $trafic_processing->trafic;
+
+        return response()->json([
+            'data' => $trafic->processing->map(function($item){
+                return [
+                    'scenario' => $item->standart->name,
+                    'user' => $item->user->cut_name,
+                    'record' => $item->getFile('record'),
+                    'audit' => $item->getFile('audit'),
+                    'result' => $item->procent,
+                    'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
+                    'status' => $item->status_result,
+                    'id' => $item->id,
+                ];
+            }),
+            'success' => 1,
+            'message' => 'Аудит изменен',
         ]);
     }
 

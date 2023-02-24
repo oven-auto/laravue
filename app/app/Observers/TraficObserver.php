@@ -17,7 +17,8 @@ class TraficObserver
     {
         $currentMn = $trafic->manager_id;
         $oldMn = $trafic->getOriginal('manager_id');
-
+        if(!$currentMn)
+            $trafic->trafic_status_id = 1;
         if($currentMn != $oldMn && $trafic->trafic_status_id != 4)
             $trafic->trafic_status_id = 2;
     }

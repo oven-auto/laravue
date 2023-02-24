@@ -5,6 +5,7 @@ namespace App\Http\Filters;
 use DB;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Collection;
 
 class TraficFilter extends AbstractFilter
 {
@@ -27,6 +28,9 @@ class TraficFilter extends AbstractFilter
     public const STATUS_ID = 'status_id';
     public const NEED_ID = 'need_id';
     public const SUPER_DIAMOND_SEARCH = 'super_diamond_search';
+    public const AUDIT_AUTHOR_ID = 'audit_author_id';
+    public const AUDIT_SCENARIO_ID = 'scenario';
+    public const AUDIT_STATUS_ID = 'status_audit_id';
 
     public $countElements = 0;
 
@@ -52,7 +56,44 @@ class TraficFilter extends AbstractFilter
             self::STATUS_ID           => [$this, 'statusId'],
             self::NEED_ID             => [$this, 'needId'],
             self::SUPER_DIAMOND_SEARCH=> [$this, 'superDiamondSearch'],
+            self::AUDIT_AUTHOR_ID     => [$this, 'auditAuthorId'],
+            self::AUDIT_SCENARIO_ID   => [$this, 'auditScenarioId'],
+            self::AUDIT_STATUS_ID     => [$this, 'auditStatusId'],
         ];
+    }
+
+    private function checkJoin(Builder $builder, $table)
+    {
+        $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
+        return $res;
+    }
+
+    public function auditAuthorId(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'trafic_processings'))
+            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
+
+        $builder->where('trafic_processings.user_id', $value);
+    }
+
+    public function auditScenarioId(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'trafic_processings'))
+            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
+
+        $builder->where('trafic_processings.audit_standart_id', $value);
+    }
+
+    public function auditStatusId(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'trafic_processings'))
+            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
+        if($value == 1)
+            $builder->where('trafic_processings.status',1);
+        if($value == 2)
+            $builder->where('trafic_processings.status',0);
+        if($value == 3)
+            $builder->where('trafic_processings.status',NULL);
     }
 
     private function setCountElements($data)
