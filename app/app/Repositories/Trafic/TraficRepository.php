@@ -27,7 +27,7 @@ Class TraficRepository
             'firstname'             => $data['firstname'] ?? $trafic->firstname,
             'lastname'              => $data['lastname'] ?? $trafic->lastname,
             'fathername'            => $data['fathername'] ?? $trafic->fathername,
-            'phone'                 => preg_replace("/[^,.0-9]/", '', $data['phone']) ?? $trafic->phone,
+            'phone'                 => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : $trafic->phone,
             'email'                 => $data['email'] ?? $trafic->email,
             'comment'               => $data['comment'] ?? $trafic->comment,
             'trafic_sex_id'         => $data['trafic_sex_id'] ?? $trafic->trafic_sex_id,

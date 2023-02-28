@@ -331,6 +331,8 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
         Route::post('{client}', 'ClientCarController@store');
         //список машин конкретного клиета
         Route::get('/list/{client}', 'ClientCarController@index');
+        //Получить конкретную машину
+        Route::get('{car}', 'ClientCarController@show');
         //изменить машину
         Route::patch('{car}', 'ClientCarController@update');
         //удалить машину

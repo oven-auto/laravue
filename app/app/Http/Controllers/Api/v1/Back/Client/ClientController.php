@@ -10,11 +10,15 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Http\Requests\Client\ClientStoreRequest;
 
+/**
+ * Контролер упраления клиентами
+ * @var ClientRepository repo ClientRepository
+ */
 class ClientController extends Controller
 {
     /**
      * Свойство ссылка на репозиторий
-     * @var ClientRepository repo
+     * @var ClientRepository repo ClientRepository
      */
     private $repo;
 

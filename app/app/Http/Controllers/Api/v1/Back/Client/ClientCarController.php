@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use \App\Models\Client;
 use App\Http\Requests\Client\ClientCarRequest;
 use App\Http\Resources\Client\Car\ClientCarCollection;
-use App\Http\Resources\Client\Car\ClientCarEditResource;
 use \App\Models\ClientCar;
 
 class ClientCarController extends Controller
@@ -74,6 +73,19 @@ class ClientCarController extends Controller
         $amountClientCar = $client->cars->where('actual',1)->count();
         return response()->json([
             'data' => $amountClientCar,
+            'success' => 1
+        ]);
+    }
+
+    /**
+     * Метод получения конкретной машины клиента
+     * @param ClientCar $car ClientCar
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show(ClientCar $car) : \Illuminate\Http\JsonResponse
+    {
+        return response()->json([
+            'data' => $car,
             'success' => 1
         ]);
     }

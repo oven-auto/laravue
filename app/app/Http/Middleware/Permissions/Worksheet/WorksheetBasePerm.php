@@ -26,7 +26,7 @@ class WorksheetBasePerm
             $message = 'Для создания рабочего листа необходим статус "НАЗНАЧЕНО"';
 
         if($message)
-            throw new \Exception();
+            throw new \Exception($message);
         return $next($request);
     }
 }

@@ -89,16 +89,19 @@ Class ClientRepository
      */
     public function findOrCreate(Trafic $trafic) :Client
     {
-        $client = Client::with(['phones' => function($query) use ($trafic){
-            $query->where('phone', $trafic->phone);
-        }])->first();
+        $client = Client::with('phones')
+            ->leftJoin('client_phones','client_phones.client_id','clients.id')
+            ->where('client_phones.phone', $trafic->phone)
+            ->first();
 
-        if(!$client->id)
+        if(!$client)
             $client = Client::create([
-                'lastname'      => $client->lastname ?? $trafic->lastname,
-                'firstname'     => $client->firstname ?? $trafic->firstname,
-                'fathername'    => $client->fathername ?? $trafic->fathername,
-                'client_type_id' => 1
+                'lastname'      => $trafic->lastname,
+                'firstname'     => $trafic->firstname,
+                'fathername'    => $trafic->fathername,
+                'client_type_id' => 1,
+                'trafic_sex_id'  => $trafic->trafic_sex_id,
+                'trafic_zone_id'  => $trafic->trafic_zone_id,
             ]);
 
         if($client->wasRecentlyCreated) {

@@ -17,7 +17,7 @@ class WorksheetService
         $clientService = new ClientRepository();
         $client = $clientService->findOrCreate($trafic);
 
-        $worksheet = \App\Models\Worksheet::create([
+        $worksheet = Worksheet::create([
             'client_id'         => $client->id,
             'trafic_id'         => $trafic->id,
             'company_id'        => $trafic->salon->id,
