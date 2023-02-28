@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCarMarksTable extends Migration
+class AddSodtDelete extends Migration
 {
     /**
      * Run the migrations.
@@ -13,9 +13,8 @@ class CreateCarMarksTable extends Migration
      */
     public function up()
     {
-        Schema::create('car_marks', function (Blueprint $table) {
-            $table->id();
-            $table->string('mark');
+        Schema::table('clients', function (Blueprint $table) {
+            $table->softDeletes();
         });
     }
 
@@ -26,6 +25,8 @@ class CreateCarMarksTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('car_marks');
+        Schema::table('clients', function (Blueprint $table) {
+            //
+        });
     }
 }

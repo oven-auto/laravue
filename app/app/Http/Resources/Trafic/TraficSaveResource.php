@@ -62,7 +62,7 @@ class TraficSaveResource extends JsonResource
                 }),
 
                 'trafic_interval' => $this->interval,
-                'begin_at' => $this->begin_at->format('d.m.Y H:i'),
+                'begin_at' => $this->begin_at ? $this->begin_at->format('d.m.Y H:i') : '',
                 'end_at' => $this->end_at->format('d.m.Y H:i'),
                 'manager_id' => [
                     'id' => $this->manager->id,

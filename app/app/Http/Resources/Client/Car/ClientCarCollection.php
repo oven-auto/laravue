@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Client;
+namespace App\Http\Resources\Client\Car;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class ClientListCollection extends ResourceCollection
+class ClientCarCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,7 +15,7 @@ class ClientListCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'clients' => $this->collection,
+            'data' => $this->collection,
             'success' => 1,
         ];
     }

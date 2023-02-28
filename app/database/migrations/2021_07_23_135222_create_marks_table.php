@@ -22,7 +22,7 @@ class CreateMarksTable extends Migration
             $table->boolean('status')->default(0);
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
             $table->foreignId('body_work_id')->constrained()->onDelete('cascade');
-            $table->foreignId('country_factory_id')->constrained()->onDelete('cascade');
+            $table->foreignId('country_factory_id')->nullable()->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

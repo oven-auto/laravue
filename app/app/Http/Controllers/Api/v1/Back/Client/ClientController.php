@@ -30,20 +30,20 @@ class ClientController extends Controller
     /**
      * Список всех клиентов, через пагинацию
      * @param Request $request  Request
-     * @return \Illuminate\Http\Resources\Json\ResourceCollection
+     * @return ClientListCollection
      */
-    public function index(Request $request)
+    public function index(Request $request) : ClientListCollection
     {
-        $clients = $this->repo->filter($request->input(), 50);
+        $clients = $this->repo->paginate($request->input());
         return new ClientListCollection($clients);
     }
 
     /**
      * Получить данные клиента, по указанному id, id превратится в модель Client в middleware
      * @param Client $client  Client
-     * @return \Illuminate\Http\Resources\Json\JsonResource
+     * @return ClientEditResource
      */
-    public function edit(Client $client)
+    public function edit(Client $client) : ClientEditResource
     {
         return new ClientEditResource($client);
     }
@@ -52,23 +52,37 @@ class ClientController extends Controller
      * Создать клиента из полученного request
      * @param Client $client  Client
      * @param Request $request  Request
-     * @return \Illuminate\Http\Resources\Json\JsonResource
+     * @return ClientEditResource
      */
-    public function store(Client $client, ClientStoreRequest $request)
+    public function store(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
-        return new ClientEditResource($client);
+        return (new ClientEditResource($client))
+            ->additional(['message' => 'Клиент создан']);
     }
 
     /**
      * Изменить клиента, по полученому id, данные взять из полученного request
      * @param Client $client  Client
-     * @param Request $request  Request
-     * @return \Illuminate\Http\Resources\Json\JsonResource
+     * @param ClientStoreRequest $request  ClientStoreRequest
+     * @return ClientEditResource
      */
-    public function update(Client $client, Request $request)
+    public function update(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
-        return new ClientEditResource($client);
+        return (new ClientEditResource($client))
+            ->additional(['message' => 'Клиент изменен']);
+    }
+
+    /**
+     * Удаление клиента
+     * @param Client $client Client
+     * @return ClientEditResource
+     */
+    public function destroy(Client $client) : ClientEditResource
+    {
+        $this->repo->delete($client);
+        return (new ClientEditResource($client))
+            ->additional(['message' => 'Клиент удален']);
     }
 }

@@ -13,6 +13,21 @@ class ClientPhone extends Model
 
     public $timestamps = false;
 
+    public function getPhoneMaskAttribute()
+    {
+        $phone = '';
+        $from = $this->phone;
+        if($this->phone)
+            $phone = sprintf("+%s (%s) %s-%s-%s",
+                substr($from, 0, 1),
+                substr($from, 1, 3),
+                substr($from, 3, 3),
+                substr($from, 7, 2),
+                substr($from, 9)
+            );
+        return $phone;
+    }
+
     public function client()
     {
         return $this->hasOne(\App\Models\Client::class, 'id', 'client_id')->withDefault();

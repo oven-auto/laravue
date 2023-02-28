@@ -12,4 +12,9 @@ class ClientEmail extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    public function client()
+    {
+        return $this->hasOne(\App\Models\Client::class, 'id', 'client_id')->withDefault();
+    }
 }

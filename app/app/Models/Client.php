@@ -6,17 +6,33 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Createable;
 use App\Models\Traits\Filterable;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Client extends Model
 {
-    use HasFactory, Createable, Filterable;
+    use HasFactory, Createable, Filterable, SoftDeletes;
 
     protected $guarded = [];
+
+    public function getFullNameAttribute()
+    {
+        return $this->lastname.' '.$this->firstname.' '.$this->fathername;
+    }
 
     public static function getColumnsName()
     {
         $client = new Client();
         return $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+    }
+
+    public static function findByPhone($phone_number)
+    {
+        $result = self::select('clients.*')
+            ->join('client_phones', 'client_phones.client_id', '=', 'clients.id')
+            ->where('client_phones.phone', $phone_number)
+            ->first();
+
+        return $result ?? new Client();
     }
 
     public function phones()
@@ -36,12 +52,12 @@ class Client extends Model
 
     public function sex()
     {
-        return $this->hasOne(\App\Models\TraficSex::class,'id','client_sex_id')->withDefault();
+        return $this->hasOne(\App\Models\TraficSex::class,'id','trafic_sex_id')->withDefault();
     }
 
     public function zone()
     {
-        return $this->hasOne(\App\Models\TraficZone::class,'id','client_zone_id')->withDefault();
+        return $this->hasOne(\App\Models\TraficZone::class,'id','trafic_zone_id')->withDefault();
     }
 
     public function passport()
@@ -49,15 +65,10 @@ class Client extends Model
         return $this->hasOne(\App\Models\ClientPassport::class, 'client_id', 'id')->withDefault();
     }
 
-
-
-    public static function findByPhone($phone_number)
+    public function cars()
     {
-        $result = self::select('clients.*')
-            ->join('client_phones', 'client_phones.client_id', '=', 'clients.id')
-            ->where('client_phones.phone', $phone_number)
-            ->first();
-
-        return $result ?? new Client();
+        return $this->hasMany(\App\Models\ClientCar::class, 'client_id', 'id')->where('actual', 1);
     }
+
+
 }

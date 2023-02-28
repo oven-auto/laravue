@@ -305,8 +305,38 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
  * КЛИЕНТЫ
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
+    //список типов клиентов физ/юр
     Route::get('types', 'ClientTypeController');
+    //cписок клиентов
+    Route::get('list', 'ClientController@index');
+    //создать клиента
     Route::post('create', 'ClientController@store');
+    //получить конкретного клиента
+    Route::get('{client}', 'ClientController@edit');
+    //изменить конкретного клиента
+    Route::patch('{client}', 'ClientController@update');
+    //удалить клиента
+    Route::delete('{client}', 'ClientController@destroy');
+
+    Route::prefix('car')->group(function(){
+        //список брендов
+        Route::get('brands', 'BrandCarController');
+        //количество машин клиента
+        Route::get('amount/{client}', 'ClientCarController@amount');
+        //список марок по бренду
+        Route::get('marks/{brand}', 'MarkCarController');
+        //список кузовов
+        Route::get('bodies', 'BodyCarController');
+        //добавить машину в клиента
+        Route::post('{client}', 'ClientCarController@store');
+        //список машин конкретного клиета
+        Route::get('/list/{client}', 'ClientCarController@index');
+        //изменить машину
+        Route::patch('{car}', 'ClientCarController@update');
+        //удалить машину
+        Route::delete('{car}', 'ClientCarController@destroy');
+    });
+
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {

@@ -16,15 +16,40 @@ Class ClientRepository
     /**
      * Метод задает запрос на получение списка клиентов удовлетворяющих заданным свойствам фильтра
      * @param array $data данные для фильтра
-     * @param integer $paginate количество клиентов на итерацию пагинации
-     * @return \Illuminate\Support\Collection $clients Illuminate\Support\Collection
+     * @return \Illuminate\Database\Eloquent\Builder $query \Illuminate\Database\Eloquent\Builder
      */
-    public function filter($data = [], $paginate = 50) : \Illuminate\Support\Collection
+    private function filter($data = []) :  \Illuminate\Database\Eloquent\Builder
     {
-        $query = Client::select('clients.*');
+        $query = Client::select('clients.*')->withTrashed();
         $filter = app()->make(ClientFilter::class, ['queryParams' => array_filter($data)]);
-        $clients = $query->filter($filter)->paginate($paginate);
-        return $clients;
+        return $query
+            ->filter($filter);
+    }
+
+    /**
+     * Метод возращает постраничную коллекию клиентов, прошедших фильтрацию
+     * @param array $data данные для фильтра
+     * @param integer $paginate не обязательное поле, по умолчанию 10
+     * @return \Illuminate\Contracts\Pagination\Paginator $result \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
+    {
+        $query = $this->filter($data);
+        $query->with([]);
+        $result = $query->simplePaginate($paginate);
+        return $result;
+    }
+
+    /**
+     * Метод возращает коллекию клиентов (нет постраничного вывода!!!), прошедших фильтрацию
+     * @param array $data данные для фильтра
+     * @return \Illuminate\Database\Eloquent\Collection $result \Illuminate\Database\Eloquent\Collection
+     */
+    public function export($data = []) : \Illuminate\Database\Eloquent\Collection
+    {
+        $query = $this->filter($data);
+        $result = $query->get();
+        return $result;
     }
 
     /**
@@ -38,22 +63,21 @@ Class ClientRepository
         $columns = Arr::except(Client::getColumnsName(), ['id']);
         $client->fill(Arr::only($data, $columns))->save();
 
+        $client->phones()->delete();
+        $client->emails()->delete();
         foreach($data['contacts'] as $itemRowContact) {
             if($itemRowContact['phone'])
-                $client->phones()->updateOrCreate(['client_id' => $client->id, 'phone' => $itemRowContact['phone']], [
-                    'phone'=>$itemRowContact['phone']
-                ]);
-            if($itemRowContact['email'])
-                $client->emails()->updateOrCreate(['client_id' => $client->id, 'email' => $itemRowContact['email']], [
-                    'email'=>$itemRowContact['email']
-                ]);
+                $client->phones()->create(['client_id' => $client->id, 'phone' => preg_replace("/[^,.0-9]/", '', $itemRowContact['phone']) ]);
+            if(isset($itemRowContact['email']))
+                $client->emails()->create(['client_id' => $client->id, 'email' => $itemRowContact['email']]);
         }
 
         $passportData = Arr::only($data, ClientPassport::getColumnsName());
         $passportData['birthday_at'] =              $passportData['birthday_at'] ? date('Y-m-d',\strtotime($passportData['birthday_at'])) : NULL;
         $passportData['driver_license_issue_at'] =  $passportData['driver_license_issue_at'] ? date('Y-m-d',\strtotime($passportData['driver_license_issue_at'])) : NULL;
         $passportData['passport_issue_at'] =        $passportData['passport_issue_at'] ? date('Y-m-d',\strtotime($passportData['passport_issue_at'] )) : NULL;
-        $client->passport()->updateOrCreate(['client_id' => $client->id], $passportData);
+        $passportData['client_id'] = $client->id;
+        $client->passport->fill($passportData)->save();
 
         return $client;
     }
@@ -67,11 +91,15 @@ Class ClientRepository
     {
         $client = Client::with(['phones' => function($query) use ($trafic){
             $query->where('phone', $trafic->phone);
-        }])->firstOrCreate([
-            'lastname'      => $client->lastname ?? $trafic->lastname,
-            'firstname'     => $client->firstname ?? $trafic->firstname,
-            'fathername'    => $client->fathername ?? $trafic->fathername
-        ]);
+        }])->first();
+
+        if(!$client->id)
+            $client = Client::create([
+                'lastname'      => $client->lastname ?? $trafic->lastname,
+                'firstname'     => $client->firstname ?? $trafic->firstname,
+                'fathername'    => $client->fathername ?? $trafic->fathername,
+                'client_type_id' => 1
+            ]);
 
         if($client->wasRecentlyCreated) {
             $client->phones()->create([
@@ -82,5 +110,15 @@ Class ClientRepository
             ]);
         }
         return $client;
+    }
+
+    /**
+     * Удалить мягко клиента
+     * @param Client $client Client
+     * @return void
+     */
+    public function delete(Client $client) :void
+    {
+        $client->delete();
     }
 }

@@ -14,25 +14,33 @@ class ClientEditResource extends JsonResource
      */
     public function toArray($request)
     {
+        $contacts = [];
+
+        foreach($this->phones as $key => $item)
+            $contacts[$key]['phone'] = $item->phone_mask;
+
+        foreach($this->emails as $key => $item)
+            $contacts[$key]['email'] = $item->email;
+
         if($this->id)
             return [
                 'data' => [
                     'id'                        => $this->id,
-                    'firstname'                 => $this->firstname,
-                    'lastname'                  => $this->lastname,
-                    'fathername'                => $this->fathername,
+                    'firstname'                 => $this->firstname ? $this->firstname : null,
+                    'lastname'                  => $this->lastname ? $this->lastname : null,
+                    'fathername'                => $this->fathername ? $this->fathername : null,
                     'client_type_id'            => $this->client_type_id,
                     'trafic_sex_id'             => $this->trafic_sex_id,
-                    'trafic_zone_id'            => $this->trafic_zone_id,
-                    'birthday_at'               => ($this->passport->birthday_at) ? $this->passport->birthday_at->format('d.m.Y H:i') : '',
+                    'trafic_zone_id'            => $this->zone->id ? $this->zone : null,
+                    'birthday_at'               => ($this->passport->birthday_at) ? $this->passport->birthday_at->format('d.m.Y H:i') : null,
                     'address'                   => $this->passport->address,
-                    'driver_license_issue_at'   => $this->passport->driver_license_issue_at ? $this->passport->driver_license_issue_at->format('d.m.Y H:i') : '',
+                    'driver_license_issue_at'   => $this->passport->driver_license_issue_at ? $this->passport->driver_license_issue_at->format('d.m.Y H:i') : null,
                     'driving_license'           => $this->passport->driving_license,
-                    'passport_issue_at'         => $this->passport->passport_issue_at ? $this->passport->passport_issue_at->format('d.m.Y H:i') : '',
-                    'serial_number'             => $this->passport->serial_number
+                    'passport_issue_at'         => $this->passport->passport_issue_at ? $this->passport->passport_issue_at->format('d.m.Y H:i') : null,
+                    'serial_number'             => $this->passport->serial_number,
+                    'contacts'                  => $contacts
                 ],
                 'success' => 1,
-                'message' => $this->isCreate() ? 'Клиент добавлен' : 'Клиент изменен'
             ];
         else
             return [

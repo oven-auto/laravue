@@ -39,7 +39,7 @@ class TraficEditResource extends JsonResource
             'structure' => $this->structure->name,
             'appeal' => $this->appeal->name,
             // 'task' => $this->task->name,
-            'begin_at' => $this->begin_at->format('d.m.Y H:i'),
+            'begin_at' => $this->begin_at ? $this->begin_at->format('d.m.Y H:i') : '',
             'end_at' => $this->end_at->format('d.m.Y H:i'),
             'manager' =>  $this->manager->cut_name,
             'needs' => $this->needs->pluck('name'),
