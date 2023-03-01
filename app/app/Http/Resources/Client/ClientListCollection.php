@@ -15,7 +15,7 @@ class ClientListCollection extends ResourceCollection
     public function toArray($request)
     {
         return [
-            'clients' => $this->collection,
+            'data' => $this->collection,
             'success' => 1,
         ];
     }

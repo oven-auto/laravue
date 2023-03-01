@@ -14,6 +14,11 @@ class Client extends Model
 
     protected $guarded = [];
 
+    public function loyalty()
+    {
+        return 'Неизвестно';
+    }
+
     public function getFullNameAttribute()
     {
         return $this->lastname.' '.$this->firstname.' '.$this->fathername;
@@ -68,6 +73,11 @@ class Client extends Model
     public function cars()
     {
         return $this->hasMany(\App\Models\ClientCar::class, 'client_id', 'id')->where('actual', 1);
+    }
+
+    public function latest_worksheet()
+    {
+        return $this->hasOne(\App\Models\Worksheet::class,'client_id', 'id')->orderBy('id','DESC')->withDefault();
     }
 
 

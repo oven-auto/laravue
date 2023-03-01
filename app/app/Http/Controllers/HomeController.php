@@ -31,7 +31,15 @@ class HomeController extends Controller
 
     public function test()
     {
-
+        $phone = '79091231396';
+        $phone = sprintf("+%s (%s) %s-%s-%s",
+            substr($phone, 0, 1),
+            substr($phone, 1, 3),
+            substr($phone, 4, 3),
+            substr($phone, 7, 2),
+            substr($phone, 9)
+        );
+        echo $phone;
     }
 
 }

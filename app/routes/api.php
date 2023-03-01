@@ -307,6 +307,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
     //список типов клиентов физ/юр
     Route::get('types', 'ClientTypeController');
+    //Количество клиентов
+    Route::get('count', 'ClientCountController');
     //cписок клиентов
     Route::get('list', 'ClientController@index');
     //создать клиента

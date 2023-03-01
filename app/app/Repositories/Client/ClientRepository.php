@@ -35,7 +35,7 @@ Class ClientRepository
     public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
     {
         $query = $this->filter($data);
-        $query->with([]);
+        $query->with(['latest_worksheet','phones','emails']);
         $result = $query->simplePaginate($paginate);
         return $result;
     }
@@ -123,5 +123,20 @@ Class ClientRepository
     public function delete(Client $client) :void
     {
         $client->delete();
+    }
+
+    /**
+     * Метод возращает количество клиентов, удовлетворяющих условию фильтра
+     * @param array $data данные для фильтра
+     * @return int $result int
+     */
+    public function counter($data = []) : int
+    {
+        $query = Client::select(\DB::raw('count(clients.id)'));
+        $filter = app()->make(ClientFilter::class, ['queryParams' => array_filter($data)]);
+        $query->filter($filter)
+            ->groupBy('clients.id');
+        $result = $query->get()->count();
+        return $result;
     }
 }

@@ -19,8 +19,12 @@ class ClientListResource extends JsonResource
             'firstname' => $this->firstname,
             'lastname' => $this->lastname,
             'fathername' => $this->fathername,
-            'email' => $this->email,
-            'phone' => $this->phone,
+            'emails' => $this->emails->count() ? '<V> Есть адрес электронной почты' : null,
+            'phones' => $this->phones->map(function($item){
+                return $item->hidden_phone;
+            }),
+            'worksheet' => $this->latest_worksheet->id,
+            'loyalty' => $this->loyalty(),
         ];
     }
 }

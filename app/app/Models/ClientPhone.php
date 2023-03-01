@@ -19,12 +19,32 @@ class ClientPhone extends Model
         $from = $this->phone;
         if($this->phone)
             $phone = sprintf("+%s (%s) %s-%s-%s",
-                substr($from, 0, 1),
-                substr($from, 1, 3),
-                substr($from, 3, 3),
-                substr($from, 7, 2),
-                substr($from, 9)
+                mb_substr($from, 0, 1),
+                mb_substr($from, 1, 3),
+                mb_substr($from, 4, 3),
+                mb_substr($from, 7, 2),
+                mb_substr($from, 9)
             );
+        return $phone;
+    }
+
+    public function getHiddenPhoneAttribute()
+    {
+        $from = $this->phone;
+        $phone = '';
+        if(strlen($this->phone) < 11)
+            $from = str_pad($this->phone, 11, '*');
+        elseif(strlen($this->phone) > 11)
+            $from = mb_substr($this->phone,0,11);
+
+        $phone = sprintf("+%s (%s) %s-%s-%s",
+            mb_substr($from, 0, 1),
+            mb_substr($from, 1, 3),
+            '***',
+            mb_substr($from, 7, 2),
+            mb_substr($from, 9)
+        );
+
         return $phone;
     }
 

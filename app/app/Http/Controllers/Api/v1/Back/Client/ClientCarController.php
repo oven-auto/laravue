@@ -6,10 +6,18 @@ use App\Http\Controllers\Controller;
 use \App\Models\Client;
 use App\Http\Requests\Client\ClientCarRequest;
 use App\Http\Resources\Client\Car\ClientCarCollection;
+use App\Http\Resources\Client\Car\ClientCarEditResource;
 use \App\Models\ClientCar;
 
 class ClientCarController extends Controller
 {
+    private $repo;
+
+    public function __construct(\App\Repositories\Client\ClientCarRepository $repo)
+    {
+        $this->repo = $repo;
+    }
+
     /**
      * Метод на получение всех машин клиента
      * @param Client $client Client
@@ -28,11 +36,7 @@ class ClientCarController extends Controller
      */
     public function store(Client $client, ClientCarRequest $request) : ClientCarCollection
     {
-        $data = $request->input();
-        $data['actual'] = 1;
-        $data['author_id'] = auth()->user()->id;
-        $data['editor_id'] = auth()->user()->id;
-        $client->cars()->create($data);
+        $this->repo->store($client, $request->input());
         return (new ClientCarCollection($client->cars))
             ->additional(['message' => 'Машина добавлена']);
     }
@@ -45,7 +49,7 @@ class ClientCarController extends Controller
      */
     public function update(ClientCar $car, ClientCarRequest $request) : ClientCarCollection
     {
-        $car->fill($request->input())->save();
+        $this->repo->update($car, $request->input());
         return (new ClientCarCollection($car->client->cars))
             ->additional(['message' => 'Машина изменена']);
     }
@@ -57,8 +61,7 @@ class ClientCarController extends Controller
      */
     public function destroy(ClientCar $car) : ClientCarCollection
     {
-        $car->actual = 0;
-        $car->save();
+        $this->repo->hide($car);
         return (new ClientCarCollection($car->client->cars))
             ->additional(['message' => 'Машина более не является актуальной']);
     }
@@ -70,9 +73,8 @@ class ClientCarController extends Controller
      */
     public function amount(Client $client) : \Illuminate\Http\JsonResponse
     {
-        $amountClientCar = $client->cars->where('actual',1)->count();
         return response()->json([
-            'data' => $amountClientCar,
+            'data' => $this->repo->amountClientCar($client),
             'success' => 1
         ]);
     }
@@ -80,13 +82,10 @@ class ClientCarController extends Controller
     /**
      * Метод получения конкретной машины клиента
      * @param ClientCar $car ClientCar
-     * @return \Illuminate\Http\JsonResponse
+     * @return ClientCarEditResource
      */
-    public function show(ClientCar $car) : \Illuminate\Http\JsonResponse
+    public function show(ClientCar $car) : ClientCarEditResource
     {
-        return response()->json([
-            'data' => $car,
-            'success' => 1
-        ]);
+        return new ClientCarEditResource($car);
     }
 }
