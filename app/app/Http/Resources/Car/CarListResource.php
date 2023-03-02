@@ -20,7 +20,7 @@ class CarListResource extends JsonResource
             'brand' => $this->brand,
             'color' => new ColorImageResource($this->color),
             'complectation' => $this->complectation,
-            'delivery' => $this->delivery,
+            'delivery' => isset($this->delivery->id) ? $this->delivery : null,
             'device_price' => $this->device_price,
             'mark' => $this->mark,
             'packs' => $this->packs,
@@ -29,7 +29,7 @@ class CarListResource extends JsonResource
             'vin' =>$this->vin,
             'year' => $this->year,
             'marker' => $this->marker->name->name ? $this->marker->name->name.' ('.$this->marker->moderator->name.' '.$this->marker->change_date.')' : '',
-            'client' => $this->client()->exists() ? $this->client : '',
+            'client' => '',//$this->client()->exists() ? $this->client : '',
             'purchase' => $this->purchase,
         ];
     }

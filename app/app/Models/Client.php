@@ -21,7 +21,11 @@ class Client extends Model
 
     public function getFullNameAttribute()
     {
-        return $this->lastname.' '.$this->firstname.' '.$this->fathername;
+        $mas[] = $this->lastname;
+        $mas[] = $this->firstname;
+        $mas[] = $this->fathername;
+        $result = trim(implode(' ',$mas));
+        return $result;
     }
 
     public static function getColumnsName()

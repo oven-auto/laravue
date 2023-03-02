@@ -91,6 +91,7 @@ class TraficSaveResource extends JsonResource
                     ];
                 }),
                 'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : '',
+                'showbuttonstatus' => $this->trafic_status_id == 2 ? 1 : 0
             ],
             'success' => $this->id ? 1 : 0,
         ];

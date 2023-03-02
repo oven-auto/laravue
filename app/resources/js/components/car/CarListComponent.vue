@@ -48,7 +48,11 @@
 
                     <td>
                         <div v-if="loading==false">
-                            <div :class="getCssCount(item.delivery.delivery_type_id)">{{ (item.delivery.type.name) }}</div>
+                            <div v-if="item.delivery!=null">
+                                <div :class="getCssCount(item.delivery.delivery_type_id)">
+                                    {{ item.delivery.type.name }}
+                                </div>
+                            </div>
                             <div>
                                 <router-link :to="'/marks/edit/'+item.mark.id">
                                     {{ item.brand.name }} {{ item.mark.name }}

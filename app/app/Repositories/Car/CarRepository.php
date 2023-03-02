@@ -16,7 +16,7 @@ Class CarRepository {
     public function filter($data = [], $paginate = 50)
     {
         $query = Car::select('cars.*')->relationList()
-            ->with(['packs:code','marker.name', 'marker.moderator','client'])
+            ->with(['packs:code','marker.name', 'marker.moderator',])
             ->leftJoin('car_deliveries','car_deliveries.car_id','cars.id');
         $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
         $cars = $query->filter($filter)->paginate($paginate);
@@ -25,9 +25,7 @@ Class CarRepository {
 
     public function save(Car $car, $data = [])
     {
-        $result = [];
-        try {
-            $result = DB::transaction(function () use ($data, $car) {
+
                 $mainData = array_filter($data, function ($key) {
                     if (\array_key_exists($key, array_flip(self::CAR_COL))) {
                         return true;
@@ -38,7 +36,9 @@ Class CarRepository {
                     $mainData['mark_color_id'] = $data['color_id'];
                 }
 
+                DB::enableQueryLog();
                 $car->fill($mainData)->save();
+                dd(DB::getQueryLog());
 
                 $car->packs()->sync($data['packs']);
                 $car->devices()->sync($data['devices']);
@@ -57,23 +57,17 @@ Class CarRepository {
                     ['car_id' => $car->id],
                     ['production_at' => $data['production_at']]
                 );
-                if(isset($data['client']['id']))
-                    $car->worksheet()->updateOrCreate(
-                        ['car_id' => $car->id],
-                        ['client_id' => $data['client']['id']]
-                    );
-                else
-                    $car->worksheet()->delete();
+                // if(isset($data['client']['id']))
+                //     $car->worksheet()->updateOrCreate(
+                //         ['car_id' => $car->id],
+                //         ['client_id' => $data['client']['id']]
+                //     );
+                // else
+                //     $car->worksheet()->delete();
 
                 return ['status' => true];
-            });
-        } catch(\Exception $e) {
-            return $result = [
-                'status' => false,
-                'error' => $e->getMessage()
-            ];
-        }
-        return $result;
+
+
     }
 
     public function delete($car)

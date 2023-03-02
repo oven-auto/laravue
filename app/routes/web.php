@@ -48,8 +48,8 @@ Route::prefix('pdf')->group(function () {
     Route::get('trafics/{trafic}', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficPDFController');
 });
 
-// Route::get( '/{any}', function() {
-//     return view('layouts.admin');
-// })->where('any', '.*');
+Route::get( '/{any}', function() {
+    return view('layouts.admin');
+})->where('any', '.*');
 
 Route::get('test', '\App\Http\Controllers\HomeController@test');

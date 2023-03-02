@@ -214,6 +214,8 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
 Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
     Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@export')
         ->middleware(['permission.trafic.list:trafic_export']);
+    //Экспорт клиентов в excel
+    Route::get('client','\App\Http\Controllers\Api\v1\Back\Client\ClientExportController');
 });
 
 /**
