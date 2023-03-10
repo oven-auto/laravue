@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Http\Controllers\Api\v1\Back\User;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\User;
+use App\Http\Resources\User\UserCollection;
+use App\Http\Resources\User\UserSaveResource;
+use App\Http\Requests\User\UserCreate;
+
+class UserController extends Controller
+{
+    private $service;
+
+    public function __construct(\App\Services\Auth\AuthService $service)
+    {
+        $this->service = $service;
+    }
+    /**
+     * Display a listing of the resource.
+     *
+     * @return UserCollection
+     */
+    public function index()
+    {
+        $users = User::with('role')->orderBy('lastname')->get();
+        return new UserCollection($users);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return UserSaveResource
+     */
+    public function store(UserCreate $request)
+    {
+        $user = $this->service->register($request->input());
+        return (new UserSaveResource($user))
+            ->additional(['message' => 'Пользователь создан']);
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  User $user
+     * @return UserSaveResource
+     */
+    public function show(User $user)
+    {
+        return new UserSaveResource($user);
+    }
+
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  User $user
+     * @return UserSaveResource
+     */
+    public function update(User $user, UserCreate $request)
+    {
+        $user = $this->service->update($user, $request->input());
+        return (new UserSaveResource($user))
+            ->additional(['message' => 'Пользователь создан']);
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  User $user
+     * @return UserSaveResource
+     */
+    public function destroy(User $user)
+    {
+        $old = $user->toArray();
+        $user->delete();
+        return (new UserSaveResource((object) $old))
+            ->additional(['message' => 'Пользователь '.$old['lastname'].' '.$old['name'].' удален']);
+    }
+}

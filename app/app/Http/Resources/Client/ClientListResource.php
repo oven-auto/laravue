@@ -26,6 +26,8 @@ class ClientListResource extends JsonResource
             'worksheet' => $this->latest_worksheet->id,
             'notification' => rand(0,1),
             'loyalty' => $this->loyalty(),
+            'created_at' => $this->created_at->format('d.m.Y'),
+            'action_at' => $this->latest_worksheet->created_at ? $this->latest_worksheet->created_at->format('d.m.Y') : ''
         ];
     }
 }

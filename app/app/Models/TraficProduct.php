@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class TraficProduct extends Model
 {
     use HasFactory;
+
+    public function group()
+    {
+        return $this->hasOne(\App\Models\ProductGroup::class,'id','group_id')->withDefault();
+    }
+
 }

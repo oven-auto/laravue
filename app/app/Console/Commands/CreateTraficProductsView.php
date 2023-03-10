@@ -38,12 +38,35 @@ class CreateTraficProductsView extends Command
     public function handle()
     {
         $query = "CREATE view trafic_products as
-            SELECT concat('model',m.id) as id, m.name, 1 as appeal_id, cb.company_id
-                from marks m
-                    left join brands b on m.brand_id = b.id
+        SELECT
+                    concat('model',m.id) as number,
+                    m.id as uid,
+                    'App\\Models\\Marks' as model,
+                    m.name as name,
+                    12 as appeal_id,
+                    cb.company_id,
+                    0 as duration,
+                    if(min(complectations.price)is null, 0, min(complectations.price)) as price
+                FROM marks m
+                    LEFT JOIN brands b on m.brand_id = b.id
                     LEFT JOIN company_brands cb on b.id = cb.brand_id
-            UNION SELECT concat('service',id) as id, name, appeal_id, company_id from service_products sp ";
+                    LEFT JOIN complectations on m.id = complectations.mark_id
+                   WHERE cb.brand_id IS NOT NULL
+                GROUP BY m.id,cb.company_id
+
+                UNION SELECT
+                    concat ('service',service_products.id) as number,
+                    service_products.id as uid,
+                    'App\\Models\\ServiceProduct' as model,
+                    name,
+                    appeal_id,
+                    company_id,
+                    duration,
+                    price
+                FROM service_products";
 
         \DB::statement($query);
     }
 }
+
+

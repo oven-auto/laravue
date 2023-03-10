@@ -109,12 +109,6 @@ class TraficFilter extends AbstractFilter
         return $this->countElements;
     }
 
-    private function formatDate($value, $format = 'Y-m-d')
-    {
-        $date = new Carbon($value);
-        return $date->format($format);
-    }
-
     public function superDiamondSearch(Builder $builder, $value)
     {
         if($value)
@@ -185,20 +179,20 @@ class TraficFilter extends AbstractFilter
             case 'month':
                 $builder->where(function($query)  {
                     $query
-                        ->whereYear('created_at', '=', now()->year)
-                        ->whereMonth('created_at', '=', now()->month);
+                        ->whereYear('trafics.created_at', '=', now()->year)
+                        ->whereMonth('trafics.created_at', '=', now()->month);
                 });
                 break;
             case 'week':
-                $builder->whereBetween('created_at', [
+                $builder->whereBetween('trafics.created_at', [
                     now()->startOfWeek(), now()->endOfWeek()
                 ]);
                 break;
             case 'today':
-                $builder->whereDate('created_at', now());
+                $builder->whereDate('trafics.created_at', now());
                 break;
             case 'yesterday':
-                $builder->whereDate('created_at', now()->subDay());
+                $builder->whereDate('trafics.created_at', now()->subDay());
                 break;
             default:
                 break;
@@ -263,12 +257,19 @@ class TraficFilter extends AbstractFilter
     //Поиск в текстовом поле по совпадению телефона/имени/Фамилии/айди трафика
     public function input(Builder $builder, $value)
     {
-        $builder->where(function($query) use ($value) {
-            $query
-                ->where(  'trafics.phone',      'LIKE', "%$value%")
-                ->orWhere('trafics.firstname',  'LIKE', "%$value%")
-                ->orWhere('trafics.lastname',   'LIKE', "%$value%")
-                ->orWhere('trafics.id',         'LIKE', "%$value%");
-        });
+        $value = explode('input=',$_SERVER['REQUEST_URI'])[1];
+
+        if(strpos($value,'+')===0){
+            $value = trim($value, '+');
+            $phone = "$value%";
+            $builder->where(  'trafics.phone',      'LIKE', "$phone");
+        } else
+            $builder->where(function($query) use ($value) {
+                $query
+                    ->where(  'trafics.phone',      'LIKE', "%$value%")
+                    ->orWhere('trafics.firstname',  'LIKE', "%$value%")
+                    ->orWhere('trafics.lastname',   'LIKE', "%$value%")
+                    ->orWhere('trafics.id',         'LIKE', "%$value%");
+            });
     }
 }

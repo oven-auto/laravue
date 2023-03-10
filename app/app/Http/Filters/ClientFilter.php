@@ -16,6 +16,13 @@ class ClientFilter extends AbstractFilter
     public const TRAFIC_ZONE_ID = 'trafic_zone_id';
     public const HAS_WORKSHEET = 'has_worksheet';
     public const INPUT         = 'input';
+    public const REGISTER_INTERVAL = 'register_interval';
+    public const REGISTER_START         = 'register_start';
+    public const REGISTER_END           = 'register_end';
+    public const ACTION_INTERVAL        = 'action_interval';
+    public const ACTION_START           = 'action_start';
+    public const ACTION_END             = 'action_end';
+    public const LOYALTY_ID             = 'loyalty_id';
 
     protected function getCallbacks(): array
     {
@@ -30,6 +37,13 @@ class ClientFilter extends AbstractFilter
             self::TRAFIC_ZONE_ID            => [$this, 'traficZoneId'],
             self::HAS_WORKSHEET             => [$this, 'hasWorksheet'],
             self::INPUT                     => [$this, 'input'],
+            self::REGISTER_INTERVAL         => [$this, 'registerInterval'],
+            self::REGISTER_START            => [$this, 'registerStart'],
+            self::REGISTER_END              => [$this, 'registerEnd'],
+            self::ACTION_INTERVAL           => [$this, 'actionInterval'],
+            self::ACTION_START              => [$this, 'actionStart'],
+            self::ACTION_END                => [$this, 'actionEnd'],
+            self::LOYALTY_ID                => [$this, 'loyaltyId'],
         ];
     }
 
@@ -99,13 +113,89 @@ class ClientFilter extends AbstractFilter
             $builder->leftJoin('client_phones', 'client_phones.client_id','clients.id');
         $builder->orWhere('client_phones.phone', 'like', '%'. $value.'%');
 
-        // if(!$this->checkJoin($builder, 'client_emails'))
-        //     $builder->leftJoin('client_emails', 'client_emails.client_id','clients.id');
-        // $builder->orWhere('client_emails.email', 'like', '%'. $value.'%');
-
         $builder->orWhere('clients.lastname', 'like', '%'. $value.'%');
 
         $builder->orWhere('clients.id', $value);
+    }
+
+    public function registerInterval(Builder $builder, $value)
+    {
+        switch ($value) {
+            case 'month':
+                $builder->where(function($query)  {
+                    $query
+                        ->whereYear('clients.created_at', '=', now()->year)
+                        ->whereMonth('clients.created_at', '=', now()->month);
+                });
+                break;
+            case 'week':
+                $builder->whereBetween('clients.created_at', [
+                    now()->startOfWeek(), now()->endOfWeek()
+                ]);
+                break;
+            case 'today':
+                $builder->whereDate('clients.created_at', now());
+                break;
+            case 'yesterday':
+                $builder->whereDate('clients.created_at', now()->subDay());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function registerStart(Builder $builder, $value)
+    {
+        $builder->whereDate('clients.created_at','>=', $this->formatDate($value));
+    }
+
+    public function registerEnd(Builder $builder, $value)
+    {
+        $builder->whereDate('clients.created_at','<=', $this->formatDate($value));
+    }
+
+    public function actionInterval(Builder $builder, $value)
+    {
+        $builder->leftJoin('worksheets','worksheets.client_id','clients.id');
+        switch ($value) {
+            case 'month':
+                $builder->where(function($query)  {
+                    $query
+                        ->whereYear('worksheets.created_at', '=', now()->year)
+                        ->whereMonth('worksheets.created_at', '=', now()->month);
+                });
+                break;
+            case 'week':
+                $builder->whereBetween('worksheets.created_at', [
+                    now()->startOfWeek(), now()->endOfWeek()
+                ]);
+                break;
+            case 'today':
+                $builder->whereDate('worksheets.created_at', now());
+                break;
+            case 'yesterday':
+                $builder->whereDate('worksheets.created_at', now()->subDay());
+                break;
+            default:
+                break;
+        }
+    }
+
+    public function actionStart(Builder $builder, $value)
+    {
+        $builder->leftJoin('worksheets','worksheets.client_id','clients.id');
+        $builder->whereDate('worksheets.created_at','>=', $this->formatDate($value));
+    }
+
+    public function actionEnd(Builder $builder, $value)
+    {
+        $builder->leftJoin('worksheets','worksheets.client_id','clients.id');
+        $builder->whereDate('worksheets.created_at','<=', $this->formatDate($value));
+    }
+
+    public function loyaltyId(Builder $builder, $value)
+    {
+
     }
 
 }

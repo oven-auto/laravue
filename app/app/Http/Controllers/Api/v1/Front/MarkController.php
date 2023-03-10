@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v1\Front;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Mark;
-use App\Repositories\MarkRepository;
+use App\Repositories\Mark\MarkRepository;
 use App\Http\Resources\Mark\MarkListCollection;
 use App\Http\Resources\Mark\MarkItemResource;
 use App\Http\Resources\Mark\MarkNameCollection;

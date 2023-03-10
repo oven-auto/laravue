@@ -7,29 +7,35 @@ use Illuminate\Http\Request;
 use App\Models\TraficAppeal;
 use DB;
 use App\Models\TraficProduct;
-use App\Http\Resources\Trafic\TraficSexCollection;
+use App\Http\Resources\Trafic\TraficProductCollection;
 
 class TraficNeedController extends Controller
 {
-    public function index($trafic_appeal_id)
+    public function index($company_id = 0, \App\Repositories\Trafic\AppealRepository $service)
+    {
+        $start_memory = memory_get_usage();
+        $appeals = $service->getAppealWithProductByCompanyId($company_id);
+        $memory = memory_get_usage() - $start_memory;
+        return (new TraficProductCollection($appeals))
+            ->additional(['memory'=>number_format($memory/1024/1024,2, '.', '').' Mb']);
+    }
+
+    public function appealneed($trafic_appeal_id)
     {
         $traficAppeal = TraficAppeal::with(['company.brands','structure','appeal'])->findOrFail($trafic_appeal_id);
 
-        $query = TraficProduct::select('number','name')
-            ->where('appeal_id', $traficAppeal->appeal_id);
-
-        if($traficAppeal->appeal_id == 1)
-            $query->where('company_id', $traficAppeal->company->id);
-
-        $appeals = $query->orderBy('number')
+        $data = TraficProduct::select('number','name')
+            ->where('appeal_id', $traficAppeal->appeal_id)
+            ->orderBy('number')
             ->get();
 
-        $data = $appeals->map(function($item) {
-            return (object) ['id' => $item->number, 'name' => $item->name];
-        });
+        $arr = [];
+        foreach($data as $item)
+            $arr[] = ['id' => $item->number, 'name' => $item->name];
 
-        return (new TraficSexCollection($data))->additional([
-            'error' => 'Товаров или услуг не найдено'
+        return response()->json([
+            'data' => $arr,
+            'success' => 1,
         ]);
     }
 }

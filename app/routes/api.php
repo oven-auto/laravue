@@ -24,6 +24,13 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:api')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+Route::get('time', function() {
+    return response()->json([
+        'datetime' => date('Y-m-d\TH:i'),
+    ]);
+});
+
 Route::prefix('auth')->namespace('\App\Http\Controllers\Api\v1\Auth')->group(function() {
     Route::get('login', function () {
         return response()->json([
@@ -69,7 +76,7 @@ Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\CMS')->group(function
     Route::resource('shortcuts', ShortcutController::class);
     Route::resource('sectionpages', SectionPageController::class);
     Route::resource('pages', PageController::class);
-    Route::resource('clients', Client\ClientController::class);
+    //Route::resource('clients', Client\ClientController::class);
 });
 
 Route::prefix('forms')->group(function() {
@@ -206,6 +213,18 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
     Route::get('zones', 'ZoneController@index');
     Route::get('chanels', 'ChanelController@index');
     Route::get('structures', 'StructureController');
+    Route::get('appeals', 'AppealController');
+});
+
+Route::middleware(['corsing','userfromtoken'])->group(function() {
+    Route::resource('serviceproducts', '\App\Http\Controllers\Api\v1\Back\ServiceProduct\ServiceProductController')
+        ->except(['edit','create']);
+    Route::resource('productgroups', '\App\Http\Controllers\Api\v1\Back\ServiceProduct\ProductGroupController')
+        ->except(['edit','create']);
+    Route::resource('users', '\App\Http\Controllers\Api\v1\Back\User\UserController')
+        ->except(['edit','create']);
+    Route::resource('roles', '\App\Http\Controllers\Api\v1\Back\User\RoleController')
+        ->except(['edit','create']);
 });
 
 /**
@@ -235,7 +254,9 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //получить список обращений указаной структуры компании трафика, id - структура
     Route::get('appeals/{id}', 'TraficAppealController@index');
     //получить список товаров и услуг, в зависимости от выбранного обращения трафика, id - обращения
-    Route::get('needs/{id}', 'TraficNeedController@index');
+    Route::get('needs/{company_id?}', 'TraficNeedController@index');
+    //Получить список товаров по обращению
+    Route::get('appealneeds/{trafic_appeal_id}', 'TraficNeedController@appealneed');
     //получить список задач трафика - !!!с 14-02-23 не используется!!!
     /**/Route::get('tasks', 'TraficTaskController@index');
     //получить список пользователей являющихся сотрудниками указанной структуры трафика и
@@ -309,6 +330,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
     //список типов клиентов физ/юр
     Route::get('types', 'ClientTypeController');
+    //список типов лояльности
+    Route::get('loyalties', 'LoyaltyController@list');
     //Количество клиентов
     Route::get('count', 'ClientCountController');
     //cписок клиентов

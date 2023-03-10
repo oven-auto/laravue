@@ -47,12 +47,26 @@ Class AuthService
     public function register($data = [])
     {
         $user = User::create([
-            'name' => $data['name'],
+            'name' => $data['firstname'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
-            'role_id' => 0,
+            'role_id' => $data['role_id'],
+            'phone' => isset($data['phone']) ? $data['phone'] : ''
         ]);
+        return $user;
+    }
+
+    public function update(User $user, $data = [])
+    {
+        $user->fill([
+            'name' => $data['firstname'],
+            'lastname' => $data['lastname'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+            'role_id' => $data['role_id'],
+            'phone' => isset($data['phone']) ? $data['phone'] : ''
+        ])->save();
         return $user;
     }
 

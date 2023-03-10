@@ -26,7 +26,7 @@ Class TraficAuditRepository
             $arr['audit'] = $this->loadService->download($traficProcessing->trafic_id, $files['audit']);
         if(isset($data['result']))
             $arr['result'] = $data['result'];
-        $arr['status'] = AuditStandart::find($traficProcessing->audit_standart_id)->target < $arr['result'] ? true : false;
+        $arr['status'] = AuditStandart::find($traficProcessing->audit_standart_id)->target <= $arr['result'] ? true : false;
         $traficProcessing->update($arr);
     }
 
@@ -47,7 +47,7 @@ Class TraficAuditRepository
         $arr['trafic_id'] = $trafic->id;
         $arr['audit_standart_id'] = $data['scenario'];
         $arr['user_id'] = auth()->user()->id;
-        $arr['status'] = AuditStandart::find($arr['audit_standart_id'])->target < $arr['result'] ? true : false;
+        $arr['status'] = AuditStandart::find($arr['audit_standart_id'])->target <= $arr['result'] ? true : false;
 
         $trafic->processing()->create($arr);
 

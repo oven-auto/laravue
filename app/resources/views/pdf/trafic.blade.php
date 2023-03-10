@@ -48,7 +48,7 @@
 <body>
     <div class="">
         <div style="font-size: 30px;margin:0px;padding:0px;">
-            Обращение {{$trafic->id}}
+            Обращение №{{$trafic->id}}
         </div>
     </div>
 
@@ -128,33 +128,33 @@
         </div>
 
         <div>
-            <h2>
+            <p>
                 @if($trafic->email)
-                    {{$trafic->email}}
+                    <b>Электронная почта: </b>{{$trafic->email}}
                 @else
-                    <i>Нет адреса электронной почты</i>
+                    <b>Электронная почта: </b> не указана
                 @endif
-            </h2>
+            </p>
         </div>
 
         <div>
-            <h2>
+            <p>
                 @if($trafic->zone->id)
-                    {{$trafic->zone->name}}
+                    <b>Зона контакта: </b>{{$trafic->zone->name}}
                 @else
-                    <i>Зона контакта неизвестна</i>
+                    <b>Зона контакта: </b> неизвестна
                 @endif
-            </h2>
+            </p>
         </div>
 
         <div>
-            <h2>
+            <p>
             @if($trafic->comment)
-                {{$trafic->coment}}
+                <b>Комментарий: </b> {{$trafic->comment}}
             @else
-                <i>Нет комментария</i>
+                <b>Комментарий: </b> отсутствует
             @endif
-            </h2>
+            </p>
         </div>
     </div>
 

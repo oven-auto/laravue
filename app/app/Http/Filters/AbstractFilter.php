@@ -5,6 +5,7 @@ namespace App\Http\Filters;
 
 
 use Illuminate\Database\Eloquent\Builder;
+use Carbon\Carbon;
 
 abstract class AbstractFilter implements FilterInterface
 {
@@ -64,5 +65,11 @@ abstract class AbstractFilter implements FilterInterface
         }
 
         return $this;
+    }
+
+    protected function formatDate($value, $format = 'Y-m-d')
+    {
+        $date = new Carbon($value);
+        return $date->format($format);
     }
 }
