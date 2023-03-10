@@ -52,7 +52,7 @@ class ProductGroupController extends Controller
      * @param  ProductGroup $productgroup
      * @return GroupSaveResource
      */
-    public function update(ProductGroup $productgroup, ProductGroupCreate $request, $id) : GroupSaveResource
+    public function update(ProductGroup $productgroup, ProductGroupCreate $request) : GroupSaveResource
     {
         $productgroup->fill($request->input())->save();
         return (new GroupSaveResource($productgroup))->additional(['message' => 'Группа изменена']);

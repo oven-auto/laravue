@@ -22,9 +22,13 @@ class UserController extends Controller
      *
      * @return UserCollection
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::with('role')->orderBy('lastname')->get();
+        $query = User::with('role')->orderBy('lastname');
+        if($request->has('input') && $request->get('input')!='')
+            $query->where('lastname', 'LIKE', "%$request->input%");
+
+        $users = $query->get();
         return new UserCollection($users);
     }
 

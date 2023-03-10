@@ -46,7 +46,9 @@ class CreateTraficProductsView extends Command
                     12 as appeal_id,
                     cb.company_id,
                     0 as duration,
-                    if(min(complectations.price)is null, 0, min(complectations.price)) as price
+                    if(min(complectations.price)is null, 0, min(complectations.price)) as price,
+                    NULL as description,
+                    NULL as group_id
                 FROM marks m
                     LEFT JOIN brands b on m.brand_id = b.id
                     LEFT JOIN company_brands cb on b.id = cb.brand_id
@@ -62,7 +64,9 @@ class CreateTraficProductsView extends Command
                     appeal_id,
                     company_id,
                     duration,
-                    price
+                    price,
+                    description,
+                    group_id
                 FROM service_products";
 
         \DB::statement($query);
