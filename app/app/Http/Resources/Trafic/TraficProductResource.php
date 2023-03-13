@@ -18,9 +18,11 @@ class TraficProductResource extends JsonResource
         return [
             'id' => $this->uid,
             'name' => $this->name,
-            'childrens' => $this->trafic_products->groupBy(function($mas, $i) use ($co){
-                return $mas['group_id'] ?? $co+1;
-            })->map(function($itemGroup,$key){
+            'childrens' => $this->trafic_products->sortBy(function($grSort){
+                return $grSort->group->sort ?? 99999999;
+            })->groupBy(function($chunk){
+                return $chunk->group_id ?? 9999999;
+            })->values()->map(function($itemGroup,$key){
                 $arr['title'] = isset($itemGroup[0]->group) ? $itemGroup[0]->group->name : '';
                 $arr['elements'] = $itemGroup->map(function($itemProduct){
                     return [

@@ -7,11 +7,15 @@ use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Http\Resources\User\RoleCollection;
 use App\Http\Resources\User\RoleSaveResource;
-
+/**
+ * CRUD контролер для ролей
+ * хз имеет ли смысл делать сервис
+ * методы контролера и так тонкие
+ */
 class RoleController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Список ролей.
      *
      * @return RoleCollection
      */
@@ -21,7 +25,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Добавить роль.
      *
      * @param  \Illuminate\Http\Request  $request
      * @return RoleSaveResource
@@ -34,7 +38,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Показать роль.
      *
      * @param  Role $role
      * @return RoleSaveResource
@@ -45,7 +49,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Изменить роль.
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  Role $role
@@ -59,7 +63,7 @@ class RoleController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Удалить роль.
      *
      * @param  Role $role
      * @return RoleSaveResource

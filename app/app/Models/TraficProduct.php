@@ -11,7 +11,7 @@ class TraficProduct extends Model
 
     public function group()
     {
-        return $this->hasOne(\App\Models\ProductGroup::class,'id','group_id')->withDefault();
+        return $this->hasOne(\App\Models\ProductGroup::class,'id','group_id')->withDefault()->orderBy('sort');
     }
 
 }

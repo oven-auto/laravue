@@ -255,6 +255,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('appeals/{id}', 'TraficAppealController@index');
     //получить список товаров и услуг, в зависимости от выбранного обращения трафика, id - обращения
     Route::get('needs/{company_id?}', 'TraficNeedController@index');
+    //получить список моделей по id компании
+    Route::get('models/{company_id}','TraficNeedController@models');
     //Получить список товаров по обращению
     Route::get('appealneeds/{trafic_appeal_id}', 'TraficNeedController@appealneed');
     //получить список задач трафика - !!!с 14-02-23 не используется!!!

@@ -50,8 +50,8 @@ class Trafic extends Model
                 substr($from, 0, 1),
                 substr($from, 1, 3),
                 '***',
-                substr($from, 7, 2),
-                substr($from, 9)
+                '**',
+                '**',
             );
         return $phone;
     }

@@ -31,6 +31,7 @@ class TraficFilter extends AbstractFilter
     public const AUDIT_AUTHOR_ID = 'audit_author_id';
     public const AUDIT_SCENARIO_ID = 'scenario';
     public const AUDIT_STATUS_ID = 'status_audit_id';
+    public const MODEL_ID = 'model_id';
 
     public $countElements = 0;
 
@@ -59,6 +60,7 @@ class TraficFilter extends AbstractFilter
             self::AUDIT_AUTHOR_ID     => [$this, 'auditAuthorId'],
             self::AUDIT_SCENARIO_ID   => [$this, 'auditScenarioId'],
             self::AUDIT_STATUS_ID     => [$this, 'auditStatusId'],
+            self::MODEL_ID            => [$this, 'modelId'],
         ];
     }
 
@@ -68,11 +70,17 @@ class TraficFilter extends AbstractFilter
         return $res;
     }
 
+    public function modelId(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'trafic_needs'))
+            $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id');
+        $builder->whereIn('trafic_needs.trafic_product_number', $value);
+    }
+
     public function auditAuthorId(Builder $builder, $value)
     {
         if(!$this->checkJoin($builder, 'trafic_processings'))
             $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
-
         $builder->where('trafic_processings.user_id', $value);
     }
 

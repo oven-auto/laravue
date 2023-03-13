@@ -38,4 +38,22 @@ class TraficNeedController extends Controller
             'success' => 1,
         ]);
     }
+
+    public function models($company_id)
+    {
+        $data = TraficProduct::select('number','name')
+            ->where('appeal_id', 12)
+            ->orderBy('number')
+            ->get();
+
+        $arr = [];
+
+        foreach($data as $item)
+            $arr[] = ['id' => $item->number, 'name' => $item->name];
+
+        return response()->json([
+            'data' => $arr,
+            'success' => 1,
+        ]);
+    }
 }
