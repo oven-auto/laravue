@@ -11,7 +11,7 @@ Class WebUrl
         return false;
     }
 
-    public function plugCar()
+    public static function plugCar()
     {
         return asset('/images/somecar.png');
     }
