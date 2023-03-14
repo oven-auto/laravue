@@ -54,6 +54,7 @@ class CreateTraficProductsView extends Command
                     LEFT JOIN company_brands cb on b.id = cb.brand_id
                     LEFT JOIN complectations on m.id = complectations.mark_id
                    WHERE cb.brand_id IS NOT NULL
+                   AND m.status > 0
                 GROUP BY m.id,cb.company_id
 
                 UNION SELECT

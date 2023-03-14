@@ -16,6 +16,6 @@ class MarkBanner extends Model
 
     public function getImageDateAttribute()
     {
-        return WebUrl::make_link($this->image);
+        return WebUrl::plugCarOrImage($this->image);
     }
 }
