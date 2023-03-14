@@ -16,8 +16,8 @@ class TraficStructureController extends Controller
             ->leftJoin('structures','structures.id','company_structures.structure_id')
             ->where('company_structures.company_id', $brand_id)
             ->orderBy('structures.sort')
-            ->toSql();
-        dd($structures);
+            ->get();
+
         $data = $structures->map(function($item){
             return (object) [
                 'id'=>$item->id,
