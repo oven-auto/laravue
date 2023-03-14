@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use WebUrl;
 
 class MarkColor extends Model
 {
@@ -20,6 +21,6 @@ class MarkColor extends Model
 
     public function getImageDateAttribute()
     {
-    	return asset('storage'.$this->image) . '?' . date('dmyh');
+    	return WebUrl::make_link($this->image);
     }
 }

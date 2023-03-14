@@ -10,7 +10,7 @@ class AppealController extends Controller
     public function __invoke()
     {
         return response()->json([
-            'data' => \App\Models\Appeal::select('id','name')->get(),
+            'data' => \App\Models\Appeal::select('id','name')->where('show',1)->get(),
             'success' => 1
         ]);
     }

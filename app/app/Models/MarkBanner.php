@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use WebUrl;
 
 class MarkBanner extends Model
 {
@@ -15,6 +16,6 @@ class MarkBanner extends Model
 
     public function getImageDateAttribute()
     {
-    	return asset('storage'.$this->image) . '?' . date('dmyhm');
+        return WebUrl::make_link($this->image);
     }
 }

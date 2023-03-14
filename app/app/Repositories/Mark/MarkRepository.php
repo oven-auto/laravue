@@ -23,10 +23,17 @@ Class MarkRepository
 
     public function getAll($data = [])
     {
-        $query = Mark::with(['icon', 'bodywork', 'brand']);
+        $query = Mark::select('marks.*')->with(['icon', 'bodywork', 'brand']);
+
         if(isset($data['brand_id']))
             $query->where('brand_id', $data['brand_id']);
-        $marks = $query->orderBy('status','DESC')->orderBy('sort')->get();
+
+        $marks = $query->leftJoin('brands','brands.id','marks.brand_id')
+            ->where('brands.diller',1)
+            ->orderBy('status','DESC')
+            ->orderBy('sort')
+            ->get();
+
         return $marks;
     }
 

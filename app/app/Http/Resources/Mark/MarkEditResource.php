@@ -29,13 +29,16 @@ class MarkEditResource extends JsonResource
                     'sort' => $this->sort,
                     'status' => $this->status,
 
+                    'tet' => file_exists(public_path($this->image)),
+                    'tet2' => $this->icon->image,
+                    'tet4' => $this->icon->image_date,
 
                     'bodywork' =>           new \App\Http\Resources\BodyWork\BodyWorkListResource($this->bodywork),
                     'basecomplectation' =>  new \App\Http\Resources\Mark\MarkBaseComplectationResource($this->basecomplectation),
                     'brand' =>              new \App\Http\Resources\Brand\BrandResource($this->brand),
 
                     'info' =>               new \App\Http\Resources\Mark\MarkInfoResource($this->info),
-                    'icon' =>               $this->icon->image ? $this->icon->image_date : '',
+                    'icon' =>               /*$this->icon->image ? */$this->icon->image_date/* : ''*/,
                     'banner' =>             $this->banner->image ? $this->banner->image_date : '',
                     'properties' =>         \App\Http\Resources\Mark\MarkPropertiesResource::collection($this->properties),
                     'markcolors' =>         \App\Http\Resources\Mark\MarkColorResource::collection($this->markcolors),
