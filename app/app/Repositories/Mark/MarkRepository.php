@@ -32,7 +32,7 @@ Class MarkRepository
             ->where('brands.diller',1)
             ->orderBy('status','DESC')
             ->orderBy('sort')
-            ->toSql();
+            ->get();
 
         return $marks;
     }
