@@ -13,14 +13,15 @@ class TraficStructureController extends Controller
     public function index($brand_id)
     {
         $structures = CompanyStructure::select('company_structures.*')->with(['structure'])
-            ->leftJoin('structures','structures.id','company_structures.company_id')
+            ->leftJoin('structures','structures.id','company_structures.structure_id')
             ->where('company_structures.company_id', $brand_id)
             ->orderBy('structures.sort')
-            ->get();
+            ->toSql();
+        dd($structures);
         $data = $structures->map(function($item){
             return (object) [
                 'id'=>$item->id,
-                'name'=>$item->structure->name
+                'name'=>$item->structure->name,
             ];
         });
         return new TraficSexCollection($data);
