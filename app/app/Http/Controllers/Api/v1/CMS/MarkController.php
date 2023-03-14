@@ -22,6 +22,7 @@ class MarkController extends Controller
     public function index(Request $request)
     {
         $marks = $this->repo->getAll($request->all());
+        dd($marks);
         return new MarkListCollection($marks);
     }
 
