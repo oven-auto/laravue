@@ -12,7 +12,11 @@ class TraficStructureController extends Controller
 {
     public function index($brand_id)
     {
-        $structures = CompanyStructure::where('company_id', $brand_id)->get();
+        $structures = CompanyStructure::with(['structure'])
+            ->leftJoin('structures','structures.id','company_structures.company_id')
+            ->where('company_structures.company_id', $brand_id)
+            ->orderBy('structures.sort')
+            ->get();
         $data = $structures->map(function($item){
             return (object) [
                 'id'=>$item->id,
