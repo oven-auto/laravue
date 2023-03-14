@@ -12,7 +12,7 @@ class TraficStructureController extends Controller
 {
     public function index($brand_id)
     {
-        $structures = CompanyStructure::with(['structure'])
+        $structures = CompanyStructure::select('company_structures.*')->with(['structure'])
             ->leftJoin('structures','structures.id','company_structures.company_id')
             ->where('company_structures.company_id', $brand_id)
             ->orderBy('structures.sort')
