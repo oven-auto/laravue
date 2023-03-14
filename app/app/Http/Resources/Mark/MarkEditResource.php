@@ -27,7 +27,7 @@ class MarkEditResource extends JsonResource
                     'show_driver' => $this->show_driver,
                     'show_toxic' => $this->show_toxic,
                     'sort' => $this->sort,
-                    'status' => $this->status,
+                    'status' => (integer)$this->status,
 
                     'bodywork' =>           new \App\Http\Resources\BodyWork\BodyWorkListResource($this->bodywork),
                     'basecomplectation' =>  new \App\Http\Resources\Mark\MarkBaseComplectationResource($this->basecomplectation),
