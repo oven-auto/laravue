@@ -18,6 +18,9 @@ Class WebUrl
 
     public static function plugCarOrImage($val)
     {
-        return self::make_link($val) ?? self::plugCar();
+        $var = self::make_link($val);
+        if($var)
+            return $var;
+        return self::plugCar();
     }
 }
