@@ -15,7 +15,7 @@ class PermissionController extends Controller
     public function index() : \Illuminate\Http\JsonResponse
     {
         return response()->json([
-            'data' => \App\Models\Permission::select(['id','name'])->get(),
+            'data' => \App\Models\Permission::select(['id','name'])->orderBy('name')->get(),
             'success' => 1
         ]);
     }
