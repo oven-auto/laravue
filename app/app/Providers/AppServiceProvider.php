@@ -30,5 +30,6 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CarMarker::observe(\App\Observers\CarMarkerObserver::class);
         \App\Models\Trafic::observe(\App\Observers\TraficObserver::class);
         \App\Models\Worksheet::observe(\App\Observers\WorksheetObserver::class);
+        \App\Models\Role::observe(\App\Observers\RoleObserver::class);
     }
 }

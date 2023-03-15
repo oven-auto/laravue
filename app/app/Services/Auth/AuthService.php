@@ -16,11 +16,20 @@ Class AuthService
                 'error' => '-'
             ]);
 
+        $user = auth()->user();
+        $data = [
+            'id' => $user->id,
+            'name' => $user->name,
+            'role_id' => $user->role_id,
+            'lastname' => $user->lastname,
+            'role' => $user->role->slug
+        ];
+
         return \response()->json([
             'laravel_session' => session()->getId(),
             'xsrf-token' => csrf_token(),
             'success' => true,
-            'data' => auth()->user(),
+            'data' => $data,
             'token' => auth()->user()->createToken('API Token')->plainTextToken
         ]);
     }

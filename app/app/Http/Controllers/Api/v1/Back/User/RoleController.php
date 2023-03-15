@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\Role;
 use App\Http\Resources\User\RoleCollection;
 use App\Http\Resources\User\RoleSaveResource;
+
 /**
  * CRUD контролер для ролей
  * хз имеет ли смысл делать сервис
