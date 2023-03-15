@@ -41,9 +41,12 @@ class TraficNeedController extends Controller
 
     public function models($company_id)
     {
-        $data = TraficProduct::select('number','name')
+        $data = TraficProduct::select('trafic_products.number','trafic_products.name','marks.id')
+            ->leftJoin('marks','marks.id','trafic_products.uid')
             ->where('appeal_id', 12)
-            ->orderBy('number')
+            ->where('marks.status','>',0)
+            ->whereNotNull('marks.id')
+            ->orderBy('marks.sort')
             ->get();
 
         $arr = [];

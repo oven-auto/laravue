@@ -225,6 +225,8 @@ Route::middleware(['corsing','userfromtoken'])->group(function() {
         ->except(['edit','create']);
     Route::resource('roles', '\App\Http\Controllers\Api\v1\Back\User\RoleController')
         ->except(['edit','create']);
+    Route::resource('permissions', '\App\Http\Controllers\Api\v1\Back\User\PermissionController')
+        ->except(['edit','create','store', 'delete']);
 });
 
 /**

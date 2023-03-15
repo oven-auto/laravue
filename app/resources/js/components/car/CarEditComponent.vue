@@ -36,7 +36,7 @@
 
                             <!--BEGIN CAR INFO-->
                             <div class="tab-pane fade show active" id="description">
-                                <div class="row">
+                                <!-- <div class="row">
                                     <div class="col">
                                         <vSelect v-model="car.brand_id" :url="'/api/services/html/select/brands'"></vSelect>
                                     </div>
@@ -44,11 +44,11 @@
                                     <div class="col">
                                         <vSelect v-model="car.mark_id" :url="'/api/services/html/select/marks'"></vSelect>
                                     </div>
-                                </div>
+                                </div> -->
 
                                 <div class="row">
                                     <div class="col"><BrandSelect name="'brand_id'" v-model="car.brand_id"></BrandSelect></div>
-                                    <div class="col"><MarkSelect v-model="car.mark_id" :brand="car.brand_id" name="mark_id"></MarkSelect></div>
+                                    <div class="col"><MarkSelect :actual="1"  v-model="car.mark_id" :brand="car.brand_id" name="mark_id"></MarkSelect></div>
                                 </div>
 
                                 <div class="row">
