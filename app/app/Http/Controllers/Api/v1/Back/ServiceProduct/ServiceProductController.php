@@ -11,6 +11,15 @@ use Illuminate\Http\Request;
 
 class ServiceProductController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission.developer:product_list')->only('index');
+        $this->middleware('permission.developer:product_edit')->only('update');
+        $this->middleware('permission.developer:product_delete')->only('delete');
+        $this->middleware('permission.developer:product_show')->only('show');
+        $this->middleware('permission.developer:product_add')->only('store');
+    }
+
     /**
      * Список продуктов.
      *

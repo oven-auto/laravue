@@ -11,6 +11,15 @@ use App\Http\Requests\ServiceProduct\ProductGroupCreate;
 
 class ProductGroupController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission.developer:product_group_list')->only('index');
+        $this->middleware('permission.developer:product_group_edit')->only('update');
+        $this->middleware('permission.developer:product_group_delete')->only('delete');
+        $this->middleware('permission.developer:product_group_show')->only('show');
+        $this->middleware('permission.developer:product_group_add')->only('store');
+    }
+
     /**
      * Список групп продуктов.
      *

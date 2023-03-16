@@ -16,6 +16,12 @@ class UserController extends Controller
     public function __construct(\App\Services\Auth\AuthService $service)
     {
         $this->service = $service;
+
+        $this->middleware('permission.developer:user_list')->only('index');
+        $this->middleware('permission.developer:user_edit')->only('update');
+        $this->middleware('permission.developer:user_delete')->only('delete');
+        $this->middleware('permission.developer:user_show')->only('show');
+        $this->middleware('permission.developer:user_add')->only('store');
     }
     /**
      * Display a listing of the resource.

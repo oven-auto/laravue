@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
         'permission.trafic.showalien' => \App\Http\Middleware\Permissions\Trafic\TraficShowAlien::class,
 
         'permission.worksheet.create' => \App\Http\Middleware\Permissions\Worksheet\WorksheetCreate::class,
+        'permission.developer' => \App\Http\Middleware\Permissions\Developer\UserActionPerm::class,
 
     ];
 }

@@ -216,13 +216,22 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
     Route::get('appeals', 'AppealController');
 });
 
+//
 Route::middleware(['corsing','userfromtoken'])->group(function() {
+    //middleware сделан в контролере
     Route::resource('serviceproducts', '\App\Http\Controllers\Api\v1\Back\ServiceProduct\ServiceProductController')
         ->except(['edit','create']);
+    //middleware сделан в контролере
     Route::resource('productgroups', '\App\Http\Controllers\Api\v1\Back\ServiceProduct\ProductGroupController')
         ->except(['edit','create']);
+});
+
+//СИСТЕМНЫЕ КОНТРОЛЛЕРЫ
+Route::middleware(['corsing','userfromtoken'])->group(function(){
+    //middleware сделан в контролере
     Route::resource('users', '\App\Http\Controllers\Api\v1\Back\User\UserController')
         ->except(['edit','create']);
+    //middleware сделан в контролере
     Route::resource('roles', '\App\Http\Controllers\Api\v1\Back\User\RoleController')
         ->except(['edit','create']);
     Route::resource('permissions', '\App\Http\Controllers\Api\v1\Back\User\PermissionController')
@@ -236,7 +245,8 @@ Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
     Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@export')
         ->middleware(['permission.trafic.list:trafic_export']);
     //Экспорт клиентов в excel
-    Route::get('client','\App\Http\Controllers\Api\v1\Back\Client\ClientExportController');
+    Route::get('client','\App\Http\Controllers\Api\v1\Back\Client\ClientExportController')
+        ->middleware(['permission.trafic.list:client_export']);;
 });
 
 /**
@@ -339,17 +349,22 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //Количество клиентов
     Route::get('count', 'ClientCountController');
     //cписок клиентов
-    Route::get('list', 'ClientController@index');
+    Route::get('list', 'ClientController@index')
+        ->middleware(['permission.trafic.list:client_list']);
     //создать клиента
-    Route::post('create', 'ClientController@store');
+    Route::post('create', 'ClientController@store')
+        ->middleware(['permission.trafic.list:client_add']);
     //получить конкретного клиента
-    Route::get('{client}', 'ClientController@edit');
+    Route::get('{client}', 'ClientController@edit')
+        ->middleware(['permission.trafic.list:client_show']);
     //изменить конкретного клиента
-    Route::patch('{client}', 'ClientController@update');
+    Route::patch('{client}', 'ClientController@update')
+        ->middleware(['permission.trafic.list:client_edit']);
     //удалить клиента
-    Route::delete('{client}', 'ClientController@destroy');
+    Route::delete('{client}', 'ClientController@destroy')
+        ->middleware(['permission.trafic.list:client_delete']);
 
-    Route::prefix('car')->group(function(){
+    Route::prefix('car')->middleware('permission.trafic.list:client_add')->group(function(){
         //список брендов
         Route::get('brands', 'BrandCarController');
         //количество машин клиента

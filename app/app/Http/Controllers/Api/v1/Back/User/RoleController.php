@@ -15,6 +15,14 @@ use App\Http\Resources\User\RoleSaveResource;
  */
 class RoleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission.developer:role_list')->only('index');
+        $this->middleware('permission.developer:role_edit')->only('update');
+        $this->middleware('permission.developer:role_delete')->only('delete');
+        $this->middleware('permission.developer:role_show')->only('show');
+        $this->middleware('permission.developer:role_add')->only('store');
+    }
     /**
      * Список ролей.
      *
