@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y apt-utils \
 	libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
+	ffmpeg \
 	nano \
         libzip-dev \
         zip \
@@ -12,7 +13,9 @@ RUN apt-get update && apt-get install -y apt-utils \
     && docker-php-ext-install pdo_mysql \
 	&& docker-php-ext-install mysqli \
 	&& docker-php-ext-configure gd --with-freetype --with-jpeg \
-	&& docker-php-ext-install -j$(nproc) gd
+	&& docker-php-ext-install -j$(nproc) gd \
+	&& docker-php-ext-configure sockets \
+	&& docker-php-ext-install sockets
 
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer

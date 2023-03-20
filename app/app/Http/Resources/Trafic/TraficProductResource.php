@@ -31,7 +31,7 @@ class TraficProductResource extends JsonResource
                         'id' => $itemProduct->number,
                         'description' => $itemProduct->description,
                         'duration' => $itemProduct->duration ? $itemProduct->duration : '',
-                        'price' => ($itemProduct->price) ? number_format($itemProduct->price,0,'',' ') : '',
+                        'price' => ($itemProduct->price !== null || $itemProduct->price === '') ? number_format($itemProduct->price,0,'',' ') : '',
                         'group' => $itemProduct->group
                     ];
                 });

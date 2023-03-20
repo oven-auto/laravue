@@ -10,6 +10,7 @@ use App\Repositories\Trafic\TraficRepository;
 use \App\Http\Resources\Trafic\TraficEditCollection;
 use \App\Http\Resources\Trafic\TraficSaveResource;
 use Auth;
+use Socket;
 
 class TraficController extends Controller
 {
@@ -44,8 +45,12 @@ class TraficController extends Controller
     {
         $trafic = Trafic::withTrashed()->find($trafic);
         $this->service->save($trafic, $request->all());
+        \App\Events\TraficEvent::dispatch($trafic);
         return (new TraficSaveResource($trafic))
-            ->additional(['message' => 'Трафик изменен']);
+            ->additional([
+                'message' => 'Трафик изменен',
+                //'socket' => $service_port
+        ]);
     }
 
     public function close($trafic, Request $request)

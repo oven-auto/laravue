@@ -27,9 +27,29 @@
             <div class="container pt-3" style="min-height:78vh;">
                 <router-view></router-view>
             </div>
-
+            <button onclick="send(i++)">123</button>
             <div class="footer mt-3" style="min-height: 15vh;background:#333;"></div>
         </div>
+
+        <script>
+            var conn = new WebSocket('ws://192.168.1.98:8290');
+            var i = 0;
+            conn.onopen = function(e) {
+                console.log('Соединение открыто')
+            }
+
+            conn.onmessage = function(e) {
+                console.log('Данные получены: ' + e.data)
+            }
+
+            function send(msg)
+            {
+                var data = 'Привет, я таки с фронтенда '+msg
+                conn.send(data)
+                console.log('Отправлено')
+            }
+        </script>
+
     </body>
 
 </html>

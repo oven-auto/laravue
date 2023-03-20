@@ -55,7 +55,7 @@ Route::get('exit', function() {
 
 //CRUD
 Route::prefix('')->namespace('\App\Http\Controllers\Api\v1\CMS')->group(function () {
-    Route::resource('brands',  BrandController::class);
+    Route::resource('brands',  BrandController::class)->except(['show']);
     Route::resource('devicetypes', DeviceTypeController::class);
     Route::resource('devicefilters', DeviceFilterController::class);
     Route::resource('devices', DeviceController::class);
@@ -207,6 +207,8 @@ Route::group(['prefix' => 'front'], function() {
   });
 });
 
+// Route::post('broadcasting/auth', '\App\Http\Controllers\Broadcast\BroadcastController@auth')->middleware(['corsing','userfromtoken']);
+// Route::get('broadcasting/auth', '\App\Http\Controllers\Broadcast\BroadcastController@auth')->middleware(['corsing','userfromtoken']);
 
 Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function() {
     Route::get('users', 'UserController@index');
@@ -239,7 +241,7 @@ Route::middleware(['corsing','userfromtoken'])->group(function(){
 });
 
 /**
- * ЭКСПОРТЫ
+ * ЭКСПОРТЫ обернуты правами доступа
  */
 Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
     Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@export')
@@ -250,7 +252,7 @@ Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
 });
 
 /**
- * ТРАФИК
+ * ТРАФИК обернут правами доступа
  */
 Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
     //получить список зон трафика
@@ -339,7 +341,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 });
 
 /**
- * КЛИЕНТЫ
+ * КЛИЕНТЫ, обернуты правами доступа
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
     //список типов клиентов физ/юр

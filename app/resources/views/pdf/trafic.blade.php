@@ -20,9 +20,9 @@
     }
     .client h2{
         font-weight: normal;
-        font-style: italic;
         margin: 0px;
         padding: 0px;
+        font-size: 26px;
     }
     .client .client-name{
         font-weight: bold;
@@ -68,7 +68,17 @@
         </div>
 
         <div>
-            Обработано: {{$trafic->processing_at ? 'Да' : 'Нет'}}
+            Ответственный: {{$trafic->author->cut_name}}
+        </div>
+
+        <div>
+            Время на обработку {{$trafic->interval}} мин.
+            {{$trafic->begin_at->format('d.m.Y (H:i)')}} -
+            {{$trafic->end_at->format('d.m.Y (H:i)')}}
+        </div>
+
+        <div>
+            Обработано: {{$trafic->processing_at ? $trafic->processing_at->format('d.m.Y (H:i)') : 'Нет'}}
         </div>
     </div>
 
@@ -80,35 +90,29 @@
 
     <div class="pt-3">
         <div><b>Структура обращения</b></div>
-        <div>{{$trafic->chanel->name}}</div>
+
         <div>
-            {{$trafic->salon->name}} ●
-            {{$trafic->structure->name}} ●
+            {{$trafic->chanel->name}}
+            {{ $trafic->chanel->myparent->id ? ('('.$trafic->chanel->myparent->name.')') : '' }}
+        </div>
+
+        <div>
+            {{$trafic->salon->name}} |
+            {{$trafic->structure->name}} |
             {{$trafic->appeal->name}}
         </div>
+
         <div>
             @if($trafic->needs)
                 @foreach($trafic->needs as $itemNeed)
                     @if (!$loop->first)
-                        ●
+                        |
                     @endif
                     <span>{{$itemNeed->name}}</span>
                 @endforeach
             @else
                 <i>Товары/услуги не выбраны</i>
             @endif
-        </div>
-    </div>
-
-    <div class="pt-3">
-        <div><b>Назначенное действие:</b></div>
-        <div>
-            Контроль ●
-            {{$trafic->interval}} мин. ●
-            {{$trafic->begin_at->format('d.m.Y (H:i)')}} - {{$trafic->end_at->format('d.m.Y (H:i)')}}
-        </div>
-        <div>
-            Ответственный: {{$trafic->manager->cut_name}}
         </div>
     </div>
 
@@ -120,7 +124,7 @@
         <div>
             <h2 class="client-phone">
                 @if($trafic->phone)
-                    {{$trafic->formated_phone}}
+                    <b>{{$trafic->formated_phone}}</b>
                 @else
                     Нет номера телефона
                 @endif
@@ -128,23 +132,23 @@
         </div>
 
         <div>
-            <p>
+            <h2 class="client-phone">
                 @if($trafic->email)
                     <b>Электронная почта: </b>{{$trafic->email}}
                 @else
                     <b>Электронная почта: </b> не указана
                 @endif
-            </p>
+            </h2>
         </div>
 
         <div>
-            <p>
+            <h2 class="client-phone">
                 @if($trafic->zone->id)
                     <b>Зона контакта: </b>{{$trafic->zone->name}}
                 @else
                     <b>Зона контакта: </b> неизвестна
                 @endif
-            </p>
+            </h2>
         </div>
 
         <div>

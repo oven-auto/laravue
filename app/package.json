@@ -30,6 +30,7 @@
         "faicon": "^1.1.0",
         "font-awesome": "^4.7.0",
         "ionicons": "^6.0.1",
+        "laravel-echo": "^1.15.0",
         "quill": "^1.3.7",
         "quill-blot-formatter": "^1.0.5",
         "quill-image-drop-module": "^1.0.3",
