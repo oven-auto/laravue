@@ -37,16 +37,17 @@ Class SocketServer extends BaseSocket
 
 
         if(isset($data['auth']) && !isset($data['message']))
-            $msg = 'В систему вошёл новый пользователь';
-
-        foreach($this->clients as $itemclient)
-        {
-            if(
-                $conn !== $itemclient &&
-                $this->connections[$itemclient->resourceId]['authId'] !== $this->connections[$conn->resourceId]['authId']
-            )
-                $itemclient->send($msg);
-        }
+            $msg = '';
+            //$msg = 'В систему вошёл новый пользователь';
+        if($msg)
+            foreach($this->clients as $itemclient)
+            {
+                if(
+                    $conn !== $itemclient &&
+                    $this->connections[$itemclient->resourceId]['authId'] !== $this->connections[$conn->resourceId]['authId']
+                )
+                    $itemclient->send($msg);
+            }
     }
 
     public function onClose(\Ratchet\ConnectionInterface $conn)
