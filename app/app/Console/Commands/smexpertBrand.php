@@ -47,11 +47,12 @@ class smexpertBrand extends Command
         ])->get($url, []);
 
         foreach($response['brands'] as $item)
-            \App\Models\Brand::create([
-                'uid' => $item['id'],
-                'name' => $item['text'],
-                'slug' => \Str::slug($item['text'])
-            ]);
+            if($item['id'] != 87)
+                \App\Models\Brand::create([
+                    'uid' => $item['id'],
+                    'name' => $item['text'],
+                    'slug' => \Str::slug($item['text'])
+                ]);
 
     }
 }
