@@ -18,7 +18,7 @@ class CreateClientEventCommentsTable extends Migration
             $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');
             $table->text('text');
             $table->foreignId('event_id')->references('id')->on('client_events')->onDelete('cascade');
-            $table->foreign('client_event_status_id')->references('id')->on('client_event_statuses')->onDelete('cascade');
+            $table->foreignId('client_event_status_id')->references('id')->on('client_event_statuses')->onDelete('cascade');
             $table->timestamps();
         });
     }
