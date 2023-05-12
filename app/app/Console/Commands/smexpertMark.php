@@ -58,7 +58,7 @@ class smexpertMark extends Command
                     'name' => $itemModel['text'],
                     'slug' => \Str::slug($itemModel['text']),
                     'brand_id' => $itemBrand->id,
-                    'brand_uid' => $itemBrand->id,
+                    'brand_uid' => $itemBrand->uid,
                     'status' => 1
                 ]);
             }
