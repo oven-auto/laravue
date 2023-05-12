@@ -134,7 +134,18 @@ class ClientEventFilter extends AbstractFilter
         if(!$this->checkJoin($builder, 'clients'))
             $builder->leftJoin('clients', 'clients.id','client_events.client_id');
 
-        $builder->where('clients.lastname', 'LIKE', "%{$value}%")
-            ->orWhere('clients.lastname', 'LIKE', "%{$value}%");
+        $builder->leftJoin('client_phones', 'clients.id','client_phones.client_id');
+        $builder->leftJoin('client_inns', 'clients.id','client_inns.client_id');
+
+        $builder->where(function ($builder) use ($value) {
+            $builder->orWhere('clients.firstname', 'LIKE', "%{$value}%");
+            $builder->orWhere('clients.lastname', 'LIKE', "%{$value}%");
+            $builder->orWhere('clients.company_name', 'LIKE', "%{$value}%");
+            $builder->orWhere('client_phones.phone', 'LIKE', "%{$value}%");
+            $builder->orWhere('client_inns.number', 'LIKE', "%{$value}%");
+        });
+
+        $builder->groupBy('client_phones.phone');
+        $builder->groupBy('client_inns.id');
     }
 }

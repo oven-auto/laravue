@@ -131,6 +131,8 @@ class ClientFilter extends AbstractFilter
             $query->orWhere('clients.firstname', 'like', '%'. $value.'%');
 
             $query->orWhere('clients.id', $value);
+
+            $query->orWhere('clients.company_name', 'like', '%'. $value.'%');
         });
     }
 

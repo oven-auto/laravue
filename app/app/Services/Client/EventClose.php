@@ -51,7 +51,7 @@ Class EventClose
         if(is_object($newStatus))
             $newStatus->lastComment()->create([
                 'author_id' => auth()->user()->id,
-                'text' => 'Назначена новая дата контроля',
+                'text' => 'Назначена новая дата контроля '.$this->eventStaus->date_at->format('d.m.Y'),
                 'event_id' => $this->eventStaus->event_id,
                 'client_event_status_id' => $newStatus->id
             ]);

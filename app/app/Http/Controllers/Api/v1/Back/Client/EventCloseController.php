@@ -32,7 +32,7 @@ class EventCloseController extends Controller
             $clientArr['author_id'] = auth()->user()->id;
             $clientArr['phone'] = $client->phones->first()->phone;
             $clientArr['email'] = $client->emails->count() ? $client->emails->first()->email : '';
-            $clientArr['trafic_chanel_id'] = 17;
+            $clientArr['trafic_chanel_id'] = 37;
 
             $trafic = new Trafic();
             $this->traficRepo->save($trafic, $clientArr);
