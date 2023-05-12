@@ -14,7 +14,7 @@ class UpdateBrand extends Migration
     public function up()
     {
         Schema::table('brands', function (Blueprint $table) {
-            $table->bigInteger('uid')->unique();
+            $table->bigInteger('uid')->nullable()->unique();
         });
     }
 
