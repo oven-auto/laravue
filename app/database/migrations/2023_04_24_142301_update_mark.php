@@ -14,7 +14,7 @@ class UpdateMark extends Migration
     public function up()
     {
         Schema::table('marks', function (Blueprint $table) {
-            $table->bigInteger('uid')->unique();
+            $table->bigInteger('uid')->nullable()->unique();
         });
     }
 
