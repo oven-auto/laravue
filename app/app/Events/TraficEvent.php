@@ -16,15 +16,17 @@ class TraficEvent
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $data;
+    public $message;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct(Trafic $trafic)
+    public function __construct(Trafic $trafic, $message)
     {
         $this->data = $trafic;
+        $this->message = $message;
     }
 
     /**
@@ -38,9 +40,10 @@ class TraficEvent
     }
 
     public function broadcastWith()
-  {
-      return [
-          'data' => $this->data
-      ];
-  }
+    {
+        return [
+            'data' => $this->data,
+            'message' => $this->message,
+        ];
+    }
 }

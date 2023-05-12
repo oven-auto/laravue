@@ -21,7 +21,7 @@ Class TraficRepository
     public function save(Trafic $trafic, $data) : Trafic
     {
         if(!$trafic->created_at)
-            $trafic->created_at     = isset($data['time']) ? date('Y-m-d H:i',\strtotime($data['time'])) : '';
+            $trafic->created_at     = isset($data['time']) ? date('Y-m-d H:i',\strtotime($data['time'])) : date('Y-m-d H:i:s');
         $trafic->fill([
             'author_id'             => $data['author_id'] ?? $trafic->author_id,
             'firstname'             => $data['firstname'] ?? $trafic->firstname,
@@ -36,10 +36,17 @@ Class TraficRepository
             'company_id'            => $data['trafic_brand_id'] ?? $trafic->company_id,
             'company_structure_id'  => $data['trafic_section_id'] ?? $trafic->company_structure_id,
             'trafic_appeal_id'      => $data['trafic_appeal_id'] ?? $trafic->trafic_appeal_id,
-            'begin_at'              => date('Y-m-d H:i',\strtotime($data['begin_at'])) ?? $trafic->begin_at,
-            'end_at'                => date('Y-m-d H:i',\strtotime($data['end_at'])) ?? $trafic->end_at,
+            'begin_at'              => isset($data['begin_at']) ? date('Y-m-d H:i',\strtotime($data['begin_at'])) : $trafic->begin_at,
+            'end_at'                => isset($data['end_at']) ? date('Y-m-d H:i',\strtotime($data['end_at'])) : $trafic->end_at,
             'manager_id'            => $data['manager_id'] ?? $trafic->manager_id,
             'interval'              => $data['trafic_interval'] ?? $trafic->interval,
+            'client_type_id'        => isset($data['person_type_id'])
+                                        ? $data['person_type_id']
+                                        : (isset($data['client_type_id'])
+                                            ? $data['client_type_id']
+                                            : $trafic->client_type_id),
+            'inn'                   => isset($data['inn']) ? $data['inn'] : NULL,
+            'company_name'          => isset($data['company_name']) ? $data['company_name'] : NULL,
         ]);
 
         $trafic->save();
@@ -80,7 +87,7 @@ Class TraficRepository
         $query->with([
             'needs', 'sex', 'zone', 'chanel.myparent',
             'salon', 'structure', 'appeal', 'manager',
-            'author', 'worksheet', 'processing', 'files'
+            'author', 'worksheet', 'processing', 'files', 'person'
         ]);
         $result = $query->simplePaginate($paginate);
         return $result;

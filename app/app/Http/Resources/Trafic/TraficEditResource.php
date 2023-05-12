@@ -31,16 +31,16 @@ class TraficEditResource extends JsonResource
             'phone' => $this->phone_mask,
             'email' => $this->email,
             'comment' => $this->comment,
-            'sex' => $this->sex->name,
+            'sex' => $this->person->name ? $this->person->name : $this->sex->name,
             'zone' => $this->zone->name,
             'parent_chanel' => $this->chanel->myparent->name,
             'chanel' => $this->chanel->name,
             'salon' => $this->salon->name,
-            'structure' => $this->structure->name,
-            'appeal' => $this->appeal->name,
+            'structure' => isset($this->structure) ? $this->structure->name : '',
+            'appeal' => isset($this->appeal) ? $this->appeal->name : '',
             // 'task' => $this->task->name,
             'begin_at' => $this->begin_at ? $this->begin_at->format('d.m.Y H:i') : '',
-            'end_at' => $this->end_at->format('d.m.Y H:i'),
+            'end_at' => $this->end_at ? $this->end_at->format('d.m.Y H:i') : '',
             'manager' =>  $this->manager->cut_name,
             'needs' => $this->needs->pluck('name'),
             'client' => ['id'=>$this->worksheet->client_id],
@@ -54,6 +54,9 @@ class TraficEditResource extends JsonResource
             'processing' => $this->processing->count() ? true : false,
             'files' => $this->files->count() ? true : false,
             'can_i_change' => $canIChange,
+            'person' => $this->person->name,
+            'inn' => $this->inn,
+            'company_name' => $this->company_name
         ];
     }
 }

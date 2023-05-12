@@ -25,4 +25,24 @@ class Worksheet extends Model
     {
         return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id')->withDefault();
     }
+
+    public function company()
+    {
+        return $this->hasOne(\App\Models\Company::class, 'id', 'company_id');
+    }
+
+    public function structure()
+    {
+        return $this->hasOne(\App\Models\Structure::class, 'id', 'structure_id');
+    }
+
+    public function appeal()
+    {
+        return $this->hasOne(\App\Models\Appeal::class, 'id', 'appeal_id');
+    }
+
+    public function status()
+    {
+        return 'Принято';
+    }
 }

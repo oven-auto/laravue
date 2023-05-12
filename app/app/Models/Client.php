@@ -24,6 +24,7 @@ class Client extends Model
         $mas[] = $this->lastname;
         $mas[] = $this->firstname;
         $mas[] = $this->fathername;
+        $mas[] = $this->company_name;
         $result = trim(implode(' ',$mas));
         return $result;
     }
@@ -32,6 +33,19 @@ class Client extends Model
     {
         $client = new Client();
         return $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
+    }
+
+    public function critical()
+    {
+        return '';
+    }
+
+    public function initials()
+    {
+        if(isset($this->company_name) && !empty($this->company_name))
+            return  mb_substr($this->company_name,0,1);
+
+        return mb_substr($this->lastname,0,1).mb_substr($this->firstname,0,1);
     }
 
     public static function findByPhone($phone_number)
@@ -84,5 +98,19 @@ class Client extends Model
         return $this->hasOne(\App\Models\Worksheet::class,'client_id', 'id')->orderBy('id','DESC')->withDefault();
     }
 
+    public function worksheets()
+    {
+        return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id');
+    }
+
+    public function inn()
+    {
+        return $this->hasOne(\App\Models\ClientInn::class, 'client_id', 'id')->withDefault();
+    }
+
+    public function events()
+    {
+        return $this->hasMany(\App\Models\ClientEvent::class, 'client_id', 'id');
+    }
 
 }

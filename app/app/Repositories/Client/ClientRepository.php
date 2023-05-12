@@ -35,7 +35,8 @@ Class ClientRepository
     public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
     {
         $query = $this->filter($data);
-        $query->with(['latest_worksheet','phones','emails']);
+        $query->with(['latest_worksheet','phones','emails','cars','inn','zone','sex',]);
+        $query->groupBy('clients.id');
         $result = $query->simplePaginate($paginate);
         return $result;
     }
@@ -65,6 +66,12 @@ Class ClientRepository
 
         $client->phones()->delete();
         $client->emails()->delete();
+
+        if(isset($data['inn']))
+            $client->inn->fill([
+                'number' => $data['inn']
+            ])->save();
+
         foreach($data['contacts'] as $itemRowContact) {
             if($itemRowContact['phone'])
                 $client->phones()->create(['client_id' => $client->id, 'phone' => preg_replace("/[^,.0-9]/", '', $itemRowContact['phone']) ]);
@@ -89,30 +96,53 @@ Class ClientRepository
      */
     public function findOrCreate(Trafic $trafic) :Client
     {
-        $client = Client::with('phones')
-            ->leftJoin('client_phones','client_phones.client_id','clients.id')
-            ->where('client_phones.phone', $trafic->phone)
-            ->first();
+        $query = Client::select('clients.*')->with('phones');
+
+        if($trafic->client_type_id == 1)
+            $query->leftJoin('client_phones','client_phones.client_id','clients.id')
+                ->where('client_phones.phone', $trafic->phone);
+
+        elseif($trafic->client_type_id == 2)
+            $query->leftJoin('client_inns','client_inns.client_id','clients.id')
+                ->where('client_inns.number', $trafic->inn);
+
+        $client = $query->first();
 
         if(!$client)
             $client = Client::create([
                 'lastname'      => $trafic->lastname,
                 'firstname'     => $trafic->firstname,
                 'fathername'    => $trafic->fathername,
-                'client_type_id' => 1,
+                'client_type_id' => $trafic->client_type_id,
                 'trafic_sex_id'  => $trafic->trafic_sex_id,
                 'trafic_zone_id'  => $trafic->trafic_zone_id,
+                'company_name'  => $trafic->company_name,
             ]);
 
         if($client->wasRecentlyCreated) {
-            $client->phones()->create([
-                'phone' => $trafic->phone
-            ]);
-            $client->emails()->create([
-                'email' => $trafic->email
-            ]);
+            if($trafic->client_type_id == 1) {
+                $client->phones()->create([
+                    'phone' => $trafic->phone
+                ]);
+                $client->emails()->create([
+                    'email' => $trafic->email
+                ]);
+            }
+            if($trafic->client_type_id == 2)
+            {
+                $client->inn()->create([
+                    'number' => $trafic->inn
+                ]);
+            }
         }
+
         return $client;
+    }
+
+    public static function getClientFromTrafic(Trafic $trafic)
+    {
+        $me = new self;
+        return $me->findOrCreate($trafic);
     }
 
     /**

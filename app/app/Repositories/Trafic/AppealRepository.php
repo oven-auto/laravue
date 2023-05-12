@@ -9,6 +9,9 @@ Class AppealRepository
 {
     public function getAppealByCompanyStructure(Int $id)
     {
+        if(!$id)
+            return [];
+
         $data = [];
 
         $appeals = TraficAppeal::select('trafic_appeals.*')->with(['appeal' => function($query) {

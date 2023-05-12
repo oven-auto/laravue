@@ -23,6 +23,7 @@ class ClientFilter extends AbstractFilter
     public const ACTION_START           = 'action_start';
     public const ACTION_END             = 'action_end';
     public const LOYALTY_ID             = 'loyalty_id';
+    public const IDS                    = 'ids';
 
     protected function getCallbacks(): array
     {
@@ -44,6 +45,7 @@ class ClientFilter extends AbstractFilter
             self::ACTION_START              => [$this, 'actionStart'],
             self::ACTION_END                => [$this, 'actionEnd'],
             self::LOYALTY_ID                => [$this, 'loyaltyId'],
+            self::IDS                       => [$this, 'ids'],
         ];
     }
 
@@ -51,6 +53,11 @@ class ClientFilter extends AbstractFilter
     {
         $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
         return $res;
+    }
+
+    public function ids(Builder $builder, $value)
+    {
+        $builder->whereIn('clients.id', explode(',',$value));
     }
 
     public function lastname(Builder $builder, $value)
@@ -111,11 +118,20 @@ class ClientFilter extends AbstractFilter
     {
         if(!$this->checkJoin($builder, 'client_phones'))
             $builder->leftJoin('client_phones', 'client_phones.client_id','clients.id');
-        $builder->orWhere('client_phones.phone', 'like', '%'. $value.'%');
+        if(!$this->checkJoin($builder, 'client_inns'))
+            $builder->leftJoin('client_inns', 'client_inns.client_id','clients.id');
 
-        $builder->orWhere('clients.lastname', 'like', '%'. $value.'%');
+        $builder->where(function($query) use ($value){
+            $query->orWhere('client_phones.phone', 'like', '%'. $value.'%');
 
-        $builder->orWhere('clients.id', $value);
+            $query->orWhere('client_inns.number', 'like', '%'. $value.'%');
+
+            $query->orWhere('clients.lastname', 'like', '%'. $value.'%');
+
+            $query->orWhere('clients.firstname', 'like', '%'. $value.'%');
+
+            $query->orWhere('clients.id', $value);
+        });
     }
 
     public function registerInterval(Builder $builder, $value)

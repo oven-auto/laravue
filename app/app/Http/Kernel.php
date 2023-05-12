@@ -76,6 +76,7 @@ class Kernel extends HttpKernel
 
         'permission.worksheet.create' => \App\Http\Middleware\Permissions\Worksheet\WorksheetCreate::class,
         'permission.developer' => \App\Http\Middleware\Permissions\Developer\UserActionPerm::class,
+        'permission.clientevent' => \App\Http\Middleware\Permissions\Client\ClientEvent::class,
 
     ];
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Client\ClientListResource;
 use App\Repositories\Client\ClientRepository;
 use App\Http\Resources\Client\ClientListCollection;
 use App\Http\Resources\Client\ClientEditResource;
@@ -21,6 +22,14 @@ class ClientController extends Controller
      * @var ClientRepository repo ClientRepository
      */
     private $repo;
+
+    private const EVENT_STATUS = [
+        'open'   => 'Клиент открыт',
+        'create' => 'Клиент создан',
+        'update' => 'Клиент изменен',
+        'close' =>  'Клиент упущен',
+        'delete' => 'Клиент удален'
+    ];
 
     /**
      * В конструкторе получить класс репозитория из сервиспровайдера, и присвоить его переменой repo
@@ -42,6 +51,11 @@ class ClientController extends Controller
         return new ClientListCollection($clients);
     }
 
+    public function show(Client $client)
+    {
+        return new \App\Http\Resources\Client\ClientCartResource($client);
+    }
+
     /**
      * Получить данные клиента, по указанному id, id превратится в модель Client в middleware
      * @param Client $client  Client
@@ -61,6 +75,7 @@ class ClientController extends Controller
     public function store(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
+        \App\Events\ClientEvent::dispatch($client, self::EVENT_STATUS['create']);
         return (new ClientEditResource($client))
             ->additional(['message' => 'Клиент создан']);
     }
@@ -74,8 +89,13 @@ class ClientController extends Controller
     public function update(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
+        \App\Events\ClientEvent::dispatch($client, self::EVENT_STATUS['update']);
+
         return (new ClientEditResource($client))
-            ->additional(['message' => 'Клиент изменен']);
+            ->additional([
+                'message' => 'Клиент изменен',
+                'client' => new ClientListResource(($client))
+            ]);
     }
 
     /**

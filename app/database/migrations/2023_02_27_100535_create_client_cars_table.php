@@ -19,7 +19,7 @@ class CreateClientCarsTable extends Migration
             $table->foreignId('client_id')->constrained()->onDelete('cascade');
             $table->foreignId('brand_id')->constrained()->onDelete('cascade');
             $table->foreignId('mark_id')->constrained()->onDelete('cascade');
-            $table->foreignId('body_work_id')->nullable()->constrained()->onDelete('cascade');
+            //$table->foreignId('body_work_id')->nullable()->constrained()->onDelete('cascade');
             $table->integer('year')->nullable();
             $table->integer('odometer')->nullable();
             $table->string('register_plate', 20)->nullable();

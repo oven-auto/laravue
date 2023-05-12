@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
 
 /*
 |--------------------------------------------------------------------------
@@ -40,6 +41,15 @@ Route::get('phpinfo', function() {
     phpinfo();
 });
 
+Route::get('/doc', function(){
+    $data = \App\Models\ApiDescription::get()->groupBy('title');
+    return view('admin.doc', ['data' => $data]);
+});
+
+Route::get('hash', function(Request $request){
+    echo Hash::make($request->get('string'));
+});
+
 // Route::prefix('export')->middleware(['corsing','userfromtoken'])->group(function () {
 //     Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
 // });
@@ -48,8 +58,8 @@ Route::prefix('pdf')->group(function () {
     Route::get('trafics/{trafic}', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficPDFController');
 });
 
-Route::get( '/{any}', function() {
-    return view('layouts.admin');
-})->where('any', '.*');
+// Route::get( '/cms', function() {
+//     return view('layouts.admin');
+// })->where('any', '.*');
 
 Route::get('test', '\App\Http\Controllers\HomeController@test');

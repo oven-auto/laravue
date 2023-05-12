@@ -255,6 +255,7 @@ Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
  * ТРАФИК обернут правами доступа
  */
 Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
+    Route::get('product/statuses', 'TraficProductStatusList');
     //получить список зон трафика
     Route::get('zones', 'TraficZoneController@index');
     //получить список каналов трафика
@@ -266,7 +267,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //получить список структур выбраной компании трафика, brand_id это id компании
     Route::get('structures/{brand_id}', 'TraficStructureController@index');
     //получить список обращений указаной структуры компании трафика, id - структура
-    Route::get('appeals/{id}', 'TraficAppealController@index');
+    Route::get('appeals/{id?}', 'TraficAppealController@index');
     //получить список товаров и услуг, в зависимости от выбранного обращения трафика, id - обращения
     Route::get('needs/{company_id?}', 'TraficNeedController@index');
     //получить список моделей по id компании
@@ -277,7 +278,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     /**/Route::get('tasks', 'TraficTaskController@index');
     //получить список пользователей являющихся сотрудниками указанной структуры трафика и
     //обрабатывающими указанное обращение, structure_id - структура, appeal_id - обращение
-    Route::get('users/{structure_id}/{appeal_id}', 'TraficUserController@index');
+    Route::get('users/{structure_id?}/{appeal_id?}', 'TraficUserController@index');
     //получить список статусов трафика
     Route::get('statuses', 'TraficStatusController@index');
     //получить список типов аудита трафика
@@ -344,6 +345,23 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
  * КЛИЕНТЫ, обернуты правами доступа
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
+    Route::get('eventtypes', 'EventTypeController');
+
+    Route::resource('eventgroups', 'EventGroupController')->only(['index','store','update','show']);
+
+    Route::get('eventstatuses', 'EventStatusController');
+
+    Route::get('events/count', 'ClientEventCountController');
+
+    Route::get('events/close', 'EventCloseController@close'); //Закрыть событие клиента без трафика
+
+    Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
+        ->except(['create','edit']);
+
+    Route::get('marketing','ClientMarketing');
+
+    Route::resource('files', 'ClientFileController')->only(['index','store','update','destroy']);
+
     //список типов клиентов физ/юр
     Route::get('types', 'ClientTypeController');
     //список типов лояльности
@@ -356,6 +374,8 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //создать клиента
     Route::post('create', 'ClientController@store')
         ->middleware(['permission.trafic.list:client_add']);
+    //Получить данные о клиенте для модалки
+    Route::get('show/{client}', 'ClientController@show');
     //получить конкретного клиента
     Route::get('{client}', 'ClientController@edit')
         ->middleware(['permission.trafic.list:client_show']);
@@ -390,11 +410,19 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
+    Route::get('client/{client}', 'ClientWorksheetListController');
     Route::post('create', 'WorksheetController@store')
         ->middleware([
             'worksheet.create.base',
             'permission.worksheet.create'
         ]);
+});
+
+Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
+
+    Route::get('deliver/brands', 'Deliver\BrandController');
+    Route::get('deliver/marks', 'Deliver\MarkController');
+
 });
 
 

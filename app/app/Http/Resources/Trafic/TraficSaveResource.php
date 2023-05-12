@@ -20,54 +20,27 @@ class TraficSaveResource extends JsonResource
                 'created_at' => $this->created_at->format('d.m.Y H:i'),
                 'updated_at' => $this->updated_at->format('d.m.Y H:i'),
                 'time' => $this->created_at->format('d.m.Y (H:i)'),
-                'author_id' => [
-                    'id' => $this->author->id,
-                    'name' => $this->author->cut_name
-                ],
+                'author_id' => $this->author->id,
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
                 'fathername' => $this->fathername,
                 'phone' => $this->phone,
                 'email' => $this->email,
                 'comment' => $this->comment,
-                'trafic_sex_id' => [
-                    'id' => $this->trafic_sex_id,
-                    'name' => $this->sex->name,
-                ],
-                'trafic_zone_id' => [
-                    'id' => $this->trafic_zone_id,
-                    'name' => $this->zone->name,
-                ],
-                'trafic_chanel_id' => [
-                    'id' => $this->trafic_chanel_id,
-                    'name' => $this->chanel->name,
-                ],
-                'trafic_brand_id' => [
-                    'id' => $this->salon->id,
-                    'name' => $this->salon->name,
-                ],
-                'trafic_section_id' => [
-                    'id' => $this->company_structure_id,
-                    'name' => $this->structure->name,
-                ],
-                'trafic_appeal_id' => [
-                    'id' => $this->trafic_appeal_id,
-                    'name' => $this->appeal->name,
-                ],
-                'trafic_need_id' => $this->needs->map(function($item, $key) {
-                    return [
-                        'id'=>$item->number,
-                        'name' => $item->name
-                    ];
-                }),
+                'trafic_sex_id'     => $this->trafic_sex_id         ?? '',
+                'trafic_zone_id'    => $this->trafic_zone_id        ?? '',
+                'trafic_chanel_id'  => $this->trafic_chanel_id      ?? '',
+                'trafic_brand_id'   => $this->salon->id             ?? '',
+                'trafic_section_id' => $this->company_structure_id  ?? '',
+                'trafic_appeal_id'  => $this->trafic_appeal_id      ?? '',
+                'trafic_need_id'    => $this->needs->map(function($item, $key) {
+                    return $item->number;
+                })->toArray(),
 
                 'trafic_interval' => $this->interval,
                 'begin_at' => $this->begin_at ? $this->begin_at->format('d.m.Y H:i') : '',
-                'end_at' => $this->end_at->format('d.m.Y H:i'),
-                'manager_id' => [
-                    'id' => $this->manager->id,
-                    'name' => $this->manager->cut_name
-                ],
+                'end_at' => $this->end_at ? $this->end_at->format('d.m.Y H:i') : '',
+                'manager_id' => $this->manager->id,
                 'status' => $this->trafic_status_id,
                 'processing' => $this->processing->map(function($item){
                     return [
@@ -91,7 +64,10 @@ class TraficSaveResource extends JsonResource
                     ];
                 }),
                 'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : '',
-                'showbuttonstatus' => $this->trafic_status_id == 2 ? 1 : 0
+                'showbuttonstatus' => $this->trafic_status_id == 2 ? 1 : 0,
+                'inn' => $this->inn,
+                'company_name' => $this->company_name,
+                'person_type_id' => $this->client_type_id
             ],
             'success' => $this->id ? 1 : 0,
         ];

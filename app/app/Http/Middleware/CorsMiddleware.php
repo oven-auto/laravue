@@ -30,7 +30,7 @@ class CorsMiddleware
         $domains = config('cors.trusted');
 
         $origin = $request->headers->get('origin');
-
+        //dd($origin = $request->headers);
         if($origin && in_array($origin, $domains, true)) {
             return $next($request)
                 ->header('Access-Control-Allow-Origin', $origin)

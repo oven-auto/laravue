@@ -19,10 +19,10 @@ class ClientCarResource extends JsonResource
             'brand' => $this->brand->name,
             'mark' => $this->mark->name,
             'bodywork' => $this->bodywork->name,
-            'odometer' => $this->odometer,
-            'year' => $this->year,
-            'register_plate' => $this->register_plate,
-            'vin' => $this->vin
+            'vin' => $this->vin ? $this->vin : '',
+            'odometer' => $this->odometer ? $this->odometer : '',
+            'register_plate' => $this->register_plate ? $this->register_plate : '',
+            'year' => $this->year ? $this->year : ''
         ];
     }
 }

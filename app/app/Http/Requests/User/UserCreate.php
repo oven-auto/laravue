@@ -23,14 +23,23 @@ class UserCreate extends FormRequest
      */
     public function rules()
     {
-        return [
+        $methods = \Route::current()->methods();
+        if(in_array('POST',$methods))
+            $pass = ['password' => 'required|min:8|confirmed'];
+        if(in_array('PATCH', $methods))
+            $pass = ['password' => 'nullable|min:8|confirmed'];
+
+        return array_merge([
             'firstname' => 'required|alpha',
             'lastname' => 'required|alpha',
             'email' => 'required|email:rfc,dns',
-            'password' => 'required|min:8|confirmed',
             'role_id' => 'required|integer',
-            'phone' => 'nullable'
-        ];
+            'phone' => [
+                'string',
+                'nullable',
+                'regex:([+]{1}[7]{1}\s{1}[(]{1}[0-9]{3}[)]{1}\s{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2})',
+            ],
+        ], $pass);
     }
 
     public function messages()

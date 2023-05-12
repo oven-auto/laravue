@@ -32,6 +32,8 @@ class TraficFilter extends AbstractFilter
     public const AUDIT_SCENARIO_ID = 'scenario';
     public const AUDIT_STATUS_ID = 'status_audit_id';
     public const MODEL_ID = 'model_id';
+    public const PERSON_TYPE_ID = 'person_type_id';
+    public const IS_PRODUCT = 'is_product';
 
     public $countElements = 0;
 
@@ -61,6 +63,8 @@ class TraficFilter extends AbstractFilter
             self::AUDIT_SCENARIO_ID   => [$this, 'auditScenarioId'],
             self::AUDIT_STATUS_ID     => [$this, 'auditStatusId'],
             self::MODEL_ID            => [$this, 'modelId'],
+            self::PERSON_TYPE_ID      => [$this, 'personTypeId'],
+            self::IS_PRODUCT          => [$this, 'isProduct'],
         ];
     }
 
@@ -75,6 +79,21 @@ class TraficFilter extends AbstractFilter
         if(!$this->checkJoin($builder, 'trafic_needs'))
             $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id');
         $builder->whereIn('trafic_needs.trafic_product_number', $value);
+    }
+
+    public function isProduct(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'trafic_needs'))
+            $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id');
+        if($value == 2)
+            $builder->havingRaw('count(trafic_needs.trafic_id) > 0');
+        elseif($value == 1)
+            $builder->havingRaw('count(trafic_needs.trafic_id) = 0');
+    }
+
+    public function personTypeId(Builder $builder, $value)
+    {
+        $builder->where('trafics.client_type_id',$value);
     }
 
     public function auditAuthorId(Builder $builder, $value)

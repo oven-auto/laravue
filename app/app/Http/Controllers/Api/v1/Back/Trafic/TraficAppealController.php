@@ -13,14 +13,13 @@ class TraficAppealController extends Controller
      * @param AppealRepository service Репазиторий обращений
      * @return \Illuminate\Http\JsonResponse
      */
-    public function index($id, AppealRepository $service)
+    public function index($id = 0, AppealRepository $service)
     {
         $data = $service->getAppealByCompanyStructure($id);
 
         return response()->json([
             'data' => $data,
             'success' => 1,
-            'test' => 123
         ]);
     }
 }

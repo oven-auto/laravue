@@ -19,7 +19,7 @@ class UserResource extends JsonResource
             'firstname' => $this->name,
             'email' => $this->email,
             'lastname' => $this->lastname,
-            'phone' => $this->phone,
+            'phone' => \StrHelp::phoneMask($this->phone),
             'role' => $this->role->name
         ];
     }

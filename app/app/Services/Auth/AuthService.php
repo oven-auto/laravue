@@ -62,7 +62,7 @@ Class AuthService
             'email' => $data['email'],
             'password' => Hash::make($data['password']),
             'role_id' => $data['role_id'],
-            'phone' => isset($data['phone']) ? $data['phone'] : ''
+            'phone' => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
         ]);
         return $user;
     }
@@ -73,9 +73,9 @@ Class AuthService
             'name' => $data['firstname'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
+            'password' => isset($data['phone']) ? Hash::make($data['password']) : $user->password,
             'role_id' => $data['role_id'],
-            'phone' => isset($data['phone']) ? $data['phone'] : ''
+            'phone' => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
         ])->save();
         return $user;
     }

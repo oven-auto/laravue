@@ -9,6 +9,9 @@ Class UserRepository
 {
     public function getListWithCoutTrafic($structure_id, $appeal_id)
     {
+        if($structure_id == 0 || $appeal_id == 0)
+            return [];
+
         $users = User::counterSelect()
             ->leftJoin('appeal_users', 'appeal_users.user_id', '=', 'users.id')
             ->leftJoin('trafic_appeals', 'trafic_appeals.appeal_id', '=',  'appeal_users.appeal_id')

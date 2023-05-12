@@ -39,6 +39,7 @@ class ClientStoreRequest extends FormRequest
                 if(isset($item['email']))
                     $data['emails'][] = $item['email'];
             }
+
         $uniquePhone = \App\Models\ClientPhone::with('client')
             ->whereIn('phone',$data['phones'])
             ->where('client_id', '<>', $clientId)
@@ -57,39 +58,74 @@ class ClientStoreRequest extends FormRequest
         if($message)
             throw new \Exception($message);
 
-        return [
+        $arr = [
             'firstname' => 'nullable|alpha',
             'lastname' => 'nullable|alpha',
             'fathername' => 'nullable|alpha',
             'client_type_id' => 'required|numeric|integer',
             'trafic_sex_id' => 'nullable|numeric|integer',
             'trafic_zone_id' => 'nullable|numeric|integer',
-            'contacts' => 'array|required',
-            'contacts.0.phone' => 'required',
-            'contacts.*.phone' => [
-                'distinct',
-                'string',
-                'nullable',
-                //'unique:App\Models\ClientPhone,phone',
-                'regex:([+]{1}[7]{1}\s{1}[(]{1}[0-9]{3}[)]{1}\s{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2})',
-                //Rule::unique('client_phones', 'phone'),
-
-            ],
-            'contacts.*.email' => [
-                'distinct',
-                'string',
-                'nullable',
-                //'unique:App\Models\ClientEmail,email',
-                'email:rfc,dns',
-                //Rule::unique('client_emails', 'email')->ignore($clientId, 'client_id'),
-            ],
             'birthday_at' => 'nullable|date',
             'driver_license_issue_at' => 'nullable|date',
             'passport_issue_at' => 'nullable|date',
             'address' => 'nullable|string',
             'driving_license' => 'nullable|regex:([0-9]{4}\s{1}[0-9]{6})',
             'serial_number' => 'nullable|regex:([0-9]{4}\s{1}[0-9]{6})',
+            'contacts' => 'array|required',
+
+            'contacts.*.phone' => [
+                'distinct',
+                'string',
+                'nullable',
+                'regex:([+]{1}[7]{1}\s{1}[(]{1}[0-9]{3}[)]{1}\s{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2})',
+
+            ],
         ];
+
+
+            if(request()->get('client_type_id') == 1) {
+                $arr2 = [
+                    'contacts' => 'array|required',
+                    'contacts.0.phone' => 'required',
+                    'contacts.*.phone' => [
+                        'distinct',
+                        'string',
+                        'nullable',
+                        'regex:([+]{1}[7]{1}\s{1}[(]{1}[0-9]{3}[)]{1}\s{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2})',
+
+                    ],
+                    'contacts.*.email' => [
+                        'distinct',
+                        'string',
+                        'nullable',
+                        'email:rfc,dns',
+                    ],
+                ];
+                return array_merge($arr2, $arr);
+            }
+
+            elseif(request()->get('client_type_id') == 2) {
+                $arr2 = [
+                    'url' => 'nullable',
+                    'inn' => 'required',
+                    'company_name' => 'required',
+                    'contacts' => 'array|nullable',
+                    'contacts.*.phone' => [
+                        'distinct',
+                        'string',
+                        'nullable',
+                        'regex:([+]{1}[7]{1}\s{1}[(]{1}[0-9]{3}[)]{1}\s{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2})',
+
+                    ],
+                    'contacts.*.email' => [
+                        'distinct',
+                        'string',
+                        'nullable',
+                        'email:rfc,dns',
+                    ],
+                ];
+                return array_merge($arr2, $arr);
+            }
     }
 
     public function messages()
@@ -100,14 +136,13 @@ class ClientStoreRequest extends FormRequest
             'lastname.alpha' => 'Фамилия может состоять только из букв',
             'fathername.alpha' => 'Отчество может состоять только из букв',
             'trafic_sex_id.required' => 'Не указан тип клиента (Физ./Юр. лицо)',
-            'contacts.required' => 'Не указан контакт клиента',
 
+            'contacts.required' => 'Не указан контакт клиента',
             'contacts.0.phone.required' => 'Должен быть указан номер телефона',
             'contacts.*.phone.string' => 'Телефон должен иметь формат +7 (XXX) XXX-XX-XX',
             'contacts.*.phone.regex' => 'Телефон должен иметь формат +7 (XXX) XXX-XX-XX ',
             'contacts.*.phone.unique' => 'Поле телефон не уникально, такой телефон уже имеется в базе клиентов',
             'contacts.0.phone.distinct' => 'Вы указали повторяющиеся телефоны',
-
             'contacts.*.email.unique' => 'Поле Email не уникально, такой адрес уже имеется в базе клиентов',
             'contacts.*.email.distinct' => 'Вы указали повторяющиеся Email',
             'contacts.*.email.email' => 'Поле Email не может быть в переданном формате',

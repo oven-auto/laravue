@@ -74,7 +74,7 @@ class UserController extends Controller
     {
         $user = $this->service->update($user, $request->input());
         return (new UserSaveResource($user))
-            ->additional(['message' => 'Пользователь создан']);
+            ->additional(['message' => 'Пользователь изменен']);
     }
 
     /**

@@ -9,7 +9,7 @@ use App\Repositories\User\UserRepository;
 
 class TraficUserController extends Controller
 {
-    public function index($structure_id, $appeal_id, UserRepository $service)
+    public function index($structure_id = 0, $appeal_id = 0, UserRepository $service)
     {
         $data = $service->getListWithCoutTrafic($structure_id, $appeal_id);
 

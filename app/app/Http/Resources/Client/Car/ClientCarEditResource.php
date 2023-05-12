@@ -20,10 +20,10 @@ class ClientCarEditResource extends JsonResource
                 'brand_id' => $this->brand_id,
                 'mark_id' => $this->mark_id,
                 'body_work_id' => $this->body_work_id,
-                'vin' => $this->vin,
-                'odometer' => $this->odometer,
-                'register_plate' => $this->register_plate,
-                'year' => $this->year
+                'vin' => $this->vin ? $this->vin : '',
+                'odometer' => $this->odometer ? $this->odometer : '',
+                'register_plate' => $this->register_plate ? $this->register_plate : '',
+                'year' => $this->year ? $this->year : ''
             ],
             'success' => 1
         ];

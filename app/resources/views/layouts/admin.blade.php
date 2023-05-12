@@ -44,7 +44,7 @@
 
             function send(msg)
             {
-                var data = 'Привет, я таки с фронтенда '+msg
+                var data = JSON.stringify({auth:47})
                 conn.send(data)
                 console.log('Отправлено')
             }

@@ -1,21 +1,18 @@
 <?php
 
-namespace App\Services\Worksheet;
+namespace App\Repositories\Worksheet;
 
 use App\Models\Worksheet;
-use App\Models\Client;
 use App\Models\Trafic;
-use App\Models\ClientPhone;
 use App\Repositories\Client\ClientRepository;
 
-class WorksheetService
+class WorksheetRepository
 {
-    public function create($trafic_id)
+    public function createFromTrafic($trafic_id)
     {
         $trafic = Trafic::with('status')->find($trafic_id);
 
-        $clientService = new ClientRepository();
-        $client = $clientService->findOrCreate($trafic);
+        $client = ClientRepository::getClientFromTrafic($trafic);
 
         $worksheet = Worksheet::create([
             'client_id'         => $client->id,

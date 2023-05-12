@@ -46,6 +46,7 @@ return [
         'http://192.168.1.98',
         'http://192.168.1.98:8280',
 	    'http://62.182.31.140',
+        'http://192.168.1.98',
         'sockjs-eu.pusher.com',
         'http://sockjs-eu.pusher.com',
         'https://sockjs-eu.pusher.com'

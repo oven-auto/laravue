@@ -7,6 +7,7 @@ use App\Classes\Socket\Base\BaseSocket;
 Class SocketServer extends BaseSocket
 {
     protected $clients;
+    protected $connections;
 
     public function __construct()
     {
@@ -16,18 +17,34 @@ Class SocketServer extends BaseSocket
     public function onOpen(\Ratchet\ConnectionInterface $conn)
     {
         $this->clients->attach($conn);
+        $this->connections[$conn->resourceId] = ['resourceId' => $conn->resourceId, 'authId' => ''];
         echo "New connection ({$conn->resourceId})\n";
     }
 
     public function onMessage(\Ratchet\ConnectionInterface $conn, $msg)
     {
         $numRecv = count($this->clients) - 1;
+
+        $data = json_decode($msg, true);
+        if(isset($data['auth']))
+            $this->connections[$conn->resourceId]['authId'] = $data['auth'];
+        if(isset($data['message']))
+            $msg = $data['message'];
+
         echo sprintf('Connection %d sending message "%s" to %d other connection'."\n",
             $conn->resourceId, $msg, $numRecv
         );
+
+
+        if(isset($data['auth']) && !isset($data['message']))
+            $msg = 'В систему вошёл новый пользователь';
+
         foreach($this->clients as $itemclient)
         {
-            if($conn !== $itemclient)
+            if(
+                $conn !== $itemclient &&
+                $this->connections[$itemclient->resourceId]['authId'] !== $this->connections[$conn->resourceId]['authId']
+            )
                 $itemclient->send($msg);
         }
     }
@@ -35,6 +52,7 @@ Class SocketServer extends BaseSocket
     public function onClose(\Ratchet\ConnectionInterface $conn)
     {
         $this->clients->detach($conn);
+        unset($this->connections[$conn->resourceId]);
         echo "Connection {$conn->resourceId} has disconnected \n";
     }
 

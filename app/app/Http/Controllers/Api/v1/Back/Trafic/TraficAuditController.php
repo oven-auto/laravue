@@ -11,7 +11,7 @@ use App\Models\TraficProcessing;
 
 class TraficAuditController extends Controller
 {
-    public $loadService;
+    public $repository;
 
     public function __construct(\App\Repositories\Trafic\TraficAuditRepository $service)
     {

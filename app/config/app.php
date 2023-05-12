@@ -237,7 +237,10 @@ return [
         'View' => Illuminate\Support\Facades\View::class,
         'Excel' => Maatwebsite\Excel\Facades\Excel::class,
         'PDF' => Barryvdh\DomPDF\Facade::class,
+
         'WebUrl' => App\Helpers\Url\WebUrl::class,
+        'StrHelp' => App\Helpers\String\StringHelper::class,
+        'DateHelp' => App\Helpers\Date\DateHelper::class,
     ],
 
 ];

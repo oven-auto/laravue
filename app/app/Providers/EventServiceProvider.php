@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Event;
 use App\Events\TraficEvent;
 use App\Listeners\SendTraficInfo;
 
+use App\Events\ClientEvent;
+use App\Listeners\SendClientInfo;
+
 class EventServiceProvider extends ServiceProvider
 {
     /**
@@ -20,6 +23,9 @@ class EventServiceProvider extends ServiceProvider
     protected $listen = [
         Registered::class => [
             SendEmailVerificationNotification::class,
+        ],
+        ClientEvent::class => [
+            SendClientInfo::class,
         ],
         TraficEvent::class => [
             SendTraficInfo::class,

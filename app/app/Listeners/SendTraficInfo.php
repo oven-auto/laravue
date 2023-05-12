@@ -26,11 +26,21 @@ class SendTraficInfo
      */
     public function handle(TraficEvent $event)
     {
-        $txt = "Изменен трафик ".PHP_EOL;
+        $txt =  $event->message.PHP_EOL;
         $txt .= "Номер трафика: {$event->data->id} ".PHP_EOL;
         $txt .= "Автор трафика: {$event->data->author->cut_name} ".PHP_EOL;
         $txt .= "Менеджер трафика: {$event->data->manager->cut_name} ".PHP_EOL;
+        $txt .= PHP_EOL;
+        $txt .= "Автор изменения: ".auth()->user()->cut_name.PHP_EOL;
 
-        \App\Classes\Socket\SocketClient::socket($txt)->send();
+        try{
+            \App\Classes\Socket\SocketClient::socket(
+                json_encode(
+                    ['auth' => 1, 'message' => $txt]
+                )
+            )->send();
+        } catch(\Exception $e){
+
+        }
     }
 }

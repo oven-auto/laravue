@@ -177,4 +177,8 @@ class Trafic extends Model
         return $this->hasMany(\App\Models\TraficFile::class, 'trafic_id', 'id');
     }
 
+    public function person()
+    {
+        return $this->hasOne(\App\Models\ClientType::class, 'id', 'client_type_id')->withDefault();
+    }
 }

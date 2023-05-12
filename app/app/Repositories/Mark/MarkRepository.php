@@ -29,6 +29,7 @@ Class MarkRepository
             $query->where('brand_id', $data['brand_id']);
 
         $marks = $query->leftJoin('brands','brands.id','marks.brand_id')
+            ->where('diller_status', 1)
             ->where('brands.diller',1)
             ->orderBy('status','DESC')
             ->orderBy('sort')
