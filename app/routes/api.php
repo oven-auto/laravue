@@ -416,13 +416,27 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
             'worksheet.create.base',
             'permission.worksheet.create'
         ]);
+
+    /****************************************************************************15.05.23
+     * Добавить клиента или менеджера в рабочий лист
+     * @param mixed $request [worksheet_id = int, user_id = int|client_id = int]
+     */
+    Route::post('users', 'AppendUserController@append');
+    Route::post('clients', 'AppendClientController@append');
+
+    /****************************************************************************15.05.23
+     * Удалить клиента или менеджера из рабочего листа
+     * @param mixed $request [worksheet_id = int, user_id = int|client_id = int]
+     */
+    Route::delete('users', 'AppendUserController@destroy');
+    Route::delete('clients', 'AppendClientController@destroy');
+
+    Route::get('{worksheet}', 'WorksheetController@show');
 });
 
 Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
-
     Route::get('deliver/brands', 'Deliver\BrandController');
     Route::get('deliver/marks', 'Deliver\MarkController');
-
 });
 
 

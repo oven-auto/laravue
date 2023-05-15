@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Worksheet\WorksheetStoreRequest;
+use App\Models\Worksheet;
 use App\Repositories\Worksheet\WorksheetRepository;
 use App\Http\Resources\Worksheet\WorksheetCreateResource;
 
@@ -20,5 +21,41 @@ class WorksheetController extends Controller
     {
         $worksheet = $this->service->createFromTrafic($request->trafic_id);
         return new WorksheetCreateResource($worksheet);
+    }
+
+    public function show(Worksheet $worksheet)
+    {
+        return response()->json([
+            'data' => [
+                'id' => $worksheet->id,
+                'created_at' => $worksheet->created_at->format('d.m.Y (H:i)'),
+                'client' => [
+                    'id' => $worksheet->client->id,
+                    'name' => $worksheet->client->full_name,
+                ],
+                'subclient' => $worksheet->subclients->map(function($item){
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->full_name,
+                    ];
+                }),
+                'trafic' => [
+                    'salon' => $worksheet->company->name,
+                    'structure' => $worksheet->structure->name,
+                    'appeal' => $worksheet->appeal->name,
+                ],
+                'author' => [
+                    'id' => $worksheet->author->id,
+                    'name' => $worksheet->author->cut_name,
+                ],
+                'executors' => $worksheet->executors->map(function($item){
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->cut_name,
+                    ];
+                }),
+            ],
+            'success' => 1,
+        ]);
     }
 }

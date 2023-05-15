@@ -40,6 +40,15 @@ class ClientStoreRequest extends FormRequest
                     $data['emails'][] = $item['email'];
             }
 
+        if(request()->has('inn')) {
+            $uniqueInn = \App\Models\ClientInn::with('client')
+                ->where('number',request()->inn)
+                ->where('client_id', '<>', $clientId)
+                ->get();
+            foreach($uniqueInn as $item)
+                $message.='ИНН '.$item->number.' не уникален ('.$item->client_id.' : '.$item->client->company_name.')'.PHP_EOL;
+        }
+
         $uniquePhone = \App\Models\ClientPhone::with('client')
             ->whereIn('phone',$data['phones'])
             ->where('client_id', '<>', $clientId)
@@ -54,6 +63,8 @@ class ClientStoreRequest extends FormRequest
             $message.='Телефон '.$item->phone_mask.' не уникален ('.$item->client_id.' : '.$item->client->full_name.')'.PHP_EOL;
         foreach($uniqueEmail as $item)
             $message.='Email '.$item->email.' не уникален ('.$item->client_id.' : '.$item->client->full_name.')'.PHP_EOL;
+
+
 
         if($message)
             throw new \Exception($message);

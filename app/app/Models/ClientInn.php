@@ -12,4 +12,9 @@ class ClientInn extends Model
     public $timestamps = false;
 
     protected $guarded = [];
+
+    public function client()
+    {
+        return $this->hasOne(\App\Models\Client::class, 'id', 'client_id')->withDefault();
+    }
 }

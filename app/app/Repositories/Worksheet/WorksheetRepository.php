@@ -19,7 +19,8 @@ class WorksheetRepository
             'trafic_id'         => $trafic->id,
             'company_id'        => $trafic->salon->id,
             'structure_id'      => $trafic->structure->id,
-            'appeal_id'         => $trafic->appeal->id
+            'appeal_id'         => $trafic->appeal->id,
+            'author_id'         => $trafic->manager_id,
         ]);
 
         $worksheet->trafic->status;

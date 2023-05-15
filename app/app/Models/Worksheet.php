@@ -28,21 +28,36 @@ class Worksheet extends Model
 
     public function company()
     {
-        return $this->hasOne(\App\Models\Company::class, 'id', 'company_id');
+        return $this->hasOne(\App\Models\Company::class, 'id', 'company_id')->withDefault();
     }
 
     public function structure()
     {
-        return $this->hasOne(\App\Models\Structure::class, 'id', 'structure_id');
+        return $this->hasOne(\App\Models\Structure::class, 'id', 'structure_id')->withDefault();
     }
 
     public function appeal()
     {
-        return $this->hasOne(\App\Models\Appeal::class, 'id', 'appeal_id');
+        return $this->hasOne(\App\Models\Appeal::class, 'id', 'appeal_id')->withDefault();
     }
 
     public function status()
     {
         return 'Принято';
+    }
+
+    public function author()
+    {
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
+    }
+
+    public function executors()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'worksheet_executors', 'worksheet_id');
+    }
+
+    public function subclients()
+    {
+        return $this->belongsToMany(\App\Models\Client::class, 'worksheet_sub_clients', 'worksheet_id');
     }
 }
