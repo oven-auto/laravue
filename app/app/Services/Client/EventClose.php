@@ -29,6 +29,9 @@ Class EventClose
             case 'quarterly':
                 $data = \DateHelp::addMonth($this->eventStaus->date_at, 3);
                 break;
+            case 'halfyear':
+                $data = \DateHelp::addMonth($this->eventStaus->date_at, 6);
+                break;
         }
         return $data;
     }
