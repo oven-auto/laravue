@@ -9,7 +9,7 @@ class EventTypeController extends Controller
 {
     public function __invoke()
     {
-        $data = \App\Models\EventType::select('id','name')->get();
+        $data = \App\Models\EventType::select('id','name')->orderBy('sort')->get();
 
         return response()->json([
             'data' => $data,

@@ -84,10 +84,12 @@ class ClientEventRepository
 
     public function getAllInGroupByClientId(Int $clientId)
     {
-        $res = ClientEventStatus::select('client_event_statuses.*')->leftJoin('client_events','client_events.id','client_event_statuses.event_id')
+        $res = ClientEventStatus::select('client_event_statuses.*')
+            ->leftJoin('client_events','client_events.id','client_event_statuses.event_id')
             ->where('client_events.client_id', $clientId)
             ->where('client_event_statuses.confirm', 'waiting')
             ->with(['event'])
+            ->orderBy('client_event_statuses.date_at')
             ->get();
         return $res;
     }
