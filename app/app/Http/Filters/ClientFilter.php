@@ -118,11 +118,17 @@ class ClientFilter extends AbstractFilter
     {
         if(!$this->checkJoin($builder, 'client_phones'))
             $builder->leftJoin('client_phones', 'client_phones.client_id','clients.id');
-        if(!$this->checkJoin($builder, 'client_inns'))
+
+            if(!$this->checkJoin($builder, 'client_inns'))
             $builder->leftJoin('client_inns', 'client_inns.client_id','clients.id');
+
+        if(!$this->checkJoin($builder, 'client_emails'))
+            $builder->leftJoin('client_emails', 'client_emails.client_id','clients.id');
 
         $builder->where(function($query) use ($value){
             $query->orWhere('client_phones.phone', 'like', '%'. $value.'%');
+
+            $query->orWhere('client_emails.email', 'like', '%'. $value.'%');
 
             $query->orWhere('client_inns.number', 'like', '%'. $value.'%');
 
