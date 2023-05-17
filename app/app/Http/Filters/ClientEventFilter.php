@@ -19,6 +19,7 @@ class ClientEventFilter extends AbstractFilter
     public const INPUT = 'input';
     public const COMPLETER_IDS = 'completer_ids';
     public const INTERVAL = 'interval';
+    public const GROUP_ID = 'group_id';
 
     protected function getCallbacks(): array
     {
@@ -36,6 +37,7 @@ class ClientEventFilter extends AbstractFilter
             self::INPUT                 => [$this, 'input'],
             self::COMPLETER_IDS         => [$this, 'completerIds'],
             self::INTERVAL              => [$this, 'interval'],
+            self::GROUP_ID              => [$this, 'groupId'],
         ];
     }
 
@@ -66,6 +68,13 @@ class ClientEventFilter extends AbstractFilter
         if(!$this->checkJoin($builder, 'client_events'))
             $builder->leftJoin('client_events', 'client_event_statuses.event_id','client_events.id');
         $builder->where('client_events.client_id', $value);
+    }
+
+    public function groupId(Builder $builder, Int $value)
+    {
+        if(!$this->checkJoin($builder, 'client_events'))
+            $builder->leftJoin('client_events', 'client_event_statuses.event_id','client_events.id');
+        $builder->where('client_events.group_id', $value);
     }
 
     public function typeId(Builder $builder, Int $value)

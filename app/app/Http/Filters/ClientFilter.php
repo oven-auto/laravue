@@ -126,15 +126,34 @@ class ClientFilter extends AbstractFilter
             $builder->leftJoin('client_emails', 'client_emails.client_id','clients.id');
 
         $builder->where(function($query) use ($value){
+
+            if(preg_match('/\s/',$value)) { //есть пробелы
+                $query->orWhere(function($query) use ($value){
+                    $data = explode(' ', $value);
+                    list($param1, $param2) = $data;
+                    $query->orWhere(function($query) use ($param1, $param2){
+                        $query->where('clients.lastname', 'like', '%'. $param1.'%')
+                            ->where('clients.firstname', 'like', '%'. $param2.'%');
+                    });
+                    $query->orWhere(function($query) use ($param1, $param2){
+                        $query->where('clients.lastname', 'like', '%'. $param2.'%')
+                            ->where('clients.firstname', 'like', '%'. $param1.'%');
+                    });
+                });
+            }
+            else { //иначе когда нет пробелов
+                $query->orWhere('clients.lastname', 'like', '%'. $value.'%');
+
+                $query->orWhere('clients.firstname', 'like', '%'. $value.'%');
+            }
+
             $query->orWhere('client_phones.phone', 'like', '%'. $value.'%');
 
             $query->orWhere('client_emails.email', 'like', '%'. $value.'%');
 
             $query->orWhere('client_inns.number', 'like', '%'. $value.'%');
 
-            $query->orWhere('clients.lastname', 'like', '%'. $value.'%');
 
-            $query->orWhere('clients.firstname', 'like', '%'. $value.'%');
 
             $query->orWhere('clients.id', $value);
 

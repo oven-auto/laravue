@@ -136,7 +136,7 @@ class ClientEventRepository
 
         $this->filter($query,$data);
 
-        if(isset($data['processed_begin']) || isset($data['ids']))
+        if(isset($data['processed_begin']) || isset($data['ids']) || isset($data['group_id']))
         {
 
         }
