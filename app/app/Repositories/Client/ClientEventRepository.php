@@ -129,7 +129,7 @@ class ClientEventRepository
 
     public function paginate(Array $data, $paginate = 15)
     {
-        $query = ClientEventStatus::with(['event','trafic']);
+        $query = ClientEventStatus::select('clients.*')->with(['event','trafic']);
 
         if(!isset($data['processed_begin']) )
             $query->where('client_event_statuses.confirm', 'waiting');

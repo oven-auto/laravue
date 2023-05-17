@@ -39,7 +39,7 @@ class ClientEventController extends Controller
      */
     public function show($event)
     {
-        $clientEventStatus = ClientEventStatus::with('event')->find($event);
+        $clientEventStatus = ClientEventStatus::with('event')->findOrFail($event);
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
             ->additional(['data'=>['event_status_id' => $clientEventStatus->id]]);
     }
