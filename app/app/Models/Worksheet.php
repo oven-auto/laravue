@@ -16,6 +16,11 @@ class Worksheet extends Model
         'updated_at',
     ];
 
+    public function getCreatedDateAttribute()
+    {
+        return $this->created_at ? $this->created_at->format('d.m.Y') : '';
+    }
+
     public function client()
     {
         return $this->hasOne(\App\Models\Client::class, 'id', 'client_id')->withDefault();

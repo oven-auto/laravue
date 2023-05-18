@@ -113,4 +113,13 @@ class Client extends Model
         return $this->hasMany(\App\Models\ClientEvent::class, 'client_id', 'id');
     }
 
+    public function unionsChildren()
+    {
+        return $this->belongsToMany(Client::class, 'client_unions', 'parent', 'client_id');
+    }
+
+    public function unionsParent()
+    {
+        return $this->belongsToMany(Client::class, 'client_unions', 'client_id', 'parent');
+    }
 }

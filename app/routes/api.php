@@ -345,6 +345,17 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
  * КЛИЕНТЫ, обернуты правами доступа
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
+
+    Route::prefix('unions')->group(function() {
+        Route::get('count/{count}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@amount');
+        Route::get('search', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@search');
+        Route::get('{client}','\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@show');
+        Route::post('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@store');
+        Route::delete('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@destroy');
+    });
+
+    Route::get('check', 'CheckClientController@check');
+
     Route::get('eventtypes', 'EventTypeController');
 
     Route::resource('eventgroups', 'EventGroupController')->only(['index','store','update','show']);
