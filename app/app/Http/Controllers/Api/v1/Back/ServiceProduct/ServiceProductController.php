@@ -52,7 +52,9 @@ class ServiceProductController extends Controller
      */
     public function store(ServiceProduct $serviceproduct, ServiceProductCreate $request)
     {
-        $serviceproduct->fill($request->input())->save();
+        $data = $request->input();
+        $data['group_id'] = $data['group_id'] === 0 ? '' : $data['group_id'];
+        $serviceproduct->fill($data)->save();
         return (new ServiceProductSaveResource($serviceproduct))->additional(['message' => 'Услуга добавлена']);
     }
 
@@ -76,7 +78,9 @@ class ServiceProductController extends Controller
      */
     public function update(ServiceProduct $serviceproduct, ServiceProductCreate $request)
     {
-        $serviceproduct->fill($request->input())->save();
+        $data = $request->input();
+        $data['group_id'] = $data['group_id'] === 0 ? '' : $data['group_id'];
+        $serviceproduct->fill($data)->save();
         return (new ServiceProductSaveResource($serviceproduct))
             ->additional(['message' => 'Услуга изменена']);
     }
