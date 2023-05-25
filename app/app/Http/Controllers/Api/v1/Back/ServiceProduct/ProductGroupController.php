@@ -39,7 +39,9 @@ class ProductGroupController extends Controller
      */
     public function store(ProductGroup $productgroup, ProductGroupCreate $request) : GroupSaveResource
     {
-        $productgroup->fill($request->input())->save();
+        $data = $request->input();
+        $data['group_id'] = $data['group_id'] === 0 ? '' : $data['group_id'];
+        $productgroup->fill($data)->save();
         return (new GroupSaveResource($productgroup))->additional(['message' => 'Группа добавлена']);
     }
 
@@ -63,7 +65,9 @@ class ProductGroupController extends Controller
      */
     public function update(ProductGroup $productgroup, ProductGroupCreate $request) : GroupSaveResource
     {
-        $productgroup->fill($request->input())->save();
+        $data = $request->input();
+        $data['group_id'] = $data['group_id'] === 0 ? '' : $data['group_id'];
+        $productgroup->fill($data)->save();
         return (new GroupSaveResource($productgroup))->additional(['message' => 'Группа изменена']);
     }
 
