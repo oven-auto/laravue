@@ -28,7 +28,7 @@ class ClientCarRequest extends FormRequest
             'mark_id' => 'required|integer',
             'body_work_id' => 'nullable|integer',
             'year' => 'nullable|digits:4',
-            'odometer' => 'nullable|integer',
+            'odometer' => 'nullable|string',
             'register_plate' => 'nullable|string|max:12',
             'vin' => 'nullable|string|size:17'
         ];

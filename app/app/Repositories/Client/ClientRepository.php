@@ -20,7 +20,7 @@ Class ClientRepository
      */
     private function filter($data = []) :  \Illuminate\Database\Eloquent\Builder
     {
-        $query = Client::select('clients.*')->withTrashed();
+        $query = Client::select('clients.*');
         $filter = app()->make(ClientFilter::class, ['queryParams' => array_filter($data)]);
         return $query
             ->filter($filter);
@@ -62,6 +62,10 @@ Class ClientRepository
     public function save(Client $client, $data = []) : Client
     {
         $columns = Arr::except(Client::getColumnsName(), ['id']);
+
+        $data['trafic_sex_id'] = $data['trafic_sex_id'] == 0 ? $data['trafic_sex_id'] = null : $data['trafic_sex_id'];
+        $data['trafic_zone_id'] = $data['trafic_zone_id'] == 0 ? $data['trafic_zone_id'] = null : $data['trafic_zone_id'];
+
         $client->fill(Arr::only($data, $columns))->save();
 
         $client->phones()->delete();
@@ -79,12 +83,14 @@ Class ClientRepository
                 $client->emails()->create(['client_id' => $client->id, 'email' => $itemRowContact['email']]);
         }
 
-        $passportData = Arr::only($data, ClientPassport::getColumnsName());
-        $passportData['birthday_at'] =              $passportData['birthday_at'] ? date('Y-m-d',\strtotime($passportData['birthday_at'])) : NULL;
-        $passportData['driver_license_issue_at'] =  $passportData['driver_license_issue_at'] ? date('Y-m-d',\strtotime($passportData['driver_license_issue_at'])) : NULL;
-        $passportData['passport_issue_at'] =        $passportData['passport_issue_at'] ? date('Y-m-d',\strtotime($passportData['passport_issue_at'] )) : NULL;
-        $passportData['client_id'] = $client->id;
-        $client->passport->fill($passportData)->save();
+        if($client->client_type_id == 1) {
+            $passportData = Arr::only($data, ClientPassport::getColumnsName());
+            $passportData['birthday_at'] =              isset($passportData['birthday_at']) ? date('Y-m-d',\strtotime($passportData['birthday_at'])) : NULL;
+            $passportData['driver_license_issue_at'] =  isset($passportData['driver_license_issue_at']) ? date('Y-m-d',\strtotime($passportData['driver_license_issue_at'])) : NULL;
+            $passportData['passport_issue_at'] =        isset($passportData['passport_issue_at']) ? date('Y-m-d',\strtotime($passportData['passport_issue_at'] )) : NULL;
+            $passportData['client_id'] = $client->id;
+            $client->passport->fill($passportData)->save();
+        }
 
         return $client;
     }
@@ -152,6 +158,7 @@ Class ClientRepository
      */
     public function delete(Client $client) :void
     {
+        $client->phones()->delete();
         $client->delete();
     }
 

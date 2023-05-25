@@ -33,8 +33,10 @@ class TraficEditResource extends JsonResource
             'comment' => $this->comment,
             'sex' => $this->person->name ? $this->person->name : $this->sex->name,
             'zone' => $this->zone->name,
-            'parent_chanel' => $this->chanel->myparent->name,
+
             'chanel' => $this->chanel->name,
+            'parent_chanel' => $this->chanel->myparent->name,
+
             'salon' => $this->salon->name,
             'structure' => isset($this->structure) ? $this->structure->name : '',
             'appeal' => isset($this->appeal) ? $this->appeal->name : '',

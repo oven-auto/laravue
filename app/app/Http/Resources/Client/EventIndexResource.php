@@ -46,6 +46,8 @@ class EventIndexResource extends JsonResource
             //'author' => $this->event->author->cut_name,
             'executor' => $this->event->executor,
             'trafic' => $this->trafic->id ? $this->trafic->id : '',
+            'client_id' => $this->event->client->id,
+            'worksheet_id' => $this->trafic->worksheet->id,
             'group' => $this->event->group->name ?? '',
             'can_i_change' => $canIChange,
         ];

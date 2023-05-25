@@ -57,6 +57,7 @@ class EventSaveResource extends JsonResource
                 'status' => $this->confirm,
                 'fillable_properties' => $params,
                 'method' => \Route::current()->methods(),
+                'event_status_id' => $this->id
             ],
             'success' => 1,
         ];

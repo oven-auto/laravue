@@ -15,12 +15,22 @@ Class ClientCarRepository
      */
     public function store(Client $client, $data = []) : void
     {
+        if(isset($data['odometer'])) {
+            $odometer = '';
+            $array = (str_split($data['odometer']));
+            foreach($array as $item) {
+                if(is_numeric($item))
+                    $odometer.=$item;
+            }
+            $data['odometer'] = $odometer;
+        }
+
         $data['actual'] = 1;
         $data['author_id'] = auth()->user()->id;
         $data['editor_id'] = auth()->user()->id;
+
         $client->cars()->create($data);
     }
-
     /**
      * Изменить машину клиента
      * @param ClientCar $car App\Models\ClientCar
@@ -29,6 +39,16 @@ Class ClientCarRepository
      */
     public function update(ClientCar $car, $data = []) : void
     {
+        if(isset($data['odometer'])) {
+            $odometer = '';
+            $array = (str_split($data['odometer']));
+            foreach($array as $item) {
+                if(is_numeric($item))
+                    $odometer.=$item;
+            }
+            $data['odometer'] = $odometer;
+        }
+
         $data['editor_id'] = auth()->user()->id;
         $car->fill($data)->save();
     }

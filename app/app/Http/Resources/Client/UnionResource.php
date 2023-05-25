@@ -18,6 +18,7 @@ class UnionResource extends JsonResource
             'id' => $this->id,
             'name' => $this->full_name,
             'status' => '',
+
         ];
     }
 }

@@ -56,7 +56,7 @@ class TraficSaveResource extends JsonResource
                 }),
                 'files' => $this->files->map(function($item) {
                     return [
-                        'id' => $this->id,
+                        'id' => $item->id,
                         'name' => $item->name,
                         'file' => $item->getFile('filepath'),
                         'user' => $item->user->cut_name,

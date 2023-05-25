@@ -105,8 +105,15 @@ class ClientController extends Controller
      */
     public function destroy(Client $client) : ClientEditResource
     {
-        $this->repo->delete($client);
+        $message = 'Нельзя удалять юр.лицо';
+        $result = 0;
+        if($client->client_type_id == 1 || $client->client_type_id == ''){
+            $this->repo->delete($client);
+            $message = 'Клиент удален';
+            $result = 1;
+        }
+
         return (new ClientEditResource($client))
-            ->additional(['message' => 'Клиент удален']);
+            ->additional(['message' => $message, 'result' => $result]);
     }
 }

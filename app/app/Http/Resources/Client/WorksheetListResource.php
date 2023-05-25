@@ -20,7 +20,9 @@ class WorksheetListResource extends JsonResource
             'company' => $this->company->name,
             'structure' => $this->structure->name,
             'appeal' => $this->appeal->name,
-            'status' => $this->status()
+            'status' => $this->status(),
+            'client_id' => $this->client_id,
+            'trafic_id' => $this->trafic_id
         ];
     }
 }

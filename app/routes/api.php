@@ -317,7 +317,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('audit/{trafic_processing}', 'TraficAuditController@show')
         ->middleware(['permission.trafic.show:trafic_files_show',]);
 
-    Route::post('files/{trafic}', 'TraficFileController');
+    Route::post('files/{trafic}', 'TraficFileController@store');
+    Route::delete('files/{file}', 'TraficFileController@destroy');
 
     //пометить трафик как удаленный
     Route::delete('{trafic}', 'TraficController@delete')
@@ -348,7 +349,7 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     Route::prefix('unions')->group(function() {
         Route::get('count/{count}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@amount');
-        Route::get('search', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@search');
+        Route::get('search', '\App\Http\Controllers\Api\v1\Back\Client\Union\SearchClientController@search');
         Route::get('{client}','\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@show');
         Route::post('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@store');
         Route::delete('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@destroy');

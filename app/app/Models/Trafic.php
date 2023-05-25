@@ -46,7 +46,7 @@ class Trafic extends Model
         $phone = '';
         $from = $this->phone;
         if($this->phone)
-            $phone = sprintf("+%s (%s) %s %s-%s",
+            $phone = sprintf("+%s (%s) %s-%s-%s",
                 substr($from, 0, 1),
                 substr($from, 1, 3),
                 '***',
@@ -61,7 +61,7 @@ class Trafic extends Model
         $phone = '';
         $from = $this->phone;
         if($this->phone)
-            $phone = sprintf("+%s (%s) %s %s-%s",
+            $phone = sprintf("+%s (%s) %s-%s-%s",
                 substr($from, 0, 1),
                 substr($from, 1, 3),
                 substr($from, 4, 3),

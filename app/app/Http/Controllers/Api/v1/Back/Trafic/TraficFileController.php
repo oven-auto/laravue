@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Trafic;
 
 use App\Http\Controllers\Controller;
+use App\Models\TraficFile;
 use Illuminate\Http\Request;
 use App\Models\Trafic;
 
@@ -15,7 +16,7 @@ class TraficFileController extends Controller
         $this->service = $repo;
     }
 
-    public function __invoke(Trafic $trafic, Request $request)
+    public function store(Trafic $trafic, Request $request)
     {
         $this->service->saveTraficFiles($trafic, $request->allFiles());
 
@@ -30,6 +31,18 @@ class TraficFileController extends Controller
             }),
             'success' => 1,
             'message' => 'Фаилы загружены',
+        ]);
+    }
+
+    public function destroy(TraficFile $file)
+    {
+        //$trafic = Trafic::find($file->trafic_id);
+        $file->delete();
+
+        return response()->json([
+            'data' => [],
+            'message' => 'Фаил удален',
+            'success' => 1,
         ]);
     }
 }

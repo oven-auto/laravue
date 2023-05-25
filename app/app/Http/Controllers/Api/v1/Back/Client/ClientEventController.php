@@ -40,8 +40,7 @@ class ClientEventController extends Controller
     public function show($event)
     {
         $clientEventStatus = ClientEventStatus::with('event')->findOrFail($event);
-        return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
-            ->additional(['data'=>['event_status_id' => $clientEventStatus->id]]);
+        return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus));
     }
 
     /**
@@ -53,8 +52,12 @@ class ClientEventController extends Controller
     public function store(ClientEventStatus $clientEventStatus, ClientEventRequest $request)
     {
         $this->repo->save($clientEventStatus->event, $request->input());
-        return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
-           ->additional(['message' => 'Событие клиента создано']);
+
+        return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus->event->lastStatus))
+            ->additional([
+                'message' => 'Событие клиента создано',
+                'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus->event->lastStatus)
+            ]);
     }
 
     /**
@@ -67,6 +70,8 @@ class ClientEventController extends Controller
     {
         $clientEventStatus = ClientEventStatus::with('event')->find($event);
         $this->repo->save($clientEventStatus->event, $request->input());
+        unset($clientEventStatus);
+        $clientEventStatus = ClientEventStatus::with('event')->find($event);
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
             ->additional([
                 'message' => 'Событие клиента изменено',

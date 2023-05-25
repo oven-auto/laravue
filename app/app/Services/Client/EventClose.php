@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Services\Client;
-use App\Models\ClientEvent;
 use App\Models\ClientEventStatus;
 
 Class EventClose
@@ -9,6 +8,8 @@ Class EventClose
     private $eventStaus;
     private const FULLY_CLOSE = 'Событие завершено';
     private const INTERVAL_CLOSE = "Событие завершено";
+
+    private $nextDate;
 
     private function rewrite() : String
     {
@@ -33,6 +34,7 @@ Class EventClose
                 $data = \DateHelp::addMonth($this->eventStaus->date_at, 6);
                 break;
         }
+        $this->nextDate = \DateHelp::format($data);
         return $data;
     }
 
@@ -54,7 +56,7 @@ Class EventClose
         if(is_object($newStatus))
             $newStatus->lastComment()->create([
                 'author_id' => auth()->user()->id,
-                'text' => 'Назначена новая дата контроля '.$this->eventStaus->date_at->format('d.m.Y'),
+                'text' => 'Назначена новая дата контроля '.$this->nextDate,
                 'event_id' => $this->eventStaus->event_id,
                 'client_event_status_id' => $newStatus->id
             ]);
@@ -98,6 +100,7 @@ Class EventClose
             $this->writeComment();
             return $this->eventStaus;
         }
-        return false;
+
+        throw new \Exception('Это событие уже было выполнено!');
     }
 }

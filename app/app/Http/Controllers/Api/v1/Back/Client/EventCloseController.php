@@ -3,9 +3,8 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\Trafic;
+use App\Services\Client\EventTrafic;
 use Illuminate\Http\Request;
-use App\Models\ClientEvent;
 
 class EventCloseController extends Controller
 {
@@ -22,29 +21,11 @@ class EventCloseController extends Controller
     {
         $eventStatus = $this->eventClose->close($request->get('event_status_id'));
 
-        if($eventStatus == false)
-            throw new \Exception('Это событие уже было выполнено');
+        $traficId = EventTrafic::addTrafic($eventStatus, $request->has('with_trafic'));
 
-        $client = $eventStatus->event->client;
-
-        if($request->has('with_trafic')) {
-            $clientArr = $client->toArray();
-            $clientArr['author_id'] = auth()->user()->id;
-            $clientArr['phone'] = $client->phones->first()->phone;
-            $clientArr['email'] = $client->emails->count() ? $client->emails->first()->email : '';
-            $clientArr['trafic_chanel_id'] = 37;
-
-            $trafic = new Trafic();
-            $this->traficRepo->save($trafic, $clientArr);
-            \App\Models\ClientEventTrafic::create([
-                'trafic_id' => $trafic->id,
-                'event_id' => $eventStatus->event_id,
-                'event_status_id' => $eventStatus->id
-            ]);
-        }
         return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
             ->additional([
-                'data' => ['trafic_id' => isset($trafic) ? $trafic->id : ''],
+                'data' => ['trafic_id' => $traficId],
                 'message' => $eventStatus->lastComment->text
             ]);
     }

@@ -23,4 +23,9 @@ Class DateHelper
     {
         return date('Y-m-d H:i:s', strtotime("+$week week", strtotime($date)));
     }
+
+    public static function format($date, $format = 'd.m.Y')
+    {
+        return date($format, strtotime($date));
+    }
 }
