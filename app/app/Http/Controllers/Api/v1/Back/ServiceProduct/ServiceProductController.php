@@ -79,7 +79,7 @@ class ServiceProductController extends Controller
     public function update(ServiceProduct $serviceproduct, ServiceProductCreate $request)
     {
         $data = $request->input();
-        $data['group_id'] = $data['group_id'] === 0 ? '' : $data['group_id'];
+        $data['group_id'] = $data['group_id'] === 0 ? NULL : $data['group_id'];
         $serviceproduct->fill($data)->save();
         return (new ServiceProductSaveResource($serviceproduct))
             ->additional(['message' => 'Услуга изменена']);
