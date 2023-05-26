@@ -12,7 +12,7 @@ class TraficChanel extends Model
     public $timestamps = false;
 
     public function childrens(){
-        return $this->hasMany(\App\Models\TraficChanel::class, 'parent', 'id');
+        return $this->hasMany(\App\Models\TraficChanel::class, 'parent', 'id')->orderBy('sort');
     }
 
     public function myparent()

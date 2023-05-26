@@ -11,7 +11,7 @@ class TraficChanelController extends Controller
 {
     public function index()
     {
-        $chanels = TraficChanel::with('childrens')->where('parent',0)->get();
+        $chanels = TraficChanel::with('childrens')->where('parent',0)->orderBy('sort')->get();
 
         return new TraficListCollection($chanels);
     }
