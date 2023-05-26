@@ -77,7 +77,7 @@ Class ClientRepository
             ])->save();
 
         foreach($data['contacts'] as $itemRowContact) {
-            if($itemRowContact['phone'])
+            if(isset($itemRowContact['phone']) && $itemRowContact['phone'])
                 $client->phones()->create(['client_id' => $client->id, 'phone' => preg_replace("/[^,.0-9]/", '', $itemRowContact['phone']) ]);
             if(isset($itemRowContact['email']))
                 $client->emails()->create(['client_id' => $client->id, 'email' => $itemRowContact['email']]);
