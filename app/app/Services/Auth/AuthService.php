@@ -70,14 +70,18 @@ Class AuthService
 
     public function update(User $user, $data = [])
     {
-        $user->fill([
+        $arr = [
             'name' => $data['firstname'],
             'lastname' => $data['lastname'],
             'email' => $data['email'],
-            'password' => isset($data['phone']) ? Hash::make($data['password']) : $user->password,
             'role_id' => $data['role_id'],
             'phone' => $data['phone'],//isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
-        ])->save();
+        ];
+
+        if(isset($data['password']) && $data['password'] != '')
+            $arr['password'] = Hash::make($data['password']);
+
+        $user->fill($arr)->save();
         return $user;
     }
 
