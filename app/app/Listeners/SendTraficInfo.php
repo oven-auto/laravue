@@ -29,7 +29,7 @@ class SendTraficInfo
         $txt =  $event->message.PHP_EOL;
         $txt .= "Номер трафика: {$event->data->id} ".PHP_EOL;
         $txt .= "Автор трафика: {$event->data->author->cut_name} ".PHP_EOL;
-        $txt .= "Менеджер трафика: {$event->data->manager->cut_name} ".PHP_EOL;
+        $txt .= "Ответственный трафика: {$event->data->manager->cut_name} ".PHP_EOL;
         $txt .= PHP_EOL;
         $txt .= "Автор изменения: ".auth()->user()->cut_name.PHP_EOL;
 
