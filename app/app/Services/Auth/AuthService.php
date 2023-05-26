@@ -23,7 +23,8 @@ Class AuthService
             'name' => $user->name,
             'role_id' => $user->role_id,
             'lastname' => $user->lastname,
-            'role' => $user->role->slug
+            'role' => $user->role->slug,
+            'role_name' => $user->role->name,
         ];
 
         return \response()->json([
@@ -75,7 +76,7 @@ Class AuthService
             'email' => $data['email'],
             'password' => isset($data['phone']) ? Hash::make($data['password']) : $user->password,
             'role_id' => $data['role_id'],
-            'phone' => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
+            'phone' => $data['phone'],//isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
         ])->save();
         return $user;
     }

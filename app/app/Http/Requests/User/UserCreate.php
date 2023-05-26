@@ -37,7 +37,6 @@ class UserCreate extends FormRequest
             'phone' => [
                 'string',
                 'nullable',
-                'regex:([+]{1}[7]{1}\s{1}[(]{1}[0-9]{3}[)]{1}\s{1}[0-9]{3}[-]{1}[0-9]{2}[-]{1}[0-9]{2})',
             ],
         ], $pass);
     }
