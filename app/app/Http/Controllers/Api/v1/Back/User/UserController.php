@@ -31,8 +31,10 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $query = User::with('role')->orderBy('lastname');
-        if($request->has('input') && $request->get('input')!='')
+        if($request->has('input') && $request->get('input')!='') {
             $query->where('lastname', 'LIKE', "%$request->input%");
+            $query->leftJoin('roles', 'roles.id', 'users.role_id')->orWhere('roles.name', 'LIKE',  "%$request->input%");
+        }
 
         $users = $query->get();
         return new UserCollection($users);
