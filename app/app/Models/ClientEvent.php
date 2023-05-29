@@ -43,7 +43,7 @@ class ClientEvent extends Model
 
     public function comments()
     {
-        return $this->hasMany(\App\Models\ClientEventComment::class, 'event_id', 'id')->orderBy('created_at','DESC');
+        return $this->hasMany(\App\Models\ClientEventComment::class, 'event_id', 'id')->orderBy('id','DESC');
     }
 
     public function lastComment()
