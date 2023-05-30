@@ -93,4 +93,6 @@ laravel-clear:
 bash-php-f:
 	sudo docker exec php-f-sshop php artisan bash
 
-#testtest
+#BACK UP
+dump-base:
+	sudo docker exec mysql-sshop /mnt/mysql/backup/scripts.sh

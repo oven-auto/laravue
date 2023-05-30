@@ -68,6 +68,7 @@ services:
     command: --sql_mode="ONLY_FULL_GROUP_BY"
     volumes: 
       - ./docker/images/mysql:/var/lib/mysql
+      - ./backup:/mnt/mysql/backup
     environment:
       
 
@@ -113,3 +114,6 @@ services:
         MYSQL_USERNAME: app
         MYSQL_ROOT_PASSWORD: secret
         MYSQL_PORT_3306_TCP_ADDR: mysql-sshop
+
+
+      
