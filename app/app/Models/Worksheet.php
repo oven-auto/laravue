@@ -65,4 +65,14 @@ class Worksheet extends Model
     {
         return $this->belongsToMany(\App\Models\Client::class, 'worksheet_sub_clients', 'worksheet_id');
     }
+
+    public function last_action()
+    {
+        return $this->hasOne(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->orderBy('id', 'DESC')->withDefault();
+    }
+
+    public function actions()
+    {
+        return $this->hasMany(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->with(['comments','author','task']);
+    }
 }

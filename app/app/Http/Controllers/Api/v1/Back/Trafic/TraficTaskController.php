@@ -8,9 +8,12 @@ use App\Models\Task;
 
 class TraficTaskController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $tasks = Task::select('id','name','interval')->where('type',1)->get();
+        $query = Task::select('id','name','interval');
+        if($request->has('trafic'))
+            $query->where('type', 1);
+        $tasks = $query->get();
         return response()->json([
             'data' => $tasks,
             'success' => 1

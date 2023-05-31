@@ -275,7 +275,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //Получить список товаров по обращению
     Route::get('appealneeds/{trafic_appeal_id}', 'TraficNeedController@appealneed');
     //получить список задач трафика - !!!с 14-02-23 не используется!!!
-    /**/Route::get('tasks', 'TraficTaskController@index');
+    Route::get('tasks', 'TraficTaskController@index');
     //получить список пользователей являющихся сотрудниками указанной структуры трафика и
     //обрабатывающими указанное обращение, structure_id - структура, appeal_id - обращение
     Route::get('users/{structure_id?}/{appeal_id?}', 'TraficUserController@index');
@@ -429,6 +429,20 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
             'permission.worksheet.create'
         ]);
 
+    Route::get('comments', 'CommentListController@list');
+    /**
+     * Добавить действие для рабочего листа
+     * @param mixed $request [worksheet_id, begin_at, end_at, task_id, text]
+     */
+    Route::post('action','Action\WorksheetActionController@store');
+    Route::patch('action', 'Action\WorksheetActionController@status');
+    Route::put('action','Action\WorksheetActionController@comment');
+
+    /*************************************
+    * Поменять клиента в рабочем листе
+    * @param mixed $request [worksheet_id = int, client_id = int]
+    */
+    Route::patch('change/client', 'ChangeClientController@change');
     /****************************************************************************15.05.23
      * Добавить клиента или менеджера в рабочий лист
      * @param mixed $request [worksheet_id = int, user_id = int|client_id = int]
@@ -443,6 +457,9 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     Route::delete('users', 'AppendUserController@destroy');
     Route::delete('clients', 'AppendClientController@destroy');
 
+    /**
+     * Получить данные рабочего листа
+     */
     Route::get('{worksheet}', 'WorksheetController@show');
 });
 
