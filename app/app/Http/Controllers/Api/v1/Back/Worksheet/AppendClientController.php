@@ -38,8 +38,8 @@ class AppendClientController extends Controller
     {
         $worksheet = Worksheet::findOrFail($request->get('worksheet_id'));
         $worksheet->subclients()->detach($request->get('client_id'));
-        $client = $worksheet->client;
-        $this->repo->delUnion($client, $request->get('client_id'));
+        //$client = $worksheet->client;
+        //$this->repo->delUnion($client, $request->get('client_id'));
         return response()->json([
             'success' => 1,
             'message' => 'Клиент удален'
