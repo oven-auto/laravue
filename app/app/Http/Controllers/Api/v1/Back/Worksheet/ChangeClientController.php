@@ -11,7 +11,7 @@ class ChangeClientController extends Controller
 {
     public function change(WorksheetAppendSubClientRequest $request)
     {
-        $worksheet = WorksheetChangeClient::change(...array_values($request->input()));
+        $worksheet = WorksheetChangeClient::change($request->worksheet_id, $request->client_id);
 
         return new WorksheetChangeClientResource($worksheet);
     }
