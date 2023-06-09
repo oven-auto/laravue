@@ -121,11 +121,18 @@ class Client extends Model implements PersonInterface
 
     public function unionsChildren()
     {
-        return $this->belongsToMany(Client::class, 'client_unions', 'parent', 'client_id');
+        return $this->belongsToMany(Client::class, 'client_unions', 'parent', 'client_id')->with(['phones','inn']);
     }
 
     public function unionsParent()
     {
-        return $this->belongsToMany(Client::class, 'client_unions', 'client_id', 'parent');
+        return $this->belongsToMany(Client::class, 'client_unions', 'client_id', 'parent')->with(['phones','inn']);
+    }
+
+    public function isCompany()
+    {
+        if($this->client_type_id == 2)
+            return true;
+        return false;
     }
 }

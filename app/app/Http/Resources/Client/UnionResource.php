@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Client;
 
+use App\Helpers\String\StringHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UnionResource extends JsonResource
@@ -18,7 +19,9 @@ class UnionResource extends JsonResource
             'id' => $this->id,
             'name' => $this->full_name,
             'status' => '',
-
+            'attribute' => $this->isCompany() ? [$this->inn->number] : $this->phones->map(function($item){
+                return StringHelper::phoneMask($item->phone);
+            }),
         ];
     }
 }
