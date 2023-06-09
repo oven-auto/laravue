@@ -159,6 +159,7 @@ class ClientEventFilter extends AbstractFilter
      */
     public function processedStart(Builder $builder, String $value)
     {
+        $this->delWhere($builder, 'client_event_statuses.confirm');
         $builder->where('client_event_statuses.confirm', 'processed');
         $builder->whereDate('client_event_statuses.processed_at','>=', $this->formatDate($value));
     }
@@ -168,6 +169,7 @@ class ClientEventFilter extends AbstractFilter
      */
     public function processedEnd(Builder $builder, String $value)
     {
+        $this->delWhere($builder, 'client_event_statuses.confirm');
         $builder->where('client_event_statuses.confirm', 'processed');
         $builder->whereDate('client_event_statuses.processed_at','<=', $this->formatDate($value));
     }
