@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 //use Illuminate\Http\Request;
+use App\Models\ClientUnion;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
@@ -31,46 +32,12 @@ class HomeController extends Controller
 
     public function test()
     {
-        $var = 98;
-        $arr = [];
-        function f($num, &$arr) {
-            for($i=2; $i<=9;$i++){
-                if($num%$i == 0) {
-                    $num/=$i;
-                    array_push($arr, $i);
-                    f($num, $arr);
-                    return;
-                }
-                if($i==9 && $num%9 != 0 && $num != 1)
-                    array_push($arr, $num);
-            }
-        }
-
-        f($var, $arr);
-        echo '<pre>';
-        print_r($arr);
-        echo '</pre>';
-        // $phone = '79091231396';
-        // $phone = sprintf("+%s (%s) %s-%s-%s",
-        //     substr($phone, 0, 1),
-        //     substr($phone, 1, 3),
-        //     substr($phone, 4, 3),
-        //     substr($phone, 7, 2),
-        //     substr($phone, 9)
-        // );
-        // echo $phone;
-
-        $date = date('Y-m-d H:i');
-        echo("Current date: $date".PHP_EOL);
-        echo '<br>';
-        echo("+ 1 Day: ".$this->addDay($date));
-        echo '<br>';
-        echo("+ 1 Week: ".$this->addWeek($date));
-        echo '<br>';
-        echo("+ 1 Month: ".$this->addMonth($date));
-        echo '<br>';
-        echo("+ 1 Year: ".$this->addYear($date));
-
+        $mas = [];
+        $unions = ClientUnion::get();
+        foreach($unions as $item)
+            foreach($unions as $sub)
+                if($item->client_id == $sub->parent && $item->parent == $sub->client_id)
+                    ClientUnion::where('client_id',$sub->client)->where('parent', $sub->parent)->delete();
     }
 
     public function addYear($date, $year = 1)

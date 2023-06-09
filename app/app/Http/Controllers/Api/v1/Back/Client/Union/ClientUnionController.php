@@ -42,14 +42,11 @@ class ClientUnionController extends Controller
             ->additional(['message' => 'Связь удалена']);
     }
 
-    public function amount($client)
+    public function amount($client_id)
     {
-        $obj = Client::find($client);
         return response()->json([
-            'data' => $this->repo->countUnion($client),
+            'data' => $this->repo->countUnion($client_id),
             'success' => 1,
-            'children' => $obj->unionsChildren,
-            'par' => $obj->unionsParent
         ]);
     }
 }
