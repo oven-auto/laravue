@@ -39,7 +39,9 @@ class HomeController extends Controller
                 if($item->client_id == $sub->parent && $item->parent == $sub->client_id)
                     $mas[] = ['client_id' => $sub->client_id, 'parent' => $sub->parent];
                     //ClientUnion::where('client_id',$sub->client)->where('parent', $sub->parent)->delete();
-        echo 1;
+        echo '<pre>';
+        print_r($mas);
+        echo '</pre>';
     }
 
     public function addYear($date, $year = 1)
