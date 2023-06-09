@@ -38,6 +38,7 @@ class HomeController extends Controller
             foreach($unions as $sub)
                 if($item->client_id == $sub->parent && $item->parent == $sub->client_id)
                     ClientUnion::where('client_id',$sub->client)->where('parent', $sub->parent)->delete();
+        echo 1;
     }
 
     public function addYear($date, $year = 1)
