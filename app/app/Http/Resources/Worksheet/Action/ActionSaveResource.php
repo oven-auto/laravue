@@ -16,7 +16,7 @@ class ActionSaveResource extends JsonResource
     {
         return [
             'data' => [
-                'worksheet_status' => $this->getTaskName(),
+                'worksheet_status' => $this->getAction()->worksheet->status->name,
                 'worksheet_id' => $this->getAction()->worksheet_id,
                 'action_id' => $this->getAction()->id,
                 'begin_at' => $this->getAction()->begin_date,
