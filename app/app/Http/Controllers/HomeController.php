@@ -37,7 +37,8 @@ class HomeController extends Controller
         foreach($unions as $item)
             foreach($unions as $sub)
                 if($item->client_id == $sub->parent && $item->parent == $sub->client_id)
-                    ClientUnion::where('client_id',$sub->client)->where('parent', $sub->parent)->delete();
+                    $mas[] = ['client_id' => $sub->client_id, 'parent' => $sub->parent];
+                    //ClientUnion::where('client_id',$sub->client)->where('parent', $sub->parent)->delete();
         echo 1;
     }
 
