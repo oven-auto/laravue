@@ -44,9 +44,12 @@ class ClientUnionController extends Controller
 
     public function amount($client)
     {
+        $obj = Client::find($client);
         return response()->json([
             'data' => $this->repo->countUnion($client),
             'success' => 1,
+            'children' => $obj->unionsChildren,
+            'par' => $obj->unionsParent
         ]);
     }
 }
