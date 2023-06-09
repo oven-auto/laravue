@@ -91,16 +91,26 @@ Class EventClose
         return false;
     }
 
+    public function canIClose()
+    {
+        if($this->eventStaus->event->resolve == 1 || $this->eventStaus->event->author_id == auth()->user()->id)
+            return true;
+        return false;
+    }
+
     public function close(int $eventStatusId)
     {
         $this->eventStaus = ClientEventStatus::with('event')->find($eventStatusId);
 
-        if($this->isWaiting()) {
-            $this->writeStatus();
-            $this->writeComment();
-            return $this->eventStaus;
-        }
+        if(!$this->isWaiting())
+            throw new \Exception('Это событие уже было выполнено!');
 
-        throw new \Exception('Это событие уже было выполнено!');
+        if(!$this->canIClose())
+            throw new \Exception('Это событие может закрывать только автор!');
+
+        $this->writeComment();
+        $this->writeStatus();
+
+        return $this->eventStaus;
     }
 }

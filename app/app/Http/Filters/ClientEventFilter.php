@@ -20,6 +20,7 @@ class ClientEventFilter extends AbstractFilter
     public const COMPLETER_IDS = 'completer_ids';
     public const INTERVAL = 'interval';
     public const GROUP_ID = 'group_id';
+    public const AUTHOR_ID = 'author_id';
 
     protected function getCallbacks(): array
     {
@@ -38,13 +39,32 @@ class ClientEventFilter extends AbstractFilter
             self::COMPLETER_IDS         => [$this, 'completerIds'],
             self::INTERVAL              => [$this, 'interval'],
             self::GROUP_ID              => [$this, 'groupId'],
+            self::AUTHOR_ID             => [$this, 'authorId'],
         ];
     }
+
+    public function authorId(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'client_events'))
+            $builder->leftJoin('client_events', 'client_event_statuses.event_id','client_events.id');
+        $builder->where('client_events.author_id', $value);
+    }
+
 
     private function checkJoin(Builder $builder, $table)
     {
         $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
         return $res;
+    }
+
+    public function delWhere(Builder $builder, $where)
+    {
+        foreach($builder->getQuery()->wheres as $key => &$itemWhere) {
+            if($itemWhere['column'] == $where) {
+                unset($builder->getQuery()->bindings['where'][$key]);
+                unset($builder->getQuery()->wheres[$key]);
+            }
+        }
     }
 
     public function completerIds(Builder $builder, $value){
@@ -55,10 +75,20 @@ class ClientEventFilter extends AbstractFilter
     {
         switch ($value){
             case 'today':
-                $builder->whereDate('client_event_statuses.date_at','=', now());
+                $builder->where(function($builder) {
+                    $builder->whereDate('client_event_statuses.date_at','=', now());
+                    $builder->orWhere(function($builder){
+                        $builder->where('client_event_statuses.date_at','<',date('Y-m-d'));
+                    });
+                });
                 break;
             case 'tomorrow':
                 $builder->whereDate('client_event_statuses.date_at','=',  now()->addDay());
+                break;
+            case 'finish_today':
+                $this->delWhere($builder, 'client_event_statuses.confirm');
+                $builder->where('client_event_statuses.confirm','processed');
+                $builder->whereDate('client_event_statuses.processed_at','=',  now());
                 break;
         }
     }
@@ -124,14 +154,21 @@ class ClientEventFilter extends AbstractFilter
         $builder->whereDate('client_event_statuses.date_at','<=', $this->formatDate($value));
     }
 
+    /**
+     * ЗАВЕРШЕНЫЕ С
+     */
     public function processedStart(Builder $builder, String $value)
     {
+        $builder->where('client_event_statuses.confirm', 'processed');
         $builder->whereDate('client_event_statuses.processed_at','>=', $this->formatDate($value));
-        //$builder->where('')
     }
 
+    /**
+     * ЗАВЕРШЕНЫЕ ДО
+     */
     public function processedEnd(Builder $builder, String $value)
     {
+        $builder->where('client_event_statuses.confirm', 'processed');
         $builder->whereDate('client_event_statuses.processed_at','<=', $this->formatDate($value));
     }
 

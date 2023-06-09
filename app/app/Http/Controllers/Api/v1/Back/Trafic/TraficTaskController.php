@@ -13,7 +13,7 @@ class TraficTaskController extends Controller
         $query = Task::select('id','name','interval');
         if($request->has('trafic'))
             $query->where('type', 1);
-        $tasks = $query->get();
+        $tasks = $query->orderBy('sort')->get();
         return response()->json([
             'data' => $tasks,
             'success' => 1

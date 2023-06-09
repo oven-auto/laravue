@@ -75,7 +75,8 @@ class ClientEventController extends Controller
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
             ->additional([
                 'message' => 'Событие клиента изменено',
-                'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus)
+                'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus),
+                'test' => $request->input()
             ]);
     }
 

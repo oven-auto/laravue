@@ -46,11 +46,6 @@ class Worksheet extends Model
         return $this->hasOne(\App\Models\Appeal::class, 'id', 'appeal_id')->withDefault();
     }
 
-    public function status()
-    {
-        return 'Принято';
-    }
-
     public function author()
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
@@ -74,5 +69,10 @@ class Worksheet extends Model
     public function actions()
     {
         return $this->hasMany(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->with(['comments','author','task']);
+    }
+
+    public function status()
+    {
+        return $this->hasOne(\App\Models\WorksheetStatus::class, 'id', 'status_id')->withDefault();
     }
 }

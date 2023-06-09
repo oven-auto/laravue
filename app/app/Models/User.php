@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\PersonInterface;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -9,7 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Authenticatable
+class User extends Authenticatable implements PersonInterface
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
@@ -27,6 +28,11 @@ class User extends Authenticatable
         'phone',
         'role_id',
     ];
+
+    public function abbreviated_name()
+    {
+        return $this->cut_name;
+    }
 
     /**
      * The attributes that should be hidden for arrays.

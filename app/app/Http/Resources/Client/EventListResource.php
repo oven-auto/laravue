@@ -14,6 +14,14 @@ class EventListResource extends JsonResource
      */
     public function toArray($request)
     {
+        $canIChange = (
+            (
+                auth()->user()->role->permissions->contains('slug', 'cevent_show')
+                && $this->event->executors->contains('id', auth()->user()->id)
+            )
+            || auth()->user()->role->permissions->contains('slug', 'cevent_show_alien')
+        ) ? 1 : 0;
+
         return [
             'id' => $this->id,
             'title' => $this->event->title ?? '',
@@ -23,7 +31,7 @@ class EventListResource extends JsonResource
             'date_at' => $this->date_at->format('d.m.Y'),
             'status' => $this->status,
             'property' => $this->event->group->name,
-
+            'can_i_change' => $canIChange,
         ];
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\PersonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Createable;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Client extends Model
+class Client extends Model implements PersonInterface
 {
     use HasFactory, Createable, Filterable, SoftDeletes;
 
@@ -17,6 +18,11 @@ class Client extends Model
     public function loyalty()
     {
         return 'Неизвестно';
+    }
+
+    public function abbreviated_name()
+    {
+        return $this->full_name;
     }
 
     public function getFullNameAttribute()

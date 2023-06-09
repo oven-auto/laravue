@@ -34,6 +34,7 @@ class EventSaveResource extends JsonResource
 
         return [
             'data' => [
+                'resolve' => $this->event->resolve,
                 'created_at' => $this->event->created_at->format('d.m.Y'),
                 'id' => $this->id,
                 'client_id' => $this->event->client_id,

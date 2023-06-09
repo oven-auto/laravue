@@ -3,43 +3,34 @@
 namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 
 use App\Http\Controllers\Controller;
-use App\Models\Worksheet;
-use Illuminate\Http\Request;
+use App\Http\Requests\Worksheet\WorksheetAppendSubClientRequest;
+use App\Models\Client;
+use App\Services\Worksheet\WorksheetClient;
 
 class AppendClientController extends Controller
 {
-    public $repo;
-
-    public function __construct(\App\Repositories\Client\ClientUnionRepository $repo)
+    public function append(WorksheetAppendSubClientRequest $request)
     {
-        $this->repo = $repo;
-    }
+        WorksheetClient::attach($request->worksheet_id, $request->client_id);
+        WorksheetClient::makeUnionInWorksheet($request->worksheet_id, $request->client_id);
 
-    public function append(Request $request)
-    {
-        $worksheet = Worksheet::findOrFail($request->get('worksheet_id'));
-        $ids = $worksheet->subclients->pluck('id')->toArray();
-        array_push($ids, $request->get('client_id'));
-        $subClient = \App\Models\Client::find($request->get('client_id'));
-        $client = $worksheet->client;
-        $worksheet->subclients()->sync($ids);
-        $this->repo->addUnion($client, $request->get('client_id'));
+        $subClient = Client::find($request->get('client_id'));
+
         return response()->json([
             'success' => 1,
             'client' => [
                 'id' => $subClient->id,
                 'name' => $subClient->full_name,
             ],
-            'message' => 'Клиент добавлен'
+            'message' => 'Клиент добавлен',
+
         ]);
     }
 
-    public function destroy(Request $request)
+    public function destroy(WorksheetAppendSubClientRequest $request)
     {
-        $worksheet = Worksheet::findOrFail($request->get('worksheet_id'));
-        $worksheet->subclients()->detach($request->get('client_id'));
-        //$client = $worksheet->client;
-        //$this->repo->delUnion($client, $request->get('client_id'));
+        WorksheetClient::detach($request->worksheet_id, $request->client_id);
+
         return response()->json([
             'success' => 1,
             'message' => 'Клиент удален'

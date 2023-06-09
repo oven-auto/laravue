@@ -31,6 +31,25 @@ class HomeController extends Controller
 
     public function test()
     {
+        $var = 98;
+        $arr = [];
+        function f($num, &$arr) {
+            for($i=2; $i<=9;$i++){
+                if($num%$i == 0) {
+                    $num/=$i;
+                    array_push($arr, $i);
+                    f($num, $arr);
+                    return;
+                }
+                if($i==9 && $num%9 != 0 && $num != 1)
+                    array_push($arr, $num);
+            }
+        }
+
+        f($var, $arr);
+        echo '<pre>';
+        print_r($arr);
+        echo '</pre>';
         // $phone = '79091231396';
         // $phone = sprintf("+%s (%s) %s-%s-%s",
         //     substr($phone, 0, 1),

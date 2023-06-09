@@ -41,7 +41,7 @@ class WorksheetAction extends Model
 
     public function isWaiting()
     {
-        return $this->begin_at > now() ? true : false;
+        return $this->end_at > now() ? true : false;
     }
 
     public function last_comment()
@@ -63,7 +63,7 @@ class WorksheetAction extends Model
     {
         switch ($this->status){
             case 'work':
-                return 'Ожидает';
+                return '';
             case 'confirm':
                 return 'Подтверждено';
             case 'abort':
@@ -71,5 +71,12 @@ class WorksheetAction extends Model
             default:
                 return '';
         }
+    }
+
+    //public function
+
+    public function worksheet()
+    {
+        return $this->hasOne(\App\Models\Worksheet::class, 'id', 'worksheet_id')->withDefault();
     }
 }

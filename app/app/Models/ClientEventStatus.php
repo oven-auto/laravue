@@ -21,6 +21,24 @@ class ClientEventStatus extends Model
         'date_at',
     ];
 
+    public function scopeOnlyMy($query)
+    {
+        return $query->select('client_event_statuses.*');
+    }
+
+    public function scopeListOrder($query)
+    {
+        return $query
+            ->groupBy('client_event_statuses.id')
+            ->orderBy('client_event_statuses.date_at', 'ASC')
+            ->orderBy('client_event_statuses.confirm', 'ASC');
+    }
+
+    public function scopeWithEventAndTrafic($query)
+    {
+        return $query->with(['event','trafic']);
+    }
+
     public function getStatusAttribute()
     {
         return $this->description->name;

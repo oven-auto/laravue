@@ -15,4 +15,9 @@ class WorksheetActionComment extends Model
     {
         return $this->hasOne(\App\Models\User::class,'id','author_id')->withDefault();
     }
+
+    public function action()
+    {
+        return $this->hasOne(\App\Models\WorksheetAction::class, 'id', 'action_id')->withDefault();
+    }
 }

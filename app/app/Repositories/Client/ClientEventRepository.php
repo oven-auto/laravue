@@ -51,6 +51,7 @@ class ClientEventRepository
                 'group_id'      => isset($this->data['group_id']) ? $this->data['group_id'] : NULL,
                 'type_id'       => isset($this->data['type_id']) ? $this->data['type_id'] : '',
                 'title'         => $this->data['title'],
+                'resolve'       => isset($this->data['resolve']) ? (($this->data['resolve']) ? 1 : 0) : 0,
             ];
             $this->event->fill($arr)->save();
         }
@@ -104,23 +105,9 @@ class ClientEventRepository
     {
         $query = ClientEventStatus::query();
 
-        if(!isset($data['processed_begin']) )
-            $query->where('client_event_statuses.confirm', 'waiting');
+        $query->where('client_event_statuses.confirm', 'waiting');
 
         $this->filter($query,$data);
-
-        if(isset($data['processed_begin']) || isset($data['ids']))
-        {
-
-        }
-        else{
-            $query->orWhere(function($query) use ($data) {
-                $query->where('client_event_statuses.date_at','<',date('Y-m-d'));
-                $query->where('client_event_statuses.confirm', 'waiting');
-                if(isset($data['executor_ids']))
-                    $query->whereIn('client_event_executors.executor_id', $data['executor_ids']);
-            });
-        }
 
         $result = $query->count();
 
@@ -129,31 +116,16 @@ class ClientEventRepository
 
     public function paginate(Array $data, $paginate = 15)
     {
-        $query = ClientEventStatus::select('client_event_statuses.*')->with(['event','trafic']);
+        $query = ClientEventStatus::query();
 
-        if(!isset($data['processed_begin']) )
-            $query->where('client_event_statuses.confirm', 'waiting');
+        $query->where('client_event_statuses.confirm', 'waiting');
 
         $this->filter($query,$data);
 
-        if(isset($data['processed_begin']) || isset($data['ids']) || isset($data['group_id']))
-        {
+        $query->onlyMy()->WithEventAndTrafic()->ListOrder();
 
-        }
-        else{
-            $query->orWhere(function($query) use ($data) {
-                $query->where('client_event_statuses.date_at','<',date('Y-m-d'));
-                $query->where('client_event_statuses.confirm', 'waiting');
-                if(isset($data['executor_ids']))
-                    $query->whereIn('client_event_executors.executor_id', $data['executor_ids']);
-            });
-        }
+        $result = $query->simplePaginate($paginate);
 
-        $result = $query
-            ->groupBy('client_event_statuses.id')
-            ->orderBy('client_event_statuses.date_at', 'ASC')
-            ->orderBy('client_event_statuses.confirm', 'ASC')
-            ->simplePaginate($paginate);
         return $result;
     }
 }
