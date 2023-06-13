@@ -36,10 +36,14 @@ class SendClientInfo
         $txt .= PHP_EOL;
         $txt .= "Автор изменения: ".auth()->user()->cut_name.PHP_EOL;
 
+        $users = [
+            auth()->user()->id,
+        ];
+
         try{
             \App\Classes\Socket\SocketClient::socket(
                 json_encode(
-                    ['auth' => auth()->user()->id, 'message' => $txt]
+                    ['auth' => auth()->user()->id, 'message' => $txt, 'users' => $users]
                 )
             )->send();
         } catch(\Exception $e){

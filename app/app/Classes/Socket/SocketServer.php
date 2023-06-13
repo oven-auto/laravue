@@ -24,25 +24,34 @@ Class SocketServer extends BaseSocket
     public function onMessage(\Ratchet\ConnectionInterface $conn, $msg)
     {
         $numRecv = count($this->clients) - 1;
-
+        $users = null;
         $data = json_decode($msg, true);
         if(isset($data['auth']))
             $this->connections[$conn->resourceId]['authId'] = $data['auth'];
         if(isset($data['message']))
             $msg = $data['message'];
+        if(isset($data['users']))
+            $users = $data['users'];
 
-        echo sprintf('Connection %d sending message "%s" to %d other connection'."\n",
+        echo sprintf('Connection %d sending message "%s" to %d other connection'."\n" ,
             $conn->resourceId, $msg, $numRecv
         );
-
 
         if(isset($data['auth']) && !isset($data['message']))
             $msg = '';
             //$msg = 'В систему вошёл новый пользователь';
+
         if($msg)
             foreach($this->clients as $itemclient)
             {
+                echo $this->connections[$itemclient->resourceId]['authId']."\n";
+                if($users && in_array($this->connections[$itemclient->resourceId]['authId'],$users))
+                {
+                    $itemclient->send($msg);
+                }
+
                 if(
+                    !$users &&
                     $conn !== $itemclient &&
                     $this->connections[$itemclient->resourceId]['authId'] !== $this->connections[$conn->resourceId]['authId']
                 )

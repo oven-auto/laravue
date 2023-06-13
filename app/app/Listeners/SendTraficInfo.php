@@ -33,10 +33,16 @@ class SendTraficInfo
         $txt .= PHP_EOL;
         $txt .= "Автор изменения: ".auth()->user()->cut_name.PHP_EOL;
 
+        $users = [
+            $event->data->author->id,
+            $event->data->manager->id,
+            auth()->user()->id,
+        ];
+
         try{
             \App\Classes\Socket\SocketClient::socket(
                 json_encode(
-                    ['auth' => 1, 'message' => $txt]
+                    ['auth' => 1, 'message' => $txt, 'users' => $users]
                 )
             )->send();
         } catch(\Exception $e){
