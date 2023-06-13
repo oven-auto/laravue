@@ -23,6 +23,7 @@ class EventIndexResource extends JsonResource
                 && $this->event->executors->contains('id', auth()->user()->id)
             )
             || auth()->user()->role->permissions->contains('slug', 'cevent_show_alien')
+            || auth()->user()->id == $this->event->author_id
         ) ? 1 : 0;
 
         return [
