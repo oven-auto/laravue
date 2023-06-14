@@ -13,4 +13,14 @@ class UserCompanyStructure extends Model
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'user_id');
     }
+
+    public function company()
+    {
+        return $this->hasOne(\App\Models\Company::class, 'id', 'company_id')->withDefault();
+    }
+
+    public function structure()
+    {
+        return $this->hasOne(\App\Models\Structure::class, 'id', 'structure_id')->withDefault();
+    }
 }

@@ -101,4 +101,9 @@ class User extends Authenticatable implements PersonInterface
             ')
         );
     }
+
+    public function appeals()
+    {
+        return $this->belongsToMany(\App\Models\Appeal::class, 'appeal_users', 'user_id', 'appeal_id','id');
+    }
 }

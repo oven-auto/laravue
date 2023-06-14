@@ -21,7 +21,7 @@ Class AuthService
         $data = [
             'id' => $user->id,
             'name' => $user->name,
-            'role_id' => $user->role_id,
+            'role_id' => auth()->user()->role->permissions->contains('slug','user_add') ? 1 : 0,
             'lastname' => $user->lastname,
             'role' => $user->role->slug,
             'role_name' => $user->role->name,
