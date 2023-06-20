@@ -34,6 +34,7 @@ class TraficFilter extends AbstractFilter
     public const MODEL_ID = 'model_id';
     public const PERSON_TYPE_ID = 'person_type_id';
     public const IS_PRODUCT = 'is_product';
+    public const BRANDS = 'brands';
 
     public $countElements = 0;
 
@@ -65,7 +66,14 @@ class TraficFilter extends AbstractFilter
             self::MODEL_ID            => [$this, 'modelId'],
             self::PERSON_TYPE_ID      => [$this, 'personTypeId'],
             self::IS_PRODUCT          => [$this, 'isProduct'],
+            self::BRANDS              => [$this, 'brands'],
+
         ];
+    }
+
+    public function brands(Builder $builder, $value)
+    {
+        $builder->whereIn('company_id', $value);
     }
 
     private function checkJoin(Builder $builder, $table)

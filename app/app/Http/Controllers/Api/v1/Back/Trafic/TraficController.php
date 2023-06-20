@@ -28,8 +28,14 @@ class TraficController extends Controller
 
     public function index(Request $request)
     {
+        $start = microtime(true);
+        $memory = memory_get_usage();
         $result = $this->service->paginate($request->all());
-        return new TraficEditCollection($result);
+        $time = microtime(true) - $start;
+        $memory = memory_get_usage() - $memory;
+
+        return (new TraficEditCollection($result))
+            ->additional(['time' => round($time,2).'s', 'memory' => round($memory/1024/1024,2).'МБ']);
     }
 
     public function store(Trafic $trafic, Request $request)

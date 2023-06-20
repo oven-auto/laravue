@@ -47,7 +47,7 @@ class ClientController extends Controller
      */
     public function index(Request $request) : ClientListCollection
     {
-        $clients = $this->repo->paginate($request->input(), 20);
+        $clients = $this->repo->paginate($request->input(), 30);
         return new ClientListCollection($clients);
     }
 

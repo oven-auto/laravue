@@ -109,6 +109,11 @@ class Client extends Model implements PersonInterface
         return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id');
     }
 
+    public function open_worksheets()
+    {
+        return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id')->where('status_id', 1);
+    }
+
     public function inn()
     {
         return $this->hasOne(\App\Models\ClientInn::class, 'client_id', 'id')->withDefault();

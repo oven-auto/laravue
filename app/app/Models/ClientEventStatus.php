@@ -36,7 +36,7 @@ class ClientEventStatus extends Model
 
     public function scopeWithEventAndTrafic($query)
     {
-        return $query->with(['event','trafic']);
+        return $query->with(['event.files','trafic']);
     }
 
     public function getStatusAttribute()

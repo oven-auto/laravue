@@ -70,9 +70,9 @@ class ClientStoreRequest extends FormRequest
             throw new \Exception($message);
 
         $arr = [
-            'firstname' => 'nullable|alpha',
-            'lastname' => 'nullable|alpha',
-            'fathername' => 'nullable|alpha',
+            'firstname' => 'nullable|string',
+            'lastname' => 'nullable|string',
+            'fathername' => 'nullable|string',
             'client_type_id' => 'required|numeric|integer',
             'trafic_sex_id' => 'nullable|numeric|integer',
             'trafic_zone_id' => 'nullable|numeric|integer',
@@ -143,8 +143,8 @@ class ClientStoreRequest extends FormRequest
     {
         $client = Route::current()->parameter('client');
         return [
-            'firstname.alpha' => 'Имя может состоять только из букв',
-            'lastname.alpha' => 'Фамилия может состоять только из букв',
+            'firstname.string' => 'Имя может состоять только из букв',
+            'lastname.string' => 'Фамилия может состоять только из букв',
             'fathername.alpha' => 'Отчество может состоять только из букв',
             'trafic_sex_id.required' => 'Не указан тип клиента (Физ./Юр. лицо)',
 

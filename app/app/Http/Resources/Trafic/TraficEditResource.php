@@ -18,6 +18,7 @@ class TraficEditResource extends JsonResource
             auth()->user()->id == $this->manager_id
             || auth()->user()->id == $this->author_id
             || auth()->user()->role->permissions->contains('slug', 'trafic_show_alien')
+            || (auth()->user()->role->permissions->contains('slug', 'show_trafic_without_manager') && $this->manager_id == '')
         ) ? 1 : 0;
 
         return [

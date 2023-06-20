@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Client;
 use App\Models\ClientEvent;
+use App\Models\ClientEventExecutor;
 use App\Models\ClientEventStatus;
 
 class ClientEventRepository
@@ -9,14 +10,18 @@ class ClientEventRepository
     private $authId;
     private $event;
     private $data;
+    private $files;
 
-    public function save(ClientEvent $event, Array $data)
+    public function save(ClientEvent $event, Array $data, $files = [])
     {
         $this->event = $event;
         $this->data = $data;
+        //$this->data['executors'] = explode(',', $this->data['executors']);
+        $this->files = $files;
         $this->authId = auth()->user()->id;
         $this->saveFasade();
         $this->event->fresh();
+        $this->saveFile();
         $this->event = null;
         $this->data = null;
     }
@@ -24,6 +29,20 @@ class ClientEventRepository
     private function checkOnOwner()
     {
 
+    }
+
+    public function saveFile()
+    {
+        $arr = [];
+        if(isset($this->files))
+        {
+            foreach($this->files as $file)
+                $this->event->files()->create([
+                    'event_id' => $this->event->id,
+                    'author_id' => auth()->user()->id,
+                    'file' => \App\Services\Download\ClientEventFileLoad::download($this->event->id, $file)
+                ]);
+        }
     }
 
     public function saveFasade()
@@ -51,7 +70,7 @@ class ClientEventRepository
                 'group_id'      => isset($this->data['group_id']) ? $this->data['group_id'] : NULL,
                 'type_id'       => isset($this->data['type_id']) ? $this->data['type_id'] : '',
                 'title'         => $this->data['title'],
-                'resolve'       => isset($this->data['resolve']) ? (($this->data['resolve']) ? 1 : 0) : 0,
+                'resolve'       => ($this->data['resolve']!="false") ? (($this->data['resolve']) ? 1 : 0) : 0,
             ];
             $this->event->fill($arr)->save();
         }
@@ -69,18 +88,24 @@ class ClientEventRepository
 
     private function syncExecutors()
     {
-        $arr[] = $this->authId;
-        $executorArr = [];
-
-        if(isset($this->data['executors'])) {
-            foreach($this->data['executors'] as $itemExecutorId) {
-                if($itemExecutorId)
-                    $executorArr[] = $itemExecutorId;
-            }
-            $arr = array_merge($arr,$executorArr);
-            $arr = array_unique($arr);
+        if(isset($this->data['executors']) && is_array($this->data['executors']) && count($this->data['executors'])) {
+            ClientEventExecutor::where('event_id', $this->event->id)->delete();
+            $this->data['executors'][] = $this->event->author_id;
+            //dump($this->data['executors']);
+            foreach($this->data['executors'] as $item)
+                $this->event->executors()->attach([
+                    //'event_id' => $this->event->id,
+                    'executor_id' => $item
+                ]);
         }
-        $this->event->executors()->sync($arr);
+        // if(isset($this->data['executors'])) {
+        //     foreach($this->data['executors'] as $itemExecutorId) {
+        //         dump($itemExecutorId);
+        //         if(!$executorArr->contains('id', $itemExecutorId))
+        //             dump('----'.$itemExecutorId);
+        //             $this->event->executors()->attach($itemExecutorId);
+        //     }
+        // }
     }
 
     public function getAllInGroupByClientId(Int $clientId)

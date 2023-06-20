@@ -252,6 +252,11 @@ Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
 });
 
 /**
+ * ПОЛУЧИТЬ СПИСОК ЦЕЛЕЙ ОБРАЩЕНИЙ
+ */
+
+
+/**
  * ТРАФИК обернут правами доступа
  */
 Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
@@ -331,14 +336,14 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('{trafic}', 'TraficController@edit')
         ->middleware([
             'permission.trafic.show:trafic_show',
-            'permission.trafic.showalien:trafic_show_alien'
+            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager'
         ]);
 
     //изменение трафика
     Route::patch('{trafic}', 'TraficController@update')
         ->middleware([
             'permission.trafic.show:trafic_update',
-            'permission.trafic.showalien:trafic_update_alien'
+            'permission.trafic.showalien:trafic_update_alien,update_trafic_without_manager'
         ]);
 });
 
@@ -366,6 +371,8 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('events/count', 'ClientEventCountController');
 
     Route::get('events/close', 'EventCloseController@close'); //Закрыть событие клиента без трафика
+
+    Route::delete('events/file/{client_event_file}', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventFileDeleteController');
 
     Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
         ->except(['create','edit']);

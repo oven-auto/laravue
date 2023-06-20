@@ -31,6 +31,7 @@ class TraficFileController extends Controller
             }),
             'success' => 1,
             'message' => 'Фаилы загружены',
+            'files' => $request->allFiles()
         ]);
     }
 

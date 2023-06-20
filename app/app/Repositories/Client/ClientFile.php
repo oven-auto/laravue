@@ -26,16 +26,19 @@ Class ClientFile
         return $files;
     }
 
-    public function save(ClientFileModel $ClientFileModel, Array $data, $files = [])
+    public function save(Array $data, $files = [])
     {
-        $arr['title'] = $data['title'];
-
         if(request()->method() == 'POST') {
-            $arr['author_id'] = auth()->user()->id;
-            $arr['client_id'] = $data['client_id'];
-            $arr['file'] = $this->service->download($data['client_id'], $files['file']);
+            foreach($files as $itemFile)
+            {
+                ClientFileModel::create([
+                    'author_id' => auth()->user()->id,
+                    'client_id' => $data['client_id'],
+                    'file' => $this->service->download($data['client_id'], $itemFile)
+                ]);
+            }
         }
-
-        $ClientFileModel->fill($arr)->save();
+        $files = ClientFileModel::where('client_id', $data['client_id'])->get();
+        return $files;
     }
 }

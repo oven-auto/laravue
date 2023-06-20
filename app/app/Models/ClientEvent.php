@@ -53,7 +53,7 @@ class ClientEvent extends Model
 
     public function executors()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'client_event_executors', 'event_id', 'executor_id');
+        return $this->belongsToMany(\App\Models\User::class, 'client_event_executors', 'event_id', 'executor_id', 'id');
     }
 
     public function statuses()
@@ -64,5 +64,10 @@ class ClientEvent extends Model
     public function lastStatus()
     {
         return $this->hasOne(\App\Models\ClientEventStatus::class, 'event_id', 'id')->orderBy('id','DESC')->withDefault();
+    }
+
+    public function files()
+    {
+        return $this->hasMany(\App\Models\ClientEventFile::class, 'event_id', 'id');
     }
 }

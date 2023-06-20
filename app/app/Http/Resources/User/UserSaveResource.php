@@ -22,7 +22,9 @@ class UserSaveResource extends JsonResource
                 'lastname' => $this->lastname,
                 'phone' => $this->phone,
                 'role_id' => $this->role_id,
-                'appeals' => $this->appeals,
+                'appeals' => $this->appeals->map(function($item){
+                    return $item->id;
+                }),
                 'structures' => $this->structures,
             ],
             'success' => 1,

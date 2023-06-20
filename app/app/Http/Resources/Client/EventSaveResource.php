@@ -58,7 +58,17 @@ class EventSaveResource extends JsonResource
                 'status' => $this->confirm,
                 'fillable_properties' => $params,
                 'method' => \Route::current()->methods(),
-                'event_status_id' => $this->id
+                'event_status_id' => $this->id,
+                'files' => $this->event->files->map(function($itemFile){
+                    $arr = explode('/',$itemFile->file);
+                    return [
+                        'file' => \WebUrl::make_link($itemFile->file),
+                        'author' => $itemFile->author->cut_name,
+                        'created_at' =>$itemFile->created_at->format('d.m.Y (H:i)'),
+                        'name' => end($arr),
+                        'id' => $itemFile->id
+                    ];
+                })
             ],
             'success' => 1,
         ];

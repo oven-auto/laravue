@@ -34,8 +34,8 @@ class FileRequest extends FormRequest
         if(in_array('POST',$methods))
             $data = [
                 'client_id' => 'required',
-                'title' => 'string|required',
-                'file' => 'required|file|mimes:jpg,png,doc,docx,xls,xlsx,txt,pdf'
+                //'title' => 'string|required',
+                //'file' => 'required|file|mimes:jpg,png,doc,docx,xls,xlsx,txt,pdf'
             ];
 
         if(in_array('PATCH',$methods))
@@ -50,11 +50,11 @@ class FileRequest extends FormRequest
     {
         return [
             'client_id.required' => 'Идентификатор клиента не указан',
-            'title.required' => 'Название фаила обязательно',
-            'title.string' => 'Название фаила должно быть строкой',
-            'file.required' => 'Загрузка фаила обязательна',
-            'file.file' => 'Загруженные данные должны быть фаилом',
-            'file.mimes' => 'Загруженный фаил должен быть с одним из следующих расширений: jpg,jpeg,png,doc,docx,xls,xlsx,txt,pdf'
+            //'title.required' => 'Название фаила обязательно',
+            //'title.string' => 'Название фаила должно быть строкой',
+            //'file.required' => 'Загрузка фаила обязательна',
+            //'file.file' => 'Загруженные данные должны быть фаилом',
+            //'file.mimes' => 'Загруженный фаил должен быть с одним из следующих расширений: jpg,jpeg,png,doc,docx,xls,xlsx,txt,pdf'
         ];
     }
 }

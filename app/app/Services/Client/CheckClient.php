@@ -2,11 +2,16 @@
 
 namespace App\Services\Client;
 use App\Models\Client;
+use App\Models\Trafic;
+use App\Services\Worksheet\WorksheetCheck;
 
 Class CheckClient
 {
     public static function check($data)
     {
+        $worksheets = null;
+        $trafic = null;
+
         $query = Client::select('clients.*');
 
         if(isset($data['phone']))
@@ -19,10 +24,19 @@ Class CheckClient
 
         $client = $query->first();
 
-        return self::formatedClient($client, $data);
+        if($client)
+        {
+            $trafic = Trafic::find($data['trafic_id']);
+            $worksheets = WorksheetCheck::check($client, $trafic);
+        }
+
+        return [
+            'client' => self::formatedClient($client, $data),
+            'worksheets' => $worksheets,
+        ];
     }
 
-    private static function formatedClient($client, $data)
+    public static function formatedClient($client, $data)
     {
         if($client)
             return [
@@ -38,7 +52,7 @@ Class CheckClient
                     'appeal' => $client->latest_worksheet->appeal->name,
                 ],
             ];
-        return 0;
+        return null;
     }
 }
 

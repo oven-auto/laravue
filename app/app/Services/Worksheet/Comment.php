@@ -3,6 +3,7 @@
 namespace App\Services\Worksheet;
 use App\Models\Client;
 use App\Models\Interfaces\PersonInterface;
+use App\Models\Task;
 use App\Models\WorksheetAction;
 
 Class Comment
@@ -12,6 +13,14 @@ Class Comment
         $comment = new Comment();
         $personName = $person->abbreviated_name();
         $action = WorksheetAction::where('worksheet_id', $worksheet_id)->orderBy('id','DESC')->first();
+        if(!$action)
+            $action = WorksheetAction::create([
+                'worksheet_id' => $worksheet_id,
+                'begin_at' => date('Y-m-d H:m:s'),
+                'end_at' => date('Y-m-d H:m:s'),
+                'task_id' => Task::where('slug','control')->first()->id,
+                'author_id' => auth()->user()->id
+            ]);
         $comment->writeComment($action, "{$message}: {$personName}");
     }
 

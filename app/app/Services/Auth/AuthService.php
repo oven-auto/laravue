@@ -65,6 +65,10 @@ Class AuthService
             'role_id' => $data['role_id'],
             'phone' => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
         ]);
+
+        if(isset($data['appeals']))
+            $user->appeals()->sync($data['appeals']);
+
         return $user;
     }
 
@@ -82,6 +86,10 @@ Class AuthService
             $arr['password'] = Hash::make($data['password']);
 
         $user->fill($arr)->save();
+
+        if(isset($data['appeals']))
+            $user->appeals()->sync($data['appeals']);
+
         return $user;
     }
 

@@ -25,7 +25,7 @@ Class EventTrafic
         $clientArr['author_id'] = auth()->user()->id;
         $clientArr['phone'] = $client->phones->count() ? $client->phones->first()->phone : '';
         $clientArr['email'] = $client->emails->count() ? $client->emails->first()->email : '';
-        $clientArr['inn'] = $client->inn->first()->number;
+        $clientArr['inn'] = $client->inn->number;
         $clientArr['trafic_chanel_id'] = 37;
 
         $this->traficRepo->save($this->trafic, $clientArr);

@@ -16,12 +16,11 @@ class SaveResource extends JsonResource
     {
         return [
             'data' => [
-                'id' => $this->id,
-                'client' => $this->client->full_name,
-                'author' => $this->author->cut_name,
-                'created_at' => $this->date,
-                'title' => $this->title,
-                'file' => \WebUrl::make_link($this->file),
+                $this->map(function($item){
+                    return [
+                        'id' => $item->id,
+                    ];
+                })
             ],
             'success' => 1
         ];

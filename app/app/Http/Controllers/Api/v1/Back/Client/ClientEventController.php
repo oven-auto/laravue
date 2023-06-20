@@ -51,7 +51,7 @@ class ClientEventController extends Controller
      */
     public function store(ClientEventStatus $clientEventStatus, ClientEventRequest $request)
     {
-        $this->repo->save($clientEventStatus->event, $request->input());
+        $this->repo->save($clientEventStatus->event, $request->input(), $request->allFiles());
 
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus->event->lastStatus))
             ->additional([
@@ -66,17 +66,18 @@ class ClientEventController extends Controller
      * @param ClientEventRequest $request ClientEventRequest
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
-    public function update($event, ClientEventRequest $request)
+    public function update($event, Request $request)
     {
         $clientEventStatus = ClientEventStatus::with('event')->find($event);
-        $this->repo->save($clientEventStatus->event, $request->input());
-        unset($clientEventStatus);
-        $clientEventStatus = ClientEventStatus::with('event')->find($event);
+        $this->repo->save($clientEventStatus->event, $request->input(), $request->allFiles());
+
+        //unset($clientEventStatus);
+        //$clientEventStatus = ClientEventStatus::with('event')->find($event);
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
             ->additional([
                 'message' => 'Событие клиента изменено',
                 'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus),
-                'test' => $request->input()
+                'request' => $request->all()
             ]);
     }
 

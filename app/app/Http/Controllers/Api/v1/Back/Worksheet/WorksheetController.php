@@ -7,6 +7,7 @@ use App\Http\Requests\Worksheet\WorksheetStoreRequest;
 use App\Models\Worksheet;
 use App\Repositories\Worksheet\WorksheetRepository;
 use App\Http\Resources\Worksheet\WorksheetCreateResource;
+use App\Services\Worksheet\WorksheetUser;
 
 class WorksheetController extends Controller
 {
@@ -25,6 +26,8 @@ class WorksheetController extends Controller
 
     public function show(Worksheet $worksheet)
     {
+        $userId = auth()->user()->id;
+        WorksheetUser::attach($worksheet->id, [$userId]);
         return new \App\Http\Resources\Worksheet\WorksheetSaveResource($worksheet);
     }
 }

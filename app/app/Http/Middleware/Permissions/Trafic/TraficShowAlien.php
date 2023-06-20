@@ -14,7 +14,7 @@ class TraficShowAlien
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $permission)
+    public function handle(Request $request, Closure $next, $permission, $permission2 = '')
     {
         //Все права пользователя из роли
         $userPermissions = auth()->user()->role->permissions;
@@ -26,9 +26,11 @@ class TraficShowAlien
             throw new \Exception('Нет такого трафика '.$request->trafic);
 
         //Проверка что есть права либо что ответсвенный за трафик тот же кто залогенен
-        $boolRes = ($userPermissions->contains('slug', $permission)
-            || $trafic->manager_id == auth()->user()->id
-            || $trafic->author_id == auth()->user()->id
+        $boolRes = (
+            $userPermissions->contains('slug', $permission) ||
+            ($userPermissions->contains('slug', $permission2) && $trafic->manager_id == '') ||
+            $trafic->manager_id == auth()->user()->id ||
+            $trafic->author_id == auth()->user()->id
         );
 
         if($boolRes)

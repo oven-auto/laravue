@@ -51,6 +51,7 @@ class EventIndexResource extends JsonResource
             'worksheet_id' => $this->trafic->worksheet->id,
             'group' => $this->event->group->name ?? '',
             'can_i_change' => $canIChange,
+            'files' => $this->event->files->count(),
         ];
     }
 }
