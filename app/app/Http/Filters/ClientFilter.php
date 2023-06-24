@@ -49,11 +49,11 @@ class ClientFilter extends AbstractFilter
         ];
     }
 
-    private function checkJoin(Builder $builder, $table)
-    {
-        $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
-        return $res;
-    }
+    // private function checkJoin(Builder $builder, $table)
+    // {
+    //     $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
+    //     return $res;
+    // }
 
     public function ids(Builder $builder, $value)
     {
@@ -119,7 +119,7 @@ class ClientFilter extends AbstractFilter
         if(!$this->checkJoin($builder, 'client_phones'))
             $builder->leftJoin('client_phones', 'client_phones.client_id','clients.id');
 
-            if(!$this->checkJoin($builder, 'client_inns'))
+        if(!$this->checkJoin($builder, 'client_inns'))
             $builder->leftJoin('client_inns', 'client_inns.client_id','clients.id');
 
         if(!$this->checkJoin($builder, 'client_emails'))

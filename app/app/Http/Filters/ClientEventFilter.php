@@ -51,11 +51,11 @@ class ClientEventFilter extends AbstractFilter
     }
 
 
-    private function checkJoin(Builder $builder, $table)
-    {
-        $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
-        return $res;
-    }
+    // private function checkJoin(Builder $builder, $table)
+    // {
+    //     $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
+    //     return $res;
+    // }
 
     public function delWhere(Builder $builder, $where)
     {

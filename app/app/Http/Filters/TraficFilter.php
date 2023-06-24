@@ -76,11 +76,11 @@ class TraficFilter extends AbstractFilter
         $builder->whereIn('company_id', $value);
     }
 
-    private function checkJoin(Builder $builder, $table)
-    {
-        $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
-        return $res;
-    }
+    // private function checkJoin(Builder $builder, $table)
+    // {
+    //     $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
+    //     return $res;
+    // }
 
     public function modelId(Builder $builder, $value)
     {

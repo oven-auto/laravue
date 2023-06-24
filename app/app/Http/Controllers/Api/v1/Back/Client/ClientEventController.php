@@ -28,7 +28,9 @@ class ClientEventController extends Controller
      */
     public function index(Request $request)
     {
+
         $data = $this->repo->paginate($request->input(), 20);
+        //return response()->json(['data' => 1]);
         return (new \App\Http\Resources\Client\EventIndexCollection($data));
     }
 

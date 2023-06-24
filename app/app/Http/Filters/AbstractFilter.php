@@ -72,4 +72,11 @@ abstract class AbstractFilter implements FilterInterface
         $date = new Carbon($value);
         return $date->format($format);
     }
+
+    protected function checkJoin(Builder $builder, $table)
+    {
+        $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
+        //dd($builder->getQuery()->joins);
+        return $res;
+    }
 }

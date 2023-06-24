@@ -465,6 +465,13 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     Route::delete('users', 'AppendUserController@destroy');
     Route::delete('clients', 'AppendClientController@destroy');
 
+    Route::get('count', function(){
+        return response()->json([
+            'data' => 666,
+            'success' => 1
+        ]);
+    });
+    Route::get('', 'WorksheetController@index');
     /**
      * Получить данные рабочего листа
      */

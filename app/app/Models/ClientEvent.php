@@ -17,7 +17,7 @@ class ClientEvent extends Model
     {
         if($this->executors->contains('id', auth()->user()->id))
             return auth()->user()->cut_name;
-        $other = ($this->executors->count() > 1) ? (' + '.($this->executors->count()-1)) : '';
+        $other = ($this->executors->count() > 1) ? (' (+'.($this->executors->count()-1).')') : '';
         return $this->author->cut_name.$other;
     }
 

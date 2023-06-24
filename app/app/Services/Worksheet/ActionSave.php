@@ -4,6 +4,7 @@ namespace App\Services\Worksheet;
 
 use App\Classes\DTO\Worksheet\CreateWorksheetAction;
 use App\Models\WorksheetAction;
+use App\Models\WorksheetStatus;
 use CreateWorksheetActionsTable;
 
 class ActionSave
@@ -77,6 +78,10 @@ class ActionSave
     private function changeStatus($data)
     {
         $this->action->status = $data['status'];
+        if(in_array($this->action->status, ['confirm','abort']))
+            $this->action->worksheet->fill([
+                'status_id' => WorksheetStatus::where('slug','check')->first()->id
+            ])->save();
         $this->action->save();
     }
 

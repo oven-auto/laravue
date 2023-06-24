@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Traits\Filterable;
 
 class Worksheet extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $guarded = [];
 
@@ -63,7 +64,7 @@ class Worksheet extends Model
 
     public function last_action()
     {
-        return $this->hasOne(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->orderBy('id', 'DESC')->withDefault();
+        return $this->hasOne(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->orderBy('begin_at', 'DESC')->withDefault();
     }
 
     public function actions()

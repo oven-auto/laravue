@@ -14,8 +14,6 @@ class WorksheetRepository
     {
         $trafic = Trafic::with('status')->find($trafic_id);
 
-
-
         $client = ClientRepository::getClientFromTrafic($trafic);
 
         $worksheet = Worksheet::create([
@@ -42,5 +40,36 @@ class WorksheetRepository
         $worksheet->trafic->status;
 
         return $worksheet;
+    }
+
+    private function filter($data = []) :  \Illuminate\Database\Eloquent\Builder
+    {
+        $query = Worksheet::select('worksheets.*');
+        $filter = app()->make(\App\Http\Filters\WorksheetFilter::class, ['queryParams' => array_filter($data)]);
+        return $query
+            ->filter($filter);
+    }
+
+    public function paginate(array $data, $paginate = 20)
+    {
+        $query = $this->filter($data)
+            ->with(['last_action.task','author', 'executors','company','structure', 'appeal','client.type'])
+            ->leftJoin('worksheet_actions', function($join) {
+                $join->on('worksheet_actions.worksheet_id','worksheets.id');
+                $join->on('worksheet_actions.end_at', \DB::raw(
+                    '(SELECT wa.end_at FROM worksheet_actions as wa
+                    where wa.worksheet_id = worksheets.id
+                    order by wa.end_at DESC LIMIT 1)')
+                );
+            })
+            //->where('worksheet_actions.task_id',1)
+            ->groupBy('worksheets.id')
+            ->groupBy('worksheet_actions.end_at')
+            ->orderBy('worksheet_actions.end_at', 'DESC');
+            //->toSql();
+       // dd($query);
+        $result = $query->simplePaginate($paginate);
+
+        return $result;
     }
 }
