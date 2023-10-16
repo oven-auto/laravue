@@ -42,6 +42,13 @@ Class EventClose
     {
         $newStatus = '';
 
+        $begin = $this->eventStaus->begin_time ?? '09:00:00';
+        $end = $this->eventStaus->end_time ?? '21:00:00';
+
+        // dump($begin);
+        // dump($end);
+        // dd($this->eventStaus);
+
         $this->eventStaus->fill([
             'confirm' => 'processed',
             'author_id' => auth()->user()->id,
@@ -51,6 +58,8 @@ Class EventClose
         if($this->eventStaus->event->type->slug != 'once')
             $newStatus = $this->eventStaus->event->lastStatus()->create([
                 'date_at' => $this->rewrite(),
+                'begin_time' => $begin,
+                'end_time' => $end
             ]);
 
         if(is_object($newStatus))
@@ -107,6 +116,8 @@ Class EventClose
 
         if(!$this->canIClose())
             throw new \Exception('Это событие может закрывать только автор!');
+
+        //dd($this->eventStaus->begin_time);
 
         $this->writeComment();
         $this->writeStatus();
