@@ -167,7 +167,7 @@ class TraficFilter extends AbstractFilter
         if(\is_array($data) || \is_object($data))
             $this->countElements+=count($data);
         if(\is_string($data) || \is_integer($data) || \is_numeric($data))
-            $this->countElements+=count($data);
+            $this->countElements+=($data);
     }
 
     public function getCountElements()

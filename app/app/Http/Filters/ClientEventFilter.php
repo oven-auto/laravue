@@ -266,6 +266,7 @@ class ClientEventFilter extends AbstractFilter
             $builder->orWhere('client_phones.phone', 'LIKE', "%{$value}%");
             $builder->orWhere('client_inns.number', 'LIKE', "%{$value}%");
             $builder->orWhere('client_event_statuses.id', $value);
+            $builder->orWhere('client_events.title', 'LIKE', "%{$value}%");
         });
 
         $builder->groupBy('client_phones.phone');
