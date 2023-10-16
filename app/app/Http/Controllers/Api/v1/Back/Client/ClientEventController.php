@@ -28,9 +28,8 @@ class ClientEventController extends Controller
      */
     public function index(Request $request)
     {
-
         $data = $this->repo->paginate($request->input(), 20);
-        //return response()->json(['data' => 1]);
+
         return (new \App\Http\Resources\Client\EventIndexCollection($data));
     }
 
@@ -42,6 +41,7 @@ class ClientEventController extends Controller
     public function show($event)
     {
         $clientEventStatus = ClientEventStatus::with('event')->findOrFail($event);
+
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus));
     }
 
@@ -72,14 +72,12 @@ class ClientEventController extends Controller
     {
         $clientEventStatus = ClientEventStatus::with('event')->find($event);
         $this->repo->save($clientEventStatus->event, $request->input(), $request->allFiles());
+        $clientEventStatus = $clientEventStatus->event->lastStatus;
 
-        //unset($clientEventStatus);
-        //$clientEventStatus = ClientEventStatus::with('event')->find($event);
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
             ->additional([
                 'message' => 'Событие клиента изменено',
                 'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus),
-                'request' => $request->all()
             ]);
     }
 

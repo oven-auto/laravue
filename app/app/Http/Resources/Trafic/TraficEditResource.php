@@ -21,18 +21,17 @@ class TraficEditResource extends JsonResource
             || (auth()->user()->role->permissions->contains('slug', 'show_trafic_without_manager') && $this->manager_id == '')
         ) ? 1 : 0;
 
+        $showSuperBykovSecurity = ($request->has('author_id') || $request->has('manager_id'));
+
         return [
             'id' => $this->id,
             'created_at' => $this->created_at->format('d.m.Y (H:i)'),
             'updated_at' => $this->updated_at->format('d.m.Y (H:i)'),
             'author' => $this->author->cut_name,
-            //'lastname' => '',//$this->lastname,
-            //'firstname' => '',//$this->firstname,
-            //'fathername' => '',//$this->fathername,
-            'phone' => $this->phone_mask,
+            'phone' => $showSuperBykovSecurity ? $this->formated_phone : $this->phone_mask,
             'email' => $this->email,
             'comment' => $this->comment,
-            'sex' => $this->person->name ? $this->person->name : $this->sex->name,
+            'sex' => $showSuperBykovSecurity ? $this->client_name : ($this->person->name ? $this->person->name : $this->sex->name),
             'zone' => $this->zone->name,
 
             'chanel' => $this->chanel->name,
@@ -41,7 +40,6 @@ class TraficEditResource extends JsonResource
             'salon' => $this->salon->name,
             'structure' => isset($this->structure) ? $this->structure->name : '',
             'appeal' => isset($this->appeal) ? $this->appeal->name : '',
-            // 'task' => $this->task->name,
             'begin_at' => $this->begin_at ? $this->begin_at->format('d.m.Y H:i') : '',
             'end_at' => $this->end_at ? $this->end_at->format('d.m.Y H:i') : '',
             'manager' =>  $this->manager->cut_name,
@@ -53,13 +51,14 @@ class TraficEditResource extends JsonResource
             ],
             'interval' => $this->interval,
             'status' => $this->status,
-            'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y H:i') : '',
+            'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y H:i') : ($this->deleted_at ? $this->deleted_at->format('d.m.Y H:i') : ''),
             'processing' => $this->processing->count() ? true : false,
             'files' => $this->files->count() ? true : false,
             'can_i_change' => $canIChange,
             'person' => $this->person->name,
             'inn' => $this->inn,
-            'company_name' => $this->company_name
+            'company_name' => $this->company_name,
+            'links' =>  $this->links_count,
         ];
     }
 }

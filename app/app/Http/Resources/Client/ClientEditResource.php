@@ -42,6 +42,7 @@ class ClientEditResource extends JsonResource
                     'company_name'              => $this->company_name,
                     'inn'                       => $this->inn->number,
                     'url'                       => $this->url,
+                    'created_at'                => $this->created_at ? $this->created_at->format('d.m.Y (H:i)') : '',
                 ],
                 'success' => 1,
             ];

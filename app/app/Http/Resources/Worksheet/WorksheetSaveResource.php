@@ -55,9 +55,9 @@ class WorksheetSaveResource extends JsonResource
                     'is_waiting' => $this->last_action->isWaiting(),
                     'status_msg' => $this->last_action->statusMsg(),
                     'last_comment' => [
-                        'created_at' => $this->last_action->last_comment->created_at ? $this->last_action->last_comment->created_at->format('d.m.Y (H:i)') : '',
-                        'text' => $this->last_action->last_comment->text,
-                        'author' => $this->last_action->last_comment->author->cut_name
+                        'created_at' => $this->last_action->last_user_comment->created_at ? $this->last_action->last_user_comment->created_at->format('d.m.Y (H:i)') : '',
+                        'text' => $this->last_action->last_user_comment->text,
+                        'author' => '---'.$this->last_action->last_user_comment->author->cut_name
                     ]
                 ]
             ],

@@ -22,6 +22,8 @@ class CommentListResource extends JsonResource
                     'text' => $item->text,
                     'writer' => $item->author->cut_name,
                     'status' => $item->status,
+                    'type' => $item->type,
+                    'author_id' => $item->author_id
                 ];
             }),
             'success' => 1

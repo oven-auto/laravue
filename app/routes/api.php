@@ -95,9 +95,6 @@ Route::prefix('forms')->group(function() {
 
 Route::get('moderator/complectation/{complectation}', [\App\Http\Controllers\Api\v1\Complectation\LastModeratorComplectationController::class, 'index']);
 
-
-
-
 Route::prefix('services')->group(function () {
     //IMAGES
     Route::prefix('images')->group(function() {
@@ -216,6 +213,17 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
     Route::get('chanels', 'ChanelController@index');
     Route::get('structures', 'StructureController');
     Route::get('appeals', 'AppealController');
+    Route::get('worksheet/statuses', 'WorksheetController');
+    Route::get('worksheetaction/statuses', 'WorksheetActionStatusController');
+    Route::get('eventpersonal', function(){
+        return response()->json([
+            'data' => [
+                ['name' => 'Все', 'id' => 0],
+                ['name' => 'Личные', 'id' => 1]
+            ],
+            'success' => 1
+        ]);
+    });
 });
 
 //
@@ -260,6 +268,15 @@ Route::prefix('export')->middleware(['userfromtoken'])->group(function(){
  * ТРАФИК обернут правами доступа
  */
 Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function() {
+
+    Route::prefix('links')->group(function(){
+        Route::get('/', 'TraficLinkController@index');
+        Route::post('/', 'TraficLinkController@store');
+        Route::patch('/{link}', 'TraficLinkController@update');
+        Route::delete('/{link}', 'TraficLinkController@delete');
+        Route::get('/count', 'TraficLinkController@count');
+    });
+
     Route::get('product/statuses', 'TraficProductStatusList');
     //получить список зон трафика
     Route::get('zones', 'TraficZoneController@index');
@@ -276,9 +293,9 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //получить список товаров и услуг, в зависимости от выбранного обращения трафика, id - обращения
     Route::get('needs/{company_id?}', 'TraficNeedController@index');
     //получить список моделей по id компании
-    Route::get('models/{company_id}','TraficNeedController@models');
+    Route::get('models/{company_id?}','TraficNeedController@models');
     //Получить список товаров по обращению
-    Route::get('appealneeds/{trafic_appeal_id}', 'TraficNeedController@appealneed');
+    Route::get('appealneeds/{trafic_appeal_id?}', 'TraficNeedController@appealneed');
     //получить список задач трафика - !!!с 14-02-23 не используется!!!
     Route::get('tasks', 'TraficTaskController@index');
     //получить список пользователей являющихся сотрудниками указанной структуры трафика и
@@ -290,6 +307,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('standarts', 'StandartController');
     //Получить список статусов аудита пройден\не пройден\отсутсвует
     Route::get('auditresults', 'AuditStatusListController');
+
+    Route::get('comments/{trafic_id}', 'TraficCommentController');
 
     //кол-во всех трафикаов +
     Route::get('count', 'TraficCountController@index')
@@ -336,7 +355,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('{trafic}', 'TraficController@edit')
         ->middleware([
             'permission.trafic.show:trafic_show',
-            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager'
+            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager',
+            'permission.trafic.showdraft:show_trafic_draft'
         ]);
 
     //изменение трафика
@@ -360,6 +380,9 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
         Route::delete('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@destroy');
     });
 
+    // Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
+    //     ->except(['create','edit']);
+
     Route::get('check', 'CheckClientController@check');
 
     Route::get('eventtypes', 'EventTypeController');
@@ -371,8 +394,14 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('events/count', 'ClientEventCountController');
 
     Route::get('events/close', 'EventCloseController@close'); //Закрыть событие клиента без трафика
-
+    Route::get('events/resume', 'EventCloseController@resume'); //Закрыть событие клиента без трафика
+    Route::patch('events/change', 'EventChangeClientController'); //Замена клиента
     Route::delete('events/file/{client_event_file}', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventFileDeleteController');
+
+    Route::patch('events/report', 'EventReportController@report');
+    Route::delete('events/report', 'EventReportController@deport');
+
+    Route::post('events/trafic', '\App\Http\Controllers\Api\v1\Back\Client\CreateEventTrafic');//Создать трафик из обращения
 
     Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
         ->except(['create','edit']);
@@ -465,22 +494,32 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     Route::delete('users', 'AppendUserController@destroy');
     Route::delete('clients', 'AppendClientController@destroy');
 
-    Route::get('count', function(){
-        return response()->json([
-            'data' => 666,
-            'success' => 1
-        ]);
-    });
+    Route::get('count', 'WorksheetCountController');
     Route::get('', 'WorksheetController@index');
     /**
      * Получить данные рабочего листа
      */
     Route::get('{worksheet}', 'WorksheetController@show');
+    Route::get('close/{worksheet}', 'WorksheetController@close');
+    Route::get('revert/{worksheet}', 'WorksheetController@revert');
 });
 
 Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
     Route::get('deliver/brands', 'Deliver\BrandController');
     Route::get('deliver/marks', 'Deliver\MarkController');
 });
+
+/**
+ * ЖУРНАЛ ЗАДАЧ
+ */
+Route::prefix('tasklist')
+    ->namespace('\App\Http\Controllers\Api\v1\Back\TaskList')
+    ->middleware(['corsing','userfromtoken'])
+    ->group(function(){
+        Route::get('trafics', 'TraficListController')->middleware('tasklist.setmanager:manager');
+        Route::get('events', 'EventListController')->middleware('tasklist.setmanager:executor');
+        Route::get('worksheets', 'WorksheetListController')->middleware('tasklist.setmanager:executor');
+    }
+);
 
 

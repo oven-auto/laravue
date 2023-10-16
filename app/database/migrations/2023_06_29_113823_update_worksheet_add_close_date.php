@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class UpdateWorksheetAddStatus extends Migration
+class UpdateWorksheetAddCloseDate extends Migration
 {
     /**
      * Run the migrations.
@@ -14,7 +14,8 @@ class UpdateWorksheetAddStatus extends Migration
     public function up()
     {
         Schema::table('worksheets', function (Blueprint $table) {
-            $table->foreignId('status_id')->nullable()->references('id')->on('worksheet_statuses')->onDelete('cascade');
+            $table->dateTime('close_at')->nullable();
+            $table->foreignId('inspector_id')->nullable()->references('id')->on('users');
         });
     }
 
@@ -26,8 +27,9 @@ class UpdateWorksheetAddStatus extends Migration
     public function down()
     {
         Schema::table('worksheets', function (Blueprint $table) {
-            $table->dropForeign(['status']);
-            $table->dropColumn('status');
+            $table->dropColumn('close_at');
+            $table->dropForeign('worksheets_inspector_id_foreign');
+            $table->dropColumn('inspector_id');
         });
     }
 }

@@ -13,6 +13,8 @@ class TraficTaskController extends Controller
         $query = Task::select('id','name','interval');
         if($request->has('trafic'))
             $query->where('type', 1);
+        if($request->has('worksheet'))
+            $query->where('type', 2);
         $tasks = $query->orderBy('sort')->get();
         return response()->json([
             'data' => $tasks,

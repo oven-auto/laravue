@@ -21,7 +21,7 @@ Class ClientFile
         if(isset($data['client_id']))
             $query->where('client_id', $data['client_id']);
 
-        $files = $query->get();
+        $files = $query->orderBy('id','DESC')->get();
 
         return $files;
     }

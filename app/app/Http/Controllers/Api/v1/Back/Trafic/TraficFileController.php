@@ -19,7 +19,7 @@ class TraficFileController extends Controller
     public function store(Trafic $trafic, Request $request)
     {
         $this->service->saveTraficFiles($trafic, $request->allFiles());
-
+        \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['file_load']);
         return response()->json([
             'data' => $trafic->files->map(function($item) {
                 return [
@@ -30,7 +30,7 @@ class TraficFileController extends Controller
                 ];
             }),
             'success' => 1,
-            'message' => 'Фаилы загружены',
+            'message' => Trafic::NOTICES['file_load'],
             'files' => $request->allFiles()
         ]);
     }
@@ -39,10 +39,10 @@ class TraficFileController extends Controller
     {
         //$trafic = Trafic::find($file->trafic_id);
         $file->delete();
-
+        \App\Services\Comment\CommentService::customMessage($file->trafic, Trafic::NOTICES['file_delete']);
         return response()->json([
             'data' => [],
-            'message' => 'Фаил удален',
+            'message' => Trafic::NOTICES['file_delete'],
             'success' => 1,
         ]);
     }

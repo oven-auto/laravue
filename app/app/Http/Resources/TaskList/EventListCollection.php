@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Resources;
+namespace App\Http\Resources\TaskList;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class WorksheetListCollection extends ResourceCollection
+class EventListCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.

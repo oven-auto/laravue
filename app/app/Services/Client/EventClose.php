@@ -45,7 +45,7 @@ Class EventClose
         $this->eventStaus->fill([
             'confirm' => 'processed',
             'author_id' => auth()->user()->id,
-            'processed_at' => now(),
+            'processed_at' => now()->format('Y-m-d H:i:s'),
         ])->save();
 
         if($this->eventStaus->event->type->slug != 'once')
@@ -110,6 +110,32 @@ Class EventClose
 
         $this->writeComment();
         $this->writeStatus();
+
+        return $this->eventStaus;
+    }
+
+    public function resume(int $eventStatusId)
+    {
+        $this->eventStaus = ClientEventStatus::with('event')->find($eventStatusId);
+
+        if($this->eventStaus->isWork())
+            throw new \Exception('Это событие в работе, его не нужно возвращать');
+
+        $lastStatus = $this->eventStaus->event->lastStatus;
+
+        if($lastStatus->confirm == 'waiting')
+            throw new \Exception('У этого событя есть новая не завершенная итерация, вся история хранится в ней');
+
+        $this->eventStaus->confirm = 'waiting';
+        $this->eventStaus->author_id = NULL;
+        $this->eventStaus->processed_at = NULL;
+        $this->eventStaus->save();
+        $this->eventStaus->lastComment()->create([
+            'author_id' => auth()->user()->id,
+            'text' => 'Событе вернулось в работу',
+            'event_id' => $this->eventStaus->event_id,
+            'client_event_status_id' => $this->eventStaus->id
+        ]);
 
         return $this->eventStaus;
     }

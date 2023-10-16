@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
+use App\Models\ClientEventStatus;
 use App\Services\Client\EventTrafic;
 use Illuminate\Http\Request;
 
@@ -19,13 +20,21 @@ class EventCloseController extends Controller
 
     public function close(Request $request)
     {
-        $eventStatus = $this->eventClose->close($request->get('event_status_id'));
 
-        $traficId = EventTrafic::addTrafic($eventStatus, $request->has('with_trafic'));
+        $eventStatus = $this->eventClose->close($request->get('event_status_id'));
 
         return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
             ->additional([
-                'data' => ['trafic_id' => $traficId],
+                'message' => $eventStatus->lastComment->text
+            ]);
+    }
+
+    public function resume(Request $request)
+    {
+        $eventStatus = $this->eventClose->resume($request->get('event_status_id'));
+
+        return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
+            ->additional([
                 'message' => $eventStatus->lastComment->text
             ]);
     }

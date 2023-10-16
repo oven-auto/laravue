@@ -13,6 +13,9 @@ Class WorksheetClient
             ->where('client_id', $client_id)
             ->count();
 
+        if($isIn)
+            throw new \Exception('Клиент уже добавлен');
+
         if(!$isIn)
         {
             WorksheetSubClient::create([

@@ -15,6 +15,11 @@ class Worksheet extends Model
     protected $dates = [
         'created_at',
         'updated_at',
+        'close_at',
+    ];
+
+    private const WORKING_STATUSES = [
+        'work', 'check'
     ];
 
     public function getCreatedDateAttribute()
@@ -64,7 +69,7 @@ class Worksheet extends Model
 
     public function last_action()
     {
-        return $this->hasOne(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->orderBy('begin_at', 'DESC')->withDefault();
+        return $this->hasOne(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->orderBy('id', 'DESC')->withDefault();
     }
 
     public function actions()
@@ -74,6 +79,18 @@ class Worksheet extends Model
 
     public function status()
     {
-        return $this->hasOne(\App\Models\WorksheetStatus::class, 'id', 'status_id')->withDefault();
+        return $this->hasOne(\App\Models\WorksheetStatus::class, 'slug', 'status_id')->withDefault();
+    }
+
+    public function inspector()
+    {
+        return $this->hasOne(\App\Models\User::class, 'id', 'inspector_id')->withDefault();
+    }
+
+    public function isWork()
+    {
+        if(in_array($this->status_id, self::WORKING_STATUSES))
+            return 1;
+        return 0;
     }
 }

@@ -20,7 +20,9 @@ class EventSaveResource extends JsonResource
             'group_id' => 1,
             'type_id' => 1,
             'text' => 1,
-            'executors' => 1
+            'executors' => 1,
+            'begin_time' => 1,
+            'end_time' => 1,
         ];
         if(auth()->user()->id != $this->event->author_id)
             $params = [
@@ -30,10 +32,15 @@ class EventSaveResource extends JsonResource
                 'title' => 0,
                 'group_id' => 0,
                 'type_id' => 0,
+                'begin_time' => 0,
+                'end_time' => 0,
             ];
 
         return [
             'data' => [
+                'begin_time' => $this->begin,
+                'end_time' => $this->end,
+                'time_status' => $this->timeStatus,
                 'resolve' => $this->event->resolve,
                 'created_at' => $this->event->created_at->format('d.m.Y'),
                 'id' => $this->id,
@@ -55,6 +62,7 @@ class EventSaveResource extends JsonResource
                 'executors' => $this->event->executors->map(function($item){
                     return $item->id;
                 }),
+                'personal' => $this->event->personal,
                 'status' => $this->confirm,
                 'fillable_properties' => $params,
                 'method' => \Route::current()->methods(),
@@ -67,6 +75,13 @@ class EventSaveResource extends JsonResource
                         'created_at' =>$itemFile->created_at->format('d.m.Y (H:i)'),
                         'name' => end($arr),
                         'id' => $itemFile->id
+                    ];
+                }),
+                'reporters' => $this->reporters->map(function($item){
+                    return [
+                        'id' => $item->id,
+                        'name' => $item->cut_name,
+                        'created_at' => $item->pivot->created_at ? $item->pivot->created_at->format('d.m.Y (H:i)') : ''
                     ];
                 })
             ],

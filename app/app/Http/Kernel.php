@@ -73,10 +73,15 @@ class Kernel extends HttpKernel
         'permission.trafic.create' => \App\Http\Middleware\Permissions\Trafic\TraficCreate::class,
         'permission.trafic.show' => \App\Http\Middleware\Permissions\Trafic\TraficShow::class,
         'permission.trafic.showalien' => \App\Http\Middleware\Permissions\Trafic\TraficShowAlien::class,
+        'permission.trafic.showdraft' => \App\Http\Middleware\Permissions\Trafic\CanShowDraft::class,
 
         'permission.worksheet.create' => \App\Http\Middleware\Permissions\Worksheet\WorksheetCreate::class,
         'permission.developer' => \App\Http\Middleware\Permissions\Developer\UserActionPerm::class,
         'permission.clientevent' => \App\Http\Middleware\Permissions\Client\ClientEvent::class,
+
+
+
+        'tasklist.setmanager' => \App\Http\Middleware\TaskList\SetManagerMiddleware::class,
 
     ];
 }

@@ -35,6 +35,13 @@ class Client extends Model implements PersonInterface
         return $result;
     }
 
+    public function getFullNameOrTypeAttribute()
+    {
+        if($this->full_name)
+            return $this->full_name;
+        return $this->type->name;
+    }
+
     public static function getColumnsName()
     {
         $client = new Client();
@@ -111,7 +118,7 @@ class Client extends Model implements PersonInterface
 
     public function open_worksheets()
     {
-        return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id')->where('status_id', 1);
+        return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id')->where('status_id', 'work');
     }
 
     public function inn()

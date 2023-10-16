@@ -5,45 +5,144 @@ use Illuminate\Database\Eloquent\Builder;
 
 Class WorksheetFilter extends AbstractFilter
 {
+    //private $completedDateArray = ['begin_at' => '', 'end_at' => ''];
     public const INPUT = 'input';
-    public const TASK_ID = 'task_id';
-    public const CLIENT_TYPE = 'client_type';
-    public const APPEAL_ID = 'appeal_id';
-    public const SALON_IDS = 'salon_ids';
-    public const STRUCTURE_ID = 'structure_id';
-    public const EXECUTOR_IDS = 'executor_ids';
-    public const STATUS_ID = 'status_id';
+    public const TASK_ID = 'task_id';//+++
+    public const CLIENT_TYPE = 'client_type'; //+++
+    public const APPEAL_IDS = 'appeal_ids';//+++
+    public const SALON_IDS = 'salon_ids';//+++
+    public const STRUCTURE_IDS = 'structure_ids';//+++
+    public const EXECUTOR_IDS = 'executor_ids';//+++
+    public const STATUS_IDS = 'status_ids';//+++
     public const AUTHOR_ID = 'author_id';
-    public const IDS = 'ids';
+    public const IDS = 'ids';//+++
     public const INTERVAL = 'interval';
-    public const BEGIN_AT = 'begin_at';
-    public const END_AT = 'end_at';
-    public const ACTION_STATUS = 'action_status';
+    public const BEGIN_AT = 'begin_at';//+++
+    public const END_AT = 'end_at';//+++
+    // public const ACTION_STATUS = 'action_status';//---
+    // public const COMPLETED_BEGIN = 'completed_begin';//---
+    // public const COMPLETED_END = 'completed_end';//---
+    // public const COMPLETED_INTERVAL = 'completed_interval';//---
+    // public const ABORTED_OR_CONFIRMED = 'abortedOrConfirmed';//---
+    public const CONTROL_DATE = 'control_date';
+    public const SHOW    = 'show';
+    public const DATE_FOR_CLOSING = 'date_for_closing';
+    //public const CLOSED = 'closed';
 
     protected function getCallbacks(): array
     {
         return [
-            self::INPUT          => [$this, 'input'],
-            self::TASK_ID       =>  [$this, 'taskId'],
-            self::CLIENT_TYPE   => [$this, 'clientType'],
-            self::APPEAL_ID   => [$this, 'appealId'],
-            self::SALON_IDS   => [$this, 'salonIds'],
-            self::STRUCTURE_ID   => [$this, 'structureId'],
-            self::EXECUTOR_IDS => [$this, 'executorIds'],
-            self::STATUS_ID => [$this, 'statusId'],
-            self::AUTHOR_ID => [$this, 'authorId'],
-            self::IDS   =>  [$this,'ids'],
-            self::INTERVAL => [$this, 'interval'],
-            self::BEGIN_AT => [$this, 'beginAt'],
-            self::END_AT => [$this, 'endAt'],
-            self::ACTION_STATUS => [$this, 'actionStatus'],
+            self::INPUT                 => [$this, 'input'],
+            self::TASK_ID               => [$this, 'taskId'],
+            self::CLIENT_TYPE           => [$this, 'clientType'],
+            self::APPEAL_IDS            => [$this, 'appealIds'],
+            self::SALON_IDS             => [$this, 'salonIds'],
+            self::STRUCTURE_IDS         => [$this, 'structureIds'],
+            self::EXECUTOR_IDS          => [$this, 'executorIds'],
+            self::STATUS_IDS            => [$this, 'statusIds'],
+            self::AUTHOR_ID             => [$this, 'authorId'],
+            self::IDS                   => [$this, 'ids'],
+            self::INTERVAL              => [$this, 'interval'],
+            self::BEGIN_AT              => [$this, 'beginAt'],
+            self::END_AT                => [$this, 'endAt'],
+            // self::ACTION_STATUS         => [$this, 'actionStatus'],
+            // self::COMPLETED_BEGIN       => [$this, 'completedBegin'],
+            // self::COMPLETED_END         => [$this, 'completedEnd'],
+            // self::COMPLETED_INTERVAL    => [$this, 'completedInterval'],
+            // self::ABORTED_OR_CONFIRMED  => [$this, 'abortedOrConfirmed'],
+            self::CONTROL_DATE          => [$this, 'controlDate'],
+            self::SHOW                  => [$this, 'show'],
+            self::DATE_FOR_CLOSING      => [$this, 'dateForClosing'],
+            //self::CLOSED                => [$this, 'closed'],
         ];
     }
 
-    public function actionStatus(Builder $builder, $value)
+    public function dateForClosing(Builder $builder, $value)
     {
-        $builder->where('worksheet_actions.status', $value);
+        $date = $this->formatDate($value);
+
+        $builder->whereDate('worksheet_actions.begin_at', '=', $date);
     }
+
+    public function show(Builder $builder, $value)
+    {
+        if($value == 'opening')
+            $builder->whereIn('worksheets.status_id', ['work']);
+
+        else if($value == 'closing')
+            $builder->whereIn('worksheets.status_id', ['confirm','abort','check']);
+    }
+
+    public function controlDate(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+
+        if(now()>=$date)
+            $builder->whereDate('worksheet_actions.begin_at', '<=', $date);
+
+        else
+            $builder->whereDate('worksheet_actions.begin_at', '=', $date);
+    }
+
+    public function delWhere(Builder $builder, $where)
+    {
+        foreach($builder->getQuery()->wheres as $key => &$itemWhere) {
+            if(isset($itemWhere['column']) && $itemWhere['column'] == $where) {
+                unset($builder->getQuery()->bindings['where'][$key]);
+                unset($builder->getQuery()->wheres[$key]);
+            }
+        }
+    }
+
+    // public function abortedOrConfirmed(Builder $builder, $value)
+    // {
+    //     $builder->whereBetween('worksheets.close_at', [$this->formatDate($value[0]), $this->formatDate($value[1])]);
+    // }
+
+    // public function completedInterval(Builder $builder, $value)
+    // {
+    //     switch($value) {
+    //         case 'today':
+    //             $builder->whereDate('worksheets.close_at', now());
+    //             break;
+    //         case 'yesterday':
+    //             $builder->whereDate('worksheets.close_at', now()->subDay());
+    //             break;
+    //         case 'week':
+    //             $builder->whereBetween('worksheets.close_at', [now()->startOfWeek(), now()->endOfWeek()]);
+    //             break;
+    //         case 'month':
+    //             $builder->where(function($query)  {
+    //                 $query
+    //                     ->whereYear('worksheets.close_at', '=', now()->year)
+    //                     ->whereMonth('worksheets.close_at', '=', now()->month);
+    //             });
+    //             break;
+    //         case 'year':
+    //             $builder->whereYear('worksheets.close_at', now()->year);
+    //             break;
+    //     }
+    // }
+
+    // public function completedBegin(Builder $builder, $value)
+    // {
+
+    //     $builder->orWhereDate('worksheets.close_at','>=', $this->formatDate($value));
+    // }
+
+    // public function completedEnd(Builder $builder, $value)
+    // {
+
+    //     $builder->orWhereDate('worksheets.close_at','<=', $this->formatDate($value));
+    // }
+
+    // public function actionStatus(Builder $builder, $value)
+    // {
+    //     $builder->where('worksheet_actions.status', $value);
+    // }
+
+
+
 
     public function beginAt(Builder $builder, $value)
     {
@@ -91,22 +190,18 @@ Class WorksheetFilter extends AbstractFilter
         $builder->where('worksheets.author_id', $value);
     }
 
-    public function statusId(Builder $builder, $value)
+    public function statusIds(Builder $builder, $value)
     {
-        $builder->where('worksheets.status_id',$value);
+        $builder->whereIn('worksheets.status_id',$value);
     }
 
     public function executorIds(Builder $builder, $value)
     {
         $builder->leftJoin('worksheet_executors','worksheet_executors.worksheet_id','worksheets.id');
 
-        if(!$this->checkJoin($builder, 'users'))
-            $builder->leftJoin('users', function($join) {
-                $join->on('users.id', 'worksheets.author_id');
-                $join->orOn('users.id','worksheet_executors.user_id');
-            });
-
-        $builder->whereIn('users.id', $value);
+        $builder->where(function($query) use ($value){
+            $query->whereIn('worksheet_executors.user_id', $value);
+        });
     }
 
     public function salonIds(Builder $builder, $value)
@@ -114,14 +209,17 @@ Class WorksheetFilter extends AbstractFilter
         $builder->whereIn('worksheets.company_id', $value);
     }
 
-    public function structureId(Builder $builder, $value)
+    public function structureIds(Builder $builder, $value)
     {
-        $builder->where('worksheets.structure_id', $value);
+        $builder->whereIn('worksheets.structure_id', $value);
     }
 
-    public function appealId(Builder $builder, $value)
+    public function appealIds(Builder $builder, $value)
     {
-        $builder->where('worksheets.appeal_id', $value);
+        if(is_array($value))
+            $builder->whereIn('worksheets.appeal_id', $value);
+        elseif(is_numeric($value) || is_string($value))
+            $builder->where('worksheets.appeal_id', $value);
     }
 
     public function clientType(Builder $builder, $value)
@@ -140,9 +238,6 @@ Class WorksheetFilter extends AbstractFilter
     {
         if(!$this->checkJoin($builder, 'clients'))
             $builder->leftJoin('clients', 'clients.id','worksheets.client_id');
-
-        // if(!$this->checkJoin($builder, 'users'))
-        //     $builder->leftJoin('users','users.id','worksheets.author_id');
 
         if(!$this->checkJoin($builder, 'client_phones'))
             $builder->leftJoin('client_phones', 'client_phones.client_id','clients.id');
@@ -187,8 +282,6 @@ Class WorksheetFilter extends AbstractFilter
             $query->orWhere('client_inns.number', 'like', '%'. $value.'%');
 
             $query->orWhere('worksheets.id', $value);
-
-            // $query->orWhere('users.lastname', $value);
         });
     }
 }

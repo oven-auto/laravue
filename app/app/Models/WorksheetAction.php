@@ -4,10 +4,30 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Interfaces\CommentInterface;
 
 class WorksheetAction extends Model
 {
     use HasFactory;
+
+    private const CONTROL_OVERDUE = 1;
+    private const CONTROL_ACTUAL = 2;
+    private const CONTROL_COMMING = 3;
+
+    public function addComment(string $message)
+    {
+
+    }
+
+    public function changesList()
+    {
+
+    }
+
+    public function selfRussianName()
+    {
+
+    }
 
     public $dates = [
         'begin_at', 'end_at', 'created_at', 'updated_at'
@@ -15,6 +35,10 @@ class WorksheetAction extends Model
 
     protected $guarded = [];
 
+    public function getActualStatus()
+    {
+        return "Актуальное событие: {$this->task->name} {$this->begin_at->format('d.m.Y (H:i)')}";
+    }
     public function getBeginDateAttribute()
     {
         if($this->begin_at)
@@ -49,6 +73,11 @@ class WorksheetAction extends Model
         return $this->hasOne(\App\Models\WorksheetActionComment::class,'action_id', 'id')->orderBy('id','DESC')->withDefault();
     }
 
+    public function last_user_comment()
+    {
+        return $this->hasOne(\App\Models\WorksheetActionComment::class,'action_id', 'id')->where('type', 0)->orderBy('id','DESC')->withDefault();
+    }
+
     public function comments()
     {
         return $this->hasMany(\App\Models\WorksheetActionComment::class,'action_id', 'id')->with('author');
@@ -63,7 +92,7 @@ class WorksheetAction extends Model
     {
         switch ($this->status){
             case 'work':
-                return '';
+                return 'Ожидает';
             case 'confirm':
                 return 'Подтверждено';
             case 'abort':
@@ -73,10 +102,61 @@ class WorksheetAction extends Model
         }
     }
 
-    //public function
+    public static function getStatuses()
+    {
+        return [
+
+                ['id' => 'work', 'name' => 'В работе'],
+                ['id' => 'confirm',  'name' => 'Подтверждено'],
+                ['id' => 'abort',  'name' => 'Отменено']
+
+        ];
+    }
 
     public function worksheet()
     {
         return $this->hasOne(\App\Models\Worksheet::class, 'id', 'worksheet_id')->withDefault();
+    }
+
+    public function getControlStatus()
+    {
+        $currentTime = date('Y-m-d H:i');
+        if($currentTime > $this->end_at)
+            return self::CONTROL_OVERDUE;
+        if($currentTime >= $this->begin_at && $currentTime <= $this->end_at)
+            return self::CONTROL_ACTUAL;
+        if($currentTime < $this->begin_at)
+            return self::CONTROL_COMMING;
+    }
+
+    public function beginDate()
+    {
+        $status = $this->getControlStatus();
+        switch ($status){
+            case 1:
+                return $this->begin_at->format('d.m.Y (H:i)').'-'.$this->end_at->format('d.m.Y (H:i)');
+            case 2:
+                return $this->begin_at->format('d.m.Y (H:i)').'-'.$this->end_at->format('d.m.Y (H:i)');
+            case 3:
+                $diff = $this->begin_at->diff(now());
+                $arr = [
+                    $diff->h.'ч.',
+                    $diff->i.'мин.',
+                ];
+                return 'Начало через '.join(' ',$arr);
+        }
+    }
+
+    public function dateFillColor()
+    {
+        $status = $this->getControlStatus();
+        switch ($status){
+            case 1:
+                return 'red';
+            case 2:
+                return 'green';
+            case 3:
+                return 'yellow';
+        }
     }
 }

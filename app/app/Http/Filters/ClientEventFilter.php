@@ -16,11 +16,16 @@ class ClientEventFilter extends AbstractFilter
     public const CONTROL_END = 'control_end';
     public const PROCESSED_START = 'processed_begin';
     public const PROCESSED_END = 'processed_end';
+    public const PROCESSED_CONTROLL = 'processed_control';
     public const INPUT = 'input';
     public const COMPLETER_IDS = 'completer_ids';
     public const INTERVAL = 'interval';
     public const GROUP_ID = 'group_id';
     public const AUTHOR_ID = 'author_id';
+    public const PERSONAL    = 'personal';
+    public const CONTROL_DATE = 'control_date';
+    public const SHOW       = 'show';
+    public const DATE_FOR_CLOSING = 'date_for_closing';
 
     protected function getCallbacks(): array
     {
@@ -40,7 +45,51 @@ class ClientEventFilter extends AbstractFilter
             self::INTERVAL              => [$this, 'interval'],
             self::GROUP_ID              => [$this, 'groupId'],
             self::AUTHOR_ID             => [$this, 'authorId'],
+            self::PERSONAL              => [$this, 'personal'],
+            self::PROCESSED_CONTROLL    => [$this, 'processedControll'],
+            self::CONTROL_DATE          => [$this, 'controlDate'],
+            self::SHOW                  => [$this, 'show'],
+            self::DATE_FOR_CLOSING      => [$this, 'dateForClosing'],
         ];
+    }
+
+    public function dateForClosing(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+
+        $builder->whereDate('client_event_statuses.date_at', '=', $date);
+    }
+
+    public function controlDate(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+
+        if($date <= now())
+            $builder->whereDate('client_event_statuses.date_at', '<=', $date);
+        else
+            $builder->whereDate('client_event_statuses.date_at', '=', $date);
+    }
+
+    public function show(Builder $builder, $value)
+    {
+        if($value == 'closing')
+        {
+            $this->delWhere($builder, 'client_event_statuses.confirm');
+            $builder->where('client_event_statuses.confirm','processed');
+        }
+        elseif($value == 'opening')
+        {
+            $this->delWhere($builder, 'client_event_statuses.confirm');
+            $builder->where('client_event_statuses.confirm','waiting');
+        }
+
+    }
+
+    public function processedControll(Builder $builder, $arr)
+    {
+        $this->delWhere($builder, 'client_event_statuses.confirm');
+        $builder->where('client_event_statuses.confirm', 'processed');
+        $builder->whereBetween('client_event_statuses.processed_at', [$this->formatDate($arr[0]), $this->formatDate($arr[1])]);
     }
 
     public function authorId(Builder $builder, $value)
@@ -60,14 +109,39 @@ class ClientEventFilter extends AbstractFilter
     public function delWhere(Builder $builder, $where)
     {
         foreach($builder->getQuery()->wheres as $key => &$itemWhere) {
-            if($itemWhere['column'] == $where) {
-                unset($builder->getQuery()->bindings['where'][$key]);
-                unset($builder->getQuery()->wheres[$key]);
-            }
+            if(isset($itemWhere['column']))
+                if($itemWhere['column'] == $where) {
+                    unset($builder->getQuery()->bindings['where'][$key]);
+                    unset($builder->getQuery()->wheres[$key]);
+                }
         }
     }
 
+    public function delWhereFromQuery(\Illuminate\Database\Query\Builder $builder, $where)
+    {
+        foreach($builder->wheres as $key => &$itemWhere) {
+            if(isset($itemWhere['column']))
+                if($itemWhere['column'] == $where) {
+                    unset($builder->bindings['where'][$key]);
+                    unset($builder->wheres[$key]);
+                }
+        }
+    }
+
+    public function personal(Builder $builder, $value)
+    {
+        $this->delWhere($builder,'client_events.personal');
+
+        foreach($builder->getQuery()->wheres as $key => &$itemWhere)
+            if(isset($itemWhere['query']) )
+                foreach($itemWhere['query']->wheres as $subQ)
+                    if(isset($subQ['column']) && $subQ['column'] == 'client_events.personal')
+                        $itemWhere['boolean'] = 'and';
+    }
+
     public function completerIds(Builder $builder, $value){
+        $this->delWhere($builder, 'client_event_statuses.confirm');
+        $builder->where('client_event_statuses.confirm', 'processed');
         $builder->whereIn('client_event_statuses.author_id', $value);
     }
 
@@ -191,6 +265,7 @@ class ClientEventFilter extends AbstractFilter
             $builder->orWhere('clients.company_name', 'LIKE', "%{$value}%");
             $builder->orWhere('client_phones.phone', 'LIKE', "%{$value}%");
             $builder->orWhere('client_inns.number', 'LIKE', "%{$value}%");
+            $builder->orWhere('client_event_statuses.id', $value);
         });
 
         $builder->groupBy('client_phones.phone');

@@ -37,6 +37,7 @@ class ClientCarController extends Controller
     public function store(Client $client, ClientCarRequest $request) : ClientCarCollection
     {
         $this->repo->store($client, $request->input());
+
         return (new ClientCarCollection($client->cars))
             ->additional(['message' => 'Машина добавлена']);
     }
@@ -50,6 +51,7 @@ class ClientCarController extends Controller
     public function update(ClientCar $car, ClientCarRequest $request) : ClientCarCollection
     {
         $this->repo->update($car, $request->input());
+
         return (new ClientCarCollection($car->client->cars))
             ->additional(['message' => 'Машина изменена']);
     }
@@ -62,6 +64,7 @@ class ClientCarController extends Controller
     public function destroy(ClientCar $car) : ClientCarCollection
     {
         $this->repo->hide($car);
+
         return (new ClientCarCollection($car->client->cars))
             ->additional(['message' => 'Машина более не является актуальной']);
     }

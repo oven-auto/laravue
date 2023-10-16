@@ -9,6 +9,7 @@ class TraficAppeal extends Model
 {
     use HasFactory;
 
+
     public function appeal()
     {
         return $this->hasOne(

@@ -9,8 +9,9 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Interfaces\GiveDataForCommentInterface;
 
-class User extends Authenticatable implements PersonInterface
+class User extends Authenticatable implements PersonInterface, GiveDataForCommentInterface
 {
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
@@ -28,6 +29,11 @@ class User extends Authenticatable implements PersonInterface
         'phone',
         'role_id',
     ];
+
+    public function forComment()
+    {
+        return $this->cut_name;
+    }
 
     public function abbreviated_name()
     {

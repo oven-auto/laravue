@@ -3,6 +3,7 @@
 namespace App\Http\Filters;
 
 use Illuminate\Database\Eloquent\Builder;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class ClientFilter extends AbstractFilter
 {
@@ -24,6 +25,7 @@ class ClientFilter extends AbstractFilter
     public const ACTION_END             = 'action_end';
     public const LOYALTY_ID             = 'loyalty_id';
     public const IDS                    = 'ids';
+    public const PERSONAL    = 'personal';
 
     protected function getCallbacks(): array
     {
@@ -46,6 +48,7 @@ class ClientFilter extends AbstractFilter
             self::ACTION_END                => [$this, 'actionEnd'],
             self::LOYALTY_ID                => [$this, 'loyaltyId'],
             self::IDS                       => [$this, 'ids'],
+
         ];
     }
 
@@ -54,6 +57,7 @@ class ClientFilter extends AbstractFilter
     //     $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
     //     return $res;
     // }
+
 
     public function ids(Builder $builder, $value)
     {

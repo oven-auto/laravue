@@ -27,4 +27,9 @@ class TraficFile extends Model
     {
         return $this->hasOne(\App\Models\User::class,'id', 'user_id');
     }
+
+    public function trafic()
+    {
+        return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id')->withDefault();
+    }
 }

@@ -20,13 +20,17 @@ class TraficNeedController extends Controller
             ->additional(['memory'=>number_format($memory/1024/1024,2, '.', '').' Mb']);
     }
 
-    public function appealneed($trafic_appeal_id)
+    public function appealneed($trafic_appeal_id = '')
     {
-        $traficAppeal = TraficAppeal::with(['company.brands','structure','appeal'])->findOrFail($trafic_appeal_id);
+        //$traficAppeal = TraficAppeal::find($trafic_appeal_id);
 
-        $data = TraficProduct::select('number','name')
-            ->where('appeal_id', $traficAppeal->appeal_id)
-            ->orderBy('number')
+        $query = TraficProduct::select('number','name');
+
+        //if($traficAppeal)
+            //$query->where('appeal_id', $traficAppeal->appeal_id);
+
+        $data = $query->orderBy('number')
+            ->where('appeal_id', '<>', 12)
             ->get();
 
         $arr = [];
@@ -39,7 +43,7 @@ class TraficNeedController extends Controller
         ]);
     }
 
-    public function models($company_id)
+    public function models($company_id = '')
     {
         $data = TraficProduct::select('trafic_products.number','trafic_products.name','marks.id')
             ->leftJoin('marks','marks.id','trafic_products.uid')

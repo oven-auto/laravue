@@ -87,9 +87,21 @@ Class TraficRepository
         $query->with([
             'needs', 'sex', 'zone', 'chanel.myparent',
             'salon', 'structure', 'appeal', 'manager',
-            'author', 'worksheet', 'processing', 'files', 'person'
-        ]);
+            'author', 'worksheet', 'processing', 'files', 'person',
+        ])->withCount('links');
         $result = $query->simplePaginate($paginate);
+        return $result;
+    }
+
+    public function get($data = [])
+    {
+        $query = $this->filter($data);
+        $query->with([
+            'needs', 'sex', 'zone', 'chanel.myparent',
+            'salon', 'structure', 'appeal', 'manager',
+            'author', /*'worksheet', 'processing', 'files',*/ 'person'
+        ]);
+        $result = $query->orderBy('trafics.begin_at')->get();
         return $result;
     }
 
@@ -112,10 +124,10 @@ Class TraficRepository
      */
     public function counter($data = []) : int
     {
-        $query = Trafic::select(DB::raw('count(trafics.id)'))->withTrashed();
+        $query = Trafic::select(\DB::raw('count(trafics.id)'))->withTrashed();
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
         $query->filter($filter)
-            ->orderBy(DB::raw('trafics.manager_id IS NULL'),'DESC')
+            ->orderBy(\DB::raw('trafics.manager_id IS NULL'),'DESC')
             ->orderBy('trafics.created_at','DESC')
             ->groupBy('trafics.id');
         $result = $query->get()->count();

@@ -15,7 +15,7 @@ class ClientMarketing extends Controller
 
     public function __invoke(Request $request)
     {
-        if(!$request->has('client_id'))
+        if(!$request->has('client_id')) //лень реквест делать
             throw new \Exception('Не указан клиент');
         $data = $this->repo->getAllInGroupByClientId($request->get('client_id'));
 

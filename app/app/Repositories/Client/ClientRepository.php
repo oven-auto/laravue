@@ -63,6 +63,7 @@ Class ClientRepository
     {
         $columns = Arr::except(Client::getColumnsName(), ['id']);
 
+
         $data['trafic_sex_id'] = $data['trafic_sex_id'] == 0 ? $data['trafic_sex_id'] = null : $data['trafic_sex_id'];
         $data['trafic_zone_id'] = $data['trafic_zone_id'] == 0 ? $data['trafic_zone_id'] = null : $data['trafic_zone_id'];
 
@@ -158,6 +159,9 @@ Class ClientRepository
      */
     public function delete(Client $client) :void
     {
+        if($client->client_type_id == 2)
+            throw new \Exception('Нельзя удалять юр.лицо');
+
         $client->phones()->delete();
         $client->delete();
     }

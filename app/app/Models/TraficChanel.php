@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Interfaces\GiveDataForCommentInterface;
 
-class TraficChanel extends Model
+class TraficChanel extends Model implements GiveDataForCommentInterface
 {
     use HasFactory;
 
@@ -18,5 +19,10 @@ class TraficChanel extends Model
     public function myparent()
     {
         return $this->hasOne(\App\Models\TraficChanel::class, 'id', 'parent')->withDefault();
+    }
+
+    public function forComment()
+    {
+        return $this->name;
     }
 }

@@ -7,6 +7,7 @@ use App\Models\ClientUnion;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
+use Illuminate\Contracts\Cache\Store;
 
 class HomeController extends Controller
 {
@@ -32,16 +33,35 @@ class HomeController extends Controller
 
     public function test()
     {
-        $mas = [];
-        $unions = ClientUnion::get();
-        foreach($unions as $item)
-            foreach($unions as $sub)
-                if($item->client_id == $sub->parent && $item->parent == $sub->client_id)
-                    $mas[] = ['client_id' => $sub->client_id, 'parent' => $sub->parent];
-                    //ClientUnion::where('client_id',$sub->client)->where('parent', $sub->parent)->delete();
-        echo '<pre>';
-        print_r($mas);
-        echo '</pre>';
+        $img = imagecreate(2480,3508);
+
+        $degree = 0; // Угол поворота текста в градусах
+        $y = 100; // Смещение сверху (координата y)
+        $x = 200;
+
+        $background_color = imagecolorallocate($img, 255, 255, 255);
+        $font = public_path().'/fonts/dejavu-sans/DejaVuSans.ttf';
+
+        $font_size = 24;
+        $text = "ТЕСТ РУССКОГО";
+        $color = imagecolorallocate($img, 0, 0, 0);
+        imagettftext($img, $font_size, $degree, $x, $y, $color, $font, $text);
+
+        $font_size = 50;
+        $degree = 0; // Угол поворота текста в градусах
+        $y = 500; // Смещение сверху (координата y)
+        $x = 200;
+        $text = "ТЕСТ СТРОКИ 22222222222222222222222222222222222222222222222222
+        22222222222222222222222222222222222222222
+        222222222222222222222222222222222222222222222222222222222222
+        22222222222222222222222222222222222222";
+        $color = imagecolorallocate($img, 150, 0, 0);
+        imagettftext($img, $font_size, $degree, $x, $y, $color, $font, $text);
+
+        imagearc($img, 100, 100, 200, 200,  0, 360, $color);
+
+        imagepng($img, public_path()."/".time().".png");
+
     }
 
     public function addYear($date, $year = 1)

@@ -26,18 +26,21 @@ class ClientUnionRepository
         if($unionClientId == $client->id)
             throw new \Exception('Клиент к которму Вы хотите добавить связь не может быть тем же кого добавляете');
 
-        if($client->unionsParent->contains('id', $unionClientId))
-            throw new \Exception('Связь уже есть');
-        if($client->unionsChildren->contains('id', $unionClientId))
-            throw new \Exception('Связь уже есть');
+        // if($client->unionsParent->contains('id', $unionClientId))
+        //     throw new \Exception('Связь уже есть');
+        // if($client->unionsChildren->contains('id', $unionClientId))
+        //     throw new \Exception('Связь уже есть');
 
-        $unions = $client->unionsChildren->pluck('id')->toArray();
-        array_push($unions, $unionClientId);
-        $unions = array_unique($unions);
+        if(!$client->unionsParent->contains('id', $unionClientId) && !$client->unionsChildren->contains('id', $unionClientId))
+        {
+            $unions = $client->unionsChildren->pluck('id')->toArray();
+            array_push($unions, $unionClientId);
+            $unions = array_unique($unions);
 
-        $client->unionsChildren()->sync($unions);
+            $client->unionsChildren()->sync($unions);
 
-        $client = $client->fresh();
+            $client = $client->fresh();
+        }
     }
 
     /**

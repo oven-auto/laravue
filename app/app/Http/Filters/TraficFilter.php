@@ -15,9 +15,9 @@ class TraficFilter extends AbstractFilter
     public const SEX_ID = 'sex_id';
     public const ZONE_ID= 'zones_id';
     public const CHANEL_ID = 'chanel_id';
-    public const COMPANY_ID = 'brand_id';
-    public const STRUCTURE_ID = 'section_id';
-    public const APPEAL_ID = 'appeal_id';
+    public const COMPANY_IDS = 'brand_ids';
+    public const STRUCTURE_IDS = 'section_ids';
+    public const APPEAL_IDS = 'appeal_ids';
     public const TASK_ID = 'action_id';
     public const INPUT = 'input';
     public const AUTHOR_ID = 'author_id';
@@ -26,16 +26,18 @@ class TraficFilter extends AbstractFilter
     public const PROCESSING_START = 'processing_begin';
     public const PROCESSING_END = 'processing_end';
     public const STATUS_ID = 'status_id';
-    public const NEED_ID = 'need_id';
+    public const NEED_IDS = 'need_ids';
     public const SUPER_DIAMOND_SEARCH = 'super_diamond_search';
     public const AUDIT_AUTHOR_ID = 'audit_author_id';
     public const AUDIT_SCENARIO_ID = 'scenario';
     public const AUDIT_STATUS_ID = 'status_audit_id';
-    public const MODEL_ID = 'model_id';
+    public const MODEL_IDS = 'model_ids';
     public const PERSON_TYPE_ID = 'person_type_id';
     public const IS_PRODUCT = 'is_product';
     public const BRANDS = 'brands';
-
+    public const CONTROL_DATE = 'control_date';
+    public const SHOW = 'show';
+    public const DATE_FOR_CLOSING = 'date_for_closing';
     public $countElements = 0;
 
     protected function getCallbacks(): array
@@ -47,9 +49,9 @@ class TraficFilter extends AbstractFilter
             self::SEX_ID              => [$this, 'sexId'], //val
             self::ZONE_ID             => [$this, 'zoneId'], //array
             self::CHANEL_ID           => [$this, 'chanelId'], //array
-            self::COMPANY_ID          => [$this, 'companyId'], //val
-            self::STRUCTURE_ID        => [$this, 'companyStructureId'], //val
-            self::APPEAL_ID           => [$this, 'appealId'],//val
+            self::COMPANY_IDS         => [$this, 'companyIds'], //val
+            self::STRUCTURE_IDS       => [$this, 'companyStructureIds'], //val
+            self::APPEAL_IDS          => [$this, 'appealIds'],//val
             self::TASK_ID             => [$this, 'taskId'], //val
             self::INPUT               => [$this, 'input'],//val
             self::AUTHOR_ID           => [$this, 'authorId'],
@@ -58,17 +60,46 @@ class TraficFilter extends AbstractFilter
             self::PROCESSING_START    => [$this, 'processingStart'],
             self::PROCESSING_END      => [$this, 'processingEnd'],
             self::STATUS_ID           => [$this, 'statusId'],
-            self::NEED_ID             => [$this, 'needId'],
+            self::NEED_IDS            => [$this, 'needIds'],
             self::SUPER_DIAMOND_SEARCH=> [$this, 'superDiamondSearch'],
             self::AUDIT_AUTHOR_ID     => [$this, 'auditAuthorId'],
             self::AUDIT_SCENARIO_ID   => [$this, 'auditScenarioId'],
             self::AUDIT_STATUS_ID     => [$this, 'auditStatusId'],
-            self::MODEL_ID            => [$this, 'modelId'],
+            self::MODEL_IDS           => [$this, 'modelIds'],
             self::PERSON_TYPE_ID      => [$this, 'personTypeId'],
             self::IS_PRODUCT          => [$this, 'isProduct'],
             self::BRANDS              => [$this, 'brands'],
-
+            self::CONTROL_DATE        => [$this, 'controlDate'],
+            self::SHOW                => [$this, 'show'],
+            self::DATE_FOR_CLOSING    => [$this, 'dateForClosing'],
         ];
+    }
+
+    public function show(Builder $builder, $value)
+    {
+        if($value == 'closing')
+            $builder->whereNotIn('trafics.trafic_status_id', [1,2]);
+        else if($value == 'opening')
+           $builder->whereIn('trafics.trafic_status_id', [1,2]);
+    }
+
+    public function dateForClosing(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+
+        $builder->whereDate('trafics.begin_at', '=', $date);
+    }
+
+    public function controlDate(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+
+        if(now()>=$date)
+            //Условие что за текющую дату либо ранее, если сегодня меньше либо равно указанной даты
+            $builder->whereDate('trafics.begin_at', '<=', $date);
+        else
+            //Условие только за указанную дату
+            $builder->whereDate('trafics.begin_at', '=', $date);
     }
 
     public function brands(Builder $builder, $value)
@@ -82,7 +113,7 @@ class TraficFilter extends AbstractFilter
     //     return $res;
     // }
 
-    public function modelId(Builder $builder, $value)
+    public function modelIds(Builder $builder, $value)
     {
         if(!$this->checkJoin($builder, 'trafic_needs'))
             $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id');
@@ -153,7 +184,7 @@ class TraficFilter extends AbstractFilter
     }
 
     //Заданные продукты или услуги [trafic_product_number, .... , trafic_product_number]
-    public function needId(Builder $builder, $value)
+    public function needIds(Builder $builder, $value)
     {
         $this->setCountElements($value);
         $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id')
@@ -200,11 +231,14 @@ class TraficFilter extends AbstractFilter
     //Менеджеры [user_id, ... , user_id]
     public function managerId(Builder $builder, $value)
     {
-        $builder->where(function($query) use ($value) {
-            $query
-                ->whereIn('trafics.manager_id', $value);
-                //->orWhere('trafics.manager_id', NULL);
-        });
+        if(is_array($value))
+            $builder->where(function($query) use ($value) {
+                $query
+                    ->whereIn('trafics.manager_id', $value);
+                    //->orWhere('trafics.manager_id', NULL);
+            });
+        else
+            $builder->where('trafics.manager_id', $value);
     }
 
     //Интервал {yesterday, today, week, month}
@@ -266,21 +300,29 @@ class TraficFilter extends AbstractFilter
     }
 
     //Заданная компания company_id
-    public function companyId(Builder $builder, $value)
+    public function companyIds(Builder $builder, $value)
     {
-        $builder->where('trafics.company_id', $value);
+        if(is_array($value))
+            $builder->whereIn('trafics.company_id', $value);
+        elseif(is_numeric($value) || is_string($value))
+            $builder->where('trafics.company_id', $value);
     }
 
     //Заданная структура компания structure_id
-    public function companyStructureId(Builder $builder, $value)
+    public function companyStructureIds(Builder $builder, $value)
     {
-        $builder->where('trafics.company_structure_id', $value);
+        $builder->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
+        $builder->whereIn('company_structures.id', $value);
     }
 
     //Заданная цель обращения appeal_id
-    public function appealId(Builder $builder, $value)
+    public function appealIds(Builder $builder, $value)
     {
-        $builder->where('trafics.trafic_appeal_id', $value);
+        if(is_array($value))
+        {
+            $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');
+            $builder->whereIn('trafic_appeals.appeal_id', $value);
+        }
     }
 
     //Заданная назначенное действиие task_id

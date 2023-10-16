@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Interfaces\GiveDataForCommentInterface;
 
-class Appeal extends Model
+class Appeal extends Model implements GiveDataForCommentInterface
 {
     use HasFactory;
 
@@ -16,8 +17,8 @@ class Appeal extends Model
         return $this->hasMany(\App\Models\TraficProduct::class, 'appeal_id', 'id')->orderBy('group_id')->orderBy('name');
     }
 
-    public function trafic_appeals()
+    public function forComment()
     {
-
+        return $this->name;
     }
 }

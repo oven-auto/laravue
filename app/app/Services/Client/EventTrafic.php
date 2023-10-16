@@ -29,6 +29,7 @@ Class EventTrafic
         $clientArr['trafic_chanel_id'] = 37;
 
         $this->traficRepo->save($this->trafic, $clientArr);
+
         \App\Models\ClientEventTrafic::create([
             'trafic_id' => $this->trafic->id,
             'event_id' => $eventStatus->event_id,
@@ -37,7 +38,7 @@ Class EventTrafic
         return $this->trafic->id;
     }
 
-    public static function addTrafic(ClientEventStatus $eventStatus, bool $status)
+    public static function addTrafic(ClientEventStatus $eventStatus, bool $status = true)
     {
         $me = new EventTrafic(new Trafic, new TraficRepository);
         return $me->createTrafic($eventStatus, $status);

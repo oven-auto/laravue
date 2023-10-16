@@ -35,9 +35,11 @@ class ActionSave
         $this->init();
         $this->setTask($data);
         $this->createAction($data);
-        //$this->setWorksheetStatus();
-        $this->commentService->writeComment($this->action, "Актуальное событие: {$this->task->name} {$this->action->begin_at->format('d.m.Y (H:i)')}");
-        $this->commentService->writeComment($this->action, $data['text']);
+        $this->setWorksheetStatus();
+
+        $this->commentService->addSystemComment($this->action->worksheet, $this->action->getActualStatus());
+        $this->commentService->addUserComment($this->action->worksheet, $data['text']);
+
         $this->action->fresh();
     }
 
@@ -49,7 +51,7 @@ class ActionSave
     {
         $this->init();
         $this->setAction($data);
-        $this->commentService->writeComment($this->action,$data['text']);
+        $this->commentService->addUserComment($this->action->worksheet, $data['text']);
         $this->action->load('last_comment');
     }
 
@@ -58,8 +60,7 @@ class ActionSave
         $this->init();
         $this->setAction($data);
         $this->changeStatus($data);
-        $this->commentService->writeComment($this->action,$this->closeMessage($data), self::COMMENT_STATUS);
-
+        $this->commentService->addSystemComment($this->action->worksheet, $this->closeMessage($data));
     }
 
     private function closeMessage($data) {
@@ -77,11 +78,11 @@ class ActionSave
 
     private function changeStatus($data)
     {
-        $this->action->status = $data['status'];
-        if(in_array($this->action->status, ['confirm','abort']))
-            $this->action->worksheet->fill([
-                'status_id' => WorksheetStatus::where('slug','check')->first()->id
-            ])->save();
+        $this->action->status = 'work';//$data['status'];
+        // if(in_array($this->action->task->slug, ['confirm','abort']))
+        //     $this->action->worksheet->fill([
+        //         'status_id' => 'check'
+        //     ])->save();
         $this->action->save();
     }
 
@@ -126,7 +127,7 @@ class ActionSave
     private function setWorksheetStatus() : void
     {
         $this->action->worksheet->fill([
-            'status_id' => $this->task->status->id
+            'status_id' => $this->task->worksheet_label
         ])->save();
     }
 

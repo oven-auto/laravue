@@ -26,32 +26,65 @@ class EventIndexResource extends JsonResource
             || auth()->user()->id == $this->event->author_id
         ) ? 1 : 0;
 
+        $event = $this->event;
+
+        $executors = $this->event->executors->filter(function($item) use ($event){
+            return ($event->author_id != $item->id);
+        });
+        $executors->prepend($event->author);
+
+        //Проверка на то что показывать, если выбрано "я ответственный"
+        $isIExecutor = (request()->has('executor_ids') && in_array($author->id, request('executor_ids'))) ? 1 : 0;
+
         return [
+            'begin_time' => $this->begin,
+            'end_time' => $this->end,
             'id' => $this->id,
             'event_id' => $this->event->id,
             'title' => $this->event->title,
             'date_at' => $this->date_at->format('d.m.Y'),
-            // 'executors' => $this->event->executors->map(function($item) {
-            //     return [
-            //         'id' => $item->id,
-            //         'name' => $item->cut_name,
-            //     ];
-            // }),
+            'executors' => $executors->map(function($item) use ($event){
+                    return [
+                        'type' => ($event->author_id != $item->id) ? 'Участник' : 'Автор',
+                        'id' => $item->id,
+                        'name' => $item->cut_name,
+                    ];
+            }),
             'type' => $this->event->type->name,
             'client' => $this->event->client->full_name,
             'status' => $this->description->name,
-            'processed_at' => $this->processed_at ? $this->processed_at->format('d.m.Y') : '',
+            'processed_at' => $this->processed_at ? $this->processed_at->format('d.m.Y (H:i)') : '',
             'completer' => $this->completer->cut_name,
             'client_type' => $this->event->client->type->name,
             'comment' => $this->lastcomment->created_at ? $this->lastcomment->created_at->format('d.m.Y (H:i)').' '.$this->lastcomment->text : '',
-            //'author' => $this->event->author->cut_name,
-            'executor' => $this->event->executor,
+            'author' => $this->event->author->cut_name,
+            'executor' => $isIExecutor ? $author->cut_name : $this->event->executor,
             'trafic' => $this->trafic->id ? $this->trafic->id : '',
             'client_id' => $this->event->client->id,
             'worksheet_id' => $this->trafic->worksheet->id,
             'group' => $this->event->group->name ?? '',
             'can_i_change' => $canIChange,
             'files' => $this->event->files->count(),
+            'trafic_count' => $this->trafics->count(),
+            'trafic_list' => $this->trafics->map(function($item)
+                {
+                    return [
+                        'id' => $item->id,
+                        'date_at' => $item->created_at->format('d.m.Y (H:i)'),
+                        'author' => $item->author->cut_name,
+
+                    ];
+                }),
+            'reporters_count' => $this->reporters->count(),
+            'reporters' => $this->reporters->map(function($item){
+                return [
+                    'id' => $item->id,
+                    'name' => $item->cut_name,
+                    'created_at' => $item->pivot->created_at ? $item->pivot->created_at->format('d.m.Y (H:i)') : ''
+                ];
+            }),
+            'me_in_reporters' => ($this->reporters->contains('id', auth()->user()->id)) ? 1 : 0,
+            'personal' => $this->event->personal,
         ];
     }
 }

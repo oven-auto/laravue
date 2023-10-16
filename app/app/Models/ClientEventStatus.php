@@ -10,6 +10,23 @@ class ClientEventStatus extends Model
 {
     use HasFactory, Filterable;
 
+    public function getBeginAttribute()
+    {
+        return date('H:i', strtotime($this->begin_time));
+    }
+
+    public function getEndAttribute()
+    {
+        return date('H:i', strtotime($this->end_time));
+    }
+
+    public function getTimeStatusAttribute()
+    {
+        if($this->begin_time == '09:00:00' && $this->end_time == '21:00:00')
+            return 0;
+        return 1;
+    }
+
     public $with = ['completer','description'];
 
     protected $guarded = [];
@@ -21,7 +38,7 @@ class ClientEventStatus extends Model
         'date_at',
     ];
 
-    public function scopeOnlyMy($query)
+    public function scopeOnlyTableData($query)
     {
         return $query->select('client_event_statuses.*');
     }
@@ -31,18 +48,29 @@ class ClientEventStatus extends Model
         return $query
             ->groupBy('client_event_statuses.id')
             ->orderBy('client_event_statuses.date_at', 'ASC')
-            ->orderBy('client_event_statuses.confirm', 'ASC');
+            ->orderBy('client_event_statuses.begin_time')
+            ->orderBy('client_event_statuses.confirm', 'ASC')
+            ->orderBy('client_event_statuses.id', 'ASC');
     }
 
     public function scopeWithEventAndTrafic($query)
     {
-        return $query->with(['event.files','trafic']);
+        return $query->with(['event.files','trafic', 'trafics', 'reporters', 'completer']);
     }
 
     public function getStatusAttribute()
     {
         return $this->description->name;
     }
+
+    public function isWork()
+    {
+        if($this->confirm == 'waiting')
+            return 1;
+        return 0;
+    }
+
+
 
     public function completer()
     {
@@ -81,5 +109,28 @@ class ClientEventStatus extends Model
             'id',
             'trafic_id'
         )->withDefault();
+    }
+
+    public function trafics()
+    {
+        return $this->hasManyThrough(
+            \App\Models\Trafic::class,
+            \App\Models\ClientEventTrafic::class,
+            'event_status_id',
+            'id',
+            'id',
+            'trafic_id'
+        );
+    }
+
+    public function reporters()
+    {
+        return $this->belongsToMany(
+            \App\Models\User::class,
+            'client_event_reporters',
+            'event_id',
+            'user_id',
+            'id'
+        )->withPivot('created_at');
     }
 }

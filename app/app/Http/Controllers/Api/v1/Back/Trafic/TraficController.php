@@ -28,39 +28,40 @@ class TraficController extends Controller
 
     public function index(Request $request)
     {
-        $start = microtime(true);
-        $memory = memory_get_usage();
         $result = $this->service->paginate($request->all());
-        $time = microtime(true) - $start;
-        $memory = memory_get_usage() - $memory;
 
-        return (new TraficEditCollection($result))
-            ->additional(['time' => round($time,2).'s', 'memory' => round($memory/1024/1024,2).'МБ']);
+        return new TraficEditCollection($result);
     }
 
     public function store(Trafic $trafic, Request $request)
     {
         $this->service->save($trafic, $request->all());
-        \App\Events\TraficEvent::dispatch($trafic, self::EVENT_STATUS['create']);
+        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['create']);
+
         return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::EVENT_STATUS['create']]);
+            ->additional([
+                'message' => Trafic::NOTICES['create'],
+            ]);
     }
 
     public function edit($trafic, Request $request)
     {
         $trafic = Trafic::withTrashed()->find($trafic);
+        if(!$trafic->isMy())
+            \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['open']);
         return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::EVENT_STATUS['open']]);
+            ->additional(['message' => Trafic::NOTICES['open']]);
     }
 
     public function update($trafic, Request $request)
     {
         $trafic = Trafic::withTrashed()->find($trafic);
         $this->service->save($trafic, $request->all());
-        \App\Events\TraficEvent::dispatch($trafic, self::EVENT_STATUS['update']);
+        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['update']);
+
         return (new TraficSaveResource($trafic))
             ->additional([
-                'message' => self::EVENT_STATUS['update'],
+                'message' => Trafic::NOTICES['update'],
         ]);
     }
 
@@ -69,16 +70,19 @@ class TraficController extends Controller
         $trafic = Trafic::withTrashed()->find($trafic);
         $result = $trafic->close();
 
-        \App\Events\TraficEvent::dispatch($trafic, self::EVENT_STATUS['close']);
+        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['close']);
 
         if($result)
+        {
+
             return (new TraficSaveResource($trafic))
-                ->additional(['message' => self::EVENT_STATUS['close']]);
+                ->additional(['message' => Trafic::NOTICES['close']]);
+        }
 
         throw new \Exception('Нельзя упускать трафик без ответственного');
     }
 
-    public function delete($trafic)
+    public function delete($trafic, Request $request)
     {
         $trafic = Trafic::withTrashed()->find($trafic);
 
@@ -87,9 +91,10 @@ class TraficController extends Controller
         }
 
         $trafic->delete();
-        \App\Events\TraficEvent::dispatch($trafic, self::EVENT_STATUS['delete']);
+
+        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['delete']);
 
         return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::EVENT_STATUS['delete']]);
+            ->additional(['message' => Trafic::NOTICES['delete']]);
     }
 }

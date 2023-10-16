@@ -13,12 +13,19 @@ class ClientEvent extends Model
 
     protected $guarded = [];
 
+    public function personality()
+    {
+        return $this->personal == 0 ? 'Рабочая коммуникация' : 'Личная коммуникация';
+    }
     public function getExecutorAttribute()
     {
-        if($this->executors->contains('id', auth()->user()->id))
-            return auth()->user()->cut_name;
-        $other = ($this->executors->count() > 1) ? (' (+'.($this->executors->count()-1).')') : '';
+        $other = ($this->executors->count() > 1) ? (' ('.($this->executors->count()).')') : '';
         return $this->author->cut_name.$other;
+    }
+
+    public function executorOrCount()
+    {
+        return "{$this->executors->count()}";
     }
 
     public function group()

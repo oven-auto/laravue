@@ -23,7 +23,7 @@ class TraficAuditController extends Controller
         $this->repository->saveTraficAudit($trafic, $request->input(),$request->allFiles());
 
         $trafic = $trafic->fresh();
-
+        \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['audit_load']);
         return response()->json([
             'data' => $trafic->processing->map(function($item){
                 return [
@@ -47,7 +47,7 @@ class TraficAuditController extends Controller
         $this->repository->updateTraficAudit($trafic_processing, $request->input(),$request->allFiles());
 
         $trafic = $trafic_processing->trafic;
-
+        \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['audit_update']);
         return response()->json([
             'data' => $trafic->processing->map(function($item){
                 return [

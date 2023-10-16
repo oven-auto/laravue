@@ -22,10 +22,10 @@ class UserSaveResource extends JsonResource
                 'lastname' => $this->lastname,
                 'phone' => $this->phone,
                 'role_id' => $this->role_id,
-                'appeals' => $this->appeals->map(function($item){
+                'appeals' => isset($this->appeals) ? $this->appeals->map(function($item){
                     return $item->id;
-                }),
-                'structures' => $this->structures,
+                }) : [],
+                'structures' => isset($this->structures) ? $this->structures : [],
             ],
             'success' => 1,
             'manual' => 'Для пароля использовать поле password, для поля подтверждения пароля password_confirmation'

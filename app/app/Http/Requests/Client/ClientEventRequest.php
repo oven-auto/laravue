@@ -39,6 +39,8 @@ class ClientEventRequest extends FormRequest
                     'type_id' => 'required',
                     'text' => 'required',
                     'executors' => 'nullable',
+                    'begin_time' => 'nullable|date_format:H:i',
+                    'end_time' => 'nullable|date_format:H:i',
                 ];
 
             elseif($method == 'PATCH')
@@ -49,6 +51,8 @@ class ClientEventRequest extends FormRequest
                     'type_id' => 'required',
                     'text' => 'nullable',
                     'executors' => 'nullable|array',
+                    'begin_time' => 'nullable|date_format:H:i',
+                    'end_time' => 'nullable|date_format:H:i',
                 ];
 
             return $arr;

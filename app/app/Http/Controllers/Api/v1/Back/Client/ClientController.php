@@ -48,6 +48,7 @@ class ClientController extends Controller
     public function index(Request $request) : ClientListCollection
     {
         $clients = $this->repo->paginate($request->input(), 30);
+
         return new ClientListCollection($clients);
     }
 
@@ -75,7 +76,7 @@ class ClientController extends Controller
     public function store(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
-        \App\Events\ClientEvent::dispatch($client, self::EVENT_STATUS['create']);
+
         return (new ClientEditResource($client))
             ->additional(['message' => 'Клиент создан']);
     }
@@ -89,7 +90,6 @@ class ClientController extends Controller
     public function update(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
-        \App\Events\ClientEvent::dispatch($client, self::EVENT_STATUS['update']);
 
         return (new ClientEditResource($client))
             ->additional([
@@ -105,15 +105,9 @@ class ClientController extends Controller
      */
     public function destroy(Client $client) : ClientEditResource
     {
-        $message = 'Нельзя удалять юр.лицо';
-        $result = 0;
-        if($client->client_type_id == 1 || $client->client_type_id == ''){
-            $this->repo->delete($client);
-            $message = 'Клиент удален';
-            $result = 1;
-        }
+        $this->repo->delete($client);
 
         return (new ClientEditResource($client))
-            ->additional(['message' => $message, 'result' => $result]);
+            ->additional(['message' => 'Клиент удален', 'result' => 1]);
     }
 }

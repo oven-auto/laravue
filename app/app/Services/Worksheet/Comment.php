@@ -5,6 +5,7 @@ use App\Models\Client;
 use App\Models\Interfaces\PersonInterface;
 use App\Models\Task;
 use App\Models\WorksheetAction;
+use App\Models\Worksheet;
 
 Class Comment
 {
@@ -21,7 +22,8 @@ Class Comment
                 'task_id' => Task::where('slug','control')->first()->id,
                 'author_id' => auth()->user()->id
             ]);
-        $comment->writeComment($action, "{$message}: {$personName}");
+        //$comment->writeComment($action, "{$message}: {$personName}");
+        $comment->addSystemComment($action->worksheet, "{$message}: {$personName}");
     }
 
     public function writeComment(WorksheetAction $action, $str, $status = 0)
@@ -31,6 +33,35 @@ Class Comment
             'author_id' => auth()->user()->id,
             'text' => $str,
             'status' => $statusVal,
+        ]);
+    }
+
+    public static function addComment(Worksheet $worksheet, $message)
+    {
+        $worksheet->last_action->last_comment()->create([
+            'author_id' => auth()->user()->id,
+            'text' => $message,
+            'status' => NULL,
+        ]);
+    }
+
+    public function addUserComment(Worksheet $worksheet, $message)
+    {
+        $worksheet->last_action->last_comment()->create([
+            'author_id' => auth()->user()->id,
+            'text' => $message,
+            'status' => NULL,
+            'type' => 0
+        ]);
+    }
+
+    public function addSystemComment(Worksheet $worksheet, $message)
+    {
+        $worksheet->last_action->last_comment()->create([
+            'author_id' => auth()->user()->id,
+            'text' => $message,
+            'status' => NULL,
+            'type' => 1
         ]);
     }
 
