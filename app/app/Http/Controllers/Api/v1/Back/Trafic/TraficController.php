@@ -36,6 +36,7 @@ class TraficController extends Controller
     public function store(Trafic $trafic, Request $request)
     {
         $this->service->save($trafic, $request->all());
+
         \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['create']);
 
         return (new TraficSaveResource($trafic))

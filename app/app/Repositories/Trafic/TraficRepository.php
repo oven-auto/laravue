@@ -22,6 +22,7 @@ Class TraficRepository
     {
         if(!$trafic->created_at)
             $trafic->created_at     = isset($data['time']) ? date('Y-m-d H:i',\strtotime($data['time'])) : date('Y-m-d H:i:s');
+
         $trafic->fill([
             'author_id'             => $data['author_id'] ?? $trafic->author_id,
             'firstname'             => $data['firstname'] ?? $trafic->firstname,

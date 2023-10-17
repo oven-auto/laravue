@@ -312,7 +312,7 @@ class TraficFilter extends AbstractFilter
     public function companyStructureIds(Builder $builder, $value)
     {
         $builder->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
-        $builder->whereIn('company_structures.id', $value);
+        $builder->whereIn('company_structures.structure_id', $value);
     }
 
     //Заданная цель обращения appeal_id

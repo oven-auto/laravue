@@ -53,6 +53,15 @@ class Client extends Model implements PersonInterface
         return '';
     }
 
+    public static function getOwner()
+    {
+        return Client::select('clients.*')
+            ->with(['inn'])
+            ->leftJoin('client_inns', 'client_inns.client_id', 'clients.id')
+            ->where('number', '1121000102')
+            ->first();
+    }
+
     public function initials()
     {
         if(isset($this->company_name) && !empty($this->company_name))

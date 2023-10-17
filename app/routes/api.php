@@ -277,6 +277,8 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
         Route::get('/count', 'TraficLinkController@count');
     });
 
+    Route::get('owner', 'TraficOwnerController');
+
     Route::get('product/statuses', 'TraficProductStatusList');
     //получить список зон трафика
     Route::get('zones', 'TraficZoneController@index');
