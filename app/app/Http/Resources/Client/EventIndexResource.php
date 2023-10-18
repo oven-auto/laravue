@@ -57,13 +57,6 @@ class EventIndexResource extends JsonResource
             'completer' => $this->completer->cut_name,
             'client_type' => $this->event->client->type->name,
             'comment' => $this->lastcomment->created_at ? $this->lastcomment->created_at->format('d.m.Y (H:i)').' '.$this->lastcomment->text : '',
-            'comments' => $this->comments->map(function($item) {
-                return [
-                    'writer' => $item->author->cut_name,
-                    'text' => $item->text,
-                    'created_at' => $item->created_at->format('d.m.Y'),
-                ];
-            }),
             'author' => $this->event->author->cut_name,
             'executor' => $isIExecutor ? $author->cut_name : $this->event->executor,
             'trafic' => $this->trafic->id ? $this->trafic->id : '',
