@@ -173,8 +173,6 @@ class ClientEventRepository
 
         $query->OnlyTableData()->WithEventAndTrafic()->ListOrder();
 
-        //$query->dd();
-
         $result = $query->simplePaginate($paginate);
 
         return $result;

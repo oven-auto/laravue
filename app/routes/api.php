@@ -405,6 +405,9 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     Route::post('events/trafic', '\App\Http\Controllers\Api\v1\Back\Client\CreateEventTrafic');//Создать трафик из обращения
 
+    //Показать комментарии события
+    Route::get('events/comments/{clientEvent}', '\App\Http\Controllers\Api\v1\Back\Client\EventCommentController');
+
     Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
         ->except(['create','edit']);
 
