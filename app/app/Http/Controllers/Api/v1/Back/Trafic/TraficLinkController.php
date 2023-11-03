@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Back\Trafic;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Trafic\LinkCollection;
 use App\Http\Resources\Trafic\LinkResource;
+use App\Models\Trafic;
 use App\Models\TraficLink;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Http\Request;
@@ -20,14 +21,14 @@ class TraficLinkController extends Controller
         return new LinkCollection($links);
     }
 
-    public function store(TraficLink $link, Request $request)
+    public function store(Trafic $trafic, Request $request)
     {
-        $link->fill([
+        $link = TraficLink::create([
             'author_id' => auth()->user()->id,
-            'text' => $request->get('text'),
-            'icon' => GetShortCutFromURL::get($request->get('text')),
-            'trafic_id' => $request->get('trafic_id'),
-        ])->save();
+            'text' => $request->get('url'),
+            'icon' => GetShortCutFromURL::get($request->get('url')),
+            'trafic_id' => $trafic->id,
+        ]);
 
         return response()->json([
             'data' => new LinkResource($link),
@@ -41,7 +42,7 @@ class TraficLinkController extends Controller
         $link->fill([
             'author_id' => auth()->user()->id,
             'text' => $request->get('text'),
-            'icon' => GetShortCutFromURL::get($request->get('text'),'shortcut','href'),
+            'icon' => GetShortCutFromURL::get($request->get('url'),'shortcut','href'),
         ])->save();
 
         return response()->json([

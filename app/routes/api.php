@@ -271,7 +271,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     Route::prefix('links')->group(function(){
         Route::get('/', 'TraficLinkController@index');
-        Route::post('/', 'TraficLinkController@store');
+        Route::post('/{trafic}', 'TraficLinkController@store');
         Route::patch('/{link}', 'TraficLinkController@update');
         Route::delete('/{link}', 'TraficLinkController@delete');
         Route::get('/count', 'TraficLinkController@count');
