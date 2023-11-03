@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Client;
 
+use App\Http\Resources\Client\Event\Reporter\ClientEventReporterResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class EventIndexResource extends JsonResource
@@ -64,7 +65,7 @@ class EventIndexResource extends JsonResource
             'worksheet_id' => $this->trafic->worksheet->id,
             'group' => $this->event->group->name ?? '',
             'can_i_change' => $canIChange,
-            'files' => $this->event->files->count(),
+
             'trafic_count' => $this->trafics->count(),
             'trafic_list' => $this->trafics->map(function($item)
                 {
@@ -76,15 +77,12 @@ class EventIndexResource extends JsonResource
                     ];
                 }),
             'reporters_count' => $this->reporters->count(),
-            'reporters' => $this->reporters->map(function($item){
-                return [
-                    'id' => $item->id,
-                    'name' => $item->cut_name,
-                    'created_at' => $item->pivot->created_at ? $item->pivot->created_at->format('d.m.Y (H:i)') : ''
-                ];
-            }),
+            'reporters' => ClientEventReporterResource::collection($this->reporters),
             'me_in_reporters' => ($this->reporters->contains('id', auth()->user()->id)) ? 1 : 0,
             'personal' => $this->event->personal,
+
+            'links' => $this->event->links_count,
+            'files' => $this->event->files_count,
         ];
     }
 }

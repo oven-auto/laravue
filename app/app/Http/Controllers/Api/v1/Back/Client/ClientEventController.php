@@ -53,7 +53,7 @@ class ClientEventController extends Controller
      */
     public function store(ClientEventStatus $clientEventStatus, ClientEventRequest $request)
     {
-        $this->repo->save($clientEventStatus->event, $request->input(), $request->allFiles());
+        $this->repo->save($clientEventStatus->event, $request->input());
 
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus->event->lastStatus))
             ->additional([
@@ -71,7 +71,7 @@ class ClientEventController extends Controller
     public function update($event, Request $request)
     {
         $clientEventStatus = ClientEventStatus::with('event')->find($event);
-        $this->repo->save($clientEventStatus->event, $request->input(), $request->allFiles());
+        $this->repo->save($clientEventStatus->event, $request->input());
         $clientEventStatus = $clientEventStatus->event->lastStatus;
 
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))

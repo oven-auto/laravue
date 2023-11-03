@@ -343,8 +343,12 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('audit/{trafic_processing}', 'TraficAuditController@show')
         ->middleware(['permission.trafic.show:trafic_files_show',]);
 
-    Route::post('files/{trafic}', 'TraficFileController@store');
-    Route::delete('files/{file}', 'TraficFileController@destroy');
+    Route::prefix('files')->group(function(){
+        Route::get('/{trafic}', 'TraficFileController@index');
+        Route::post('/{trafic}', 'TraficFileController@store');
+        Route::delete('/{file}', 'TraficFileController@destroy');
+    });
+
 
     //пометить трафик как удаленный
     Route::delete('{trafic}', 'TraficController@delete')
@@ -374,12 +378,37 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
 
+    //CRUD Связей клиентов с клиентами
     Route::prefix('unions')->group(function() {
         Route::get('count/{count}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@amount');
         Route::get('search', '\App\Http\Controllers\Api\v1\Back\Client\Union\SearchClientController@search');
         Route::get('{client}','\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@show');
         Route::post('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@store');
         Route::delete('{client}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@destroy');
+    });
+
+    //CRUD Ссылок в коммуникации
+    Route::prefix('event/links')->group(function() {
+        Route::get('/{clientEventStatus}', 'EventLinkController@index');
+        Route::post('/', 'EventLinkController@store');
+        Route::patch('/{link}', 'EventLinkController@update');
+        Route::get('/show/{link}', 'EventLinkController@show');
+        Route::delete('/{link}', 'EventLinkController@delete');
+    });
+
+    //CRUD фаилов в коммуникации
+    Route::prefix('event/files')->group(function() {
+        Route::get('/{clientEventStatus}', 'EventFileController@index');
+        Route::post('/', 'EventFileController@store');
+        Route::get('/show/{file}', 'EventFileController@show');
+        Route::delete('/{file}', 'EventFileController@delete');
+    });
+
+    //CRUD Исполнителей в коммуникации
+    Route::prefix('event/executors')->group(function() {
+        Route::get('/{clientEventStatus}', 'EventExecutorController@index');
+        Route::post('/{clientEventStatus}', 'EventExecutorController@store');
+        Route::delete('/{clientEventStatus}', 'EventExecutorController@delete');
     });
 
     // Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
@@ -395,6 +424,8 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     Route::get('events/count', 'ClientEventCountController');
 
+
+
     Route::get('events/close', 'EventCloseController@close'); //Закрыть событие клиента без трафика
     Route::get('events/resume', 'EventCloseController@resume'); //Закрыть событие клиента без трафика
     Route::patch('events/change', 'EventChangeClientController'); //Замена клиента
@@ -407,6 +438,9 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     //Показать комментарии события
     Route::get('events/comments/{clientEvent}', '\App\Http\Controllers\Api\v1\Back\Client\EventCommentController');
+
+    //Получить список трафиков
+    Route::get('events/trafics/{eventstatus}', '\App\Http\Controllers\Api\v1\Back\Client\EventTraficListController');
 
     Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
         ->except(['create','edit']);
@@ -463,6 +497,13 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
+
+    Route::prefix('links')->group(function() {
+        Route::get('/{worksheet}', 'WorksheetLinkController@index');
+        Route::post('/{worksheet}', 'WorksheetLinkController@store');
+        Route::delete('/{worksheetLink}', 'WorksheetLinkController@delete');
+    });
+
     Route::get('client/{client}', 'ClientWorksheetListController');
     Route::post('create', 'WorksheetController@store')
         ->middleware([
@@ -526,5 +567,17 @@ Route::prefix('tasklist')
         Route::get('worksheets', 'WorksheetListController')->middleware('tasklist.setmanager:executor');
     }
 );
+
+/**
+ * ЖУРНАЛ РУКОВОДИТЕЛЯ (АНАЛИТИКА)
+ */
+Route::prefix('director')
+    ->namespace('\App\Http\Controllers\Api\v1\Back\Director')
+    ->middleware(['corsing','userfromtoken'])
+    ->group(function(){
+        Route::get('trafics', 'TraficController');
+        Route::get('worksheets', 'WorksheetController');
+        Route::get('counter', 'CounterController');
+    });
 
 

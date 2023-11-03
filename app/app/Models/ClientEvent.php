@@ -6,16 +6,34 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\Interfaces\CommentInterface;
 
-class ClientEvent extends Model
+class ClientEvent extends Model implements CommentInterface
 {
     use HasFactory, Filterable, SoftDeletes;
 
     protected $guarded = [];
 
+    public function addComment($message)
+    {
+        $this->lastComment()->create([
+
+        ]);
+    }
+
+    public function selfRussianName()
+    {
+        return 'Событие';
+    }
+
+    public function changesList($arr)
+    {
+
+    }
+
     public function personality()
     {
-        return $this->personal == 0 ? 'Рабочая коммуникация' : 'Личная коммуникация';
+        return $this->personal == 0 ? 'Рабочее событие' : 'Личное событие';
     }
     public function getExecutorAttribute()
     {
@@ -76,5 +94,10 @@ class ClientEvent extends Model
     public function files()
     {
         return $this->hasMany(\App\Models\ClientEventFile::class, 'event_id', 'id');
+    }
+
+    public function links()
+    {
+        return $this->hasMany(\App\Models\ClientEventLink::class, 'event_id', 'id');
     }
 }

@@ -28,4 +28,10 @@ Class DateHelper
     {
         return date($format, strtotime($date));
     }
+
+    public static function russianMonth($index)
+    {
+        $arr = ['янв', 'февр', 'март', 'апр.', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт', 'нояб', 'дек'];
+        return $arr[$index];
+    }
 }

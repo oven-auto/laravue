@@ -37,7 +37,7 @@ class WorksheetListResource extends JsonResource
             'author' => $this->author->cut_name,
             'executors' => $executors->map(function($item){
                 return [
-                    'type' => $item->id == $this->author_id ? 'Автор' : 'Ответственный',
+                    'type' => $item->id == $this->author_id ? 'Ответственный' : 'Отслеживает',
                     'name' => $item->cut_name,
                 ];
             }),

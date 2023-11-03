@@ -3,6 +3,7 @@
 namespace App\Repositories\Trafic;
 
 use App\Models\Trafic;
+use Carbon\Carbon;
 use DB;
 use App\Http\Filters\TraficFilter;
 use Illuminate\Database\Eloquent\Builder;
@@ -128,8 +129,6 @@ Class TraficRepository
         $query = Trafic::select(\DB::raw('count(trafics.id)'))->withTrashed();
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
         $query->filter($filter)
-            ->orderBy(\DB::raw('trafics.manager_id IS NULL'),'DESC')
-            ->orderBy('trafics.created_at','DESC')
             ->groupBy('trafics.id');
         $result = $query->get()->count();
         return $result;

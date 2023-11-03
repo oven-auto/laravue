@@ -2,7 +2,10 @@
 
 namespace App\Services\Comment;
 
+use App\Models\ClientEventLink;
 use App\Models\Interfaces\CommentInterface;
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 
 Class CommentService
 {

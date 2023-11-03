@@ -32,10 +32,13 @@ class WorksheetController extends Controller
         return new WorksheetCreateResource($worksheet);
     }
 
-    public function show(Worksheet $worksheet, \App\Services\Worksheet\WorksheetCommentOnShow $service)
+    public function show($worksheet, \App\Services\Worksheet\WorksheetCommentOnShow $service)
     {
-        $service->addShowComment($worksheet);
-        return new \App\Http\Resources\Worksheet\WorksheetSaveResource($worksheet);
+        $res = Worksheet::linksCount()->find($worksheet);
+
+        $service->addShowComment($res);
+
+        return new \App\Http\Resources\Worksheet\WorksheetSaveResource($res);
     }
 
     public function close(Worksheet $worksheet)

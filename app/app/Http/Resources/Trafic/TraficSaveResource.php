@@ -56,20 +56,22 @@ class TraficSaveResource extends JsonResource
                         'status' => $item->status_result,
                     ];
                 }),
-                'files' => $this->files->map(function($item) {
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                        'file' => $item->getFile('filepath'),
-                        'user' => $item->user->cut_name,
-                        'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
-                    ];
-                }),
+                // 'files' => $this->files->map(function($item) {
+                //     return [
+                //         'id' => $item->id,
+                //         'name' => $item->name,
+                //         'file' => $item->getFile('filepath'),
+                //         'user' => $item->user->cut_name,
+                //         'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
+                //     ];
+                // }),
                 'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : '',
                 'showbuttonstatus' => $this->trafic_status_id == 2 ? 1 : 0,
                 'inn' => $this->inn,
                 'company_name' => $this->company_name,
-                'person_type_id' => $this->client_type_id
+                'person_type_id' => $this->client_type_id,
+                'files' => $this->files_count,
+                'links' => $this->links_count,
             ],
             'success' => $this->id ? 1 : 0,
         ];

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Filters;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 Class WorksheetFilter extends AbstractFilter
@@ -28,6 +29,12 @@ Class WorksheetFilter extends AbstractFilter
     public const SHOW    = 'show';
     public const DATE_FOR_CLOSING = 'date_for_closing';
     //public const CLOSED = 'closed';
+    public const CREATED_BEGIN = 'register_begin';
+    public const CREATED_END = 'register_end';
+    public const CREATED_MONTH = 'created_month';
+    public const CLOSED_MONTH = 'closed_month';
+    public const CLOSED_BEGIN = 'closed_date';
+    public const CLOSED_END = 'closed_end';
 
     protected function getCallbacks(): array
     {
@@ -54,7 +61,60 @@ Class WorksheetFilter extends AbstractFilter
             self::SHOW                  => [$this, 'show'],
             self::DATE_FOR_CLOSING      => [$this, 'dateForClosing'],
             //self::CLOSED                => [$this, 'closed'],
+            self::CREATED_BEGIN         => [$this, 'createdBegin'],
+            self::CREATED_END           => [$this, 'createdEnd'],
+            self::CLOSED_BEGIN          => [$this, 'closedBegin'],
+            self::CLOSED_END            => [$this, 'closedEnd'],
+            self::CREATED_MONTH         => [$this, 'createdMonth'],
+            self::CLOSED_MONTH          => [$this, 'closedMonth'],
         ];
+    }
+
+    public function createdMonth(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $carbon =  Carbon::createFromFormat('Y-m-d', $date);
+
+        $builder->where(function($query) use ($carbon) {
+            $query
+                ->whereYear('worksheets.created_at', '=', $carbon->year)
+                ->whereMonth('worksheets.created_at', '=', $carbon->month);
+        });
+    }
+
+    public function closedMonth(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $carbon =  Carbon::createFromFormat('Y-m-d', $date);
+
+        $builder->where(function($query) use ($carbon) {
+            $query
+                ->whereIn('worksheet_actions.status', ['confirm','abort'])
+                ->whereYear('worksheet_actions.created_at', '=', $carbon->year)
+                ->whereMonth('worksheet_actions.created_at', '=', $carbon->month);
+        });
+    }
+
+    public function createdBegin(Builder $builder, $value)
+    {
+        $builder->whereDate('worksheets.created_at', '>=', $this->formatDate($value));
+    }
+
+    public function createdEnd(Builder $builder, $value)
+    {
+        $builder->whereDate('worksheets.created_at', '<=', $this->formatDate($value));
+    }
+
+    public function closedBegin(Builder $builder, $value)
+    {
+        $builder->whereIn('worksheet_actions.status', ['confirm','abort'])
+            ->whereDate('worksheet_actions.created_at', '>=', $this->formatDate($value));
+    }
+
+    public function closedEnd(Builder $builder, $value)
+    {
+        $builder->whereIn('worksheet_actions.status', ['confirm','abort'])
+            ->whereDate('worksheet_actions.created_at', '<=', $this->formatDate($value));
     }
 
     public function dateForClosing(Builder $builder, $value)

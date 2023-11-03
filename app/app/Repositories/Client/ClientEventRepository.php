@@ -16,11 +16,11 @@ class ClientEventRepository
     {
         $this->event = $event;
         $this->data = $data;
-        $this->files = $files;
+        //$this->files = $files;
         $this->authId = auth()->user()->id;
         $this->saveFasade();
         $this->event->fresh();
-        $this->saveFile();
+        //$this->saveFile();
         $this->event = null;
         $this->data = null;
     }
@@ -28,18 +28,6 @@ class ClientEventRepository
     private function checkOnOwner()
     {
 
-    }
-
-    public function saveFile()
-    {
-        $arr = [];
-        if(isset($this->files))
-            foreach($this->files as $file)
-                $this->event->files()->create([
-                    'event_id' => $this->event->id,
-                    'author_id' => auth()->user()->id,
-                    'file' => \App\Services\Download\ClientEventFileLoad::download($this->event->id, $file)
-                ]);
     }
 
     public function saveFasade()
@@ -61,7 +49,6 @@ class ClientEventRepository
         else
             $this->event->lastStatus->fill($arr)->save();
         $this->createComments();
-        $this->syncExecutors();
     }
 
     public function saveMain()
@@ -78,6 +65,8 @@ class ClientEventRepository
                 'personal'      => isset($this->data['personal']) ? $this->data['personal'] : 0,
             ];
             $this->event->fill($arr)->save();
+            if(!$this->event->executors->contains('id', $this->event->author_id))
+                $this->event->executors()->attach($this->event->author_id);
         }
     }
 
@@ -89,37 +78,6 @@ class ClientEventRepository
                 'author_id' => $this->authId,
                 'client_event_status_id' => $this->event->lastStatus->id
             ]);
-    }
-
-    private function syncExecutors()
-    {
-        if(isset($this->data['executors']) && is_array($this->data['executors']) && count($this->data['executors']))
-        {
-            $this->data['executors'][] = $this->event->author_id;
-            $this->data['executors'] = array_unique($this->data['executors']);
-            foreach($this->data['executors'] as $item)
-                if(!$this->event->executors->contains('id', $item))
-                {
-                    $this->event->executors()->attach(['executor_id' => $item]);
-                    $this->event->lastComment()->create([
-                        'author_id' => auth()->user()->id,
-                        'text' => 'Добавлен ответственный '.\App\Models\User::find($item)->cut_name,
-                        'event_id' => $this->event->id,
-                        'client_event_status_id' => $this->event->lastStatus->id
-                    ]);
-                }
-            foreach($this->event->executors as $item)
-                if(!in_array($item->id, $this->data['executors']))
-                {
-                    $this->event->executors()->detach(['executor_id' => $item->id]);
-                    $this->event->lastComment()->create([
-                        'author_id' => auth()->user()->id,
-                        'text' => 'Удален ответственный '.$item->cut_name,
-                        'event_id' => $this->event->id,
-                        'client_event_status_id' => $this->event->lastStatus->id
-                    ]);
-                }
-        }
     }
 
     public function getAllInGroupByClientId(Int $clientId)

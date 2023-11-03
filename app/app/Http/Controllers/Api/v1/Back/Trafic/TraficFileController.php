@@ -16,6 +16,22 @@ class TraficFileController extends Controller
         $this->service = $repo;
     }
 
+    public function index(Trafic $trafic)
+    {
+        return response()->json([
+            'data' => $trafic->files->map(function($item){
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'file' => $item->getFile('filepath'),
+                    'user' => $item->user->cut_name,
+                    'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
+                ];
+            }),
+            'success' => 1,
+        ]);
+    }
+
     public function store(Trafic $trafic, Request $request)
     {
         $this->service->saveTraficFiles($trafic, $request->allFiles());

@@ -47,16 +47,18 @@ class TraficController extends Controller
 
     public function edit($trafic, Request $request)
     {
-        $trafic = Trafic::withTrashed()->find($trafic);
+        $trafic = Trafic::withTrashed()->linksCount()->filesCount()->find($trafic);
+
         if(!$trafic->isMy())
             \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['open']);
+
         return (new TraficSaveResource($trafic))
             ->additional(['message' => Trafic::NOTICES['open']]);
     }
 
     public function update($trafic, Request $request)
     {
-        $trafic = Trafic::withTrashed()->find($trafic);
+        $trafic = Trafic::withTrashed()->linksCount()->filesCount()->find($trafic);
         $this->service->save($trafic, $request->all());
         \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['update']);
 

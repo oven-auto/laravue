@@ -38,6 +38,7 @@ class TraficFilter extends AbstractFilter
     public const CONTROL_DATE = 'control_date';
     public const SHOW = 'show';
     public const DATE_FOR_CLOSING = 'date_for_closing';
+    public const SHOW_MONTH = 'show_month';
     public $countElements = 0;
 
     protected function getCallbacks(): array
@@ -72,7 +73,20 @@ class TraficFilter extends AbstractFilter
             self::CONTROL_DATE        => [$this, 'controlDate'],
             self::SHOW                => [$this, 'show'],
             self::DATE_FOR_CLOSING    => [$this, 'dateForClosing'],
+            self::SHOW_MONTH          => [$this, 'showMonth'],
         ];
+    }
+
+    public function showMonth(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $carbon =  Carbon::createFromFormat('Y-m-d', $date);
+
+        $builder->where(function($query) use ($carbon) {
+            $query
+                ->whereYear('trafics.created_at', '=', $carbon->year)
+                ->whereMonth('trafics.created_at', '=', $carbon->month);
+        });
     }
 
     public function show(Builder $builder, $value)

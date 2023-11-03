@@ -77,6 +77,11 @@ class Worksheet extends Model
         return $this->hasMany(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->with(['comments','author','task']);
     }
 
+    public function links()
+    {
+        return $this->hasMany(WorksheetLink::class, 'worksheet_id', 'id');
+    }
+
     public function status()
     {
         return $this->hasOne(\App\Models\WorksheetStatus::class, 'slug', 'status_id')->withDefault();
@@ -93,4 +98,14 @@ class Worksheet extends Model
             return 1;
         return 0;
     }
+
+    public function scopeLinksCount($query)
+    {
+        return $query->withCount('links');
+    }
+
+    // public function scopeFilesCount($query)
+    // {
+    //     return $query->withCount('files');
+    // }
 }

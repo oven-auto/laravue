@@ -184,6 +184,16 @@ class Trafic extends Model implements CommentInterface
         ]);
     }
 
+    public function scopeLinksCount($query)
+    {
+        return $query->withCount('links');
+    }
+
+    public function scopeFilesCount($query)
+    {
+        return $query->withCount('files');
+    }
+
     public function saveNeeds()
     {
         return $this->hasMany(\App\Models\TraficNeed::class, 'trafic_id', 'id');

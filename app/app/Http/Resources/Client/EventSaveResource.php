@@ -83,7 +83,9 @@ class EventSaveResource extends JsonResource
                         'name' => $item->cut_name,
                         'created_at' => $item->pivot->created_at ? $item->pivot->created_at->format('d.m.Y (H:i)') : ''
                     ];
-                })
+                }),
+                'file_count' => $this->event->files->count(),
+                'link_count' => $this->event->links->count(),
             ],
             'success' => 1,
         ];

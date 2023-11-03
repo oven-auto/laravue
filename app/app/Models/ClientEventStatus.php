@@ -5,10 +5,32 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Interfaces\CommentInterface;
 
-class ClientEventStatus extends Model
+
+class ClientEventStatus extends Model implements CommentInterface
 {
     use HasFactory, Filterable;
+
+    public function addComment(string $message)
+    {
+        $this->comments()->create([
+            'author_id' => auth()->user()->id,
+            'text' => $message,
+            'event_id' => $this->event_id,
+            'client_event_status_id' => $this->id
+        ]);
+    }
+
+    public function selfRussianName()
+    {
+
+    }
+
+    public function changesList($arr)
+    {
+
+    }
 
     public function getBeginAttribute()
     {
@@ -55,7 +77,11 @@ class ClientEventStatus extends Model
 
     public function scopeWithEventAndTrafic($query)
     {
-        return $query->with(['event.files','trafic', 'trafics', 'reporters', 'completer']);
+        return $query->with(['event.files', 'trafic', 'trafics', 'reporters', 'completer'])
+            ->with(['event' => function($query){
+                $query->withCount('files')
+                    ->withCount('links');
+            }]);
     }
 
     public function getStatusAttribute()
@@ -132,5 +158,15 @@ class ClientEventStatus extends Model
             'user_id',
             'id'
         )->withPivot('created_at');
+    }
+
+    public function links()
+    {
+        return $this->hasMany(\App\Models\ClientEventLink::class, 'event_id', 'event_id');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(\App\Models\ClientEventFile::class, 'event_id', 'event_id');
     }
 }

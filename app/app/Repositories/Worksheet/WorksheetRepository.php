@@ -114,9 +114,15 @@ class WorksheetRepository
         return $result;
     }
 
+    public function workingCount($data)
+    {
+        $data['status_ids'] = ['work'];
+        $count = $this->counter($data);
+        return $count;
+    }
+
     public function setDefaultStatus(&$data)
     {
-        // if(!isset($data['status_ids']))
-        //     $data['status_ids'] = ['work', 'check'];
+
     }
 }

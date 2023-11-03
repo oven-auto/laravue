@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Client\Event\ReportResource;
+use App\Http\Resources\Client\Event\Reporter\ClientEventReporterCollection;
+use App\Http\Resources\Client\Event\Reporter\ClientEventReporterResource;
 use App\Models\ClientEventStatus;
+use App\Models\User;
+use App\Services\Comment\EventComment;
 use Illuminate\Http\Request;
 
 class EventReportController extends Controller
@@ -16,14 +19,16 @@ class EventReportController extends Controller
         if($eventStatus->reporters->contains('id', auth()->user()->id))
             throw new \Exception('Вы уже отчитались за данное действие');
 
+        $eventStatus->event->executors()->detach(auth()->user()->id);
+
         $eventStatus->reporters()->attach(
             auth()->user()->id, ['created_at' => now()]
         );
 
-        $eventStatus->load('reporters');
+        EventComment::reportlUser($eventStatus, auth()->user());
 
-        return (new ReportResource($eventStatus))
-            ->additional(['message' => 'Вы успешно отчитались']);
+        return (new ClientEventReporterResource(auth()->user()))
+            ->additional(['message' => 'Вы успешно отчитались', 'success' => 1]);
     }
 
     public function deport(Request $request)
@@ -34,11 +39,18 @@ class EventReportController extends Controller
             throw new \Exception('Пользователя нет в списке отчитавшихся');
 
         if($eventStatus->reporters->contains('id', $request->get('reporter_id')))
+        {
             $eventStatus->reporters()->detach($request->get('reporter_id'));
 
-        $eventStatus->load('reporters');
+            if(!$eventStatus->event->executors->contains('id', $request->get('reporter_id')))
+                $eventStatus->event->executors()->attach($request->get('reporter_id'));
+        }
 
-        return (new ReportResource($eventStatus))
-            ->additional(['message' => 'Отчет отменен']);
+        $user = User::findOrFail($request->get('reporter_id'));
+
+        EventComment::deportUser($eventStatus, $user);
+
+        return (new ClientEventReporterResource($user))
+            ->additional(['message' => 'Отчет отменен', 'success' => 1]);
     }
 }
