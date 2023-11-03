@@ -146,7 +146,7 @@ class ClientEventStatus extends Model implements CommentInterface
             'id',
             'id',
             'trafic_id'
-        );
+        )->orderBy('id','DESC');
     }
 
     public function reporters()
