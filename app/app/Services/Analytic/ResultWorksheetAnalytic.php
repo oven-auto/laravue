@@ -2,36 +2,31 @@
 
 namespace App\Services\Analytic;
 
-use App\Http\Filters\WorksheetFilter;
+use App\Http\Filters\WorksheetAnalyticFilter;
 use App\Models\Task;
 use App\Models\Worksheet;
+use Illuminate\Support\Arr;
 
 Class ResultWorksheetAnalytic implements TraficAnalyticInterface
 {
     public function getArrayAnalytic(array $data)
     {
+        $arr = Arr::except($data, ['interval_begin','interval_end']);
+        $arr['closed_begin'] = $data['interval_begin'];
+        $arr['closed_end'] = $data['interval_end'];
 
-        if(isset($data['register_begin']) || isset($data['register_end']))
-        {
-            $data['closed_begin'] = $data['register_begin'];
-            $data['closed_end'] = $data['register_end'];
-            unset($data['register_begin'], $data['register_end']);
-        }
-
-        $filter = app()->make(WorksheetFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(WorksheetAnalyticFilter::class, ['queryParams' => array_filter($arr)]);
 
         $subQuery = Worksheet::select([
+                \DB::raw('count(worksheets.id) as count'),
                 'worksheet_actions.task_id as task_id',
-                \DB::raw('COUNT(worksheet_actions.task_id) as count'),
-                'total' => Worksheet::select(\DB::raw('count(*)'))->filter($filter),
-            ])->leftJoin('worksheet_actions', function($join) {
-                $join->on('worksheet_actions.worksheet_id','worksheets.id');
-            })->where(
-                'worksheet_actions.id',
-                \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
-            )->whereIn('worksheet_actions.task_id', [6,7])
+            ])
+            ->whereIn('worksheet_actions.task_id', [6,7])
             ->filter($filter)
-            ->groupBy('worksheet_actions.task_id')->groupBy('worksheet_actions.status')->groupBy('worksheet_actions.created_at');
+            ->groupBy('worksheet_actions.task_id');
+
+        if(collect($subQuery->getQuery()->joins)->pluck('table')->contains('worksheet_executors'))
+            $subQuery->whereRaw(\DB::raw('worksheets.author_id = worksheet_executors.user_id'));
 
         $query = Task::select()
             ->leftJoinSub($subQuery, 'subQuery', function($join){
@@ -43,7 +38,8 @@ Class ResultWorksheetAnalytic implements TraficAnalyticInterface
             'name' => $item->name,
             'total' => $item->count ?? 0,
             'percent' => $item->count ? round((100 / $item->count) * $item->count, 2) : 0,
-            'type' => $item->type
+            'type' => $item->task_id,
+            'inversion' => $item->task_id == 7 ? 1 : 0,
         ]);
     }
 }

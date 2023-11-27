@@ -83,5 +83,7 @@ class Kernel extends HttpKernel
 
         'tasklist.setmanager' => \App\Http\Middleware\TaskList\SetManagerMiddleware::class,
 
+        'director.request' => \App\Http\Middleware\DirectorRequestMiddleware::class,
+
     ];
 }

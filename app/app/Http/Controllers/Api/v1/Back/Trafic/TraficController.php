@@ -8,6 +8,7 @@ use App\Models\Trafic;
 use App\Repositories\Trafic\TraficRepository;
 use \App\Http\Resources\Trafic\TraficEditCollection;
 use \App\Http\Resources\Trafic\TraficSaveResource;
+use \App\Services\Comment\Comment;
 
 class TraficController extends Controller
 {
@@ -37,7 +38,9 @@ class TraficController extends Controller
     {
         $this->service->save($trafic, $request->all());
 
-        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['create']);
+        //\App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['create']);
+
+        Comment::add($trafic, 'create');
 
         return (new TraficSaveResource($trafic))
             ->additional([
@@ -50,7 +53,7 @@ class TraficController extends Controller
         $trafic = Trafic::withTrashed()->linksCount()->filesCount()->find($trafic);
 
         if(!$trafic->isMy())
-            \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['open']);
+            Comment::add($trafic, 'show');
 
         return (new TraficSaveResource($trafic))
             ->additional(['message' => Trafic::NOTICES['open']]);
@@ -58,9 +61,13 @@ class TraficController extends Controller
 
     public function update($trafic, Request $request)
     {
-        $trafic = Trafic::withTrashed()->linksCount()->filesCount()->find($trafic);
+        $trafic = Trafic::linksCount()->filesCount()->find($trafic);
+
         $this->service->save($trafic, $request->all());
-        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['update']);
+
+        //\App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['update']);
+
+        Comment::add($trafic, 'update');
 
         return (new TraficSaveResource($trafic))
             ->additional([
@@ -70,32 +77,27 @@ class TraficController extends Controller
 
     public function close($trafic, Request $request)
     {
-        $trafic = Trafic::withTrashed()->find($trafic);
+        $trafic = Trafic::find($trafic);
+
         $result = $trafic->close();
 
-        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['close']);
+        Comment::add($trafic, 'close');
 
-        if($result)
-        {
+        //\App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['close']);
 
-            return (new TraficSaveResource($trafic))
-                ->additional(['message' => Trafic::NOTICES['close']]);
-        }
-
-        throw new \Exception('Нельзя упускать трафик без ответственного');
+        return (new TraficSaveResource($trafic))
+            ->additional(['message' => Trafic::NOTICES['close']]);
     }
 
     public function delete($trafic, Request $request)
     {
-        $trafic = Trafic::withTrashed()->find($trafic);
+        $trafic = Trafic::find($trafic);
 
-        if ($trafic->trashed()) {
-            throw new \Exception('Трафик уже помечен как удаленный');
-        }
+        Comment::add($trafic, 'delete');
 
         $trafic->delete();
 
-        \App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['delete']);
+        //\App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['delete']);
 
         return (new TraficSaveResource($trafic))
             ->additional(['message' => Trafic::NOTICES['delete']]);

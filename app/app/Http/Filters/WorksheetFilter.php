@@ -247,7 +247,10 @@ Class WorksheetFilter extends AbstractFilter
 
     public function authorId(Builder $builder, $value)
     {
-        $builder->where('worksheets.author_id', $value);
+        if(is_array($value))
+            $builder->whereIn('worksheets.author_id', $value);
+        if(is_string($value))
+            $builder->where('worksheets.author_id', $value);
     }
 
     public function statusIds(Builder $builder, $value)

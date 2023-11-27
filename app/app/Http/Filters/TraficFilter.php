@@ -39,6 +39,7 @@ class TraficFilter extends AbstractFilter
     public const SHOW = 'show';
     public const DATE_FOR_CLOSING = 'date_for_closing';
     public const SHOW_MONTH = 'show_month';
+    public const WORKING = 'working';
     public $countElements = 0;
 
     protected function getCallbacks(): array
@@ -74,7 +75,13 @@ class TraficFilter extends AbstractFilter
             self::SHOW                => [$this, 'show'],
             self::DATE_FOR_CLOSING    => [$this, 'dateForClosing'],
             self::SHOW_MONTH          => [$this, 'showMonth'],
+            self::WORKING             => [$this, 'working'],
         ];
+    }
+
+    public function working(Builder $builder, $value)
+    {
+        $builder->whereIn('trafics.trafic_status_id', $value);
     }
 
     public function showMonth(Builder $builder, $value)
@@ -92,9 +99,9 @@ class TraficFilter extends AbstractFilter
     public function show(Builder $builder, $value)
     {
         if($value == 'closing')
-            $builder->whereNotIn('trafics.trafic_status_id', [1,2]);
+            $builder->whereNotIn('trafics.trafic_status_id', [1,2,6]);
         else if($value == 'opening')
-           $builder->whereIn('trafics.trafic_status_id', [1,2]);
+           $builder->whereIn('trafics.trafic_status_id', [1,2,6]);
     }
 
     public function dateForClosing(Builder $builder, $value)
@@ -146,7 +153,10 @@ class TraficFilter extends AbstractFilter
 
     public function personTypeId(Builder $builder, $value)
     {
-        $builder->where('trafics.client_type_id',$value);
+        if(is_array($value))
+            $builder->whereIn('trafics.client_type_id',$value);
+        else
+            $builder->where('trafics.client_type_id', $value);
     }
 
     public function auditAuthorId(Builder $builder, $value)
@@ -209,7 +219,10 @@ class TraficFilter extends AbstractFilter
     //Заданные статусы трафика [trafic_status_id, ... , trafic_status_id]
     public function statusId(Builder $builder, $value)
     {
-        $builder->whereIn('trafics.trafic_status_id', $value);
+        if(is_array($value))
+            $builder->whereIn('trafics.trafic_status_id', $value);
+        if(is_string($value))
+            $builder->where('trafics.trafic_status_id', $value);
     }
 
     //Начало обработки [dd.mm.yyyy]

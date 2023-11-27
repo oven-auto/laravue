@@ -54,7 +54,7 @@ Route::get('hash', function(Request $request){
 //     Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
 // });
 
-Route::prefix('pdf')->group(function () {
+Route::prefix('pdf')->middleware([''])->group(function () {
     Route::get('trafics/{trafic}', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficPDFController');
 });
 

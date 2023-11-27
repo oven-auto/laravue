@@ -1,9 +1,11 @@
 <?php
 
 namespace App\Services\Analytic;
+
+use Illuminate\Support\Arr;
 use Carbon\Carbon;
 
-Class AnalyticTrafic
+Class AnalyticTrafic extends AbstractAnalytic
 {
     public function toArray($current, $month, $year)
     {
@@ -20,42 +22,40 @@ Class AnalyticTrafic
             if($year->contains('type', $item['type']))
                 $prevYearCount = $year->where('type', $item['type'])->first()['count'];
 
-            $arr[] = [
-                'name' => $item['name'],
-                'count' => $item['count'],
-                'percent' => $item['percent'],
-                'previos_month' => $prevMonthCount,
-                'month_dynamic' => $prevMonthCount ? round( (($item['count'] / $prevMonthCount) - 1) * 100, 2) : 0,
-                'previos_year' => $prevYearCount,
-                'year_dynamic' => $prevYearCount ? round( (($item['count'] / $prevYearCount) - 1) * 100, 2) : 0,
-                'border_top' => ($item['border_top']) ?? 0,
-                'border_bottom' => ($item['border_bottom']) ?? 0,
-            ];
+            $arr[] = $this->getArr($item, $prevMonthCount, $prevYearCount);
         }
+
         return $arr;
     }
 
     public function fasade($data = [], TraficAnalyticInterface $command)
     {
-        if($this->isShowMonth($data))
-        {
-            $prevMonthData = $data;
-            $date = new Carbon($data['show_month']);
-            $prevMonthData['show_month'] = $date->subMonth()->format('d.m.Y');
+            $requestData = Arr::except($data, [
+                'interval_begin', 'interval_end',
+                'second_interval_begin', 'second_interval_end',
+                'third_interval_begin', 'third_interval_end'
+            ]);
 
-            $prevYearData = $data;
-            $date = new Carbon($data['show_month']);
-            $prevYearData['show_month'] = $date->subYear()->format('d.m.Y');
+            $neededData = [
+                'interval_begin' => $data['interval_begin'],
+                'interval_end' => $data['interval_end'],
+            ];
 
-            $current        = $command->getArrayAnalytic($data);
-            $prevMont       = $command->getArrayAnalytic($prevMonthData);
-            $prevYear       = $command->getArrayAnalytic($prevYearData);
+            $secondData = [
+                'interval_begin' => $data['second_interval_begin'],
+                'interval_end' => $data['second_interval_end'],
+            ];
+
+            $thirdData = [
+                'interval_begin' => $data['third_interval_begin'],
+                'interval_end' => $data['third_interval_end'],
+            ];
+
+            $current        = $command->getArrayAnalytic(array_merge($neededData, $requestData));
+            $prevMont       = $command->getArrayAnalytic(array_merge($secondData, $requestData));
+            $prevYear       = $command->getArrayAnalytic(array_merge($thirdData,  $requestData));
 
             return $this->toArray($current, $prevMont, $prevYear);
-        }
-
-        $current        = $command->getArrayAnalytic($data);
-        return $current;
     }
 
     public function isShowMonth(array $data)

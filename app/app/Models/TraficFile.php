@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Storage;
 
-class TraficFile extends Model
+class TraficFile extends Model implements CommentInterface
 {
     use HasFactory;
 
@@ -31,5 +32,10 @@ class TraficFile extends Model
     public function trafic()
     {
         return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id')->withDefault();
+    }
+
+    public function writeComment(array $data)
+    {
+        return TraficComment::create($data);
     }
 }

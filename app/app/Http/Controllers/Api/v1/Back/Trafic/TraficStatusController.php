@@ -10,7 +10,7 @@ class TraficStatusController extends Controller
 {
     public function index()
     {
-        $data = \App\Models\TraficStatus::get();
+        $data = \App\Models\TraficStatus::where('id', '<>', 6)->get();
         $result = $data->map(function($item){
             return (object) [
                 'name' => $item->description,

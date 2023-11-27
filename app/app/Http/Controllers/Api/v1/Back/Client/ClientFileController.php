@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\ClientFile;
 use App\Http\Requests\Client\FileRequest;
+use App\Services\Comment\Comment;
 
 class ClientFileController extends Controller
 {
@@ -24,6 +25,7 @@ class ClientFileController extends Controller
     public function index(FileRequest $request)
     {
         $files = $this->repo->getByParam($request->all());
+
         return new \App\Http\Resources\Client\File\IndexCollection($files);
     }
 
@@ -37,6 +39,9 @@ class ClientFileController extends Controller
     public function store(ClientFile $file, FileRequest $request)
     {
         $files = $this->repo->save($request->input(), $request->allFiles());
+
+        Comment::add($files->first(), 'create');
+
         return (new \App\Http\Resources\Client\File\IndexCollection($files))
             ->additional(['message' => 'Фаил успешно добавлен']);
     }
@@ -50,6 +55,9 @@ class ClientFileController extends Controller
     public function update(ClientFile $file, FileRequest $request)
     {
         $files = $this->repo->save($request->input(), $request->allFiles());
+
+        Comment::add($file, 'update');
+
         return (new \App\Http\Resources\Client\File\IndexCollection($files))
             ->additional(['message' => 'Информация о фаиле изменена']);
     }
@@ -62,7 +70,10 @@ class ClientFileController extends Controller
      */
     public function destroy(ClientFile $file)
     {
+        Comment::add($file, 'delete');
+
         $file->delete();
+
         return response()->json([
             'message' => "Фаил удален",
             'success' => 1

@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Storage;
 
-class TraficProcessing extends Model
+class TraficProcessing extends Model implements CommentInterface
 {
     use HasFactory;
 
@@ -16,6 +17,11 @@ class TraficProcessing extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function writeComment(array $data)
+    {
+        return TraficComment::create($data);
+    }
 
     public function getProcentAttribute()
     {

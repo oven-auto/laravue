@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Trafic;
 
 use App\Http\Controllers\Controller;
+use App\Services\Comment\Comment;
 use Illuminate\Http\Request;
 use App\Models\Trafic;
 use App\Http\Requests\Trafic\TraficProcessing as TPRequest;
@@ -20,10 +21,12 @@ class TraficAuditController extends Controller
 
     public function load(Trafic $trafic, TPRequest $request)
     {
-        $this->repository->saveTraficAudit($trafic, $request->input(),$request->allFiles());
+        $audit = $this->repository->saveTraficAudit($trafic, $request->input(),$request->allFiles());
 
         $trafic = $trafic->fresh();
-        \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['audit_load']);
+
+        Comment::add($audit, 'create');
+
         return response()->json([
             'data' => $trafic->processing->map(function($item){
                 return [
@@ -47,7 +50,9 @@ class TraficAuditController extends Controller
         $this->repository->updateTraficAudit($trafic_processing, $request->input(),$request->allFiles());
 
         $trafic = $trafic_processing->trafic;
-        \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['audit_update']);
+
+        Comment::add($trafic_processing, 'update');
+
         return response()->json([
             'data' => $trafic->processing->map(function($item){
                 return [
@@ -68,6 +73,8 @@ class TraficAuditController extends Controller
 
     public function show( TraficProcessing $trafic_processing)
     {
+        Comment::add($trafic_processing, 'show');
+
         return response()->json([
             'data' => [
                 'record' => $trafic_processing->getFile('record'),

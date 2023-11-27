@@ -27,9 +27,8 @@ class ClientUnionController extends Controller
     public function store(Client $client, Request $request)
     {
         $this->repo->addUnion($client, $request->get('client_id'));
-        $data = $this->repo->getAllUnion($client);
 
-        return (new UnionCollection($data))
+        return (new UnionCollection($this->repo->getAllUnion($client)))
             ->additional(['message' => 'Связь добавлена']);
     }
 

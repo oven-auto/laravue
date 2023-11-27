@@ -11,7 +11,7 @@ class WorksheetListController extends Controller
 {
     public function __invoke(WorksheetRepository $repo, Request $request)
     {
-        $worksheets = $repo->get($request->all());
+        $worksheets = $repo->getWorksheetsForTaskList($request->all());
 
         return (new WorksheetListCollection($worksheets));
     }

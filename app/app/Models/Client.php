@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use App\Models\Interfaces\PersonInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -9,7 +10,7 @@ use App\Models\Traits\Createable;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Client extends Model implements PersonInterface
+class Client extends Model implements PersonInterface, CommentInterface
 {
     use HasFactory, Createable, Filterable, SoftDeletes;
 
@@ -23,6 +24,11 @@ class Client extends Model implements PersonInterface
     public function abbreviated_name()
     {
         return $this->full_name;
+    }
+
+    public function writeComment(array $data)
+    {
+        ClientComment::create($data);
     }
 
     public function getFullNameAttribute()
@@ -155,5 +161,24 @@ class Client extends Model implements PersonInterface
         if($this->client_type_id == 2)
             return true;
         return false;
+    }
+
+    public function scopeLinksCount($query)
+    {
+        return $query->withCount('links');
+    }
+
+    public function scopeFilesCount($query)
+    {
+        return $query->withCount('files');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(\App\Models\ClientFile::class, 'client_id', 'id');
+    }
+    public function links()
+    {
+        return $this->hasMany(\App\Models\ClientLink::class, 'client_id', 'id');
     }
 }

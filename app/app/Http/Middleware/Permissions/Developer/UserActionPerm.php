@@ -20,7 +20,7 @@ class UserActionPerm
 
         foreach($userPermissions as $item)
             if($item->slug == $permission)
-                 return $next($request);
+                return $next($request);
 
         //Получение текущего права, что бы вернуть исключение
         $permission = \App\Models\Permission::where('slug', $permission)->first();

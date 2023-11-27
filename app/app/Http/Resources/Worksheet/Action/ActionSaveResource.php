@@ -16,19 +16,19 @@ class ActionSaveResource extends JsonResource
     {
         return [
             'data' => [
-                'worksheet_status' => $this->getAction()->worksheet->status->name,
-                'worksheet_id' => $this->getAction()->worksheet_id,
-                'action_id' => $this->getAction()->id,
-                'begin_at' => $this->getAction()->begin_date,
-                'end_at' => $this->getAction()->end_date,
-                'task' => $this->getAction()->task->name,
-                'is_working' => $this->getAction()->isWorking(),
-                'is_waiting' => $this->getAction()->isWaiting(),
-                'status_msg' => $this->getAction()->statusMsg(),
+                'worksheet_status' => $this->worksheet->status->name,
+                'worksheet_id' => $this->worksheet_id,
+                'action_id' => $this->id,
+                'begin_at' => $this->begin_date,
+                'end_at' => $this->end_date,
+                'task' => $this->task->name,
+                'is_working' => $this->isWorking(),
+                'is_waiting' => $this->isWaiting(),
+                'status_msg' => $this->statusMsg(),
                 'last_comment' => [
-                    'created_at' => $this->getAction()->last_comment->created_at ? $this->getAction()->last_comment->created_at->format('d.m.Y (H:i)') : '',
-                    'text' => $this->getAction()->last_comment->text,
-                    'author' => $this->getAction()->last_comment->author->cut_name
+                    'created_at' => $this->last_comment->created_at ? $this->last_comment->created_at->format('d.m.Y (H:i)') : '',
+                    'text' => $this->last_comment->text,
+                    'author' => $this->last_comment->author->cut_name
                 ],
             ],
             //'task' => $task,

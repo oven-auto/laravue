@@ -11,9 +11,10 @@ Class EventComment extends CommentService
 {
     public static function addUsers(CommentInterface $model, Collection $users)
     {
-        self::customMessage($model, 'Добавлены новые участники события '. implode(', ', $users->map(function($item){
-            return $item->cut_name;
-        })->toArray()));
+        if($users->count())
+            self::customMessage($model, 'Добавлен новый участник события '. implode(', ', $users->map(function($item){
+                return $item->cut_name;
+            })->toArray()));
     }
 
     public static function delUser(CommentInterface $model, User $user)
@@ -28,10 +29,7 @@ Class EventComment extends CommentService
 
     public static function deportUser(CommentInterface $model, User $user)
     {
-        if($user->id == $model->event->author_id)
-            self::customMessage($model, 'Сотрудник '.$user->cut_name.' исключен из отчитавшихся и добавлен в участники события.');
-        else
-            self::customMessage($model, 'Отчет об исполнении события отозван.');
+        self::customMessage($model, 'Отчет об исполнении сотрудника '.$user->cut_name.' отозван');
     }
 
     public static function appendFile(CommentInterface $model)

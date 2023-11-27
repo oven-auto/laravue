@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Back\Trafic;
 
 use App\Http\Controllers\Controller;
 use App\Models\TraficFile;
+use App\Services\Comment\Comment;
 use Illuminate\Http\Request;
 use App\Models\Trafic;
 
@@ -24,7 +25,7 @@ class TraficFileController extends Controller
                     'id' => $item->id,
                     'name' => $item->name,
                     'file' => $item->getFile('filepath'),
-                    'user' => $item->user->cut_name,
+                    'author' => $item->user->cut_name,
                     'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
                 ];
             }),
@@ -34,28 +35,36 @@ class TraficFileController extends Controller
 
     public function store(Trafic $trafic, Request $request)
     {
-        $this->service->saveTraficFiles($trafic, $request->allFiles());
-        \App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['file_load']);
+        $res = collect($this->service->saveTraficFiles($trafic, $request->allFiles()));
+
+        if ( !$res->isEmpty() )
+            Comment::add($res->first(), 'create');
+
+        //\App\Services\Comment\CommentService::customMessage($trafic, Trafic::NOTICES['file_load']);
+
         return response()->json([
-            'data' => $trafic->files->map(function($item) {
+            'data' => $res->map(function($item) {
                 return [
+                    'id' => $item->id,
                     'name' => $item->name,
                     'file' => $item->getFile('filepath'),
-                    'user' => $item->user->cut_name,
+                    'author' => $item->user->cut_name,
                     'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
                 ];
             }),
             'success' => 1,
             'message' => Trafic::NOTICES['file_load'],
-            'files' => $request->allFiles()
         ]);
     }
 
     public function destroy(TraficFile $file)
     {
-        //$trafic = Trafic::find($file->trafic_id);
+        Comment::add($file, 'delete');
+
         $file->delete();
-        \App\Services\Comment\CommentService::customMessage($file->trafic, Trafic::NOTICES['file_delete']);
+
+        //\App\Services\Comment\CommentService::customMessage($file->trafic, Trafic::NOTICES['file_delete']);
+
         return response()->json([
             'data' => [],
             'message' => Trafic::NOTICES['file_delete'],

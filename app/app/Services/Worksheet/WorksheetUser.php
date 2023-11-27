@@ -4,56 +4,51 @@ namespace App\Services\Worksheet;
 use App\Models\User;
 use App\Models\Worksheet;
 use App\Models\WorksheetExecutor;
+use Illuminate\Support\Collection;
+use App\Services\Comment\Comment;
 
+/**
+ * Класс для добавления/удаления ответственных лиц из РЛ
+ */
 Class WorksheetUser
 {
-    private static function getExecutorsWorksheet(int $worksheet_id)
+    /**
+    * Добавить ответственных лиц в РЛ
+    * @param Worksheet $worksheet РЛ в который хотим добавить ответственных лицо
+    * @param Collection $users Пользователи которых хотим сделать ответственными лицами
+    */
+    public static function attach(Worksheet $worksheet, Collection $users) : void
     {
-        $users = User::select('users.*')
-            ->leftJoin('worksheet_executors', 'worksheet_executors.user_id', 'users.id')
-            ->where('worksheet_executors.worksheet_id', $worksheet_id)
-            ->get();
+        $currentUsers = $worksheet->executors;
 
-        return $users;
-    }
+        $currentUsers->push($worksheet->author);
 
-    public static function attach(int $worksheet_id, array $user_ids)
-    {
-
-        $worksheet = Worksheet::find($worksheet_id);
-
-        $currentUsers = WorksheetExecutor::where('worksheet_id', $worksheet_id)->pluck('user_id')->toArray();
-        array_push($currentUsers, $worksheet->author_id);
-
-        foreach($user_ids as $item)
-            if(!in_array($item,$currentUsers))
+        foreach($users as $item)
+            if(!$currentUsers->contains('id', $item->id))
             {
-                WorksheetExecutor::create([
-                    'worksheet_id' => $worksheet_id,
-                    'user_id' => $item
-                ]);
-                $user = User::find($item);
-                Comment::commentAppendClient($worksheet_id, $user, 'Добавлен ответственный');
+                $worksheet->executors()->attach($item);
+                Comment::add(self::commentModel($worksheet, $item), 'attach');
             }
-
-        $users = self::getExecutorsWorksheet($worksheet_id);
-
-        return $users;
     }
 
-    public static function detach(int $worksheet_id, int $user_id)
+    /**
+    * Удалить ответственного из РЛ
+    * @param Worksheet $worksheet РЛ в который хотим удаить ответственное лицо
+    * @param User $users Пользователь которого хотим удалить
+    */
+    public static function detach(Worksheet $worksheet, User $user) : void
     {
-        $isIn = WorksheetExecutor::where('worksheet_id', $worksheet_id)
-            ->where('user_id', $user_id)
-            ->count();
+        Comment::add(self::commentModel($worksheet, $user), 'detach');
 
-        if($isIn)
-        {
-            WorksheetExecutor::where('worksheet_id', $worksheet_id)
-                ->where('user_id', $user_id)
-                ->delete();
-            $user = User::find($user_id);
-            Comment::commentAppendClient($worksheet_id, $user, 'Удален ответственный');
-        }
+        $worksheet->executors()->detach($user->id);
+    }
+
+    private static function commentModel($worksheet, $user) : WorksheetExecutor
+    {
+        $executor = new WorksheetExecutor();
+
+        $executor->fill(['worksheet_id' => $worksheet->id, 'user_id' => $user->id]);
+
+        return $executor;
     }
 }

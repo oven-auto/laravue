@@ -11,6 +11,7 @@ class ClientWorksheetListController extends Controller
     public function __invoke($client)
     {
         $data = Worksheet::where('client_id', $client)->with('last_action')->orderBy('id', 'DESC')->get();
+
         return new \App\Http\Resources\Client\WorksheetListCollection($data);
     }
 }

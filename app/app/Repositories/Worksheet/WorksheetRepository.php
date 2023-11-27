@@ -6,11 +6,17 @@ use App\Models\Task;
 use App\Models\Worksheet;
 use App\Models\Trafic;
 use App\Repositories\Client\ClientRepository;
+use App\Services\Comment\Comment;
 use App\Services\Worksheet\ActionSave;
 
 class WorksheetRepository
 {
-    public function createFromTrafic($trafic_id)
+    /**
+     * Создать РЛ из трафика
+     * @param int $trafic_id
+     * @return Worksheet
+     */
+    public function createFromTrafic(int $trafic_id) : Worksheet
     {
         $trafic = Trafic::with('status')->find($trafic_id);
 
@@ -26,18 +32,13 @@ class WorksheetRepository
             'status_id'         => 'work',
         ]);
 
-        $dataTraficAction = [
+        $worksheet->last_action()->create([
             'task_id' => Task::where('slug','control')->first()->id,
             'worksheet_id' => $worksheet->id,
             'begin_at' => $trafic->begin_at,
             'end_at' => $trafic->end_at,
             'author_id' => auth()->user()->id,
-            'text' => $trafic->comment ? $trafic->comment : 'Комментарий трафика отсутствует',
-        ];
-
-        $actionService = new ActionSave();
-
-        $actionService->saveActionFasade($dataTraficAction);
+        ]);
 
         $worksheet->trafic->status;
 
@@ -124,5 +125,68 @@ class WorksheetRepository
     public function setDefaultStatus(&$data)
     {
 
+    }
+
+    /**
+     * Получить список РЛ для журнала задач
+     * @param array $data
+     */
+    public function getWorksheetsForTaskList(array $data)
+    {
+        $filter = app()->make(\App\Http\Filters\WorksheetListFilter::class, ['queryParams' => array_filter($data)]);
+
+        $query = Worksheet::query()
+            ->with(['last_action.task','author', 'executors','company','structure', 'appeal','client.type'])
+            ->filter($filter);
+
+        $result = $query->get();
+
+        return $result;
+    }
+
+    /**
+     * Закрыть РЛ
+     * @param Worksheet $worksheet
+     */
+    public function close(Worksheet $worksheet) : void
+    {
+        if($worksheet->status_id != 'check')
+            throw new \Exception('Команда не может быть выполнена. Закрыть можно только рабочий лист, находящийся на проверке');
+
+        if(!in_array($worksheet->last_action->task->slug, ['confirm','abort']))
+            throw new \Exception('Последнее действие в рабочем листе не подразумевает его закрытие. Создайте закрывающее действие.');
+
+        $worksheet->status_id = $worksheet->last_action->task->slug;
+        $worksheet->close_at = now();
+        $worksheet->inspector_id = auth()->user()->id;
+        $worksheet->save();
+
+        Comment::add($worksheet->last_action, 'close');
+    }
+
+    /**
+     * Вернуть закрытый РЛ в работу
+     * @param Worksheet $worksheet
+     */
+    public function revert(Worksheet $worksheet) : void
+    {
+        if(in_array($worksheet->status_id, ['work']))
+            throw new \Exception('Рабочий лист в работе, незачем его возвращать в работу.');
+
+        $worksheet->status_id = 'work';
+        $worksheet->inspector_id = null;
+        $worksheet->close_at = null;
+        $worksheet->save();
+
+        $worksheet->last_action->fill([
+            'task_id' => \App\Models\Task::where('slug','control')->first()->id,
+            'worksheet_id' => $worksheet->id,
+            'begin_at' => now(),
+            'end_at' => now()->addMinutes(30),
+            'author_id' => auth()->user()->id,
+            'status' => 'work'
+        ])->save();
+
+        Comment::add($worksheet->last_action, 'revert');
     }
 }

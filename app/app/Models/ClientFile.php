@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClientFile extends Model
+class ClientFile extends Model implements CommentInterface
 {
     use HasFactory;
 
     protected $guarded = [];
+
+    public function writeComment(array $data)
+    {
+        ClientComment::create($data);
+    }
 
     public function author()
     {

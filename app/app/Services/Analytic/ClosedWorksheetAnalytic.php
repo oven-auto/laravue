@@ -2,32 +2,29 @@
 
 namespace App\Services\Analytic;
 
-use App\Http\Filters\WorksheetFilter;
+use App\Http\Filters\WorksheetAnalyticFilter;
 use App\Models\Worksheet;
+use Illuminate\Support\Arr;
 
 Class ClosedWorksheetAnalytic implements TraficAnalyticInterface
 {
     public function getArrayAnalytic(array $data)
     {
-        if(isset($data['register_begin']) || isset($data['register_end']))
-        {
-            $data['closed_begin'] = $data['register_begin'];
-            $data['closed_end'] = $data['register_end'];
-            unset($data['register_begin'], $data['register_end']);
-        }
+        $arr = Arr::except($data, ['interval_begin','interval_end']);
+        $arr['closed_begin'] = $data['interval_begin'];
+        $arr['closed_end'] = $data['interval_end'];
 
-        $filter = app()->make(WorksheetFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(WorksheetAnalyticFilter::class, ['queryParams' => array_filter($arr)]);
 
         $query = Worksheet::select(
-            \DB::raw('"Закрытые в периоде" as name'),
+            \DB::raw('"Завершенные в периоде" as name'),
             \DB::raw('count(worksheets.id) as count'),
             \DB::raw('1 as type')
-        )->leftJoin('worksheet_actions', function($join) {
-            $join->on('worksheet_actions.worksheet_id','worksheets.id');
-        })->where(
-            'worksheet_actions.id',
-            \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
-        )->filter($filter);
+        )
+        ->filter($filter);
+
+        if(collect($query->getQuery()->joins)->pluck('table')->contains('worksheet_executors'))
+            $query->whereRaw(\DB::raw('worksheets.author_id = worksheet_executors.user_id'));
 
         return $query->get()->map(fn($item) => [
             'count' => $item->count ?? 0,

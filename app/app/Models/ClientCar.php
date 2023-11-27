@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClientCar extends Model
+class ClientCar extends Model implements CommentInterface
 {
     use HasFactory;
 
@@ -15,6 +16,11 @@ class ClientCar extends Model
         'created_at',
         'updated_at',
     ];
+
+    public function writeComment(array $data)
+    {
+        ClientComment::create($data);
+    }
 
     public function brand()
     {

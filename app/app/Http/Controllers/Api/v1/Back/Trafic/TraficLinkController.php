@@ -7,6 +7,7 @@ use App\Http\Resources\Trafic\LinkCollection;
 use App\Http\Resources\Trafic\LinkResource;
 use App\Models\Trafic;
 use App\Models\TraficLink;
+use App\Services\Comment\Comment;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Http\Request;
 
@@ -29,6 +30,8 @@ class TraficLinkController extends Controller
             'icon' => GetShortCutFromURL::get($request->get('url')),
             'trafic_id' => $trafic->id,
         ]);
+
+        Comment::add($link, 'create');
 
         return response()->json([
             'data' => new LinkResource($link),
@@ -54,6 +57,8 @@ class TraficLinkController extends Controller
 
     public function delete(TraficLink $link)
     {
+        Comment::add($link, 'delete');
+
         $link->delete();
 
         return response()->json([

@@ -2,7 +2,7 @@
 
 namespace App\Services\Analytic;
 
-use App\Http\Filters\TraficFilter;
+use App\Http\Filters\TraficAnalyticFilter;
 use App\Models\ClientType;
 use App\Models\Trafic;
 
@@ -10,7 +10,7 @@ Class GeneralTraficAnalytic implements TraficAnalyticInterface
 {
     public function getArrayAnalytic($data = [])
     {
-        $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(TraficAnalyticFilter::class, ['queryParams' => array_filter($data)]);
 
         $subQuery = Trafic::select([
                 'trafics.client_type_id',
@@ -28,7 +28,7 @@ Class GeneralTraficAnalytic implements TraficAnalyticInterface
 
         return $query->get()->map(fn($item) => [
             'count' => $item->count ?? 0,
-            'name' => $item->name,
+            'name' => $item->name.'',
             'total' => $item->total ?? 0,
             'percent' => $item->total ? round((100 / $item->total) * $item->count, 2) : 0,
             'type' => $item->type

@@ -2,10 +2,11 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TraficLink extends Model
+class TraficLink extends Model implements CommentInterface
 {
     use HasFactory;
 
@@ -19,5 +20,10 @@ class TraficLink extends Model
     public function trafic()
     {
         return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id')->withDefault();
+    }
+
+    public function writeComment(array $data)
+    {
+        return TraficComment::create($data);
     }
 }

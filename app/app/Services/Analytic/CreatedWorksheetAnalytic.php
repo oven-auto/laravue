@@ -2,25 +2,29 @@
 
 namespace App\Services\Analytic;
 
-use App\Http\Filters\WorksheetFilter;
+use App\Http\Filters\WorksheetAnalyticFilter;
 use App\Models\Worksheet;
+use Illuminate\Support\Arr;
 
 Class CreatedWorksheetAnalytic implements TraficAnalyticInterface
 {
     public function getArrayAnalytic(array $data)
     {
-        $filter = app()->make(WorksheetFilter::class, ['queryParams' => array_filter($data)]);
+        $arr = Arr::except($data, ['interval_begin','interval_end']);
+        $arr['created_begin'] = $data['interval_begin'];
+        $arr['created_end'] = $data['interval_end'];
+
+        $filter = app()->make(WorksheetAnalyticFilter::class, ['queryParams' => array_filter($arr)]);
 
         $query = Worksheet::select(
             \DB::raw('"Созданые в периоде" as name'),
             \DB::raw('count(worksheets.id) as count'),
             \DB::raw('1 as type')
-        )->leftJoin('worksheet_actions', function($join) {
-            $join->on('worksheet_actions.worksheet_id','worksheets.id');
-        })->where(
-            'worksheet_actions.id',
-            \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
-        )->filter($filter);
+        )
+        ->filter($filter);
+
+        if(collect($query->getQuery()->joins)->pluck('table')->contains('worksheet_executors'))
+            $query->whereRaw(\DB::raw('worksheets.author_id = worksheet_executors.user_id'));
 
         return $query->get()->map(fn($item) => [
             'count' => $item->count ?? 0,

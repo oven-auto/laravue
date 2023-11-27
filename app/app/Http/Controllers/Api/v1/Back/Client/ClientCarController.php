@@ -8,6 +8,7 @@ use App\Http\Requests\Client\ClientCarRequest;
 use App\Http\Resources\Client\Car\ClientCarCollection;
 use App\Http\Resources\Client\Car\ClientCarEditResource;
 use \App\Models\ClientCar;
+use App\Services\Comment\Comment;
 
 class ClientCarController extends Controller
 {
@@ -36,7 +37,9 @@ class ClientCarController extends Controller
      */
     public function store(Client $client, ClientCarRequest $request) : ClientCarCollection
     {
-        $this->repo->store($client, $request->input());
+        $clientcar = $this->repo->store($client, $request->input());
+
+        Comment::add($clientcar, 'create');
 
         return (new ClientCarCollection($client->cars))
             ->additional(['message' => 'Машина добавлена']);
@@ -52,6 +55,8 @@ class ClientCarController extends Controller
     {
         $this->repo->update($car, $request->input());
 
+        Comment::add($car, 'update');
+
         return (new ClientCarCollection($car->client->cars))
             ->additional(['message' => 'Машина изменена']);
     }
@@ -63,6 +68,8 @@ class ClientCarController extends Controller
      */
     public function destroy(ClientCar $car) : ClientCarCollection
     {
+        Comment::add($car, 'delete');
+
         $this->repo->hide($car);
 
         return (new ClientCarCollection($car->client->cars))

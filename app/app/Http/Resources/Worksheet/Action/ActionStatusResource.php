@@ -16,11 +16,11 @@ class ActionStatusResource extends JsonResource
     {
         return [
             'data' => [
-                'is_working' => $this->getAction()->isWorking(),
-                'status_msg' => $this->getAction()->statusMsg(),
+                'is_working' => $this->isWorking(),
+                'status_msg' => $this->statusMsg(),
             ],
             'success' => 1,
-            'message' => $this->getMesage()
+            'message' => 'Действие изменено'
         ];
     }
 }

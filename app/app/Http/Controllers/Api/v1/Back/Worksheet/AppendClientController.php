@@ -6,21 +6,23 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Worksheet\WorksheetAppendSubClientRequest;
 use App\Models\Client;
 use App\Services\Worksheet\WorksheetClient;
+use App\Models\Worksheet;
 
 class AppendClientController extends Controller
 {
     public function append(WorksheetAppendSubClientRequest $request)
     {
-        WorksheetClient::attach($request->worksheet_id, $request->client_id);
-        WorksheetClient::makeUnionInWorksheet($request->worksheet_id, $request->client_id);
+        $client = Client::find($request->client_id);
 
-        $subClient = Client::find($request->get('client_id'));
+        $worksheet = Worksheet::with('subclients')->find($request->worksheet_id);
+
+        WorksheetClient::attach($worksheet, $client);
 
         return response()->json([
             'success' => 1,
             'client' => [
-                'id' => $subClient->id,
-                'name' => $subClient->full_name,
+                'id' => $client->id,
+                'name' => $client->full_name,
             ],
             'message' => 'Клиент добавлен',
 
@@ -29,7 +31,11 @@ class AppendClientController extends Controller
 
     public function destroy(WorksheetAppendSubClientRequest $request)
     {
-        WorksheetClient::detach($request->worksheet_id, $request->client_id);
+        $client = Client::find($request->client_id);
+
+        $worksheet = Worksheet::with('subclients')->find($request->worksheet_id);
+
+        WorksheetClient::detach($worksheet, $client);
 
         return response()->json([
             'success' => 1,

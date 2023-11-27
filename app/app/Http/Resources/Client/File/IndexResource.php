@@ -20,7 +20,7 @@ class IndexResource extends JsonResource
             'client' => $this->client->full_name,
             'author' => $this->author->cut_name,
             'created_at' => $this->date,
-            'title' => end($arr),
+            'name' => end($arr),
             'file' => \WebUrl::make_link($this->file),
         ];
     }

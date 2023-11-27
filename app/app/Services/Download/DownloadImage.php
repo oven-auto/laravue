@@ -57,7 +57,8 @@ Class DownloadImage
         if($timeSufix == true)
             $sufix = date('dmyhms');
 
-        $fileName = $this->prefix.'_'.$sufix.'.'.$this->file->getClientOriginalExtension();
+        $fileName = $this->prefix.''.$sufix.'_'.$this->file->getClientOriginalName();
+
 
         $path = $this->storagePath($this->root);
 

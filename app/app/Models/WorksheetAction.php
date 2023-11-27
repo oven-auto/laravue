@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Interfaces\CommentInterface;
 
-class WorksheetAction extends Model
+class WorksheetAction extends Model implements CommentInterface
 {
     use HasFactory;
 
@@ -14,20 +14,25 @@ class WorksheetAction extends Model
     private const CONTROL_ACTUAL = 2;
     private const CONTROL_COMMING = 3;
 
-    public function addComment(string $message)
+    public function writeComment(array $data)
     {
-
+        return WorksheetActionComment::create($data);
     }
 
-    public function changesList()
-    {
+    // public function addComment(string $message)
+    // {
 
-    }
+    // }
 
-    public function selfRussianName()
-    {
+    // public function changesList()
+    // {
 
-    }
+    // }
+
+    // public function selfRussianName()
+    // {
+
+    // }
 
     public $dates = [
         'begin_at', 'end_at', 'created_at', 'updated_at'

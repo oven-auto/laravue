@@ -6,7 +6,7 @@ use \App\Models\Client;
 
 Class EventChangeClient
 {
-    public static function change($eventStatusId, $newClientId)
+    public static function changeClient($eventStatusId, $newClientId)
     {
         $eventStatus = ClientEventStatus::with('event')->findOrFail($eventStatusId);
 
@@ -25,5 +25,29 @@ Class EventChangeClient
         ]);
 
         return $client;
+    }
+
+    public static function changeAuthor($eventStatusId, $newClientId)
+    {
+        $eventStatus = ClientEventStatus::with('event')->findOrFail($eventStatusId);
+        $event = $eventStatus->event;
+
+        $oldAuthor = $event->author;
+        $newAuthor =  \App\Models\User::findOrFail($newClientId);
+
+        $event->author_id = $newClientId;
+
+        if(!$event->executors->contains('id', $newClientId))
+            $event->executors()->attach($newClientId);
+
+        $event->save();
+
+        $eventStatus->lastComment()->create([
+            'text' => 'Изменен автор коммуникации '.$newAuthor->cut_name.' Старый автор '.$oldAuthor->cut_name.'',
+            'author_id' => auth()->user()->id,
+            'event_id' => $eventStatus->event_id,
+        ]);
+
+        return \App\Models\User::findOrFail($newClientId);
     }
 }

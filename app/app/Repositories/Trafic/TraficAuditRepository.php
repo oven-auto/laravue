@@ -49,8 +49,8 @@ Class TraficAuditRepository
         $arr['user_id'] = auth()->user()->id;
         $arr['status'] = AuditStandart::find($arr['audit_standart_id'])->target <= $arr['result'] ? true : false;
 
-        $trafic->processing()->create($arr);
+        $audit = $trafic->processing()->create($arr);
 
-        return $arr;
+        return $audit;
     }
 }

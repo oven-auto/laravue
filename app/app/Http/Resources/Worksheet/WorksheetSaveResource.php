@@ -61,7 +61,7 @@ class WorksheetSaveResource extends JsonResource
                     ]
                 ],
                 'links' => $this->links_count,
-                'files' => 0,
+                'files' => $this->files_count,
                 //'available_modules' => \App\Models\Modul::select('modules.*')->joinLeft(''),
             ],
             'success' => 1,

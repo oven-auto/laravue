@@ -15,42 +15,21 @@ class WorksheetController extends Controller
 {
     public function __invoke(Request $request, WorksheetRepository $repo, AnalyticWorksheet $analytic)
     {
-        if(!$request->has('appeal_ids'))
-            $request->merge(['appeal_ids' => auth()->user()->appeals->map(fn($item) => [
-                $item->id
-            ])->toArray()]);
 
-        $dataCreated = $request->all();
-        $dataClosed = $request->all();
 
-        if($request->has('show_month'))
-        {
-            $dataCreated    = array_merge($dataCreated, ['created_month' => $request->get('show_month')]);
-            $dataClosed     = array_merge($dataClosed, ['closed_month' => $request->get('show_month')]);
-        }
-
-        $col = [];
-        if($request->has('show_month'))
-        {
-            $date = new Carbon($request->show_month);
-            $col = [
-                    'Кол-во',
-                    'Доля',
-                    DateHelper::russianMonth($date->subMonth()->month-1).' '.date('y'),
-                    'Динамика',
-                    DateHelper::russianMonth($date->month).' '.(date('y')-1),
-                    'Динамика',
-            ];
-        }
+        $nonIntervalArray = $request->except([
+                'interval_begin', 'interval_end',
+                'second_interval_begin', 'second_interval_end',
+                'third_interval_begin', 'third_interval_end',
+        ]);
 
         return response()->json([
-            'col' => $col,
             'data' => [
-
-                'created'   => $analytic->fasade($dataCreated, new \App\Services\Analytic\CreatedWorksheetAnalytic()),
-                'closed'    => $analytic->fasade($dataClosed, new \App\Services\Analytic\ClosedWorksheetAnalytic()),
-                'results'   => $analytic->fasade($dataClosed, new \App\Services\Analytic\ResultWorksheetAnalytic()),
-                'work'      => $repo->workingCount($request->except(['register_begin', 'register_end']))
+                'author'    => \App\Services\Analytic\WorksheetAuthor::getCountAnalyticByAuthor($nonIntervalArray),
+                'created'   => $analytic->fasade($request->all(), new \App\Services\Analytic\CreatedWorksheetAnalytic()),
+                'closed'    => $analytic->fasade($request->all(), new \App\Services\Analytic\ClosedWorksheetAnalytic()),
+                'results'   => $analytic->fasade($request->all(), new \App\Services\Analytic\ResultWorksheetAnalytic()),
+                'work'      => $repo->workingCount($nonIntervalArray)
             ],
             'success' => 1,
         ]);

@@ -78,6 +78,22 @@ Class TraficRepository
     }
 
     /**
+     * Метод возращает количество трафиков, удовлетворяющих условию фильтра
+     * @param array $data данные для фильтра
+     * @return int $result int
+     */
+    public function counter($data = []) : int
+    {
+        $query = Trafic::select(\DB::raw('count(trafics.id)'))->withTrashed();
+        $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
+        $query->filter($filter)
+            ->groupBy('trafics.id');
+        $query->where('trafics.trafic_status_id', '<>', 6);
+        $result = $query->get()->count();
+        return $result;
+    }
+
+    /**
      * Метод возращает постраничную коллекию трафиков, прошедших фильтрацию
      * @param array $data данные для фильтра
      * @param integer $paginate не обязательное поле, по умолчанию 10
@@ -85,18 +101,24 @@ Class TraficRepository
      */
     public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
     {
+        //$query = Trafic::select('trafics.*')->withTrashed();
         $query = $this->filter($data);
         $query->with([
             'needs', 'sex', 'zone', 'chanel.myparent',
             'salon', 'structure', 'appeal', 'manager',
             'author', 'worksheet', 'processing', 'files', 'person',
         ])->withCount('links');
+
+        $query->where('trafics.trafic_status_id', '<>', 6);
+
         $result = $query->simplePaginate($paginate);
+
         return $result;
     }
 
     public function get($data = [])
     {
+        //$query = Trafic::select('trafics.*')->withTrashed();
         $query = $this->filter($data);
         $query->with([
             'needs', 'sex', 'zone', 'chanel.myparent',
@@ -119,20 +141,7 @@ Class TraficRepository
         return $result;
     }
 
-    /**
-     * Метод возращает количество трафиков, удовлетворяющих условию фильтра
-     * @param array $data данные для фильтра
-     * @return int $result int
-     */
-    public function counter($data = []) : int
-    {
-        $query = Trafic::select(\DB::raw('count(trafics.id)'))->withTrashed();
-        $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
-        $query->filter($filter)
-            ->groupBy('trafics.id');
-        $result = $query->get()->count();
-        return $result;
-    }
+
 
     /**
      * Метод поиск трафик по id, со всеми связными данными
@@ -143,5 +152,26 @@ Class TraficRepository
     {
         $result = Trafic::fullest()->find($id);
         return $result;
+    }
+
+    public function getTraficsForTaskList(array $data)
+    {
+        $query = Trafic::select('trafics.*')->withTrashed();
+
+        $filter = app()->make(\App\Http\Filters\TraficListFilter::class, ['queryParams' => array_filter($data)]);
+
+        $query->filter($filter);
+
+        $query->with([
+            'needs', 'sex', 'zone', 'chanel.myparent',
+            'salon', 'structure', 'appeal', 'manager',
+            'author', 'person'
+        ]);
+
+        $query->orderBy('trafics.begin_at')->groupBy('trafics.id');
+
+        $trafics = $query->get();
+
+        return $trafics;
     }
 }

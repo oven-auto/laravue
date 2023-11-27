@@ -16,9 +16,9 @@ class CommentSaveResource extends JsonResource
     {
         return [
             'data' => [
-                'created_at' => $this->getAction()->last_comment->created_at ? $this->getAction()->last_comment->created_at->format('d.m.Y (H:i)') : '',
-                'text' => $this->getAction()->last_comment->text,
-                'author' => $this->getAction()->last_comment->author->cut_name
+                'created_at' => $this->created_at->format('d.m.Y (H:i)'),
+                'text' => $this->text,
+                'author' => $this->author->cut_name
             ],
             'success' => 1,
             'message' => 'Комментарий добавлен'

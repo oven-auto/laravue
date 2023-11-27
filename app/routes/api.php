@@ -224,6 +224,7 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
             'success' => 1
         ]);
     });
+    Route::get('/trafic/buttons', 'TraficButtonFilterController');
 });
 
 //
@@ -378,6 +379,12 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
  */
 Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Client')->group(function() {
 
+    Route::prefix('links')->group(function() {
+        Route::get('{client}', 'ClientLinkController@index');
+        Route::post('{client}', 'ClientLinkController@store');
+        Route::delete('{clientlink}', 'ClientLinkController@delete');
+    });
+
     //CRUD Связей клиентов с клиентами
     Route::prefix('unions')->group(function() {
         Route::get('count/{count}', '\App\Http\Controllers\Api\v1\Back\Client\Union\ClientUnionController@amount');
@@ -428,7 +435,10 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     Route::get('events/close', 'EventCloseController@close'); //Закрыть событие клиента без трафика
     Route::get('events/resume', 'EventCloseController@resume'); //Закрыть событие клиента без трафика
-    Route::patch('events/change', 'EventChangeClientController'); //Замена клиента
+
+    Route::patch('events/change/client', 'EventChangeClientController@client'); //Замена клиента
+    Route::patch('events/change/author', 'EventChangeClientController@author'); //Замена автора
+
     Route::delete('events/file/{client_event_file}', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventFileDeleteController');
 
     Route::patch('events/report', 'EventReportController@report');
@@ -504,6 +514,13 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
         Route::delete('/{worksheetLink}', 'WorksheetLinkController@delete');
     });
 
+    //CRUD фаилов
+    Route::prefix('files')->group(function() {
+        Route::get(     '/{worksheet}',       'WorksheetFileController@index');
+        Route::post(    '/{worksheet}',       'WorksheetFileController@store');
+        Route::delete(  '/{worksheetfile}',   'WorksheetFileController@delete');
+    });
+
     Route::get('client/{client}', 'ClientWorksheetListController');
     Route::post('create', 'WorksheetController@store')
         ->middleware([
@@ -550,6 +567,8 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     Route::get('revert/{worksheet}', 'WorksheetController@revert');
 });
 
+
+
 Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
     Route::get('deliver/brands', 'Deliver\BrandController');
     Route::get('deliver/marks', 'Deliver\MarkController');
@@ -573,11 +592,11 @@ Route::prefix('tasklist')
  */
 Route::prefix('director')
     ->namespace('\App\Http\Controllers\Api\v1\Back\Director')
-    ->middleware(['corsing','userfromtoken'])
+    ->middleware(['corsing','userfromtoken','director.request'])
     ->group(function(){
-        Route::get('trafics', 'TraficController');
-        Route::get('worksheets', 'WorksheetController');
-        Route::get('counter', 'CounterController');
+        Route::get('trafics',       'TraficController');
+        Route::get('worksheets',    'WorksheetController');
+        Route::get('counter',       'CounterController');
     });
 
 

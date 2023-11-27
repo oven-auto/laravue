@@ -4,6 +4,7 @@ namespace App\Repositories\Trafic;
 
 use App\Services\Download\TraficFileLoad;
 use App\Models\Trafic;
+use App\Models\TraficFile;
 
 Class TraficFileRepository
 {
@@ -16,13 +17,18 @@ Class TraficFileRepository
 
     public function saveTraficFiles(Trafic $trafic, $files)
     {
+        $res = [];
+
         foreach($files as $itemFile) {
+
             $arr['name'] = $itemFile->getClientOriginalName();
             $arr['filepath'] = $this->loadService->download($trafic->id, $itemFile);
             $arr['trafic_id'] = $trafic->id;
             $arr['user_id'] = auth()->user()->id;
-            $trafic->files()->create($arr);
+
+            $res[] = TraficFile::create($arr);
         }
-        return 1;
+
+        return $res;
     }
 }

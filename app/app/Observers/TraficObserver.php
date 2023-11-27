@@ -31,15 +31,15 @@ class TraficObserver
 
     public function deleted(\App\Models\Trafic $trafic)
     {
-        if($trafic->trafic_status_id != 5)
-            if(request()->has('clone'))
-            {
-                \App\Services\Comment\CommentService::customMessage($trafic, \App\Models\Trafic::NOTICES['clone']);
-            }
-            else
-            {
-                \App\Services\Comment\CommentService::customMessage($trafic, \App\Models\Trafic::NOTICES['delete']);
-            }
+        // if($trafic->trafic_status_id != 5)
+        //     if(request()->has('clone'))
+        //     {
+        //         \App\Services\Comment\CommentService::customMessage($trafic, \App\Models\Trafic::NOTICES['clone']);
+        //     }
+        //     else
+        //     {
+        //         \App\Services\Comment\CommentService::customMessage($trafic, \App\Models\Trafic::NOTICES['delete']);
+        //     }
 
         $trafic->trafic_status_id = 5;
 
@@ -48,14 +48,14 @@ class TraficObserver
 
     public function created(\App\Models\Trafic $trafic)
     {
-        \App\Services\Comment\CommentService::systemMessage($trafic);
+        //\App\Services\Comment\CommentService::systemMessage($trafic);
     }
 
     public function updated(\App\Models\Trafic $trafic)
     {
-        if($trafic->trafic_status_id == 4 && $trafic->getOriginal('trafic_status_id') != 4)
-            \App\Services\Comment\CommentService::customMessage($trafic, \App\Models\Trafic::NOTICES['close']);
-        else
-            \App\Services\Comment\CommentService::systemMessage($trafic);
+        // if($trafic->trafic_status_id == 4 && $trafic->getOriginal('trafic_status_id') != 4)
+        //     \App\Services\Comment\CommentService::customMessage($trafic, \App\Models\Trafic::NOTICES['close']);
+        // else
+        //     \App\Services\Comment\CommentService::systemMessage($trafic);
     }
 }

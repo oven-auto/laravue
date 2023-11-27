@@ -59,6 +59,15 @@ class User extends Authenticatable implements PersonInterface, GiveDataForCommen
         'email_verified_at' => 'datetime',
     ];
 
+    public function colleagues()//structures
+    {
+        return User::select('users.*')
+            ->leftJoin('user_company_structures', 'user_company_structures.user_id', 'users.id')
+            ->whereIn('user_company_structures.company_structure_id', $this->structures->pluck('company_structure_id'))
+            ->groupBy('users.id')
+            ->get();
+    }
+
     public function scopeByStructure($query, $structure_id)
     {
         return $query
@@ -72,7 +81,11 @@ class User extends Authenticatable implements PersonInterface, GiveDataForCommen
         if($this->name && $this->lastname)
             return "$this->lastname ".mb_substr($this->name,0,1).'.';
         return '';
+    }
 
+    public function companies()
+    {
+        return $this->belongsToMany(\App\Models\Company::class, 'user_company_structures', 'user_id', 'company_id');
     }
 
     public function structures()

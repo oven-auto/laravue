@@ -10,6 +10,7 @@ use App\Http\Resources\Client\ClientEditResource;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Http\Requests\Client\ClientStoreRequest;
+use App\Services\Comment\Comment;
 
 /**
  * Контролер упраления клиентами
@@ -62,8 +63,12 @@ class ClientController extends Controller
      * @param Client $client  Client
      * @return ClientEditResource
      */
-    public function edit(Client $client) : ClientEditResource
+    public function edit($client) : ClientEditResource
     {
+        $client = Client::query()->filesCount()->linksCount()->find($client);
+
+        Comment::add($client, 'show');
+
         return new ClientEditResource($client);
     }
 
@@ -76,6 +81,8 @@ class ClientController extends Controller
     public function store(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
+
+        Comment::add($client, 'create');
 
         return (new ClientEditResource($client))
             ->additional(['message' => 'Клиент создан']);
@@ -90,6 +97,8 @@ class ClientController extends Controller
     public function update(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
+
+        Comment::add($client, 'update');
 
         return (new ClientEditResource($client))
             ->additional([
@@ -106,6 +115,8 @@ class ClientController extends Controller
     public function destroy(Client $client) : ClientEditResource
     {
         $this->repo->delete($client);
+
+        Comment::add($client, 'delete');
 
         return (new ClientEditResource($client))
             ->additional(['message' => 'Клиент удален', 'result' => 1]);

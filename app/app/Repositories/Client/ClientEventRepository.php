@@ -54,7 +54,9 @@ class ClientEventRepository
     public function saveMain()
     {
         if(!$this->event->id || $this->event->author_id === $this->authId) {
+
             $date_at = (string)$this->data['date_at'];
+
             $arr = [
                 'client_id'     => $this->event->client_id ? $this->event->client_id : $this->data['client_id'],
                 'author_id'     => $this->event->auth_id ? $this->event->auth_id : $this->authId,
@@ -64,7 +66,9 @@ class ClientEventRepository
                 'resolve'       => ($this->data['resolve']!="false") ? (($this->data['resolve']) ? 1 : 0) : 0,
                 'personal'      => isset($this->data['personal']) ? $this->data['personal'] : 0,
             ];
+
             $this->event->fill($arr)->save();
+
             if(!$this->event->executors->contains('id', $this->event->author_id))
                 $this->event->executors()->attach($this->event->author_id);
         }
@@ -94,7 +98,7 @@ class ClientEventRepository
 
     public function filter($query, Array $data)
     {
-        $this->closingOrWorking($data, $query);
+        //$this->closingOrWorking($data, $query);
 
         $query->leftJoin('client_events', 'client_events.id','client_event_statuses.event_id')
             ->leftJoin('client_event_executors','client_event_executors.event_id','client_events.id')
@@ -186,5 +190,19 @@ class ClientEventRepository
         }
     }
 
+    public function getEventsForTaskList(array $data)
+    {
+        $query = ClientEventStatus::query();
+
+        $filter = app()->make(\App\Http\Filters\ClientEventListFilter::class, ['queryParams' => array_filter($data)]);
+
+        $query->filter($filter);
+
+        $query->OnlyTableData()->WithEventAndTrafic()->ListOrder();
+
+        $result = $query->get();
+
+        return $result;
+    }
 }
 

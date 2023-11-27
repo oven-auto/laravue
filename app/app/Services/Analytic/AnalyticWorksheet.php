@@ -2,8 +2,9 @@
 
 namespace App\Services\Analytic;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
-Class AnalyticWorksheet
+Class AnalyticWorksheet extends AbstractAnalytic
 {
     public function toArray($current, $month, $year)
     {
@@ -20,62 +21,38 @@ Class AnalyticWorksheet
             if($year->contains('type', $item['type']))
                 $prevYearCount = $year->where('type', $item['type'])->first()['count'];
 
-            $arr[] = [
-                'name' => $item['name'],
-                'count' => $item['count'],
-                'percent' => $item['percent'],
-                'previos_month' => $prevMonthCount,
-                'month_dynamic' => $prevMonthCount ? round( (($item['count'] / $prevMonthCount) - 1) * 100, 2) : ($item['count'] ? 100 : 0),
-                'previos_year' => $prevYearCount,
-                'year_dynamic' => $prevYearCount ? round( (($item['count'] / $prevYearCount) - 1) * 100, 2) : ($item['count'] ? 100 : 0),
-                'border_top' => ($item['border_top']) ?? 0,
-                'border_bottom' => ($item['border_bottom']) ?? 0,
-            ];
+            $arr[] = $this->getArr($item, $prevMonthCount, $prevYearCount);
         }
+
         return $arr;
     }
 
     public function fasade($data = [], TraficAnalyticInterface $command)
     {
-        if(isset($data['closed_month']))
-            return $this->isShowClosed($command, $data);
+        $requestData = Arr::except($data, [
+            'interval_begin', 'interval_end',
+            'second_interval_begin', 'second_interval_end',
+            'third_interval_begin', 'third_interval_end'
+        ]);
 
-        if(isset($data['created_month']))
-            return $this->isShowCreated($command, $data);
+        $neededData = [
+            'interval_begin' => $data['interval_begin'],
+            'interval_end' => $data['interval_end'],
+        ];
 
-        return $command->getArrayAnalytic($data);
-    }
+        $secondData = [
+            'interval_begin' => $data['second_interval_begin'],
+            'interval_end' => $data['second_interval_end'],
+        ];
 
-    public function isShowClosed($command, array $data)
-    {
-        $prevMonthData = $data;
-        $date = new Carbon($data['closed_month']);
-        $prevMonthData['closed_month'] = $date->subMonth()->format('d.m.Y');
+        $thirdData = [
+            'interval_begin' => $data['third_interval_begin'],
+            'interval_end' => $data['third_interval_end'],
+        ];
 
-        $prevYearData = $data;
-        $date = new Carbon($data['closed_month']);
-        $prevYearData['closed_month'] = $date->subYear()->format('d.m.Y');
-
-        $current        = $command->getArrayAnalytic($data);
-        $prevMont       = $command->getArrayAnalytic($prevMonthData);
-        $prevYear       = $command->getArrayAnalytic($prevYearData);
-
-        return $this->toArray($current, $prevMont, $prevYear);
-    }
-
-    public function isShowCreated($command, array $data)
-    {
-        $prevMonthData = $data;
-        $date = new Carbon($data['created_month']);
-        $prevMonthData['created_month'] = $date->subMonth()->format('d.m.Y');
-
-        $prevYearData = $data;
-        $date = new Carbon($data['created_month']);
-        $prevYearData['created_month'] = $date->subYear()->format('d.m.Y');
-
-        $current        = $command->getArrayAnalytic($data);
-        $prevMont       = $command->getArrayAnalytic($prevMonthData);
-        $prevYear       = $command->getArrayAnalytic($prevYearData);
+        $current        = $command->getArrayAnalytic(array_merge($neededData, $requestData));
+        $prevMont       = $command->getArrayAnalytic(array_merge($secondData, $requestData));
+        $prevYear       = $command->getArrayAnalytic(array_merge($thirdData,  $requestData));
 
         return $this->toArray($current, $prevMont, $prevYear);
     }

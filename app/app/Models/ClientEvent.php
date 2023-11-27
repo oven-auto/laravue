@@ -8,7 +8,7 @@ use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Interfaces\CommentInterface;
 
-class ClientEvent extends Model implements CommentInterface
+class ClientEvent extends Model
 {
     use HasFactory, Filterable, SoftDeletes;
 

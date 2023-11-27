@@ -4,54 +4,73 @@ namespace App\Services\Worksheet;
 use App\Models\Client;
 use App\Models\WorksheetSubClient;
 use App\Repositories\Client\ClientUnionRepository;
+use App\Models\Worksheet;
+use App\Services\Comment\Comment;
 
+/**
+ * Класс для добавления/удаления контактных лиц из РЛ
+ */
 Class WorksheetClient
 {
-    public static function attach($worksheet_id, $client_id)
+    /**
+     * Добавить контактное лицо в РЛ
+     * @param Worksheet $worksheet РЛ в который хотим добавить контактное лицо
+     * @param Client $client Клиент которого хотим сделать контактным лицом
+     */
+    public static function attach(Worksheet $worksheet, Client $client) : void
     {
-        $isIn = WorksheetSubClient::where('worksheet_id', $worksheet_id)
-            ->where('client_id', $client_id)
-            ->count();
-
-        if($isIn)
+        if($worksheet->subclients->contains('id', $client->id))
             throw new \Exception('Клиент уже добавлен');
 
-        if(!$isIn)
-        {
-            WorksheetSubClient::create([
-                'worksheet_id' => $worksheet_id,
-                'client_id' => $client_id
-            ]);
+        $worksheet->subclients()->attach($client->id);
 
-            $client = Client::find($client_id);
+        $clientUnionRepository = new ClientUnionRepository();
 
-            Comment::commentAppendClient($worksheet_id, $client, 'Добавлено новое контактное лицо');
-        }
+        $clientUnionRepository->addUnion($worksheet->client, $client->id);
+
+        $worksheetSubClient = new WorksheetSubClient();
+
+        $worksheetSubClient->fill(['worksheet_id' => $worksheet->id, 'client_id' => $client->id]);
+
+        Comment::add($worksheetSubClient, 'attach');
     }
 
-    public static function detach($worksheet_id, $client_id)
+    /**
+     * Удалить контактное лицо в РЛ
+     * @param Worksheet $worksheet РЛ в который хотим добавить контактное лицо
+     * @param Client $client Клиент которого хотим сделать контактным лицом
+     */
+    public static function detach(Worksheet $worksheet, Client $client) : void
     {
-        $isIn = WorksheetSubClient::where('worksheet_id', $worksheet_id)
-            ->where('client_id', $client_id)
-            ->count();
-        if($isIn)
-        {
-            WorksheetSubClient::where('worksheet_id', $worksheet_id)
-                ->where('client_id', $client_id)
-                ->delete();
-            $client = Client::find($client_id);
-            Comment::commentAppendClient($worksheet_id, $client, 'Удалено контактное лицо');
-        }
+        $worksheetSubClient = new WorksheetSubClient();
+
+        $worksheetSubClient->fill(['worksheet_id' => $worksheet->id, 'client_id' => $client->id]);
+
+        Comment::add($worksheetSubClient, 'detach');
+
+        $worksheet->subclients()->detach($client->id);
     }
 
-    public static function makeUnionInWorksheet($worksheet_id, $client_id)
+    /**
+     * Заменить клиента РЛ, на контактное лицо
+     * @param Worksheet $worksheet РЛ в котором хотим заменить клиента
+     * @param Client $client Новый клиент
+     */
+    public static function change(Worksheet $worksheet, Client $newClient)
     {
-        $client = Client::select('clients.*')
-            ->leftJoin('worksheets', 'worksheets.client_id','clients.id')
-            ->where('worksheets.id', $worksheet_id)
-            ->first();
+        $oldClient = Client::find($worksheet->client_id);
 
-        $union = new ClientUnionRepository();
-        $union->addUnion($client, $client_id);
+        Comment::add($worksheet->last_action, 'delete_client');
+
+        $worksheet->fill(['client_id' => $newClient->id])->save();
+
+        WorksheetClient::attach($worksheet, $oldClient);
+        WorksheetClient::detach($worksheet, $newClient);
+
+        Comment::add($worksheet->last_action, 'set_client');
+
+        $worksheet->load('subclients');
+
+        return $worksheet;
     }
 }

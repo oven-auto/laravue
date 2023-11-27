@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
@@ -104,8 +105,13 @@ class Worksheet extends Model
         return $query->withCount('links');
     }
 
-    // public function scopeFilesCount($query)
-    // {
-    //     return $query->withCount('files');
-    // }
+    public function scopeFilesCount($query)
+    {
+        return $query->withCount('files');
+    }
+
+    public function files()
+    {
+        return $this->hasMany(\App\Models\WorksheetFile::class, 'worksheet_id', 'id');
+    }
 }

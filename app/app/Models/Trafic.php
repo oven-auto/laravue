@@ -96,11 +96,22 @@ class Trafic extends Model implements CommentInterface
         ]);
     }
 
+    public function writeComment($arr_message)
+    {
+        return $this->comment_list()->create($arr_message);
+    }
+
     public function isDraft()
     {
         if($this->trafic_status_id == 6)
             return 1;
         return 0;
+    }
+
+    public function scopeOnlyTarget($query)
+    {
+        $query->whereIn('trafics.client_type_id', [1,2]);
+        $query->whereIn('trafics.trafic_status_id', [1,2,3,4]);
     }
 
     public function links()

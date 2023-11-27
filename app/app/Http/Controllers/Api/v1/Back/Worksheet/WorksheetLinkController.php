@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Worksheet\Link\LinkCollection;
+use App\Http\Resources\Worksheet\Link\LinkResource;
 use App\Models\Worksheet;
 use App\Models\WorksheetLink;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Http\Request;
+use App\Services\Comment\Comment;
 
 class WorksheetLinkController extends Controller
 {
@@ -14,44 +17,28 @@ class WorksheetLinkController extends Controller
     {
         $links = $worksheet->links;
 
-        return response()->json([
-            'data' => $links->map(function($item) {
-                return [
-                    'id' => $item->id,
-                    'text' => $item->url,
-                    'icon' => $item->icon,
-                    'author' => $item->author->cut_name,
-                    'created_at' => $item->created_at->format('d.m.Y (H:i)')
-                ];
-            }),
-            'success' => 1,
-        ]);
+        return new LinkCollection($links);
     }
 
     public function store(Worksheet $worksheet, Request $request)
     {
         $link = $worksheet->links()->create([
-            //'worksheet_id' => $request->worksheet_id,
             'author_id' => auth()->user()->id,
             'icon' => GetShortCutFromURL::get($request->url),
             'url' => $request->url,
         ]);
 
-        return response()->json([
-            'data' => [
-                'id' => $link->id,
-                'text' => $link->url,
-                'icon' => $link->icon,
-                'author' => $link->author->cut_name,
-                'created_at' => $link->created_at->format('d.m.Y (H:i)')
-            ],
-            'success' => 1,
-            'message' => 'Ссылка создана'
+        Comment::add($link, 'create');
+
+        return (new LinkResource($link))->additional([
+            'success' => 1, 'message' => 'Ссылка добавлена'
         ]);
     }
 
     public function delete(WorksheetLink $worksheetLink)
     {
+        Comment::add($worksheetLink, 'delete');
+
         $worksheetLink->delete();
 
         return response()->json([

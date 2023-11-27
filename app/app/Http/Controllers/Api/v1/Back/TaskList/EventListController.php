@@ -11,7 +11,7 @@ class EventListController extends Controller
 {
     public function __invoke(ClientEventRepository $repo, Request $request)
     {
-        $events = $repo->get($request->input());
+        $events = $repo->getEventsForTaskList($request->input());
 
         return (new EventListCollection($events))
             ->additional(['request' => $request->all()]);

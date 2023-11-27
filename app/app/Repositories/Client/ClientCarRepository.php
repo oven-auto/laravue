@@ -11,9 +11,9 @@ Class ClientCarRepository
      * Создать машину клиента
      * @param Client $client App\Models\Client
      * @param array $data Данные о машине
-     * @return void
+     * @return ClientCar
      */
-    public function store(Client $client, $data = []) : void
+    public function store(Client $client, $data = []) : ClientCar
     {
         if(isset($data['odometer'])) {
             $odometer = '';
@@ -29,7 +29,7 @@ Class ClientCarRepository
         $data['author_id'] = auth()->user()->id;
         $data['editor_id'] = auth()->user()->id;
 
-        $client->cars()->create($data);
+        return $client->cars()->create($data);
     }
     /**
      * Изменить машину клиента

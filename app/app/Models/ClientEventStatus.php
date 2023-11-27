@@ -12,6 +12,10 @@ class ClientEventStatus extends Model implements CommentInterface
 {
     use HasFactory, Filterable;
 
+    public function writeComment(array $data)
+    {
+
+    }
     public function addComment(string $message)
     {
         $this->comments()->create([
