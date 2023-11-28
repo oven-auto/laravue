@@ -31,7 +31,6 @@ Class TargetTraficAnalytic implements TraficAnalyticInterface
                 $join->on('subQuery.trafic_status_id','=','trafic_statuses.id');
             })->whereIn('trafic_statuses.id', [1,2,3,4]);
 
-
         $result = $query->get()->map(fn($item) => [
             'count' => $item->count ?? 0,
             'name' => $item->name,
@@ -39,7 +38,7 @@ Class TargetTraficAnalytic implements TraficAnalyticInterface
             'percent' => $item->total ? round((100 / $item->total) * $item->count, 2) : 0,
             'type' => $item->type,
             'border_bottom' => $item->type == 4 ? 1 : 0,
-            'inversion' => $item->trafic_status_id == 4 ? 1 : 0
+            'inversion' => $item->type == 4 ? 1 : 0
         ]);
 
         return $result;
