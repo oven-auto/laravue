@@ -31,7 +31,7 @@ Class ClosedWorksheetAnalytic implements TraficAnalyticInterface
             'name' => $item->name,
             'total' => $item->count ?? 0,
             'percent' => $item->count ? round((100 / $item->count) * $item->count, 2) : 0,
-            'type' => $item->type
+            'type' => $item->type,
         ]);
     }
 }

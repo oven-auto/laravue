@@ -37,7 +37,7 @@ Class TargetTraficAnalytic implements TraficAnalyticInterface
             'total' => $item->total ?? 0,
             'percent' => $item->total ? round((100 / $item->total) * $item->count, 2) : 0,
             'type' => $item->type,
-            'border_bottom' => $item->type == 4 ? 1 : 0,
+            'border_bottom' => 0,
             'inversion' => $item->type == 4 ? 1 : 0
         ]);
 

@@ -33,13 +33,16 @@ Class ResultWorksheetAnalytic implements TraficAnalyticInterface
                 $join->on('subQuery.task_id','=','tasks.id');
             })->whereIn('tasks.id', [6,7]);
 
-        return $query->get()->map(fn($item) => [
+        $k = 0;
+        return $query->get()->map(fn($item, $k) => [
             'count' => $item->count ?? 0,
             'name' => $item->name,
             'total' => $item->count ?? 0,
             'percent' => $item->count ? round((100 / $item->count) * $item->count, 2) : 0,
             'type' => $item->task_id,
             'inversion' => $item->task_id == 7 ? 1 : 0,
+            'border_top' => $k++ == 0 ? 1 : 0,
+            'border_bottom' => $k == 2 ? 1 : 0,
         ]);
     }
 }

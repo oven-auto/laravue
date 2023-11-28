@@ -22,7 +22,8 @@ Class TotalTraficAnalytic implements TraficAnalyticInterface
             'name' => 'Все обращения за период',
             'total' => $item->count ?? 0,
             'percent' => $item->count ? round((100 / $item->count) * $item->count, 1) : 0,
-            'type' => $item->type ?? 1
+            'type' => $item->type ?? 1,
+            'border_top' => 1,
         ]);
     }
 }
