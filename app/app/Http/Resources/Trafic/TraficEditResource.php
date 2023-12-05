@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Trafic;
 
+use App\Models\Trafic;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TraficEditResource extends JsonResource
@@ -12,13 +13,16 @@ class TraficEditResource extends JsonResource
      * @param  \Illuminate\Http\Request  $request
      * @return array
      */
+
     public function toArray($request)
     {
+        //dd($this->resource);
         $canIChange = (
             auth()->user()->id == $this->manager_id
             || auth()->user()->id == $this->author_id
             || auth()->user()->role->permissions->contains('slug', 'trafic_show_alien')
             || (auth()->user()->role->permissions->contains('slug', 'show_trafic_without_manager') && $this->manager_id == '')
+            || (Trafic::checkCanIClick($this->resource, auth()->user(), 'show_waiting_for_my_appeals'))
         ) ? 1 : 0;
 
         $showSuperBykovSecurity = ($request->has('author_id') || $request->has('manager_id'));

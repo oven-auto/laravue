@@ -93,6 +93,11 @@ class User extends Authenticatable implements PersonInterface, GiveDataForCommen
         return $this->hasmany(\App\Models\UserCompanyStructure::class,'user_id','id');
     }
 
+    public function mystructures()
+    {
+        return $this->belongsToMany(\App\Models\Structure::class, 'user_company_structures', 'user_id', 'company_structure_id');
+    }
+
     public function role()
     {
         return $this->hasOne(\App\Models\Role::class, 'id', 'role_id')->withDefault();

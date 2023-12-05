@@ -342,4 +342,28 @@ class Trafic extends Model implements CommentInterface
                 return 'yellow';
         }
     }
+
+    public static function checkCanIClick(Trafic $trafic, User $user, $permission3)
+    {
+        $userPermissions = $user->role->permissions;
+
+        if($trafic->trafic_status_id == 1 && $userPermissions->contains('slug', $permission3))
+        {
+            $userSalons = auth()->user()->companies;
+            $userStructures = auth()->user()->mystructures;
+            $userAppeals = auth()->user()->appeals;
+
+            $traficCompany = $trafic->salon;
+            $traficStructure = $trafic->structure;
+            $traficAppeal = $trafic->appeal;
+
+            $isSalon = $userSalons->contains('id', $traficCompany->id);
+            $isStructure = $userStructures->contains('id', $traficStructure->id);
+            $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
+            if($isSalon && $isStructure && $isAppeal)
+                return true;
+        }
+
+        return false;
+    }
 }

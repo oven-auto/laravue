@@ -225,6 +225,7 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
         ]);
     });
     Route::get('/trafic/buttons', 'TraficButtonFilterController');
+    Route::get('/company/structures', 'CompanyStructureController');
 });
 
 //
@@ -362,7 +363,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::get('{trafic}', 'TraficController@edit')
         ->middleware([
             'permission.trafic.show:trafic_show',
-            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager',
+            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager,show_waiting_for_my_appeals',
             'permission.trafic.showdraft:show_trafic_draft'
         ]);
 
@@ -370,7 +371,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::patch('{trafic}', 'TraficController@update')
         ->middleware([
             'permission.trafic.show:trafic_update',
-            'permission.trafic.showalien:trafic_update_alien,update_trafic_without_manager'
+            'permission.trafic.showalien:trafic_update_alien,update_trafic_without_manager,update_waiting_for_my_appeals'
         ]);
 });
 

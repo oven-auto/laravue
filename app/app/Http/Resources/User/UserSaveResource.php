@@ -25,7 +25,9 @@ class UserSaveResource extends JsonResource
                 'appeals' => isset($this->appeals) ? $this->appeals->map(function($item){
                     return $item->id;
                 }) : [],
-                'structures' => isset($this->structures) ? $this->structures : [],
+                'structures' => isset($this->structures) ? $this->structures->map(function($item){
+                    return $item->company_structure_id;
+                }) : [],
             ],
             'success' => 1,
             'manual' => 'Для пароля использовать поле password, для поля подтверждения пароля password_confirmation'

@@ -2,6 +2,7 @@
 
 namespace App\Services\Auth;
 
+use App\Models\CompanyStructure;
 use App\Models\User;
 use Hash;
 
@@ -25,6 +26,7 @@ Class AuthService
             'lastname' => $user->lastname,
             'role' => $user->role->slug,
             'role_name' => $user->role->name,
+            'super' => in_array($user->role->id, [1,8]),
         ];
 
         return \response()->json([
@@ -69,6 +71,8 @@ Class AuthService
         if(isset($data['appeals']))
             $user->appeals()->sync($data['appeals']);
 
+        $this->saveStructures($user, $data['structures']);
+
         return $user;
     }
 
@@ -90,6 +94,8 @@ Class AuthService
         if(isset($data['appeals']))
             $user->appeals()->sync($data['appeals']);
 
+        $this->saveStructures($user, $data['structures']);
+
         return $user;
     }
 
@@ -99,6 +105,23 @@ Class AuthService
             'data1' => auth()->user()->role->permissions,
             'data' => 1
         ]);
+    }
+
+    private function saveStructures(User $user, array $structures)
+    {
+        if($structures)
+        {
+            \App\Models\UserCompanyStructure::where('user_id', $user->id)->delete();
+            foreach($structures as $item)
+            {
+                $companyStructures = CompanyStructure::find($item);
+                \App\Models\UserCompanyStructure::create([
+                    'user_id' => $user->id,
+                    'company_structure_id' => $companyStructures->id,
+                    'company_id' => $companyStructures->company_id
+                ]);
+            }
+        }
     }
 
 
