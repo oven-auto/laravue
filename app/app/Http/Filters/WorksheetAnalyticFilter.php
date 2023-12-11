@@ -16,6 +16,8 @@ Class WorksheetAnalyticFilter extends AbstractFilter
     public const CREATED_END = 'created_end';
     public const CLOSED_BEGIN = 'closed_begin';
     public const CLOSED_END = 'closed_end';
+    public const COMPANY_IDS = 'company_ids';
+    public const STRUCTURE_IDS = 'structure_ids';
 
     public function __construct($queryParams)
     {
@@ -38,6 +40,9 @@ Class WorksheetAnalyticFilter extends AbstractFilter
 
             self::CLOSED_BEGIN          => [$this,'closedBegin'],
             self::CLOSED_END            => [$this,'closedEnd'],
+
+            self::STRUCTURE_IDS         => [$this, 'structureIds'],
+            self::COMPANY_IDS           => [$this, 'companyIds'],
         ];
     }
 
@@ -109,5 +114,17 @@ Class WorksheetAnalyticFilter extends AbstractFilter
             $builder->whereIn('worksheet_executors.user_id', $value);
         elseif(is_numeric($value) || is_string($value))
             $builder->where('worksheet_executors.user_id', $value);
+    }
+
+    public function companyIds(Builder $builder, $value)
+    {
+        $builder->whereIn('worksheets.company_id', $value);
+    }
+
+    public function structureIds(Builder $builder, $value)
+    {
+        $builder->leftJoin('company_structures', 'company_structures.structure_id', 'worksheets.structure_id');
+
+        $builder->whereIn('company_structures.id', $value);
     }
 }

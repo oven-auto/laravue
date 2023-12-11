@@ -25,6 +25,6 @@ class UserCompanyStructure extends Model
 
     public function structure()
     {
-        return $this->hasOne(\App\Models\Structure::class, 'id', 'structure_id')->withDefault();
+        return $this->hasOne(\App\Models\CompanyStructure::class, 'id', 'company_structure_id')->withDefault();
     }
 }

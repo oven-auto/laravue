@@ -12,6 +12,8 @@ Class TraficAnalyticFilter extends AbstractFilter
     public const APPEAL_IDS = 'appeal_ids';
     public const AUTHOR_ID = 'author_id';
     public const MANAGER_ID = 'manager_id';
+    public const COMPANY_IDS = 'company_ids';
+    public const STUCTURE_IDS = 'structure_ids';
 
     /*-----------------------------------------*/
     public const INIT = 'init';
@@ -25,6 +27,8 @@ Class TraficAnalyticFilter extends AbstractFilter
             self::APPEAL_IDS        => [$this, 'appealIds'],
             self::MANAGER_ID        => [$this, 'managerId'],
             self::AUTHOR_ID         => [$this, 'authorId'],
+            self::COMPANY_IDS       => [$this, 'companyIds'],
+            self::STUCTURE_IDS      => [$this, 'structureIds'],
         ];
     }
 
@@ -81,6 +85,21 @@ Class TraficAnalyticFilter extends AbstractFilter
             $builder->whereIn('trafics.author_id', $value);
         elseif(is_numeric($value))
             $builder->where('trafics.author_id', $value);
+    }
 
+    public function companyIds(Builder $builder, $value)
+    {
+        if(is_array($value))
+            $builder->whereIn('trafics.company_id', $value);
+        elseif(is_string($value))
+            $builder->where('trafics.company_id', $value);
+    }
+
+    public function structureIds(Builder $builder, $value)
+    {
+        if(is_array($value))
+            $builder->whereIn('trafics.company_structure_id', $value);
+        elseif(is_string($value))
+            $builder->where('trafics.company_structure_id', $value);
     }
 }

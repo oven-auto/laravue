@@ -61,7 +61,10 @@ class ClientFilter extends AbstractFilter
 
     public function ids(Builder $builder, $value)
     {
-        $builder->whereIn('clients.id', explode(',',$value));
+        if(is_array($value))
+            $builder->whereIn('clients.id', $value);
+        elseif(is_string($value))
+            $builder->whereIn('clients.id', explode(',',$value));
     }
 
     public function lastname(Builder $builder, $value)

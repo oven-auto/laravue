@@ -25,8 +25,8 @@ class DirectorRequestMiddleware
         if(!$request->has('company_ids'))
             $request->merge(['company_ids' => auth()->user()->companies->pluck('id')->unique()->toArray()]);
 
-        if(!$request->has('manager_id'))
-            $request->merge(['manager_id' => auth()->user()->colleagues()->pluck('id')->toArray()]);
+        // if(!$request->has('manager_id'))
+        //     $request->merge(['manager_id' => auth()->user()->colleagues()->pluck('id')->toArray()]);
 
         return $next($request);
     }

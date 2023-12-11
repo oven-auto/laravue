@@ -346,7 +346,8 @@ class Trafic extends Model implements CommentInterface
     public static function checkCanIClick(Trafic $trafic, User $user, $permission3)
     {
         $userPermissions = $user->role->permissions;
-
+        // dump($permission3);
+        // dd($userPermissions->pluck('slug'));
         if($trafic->trafic_status_id == 1 && $userPermissions->contains('slug', $permission3))
         {
             $userSalons = auth()->user()->companies;
@@ -360,6 +361,14 @@ class Trafic extends Model implements CommentInterface
             $isSalon = $userSalons->contains('id', $traficCompany->id);
             $isStructure = $userStructures->contains('id', $traficStructure->id);
             $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
+            // dump($isSalon);
+            // dump($isStructure);
+            // dump($isAppeal);
+            // dump('---');
+            // dump($traficCompany);
+            // dump($traficStructure);
+            // dump($traficAppeal);
+
             if($isSalon && $isStructure && $isAppeal)
                 return true;
         }
