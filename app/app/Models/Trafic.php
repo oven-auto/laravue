@@ -343,13 +343,13 @@ class Trafic extends Model implements CommentInterface
         }
     }
 
-    public static function checkCanIClick(Trafic $trafic, User $user, $permission3)
+    public static function checkCanIClick(Trafic $trafic, $permission3)
     {
+        $user = auth()->user();
         $userPermissions = $user->role->permissions;
-        // dump($permission3);
-        // dd($userPermissions->pluck('slug'));
-        if($trafic->trafic_status_id == 1 && $userPermissions->contains('slug', $permission3))
-        {
+
+        //if($trafic->trafic_status_id == 1 && $userPermissions->contains('slug', $permission3))
+        //{
             $userSalons = auth()->user()->companies;
             $userStructures = auth()->user()->mystructures;
             $userAppeals = auth()->user()->appeals;
@@ -361,18 +361,44 @@ class Trafic extends Model implements CommentInterface
             $isSalon = $userSalons->contains('id', $traficCompany->id);
             $isStructure = $userStructures->contains('id', $traficStructure->id);
             $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
-            // dump($isSalon);
-            // dump($isStructure);
-            // dump($isAppeal);
-            // dump('---');
-            // dump($traficCompany);
-            // dump($traficStructure);
-            // dump($traficAppeal);
 
             if($isSalon && $isStructure && $isAppeal)
                 return true;
-        }
+        //}
 
         return false;
+    }
+
+    public static function checkTrafic(string $traficStatus, Trafic $trafic, $permission = '')
+    {
+        $user = auth()->user();
+        $userPermissions = $user->role->permissions;
+
+        $result = false;
+
+        switch ($traficStatus) {
+            case 'waiting':
+                $isOnMyAppeals = self::checkCanIClick($trafic, $permission);
+                $isWaitingTrafic = $trafic->trafic_status_id == 1;
+                $isPermission = $userPermissions->contains('slug', $permission);
+
+                if($isOnMyAppeals && $isWaitingTrafic && $isPermission)
+                    $result = true;
+                else
+                    $result = false;
+                break;
+
+            case 'all':
+                $isOnMyAppeals = self::checkCanIClick($trafic, $permission);
+                $isPermission = $userPermissions->contains('slug', $permission);
+
+                if($isOnMyAppeals && $isPermission)
+                    $result = true;
+                else
+                    $result = false;
+                break;
+        };
+
+        return $result;
     }
 }

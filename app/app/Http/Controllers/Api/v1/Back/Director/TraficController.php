@@ -16,26 +16,7 @@ class TraficController extends Controller
 {
     public function __invoke(Request $request, TraficRepository $repo, AnalyticTrafic $analytic)
     {
-            $filterOption['appeal_ids'] = auth()->user()->appeals->map(fn($item) => [
-                'name' => $item->name,
-                'id' => $item->id
-            ]);
-
-            $filterOption['structure_ids'] = auth()->user()->structures->map(fn($item) => [
-                'name' => $item->structure->structure->name.' ('.$item->company->name.')',
-                'id' => $item->company_structure_id,
-                'company_id' => $item->company_id
-            ]);
-
-            $filterOption['company_ids'] = auth()->user()->companies->unique()->map(fn($item) => [
-                'name' => $item->name,
-                'id' => $item->id
-            ]);
-
-
         return response()->json([
-
-            'option' => $filterOption,
 
             'data' => [
                 'total'     => $analytic->fasade($request->all(), new \App\Services\Analytic\TotalTraficAnalytic()),

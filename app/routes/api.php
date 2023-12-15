@@ -355,15 +355,14 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     //пометить трафик как удаленный
     Route::delete('{trafic}', 'TraficController@delete')
         ->middleware([
-            'permission.trafic.show:trafic_softdelete',
-            'permission.trafic.showalien:trafic_softdelete_alien'
+            'permission.trafic.delete:trafic_softdelete,trafic_softdelete_appeals,trafic_softdelete_alien'
         ]);
 
     //просмотр трафика
     Route::get('{trafic}', 'TraficController@edit')
         ->middleware([
-            'permission.trafic.show:trafic_show',
-            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager,show_waiting_for_my_appeals',
+            'permission.trafic.show:trafic_show', //просмотр где я автор, менеджер
+            'permission.trafic.showalien:trafic_show_alien,show_trafic_without_manager,show_waiting_for_my_appeals,show_all_from_my_appeals',
             'permission.trafic.showdraft:show_trafic_draft'
         ]);
 
@@ -371,7 +370,7 @@ Route::prefix('trafic')->middleware(['corsing','userfromtoken'])->namespace('\Ap
     Route::patch('{trafic}', 'TraficController@update')
         ->middleware([
             'permission.trafic.show:trafic_update',
-            'permission.trafic.showalien:trafic_update_alien,update_trafic_without_manager,update_waiting_for_my_appeals'
+            'permission.trafic.showalien:trafic_update_alien,update_trafic_without_manager,update_waiting_for_my_appeals,update_all_from_my_appeals'
         ]);
 });
 
@@ -509,13 +508,18 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
 
+    /**
+     * ССЫЛКИ РЛ
+     */
     Route::prefix('links')->group(function() {
         Route::get('/{worksheet}', 'WorksheetLinkController@index');
         Route::post('/{worksheet}', 'WorksheetLinkController@store');
         Route::delete('/{worksheetLink}', 'WorksheetLinkController@delete');
     });
 
-    //CRUD фаилов
+    /**
+     * ФАИЛЫ РЛ
+     */
     Route::prefix('files')->group(function() {
         Route::get(     '/{worksheet}',       'WorksheetFileController@index');
         Route::post(    '/{worksheet}',       'WorksheetFileController@store');
@@ -523,49 +527,71 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     });
 
     Route::get('client/{client}', 'ClientWorksheetListController');
-    Route::post('create', 'WorksheetController@store')
-        ->middleware([
-            'worksheet.create.base',
-            'permission.worksheet.create'
-        ]);
 
-    //Route::get('close', )
+    /**
+     * КОММЕНТАРИИ РЛ
+     */
     Route::get('comments', 'CommentListController@list');
+
     /**
      * Добавить действие для рабочего листа
      * @param mixed $request [worksheet_id, begin_at, end_at, task_id, text]
      */
-    Route::post('action','Action\WorksheetActionController@store');
-    Route::patch('action', 'Action\WorksheetActionController@status');
-    Route::put('action','Action\WorksheetActionController@comment');
+    Route::prefix('action')->middleware('permission.worksheet.action:ws_action_executor,ws_action_any')->group(function(){
+        Route::post ('',     'Action\WorksheetActionController@store');
+        Route::patch('',    'Action\WorksheetActionController@status');
+        Route::put  ( '',  'Action\WorksheetActionController@comment');
+    });
+
 
     /*************************************
     * Поменять клиента в рабочем листе
     * @param mixed $request [worksheet_id = int, client_id = int]
     */
-    Route::patch('change/client', 'ChangeClientController@change');
+    Route::patch('change/client', 'ChangeClientController@change')->middleware('permission.worksheet.action:ws_subclient_attach');;
     /****************************************************************************15.05.23
      * Добавить клиента или менеджера в рабочий лист
      * @param mixed $request [worksheet_id = int, user_id = int|client_id = int]
      */
     Route::post('users', 'AppendUserController@append');
-    Route::post('clients', 'AppendClientController@append');
+    Route::post('clients', 'AppendClientController@append')->middleware('permission.worksheet.action:ws_subclient_attach');
 
     /****************************************************************************15.05.23
      * Удалить клиента или менеджера из рабочего листа
      * @param mixed $request [worksheet_id = int, user_id = int|client_id = int]
      */
     Route::delete('users', 'AppendUserController@destroy');
-    Route::delete('clients', 'AppendClientController@destroy');
+    Route::delete('clients', 'AppendClientController@destroy')->middleware('permission.worksheet.action:ws_subclient_detach');
 
-    Route::get('count', 'WorksheetCountController');
-    Route::get('', 'WorksheetController@index');
+
     /**
-     * Получить данные рабочего листа
+     * ЖУРНАЛ РЛ
      */
-    Route::get('{worksheet}', 'WorksheetController@show');
-    Route::get('close/{worksheet}', 'WorksheetController@close');
-    Route::get('revert/{worksheet}', 'WorksheetController@revert');
+    Route::get('', 'WorksheetController@index')->middleware('permission.worksheet.list');
+    Route::get('count', 'WorksheetCountController')->middleware('permission.worksheet.list');
+
+    /**
+     * СОЗДАТЬ РЛ
+     */
+    Route::post('create', 'WorksheetController@store')->middleware([
+            'worksheet.create.base',
+            'permission.worksheet.create'
+        ]);
+
+    /**
+     * ОТКРЫТЬ РЛ
+     */
+    Route::get('{worksheet}', 'WorksheetController@show')->middleware(['permission.worksheet.show']);
+
+    /**
+     * ЗАКРЫТЬ РЛ
+     */
+    Route::get('close/{worksheet}', 'WorksheetController@close')->middleware(['permission.worksheet.close']);
+
+    /**
+     * ВЕРНУТЬ РЛ В РАБОТУ
+     */
+    Route::get('revert/{worksheet}', 'WorksheetController@revert')->middleware(['permission.worksheet.revert']);
 });
 
 
@@ -598,6 +624,7 @@ Route::prefix('director')
         Route::get('trafics',       'TraficController');
         Route::get('worksheets',    'WorksheetController');
         Route::get('counter',       'CounterController');
+        Route::get('options',       'OptionsController');
     });
 
 

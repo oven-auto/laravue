@@ -220,20 +220,20 @@ Class WorksheetFilter extends AbstractFilter
             case 'month':
                 $builder->where(function($query)  {
                     $query
-                        ->whereYear('worksheet_actions.begin_at', '=', now()->year)
-                        ->whereMonth('worksheet_actions.begin_at', '=', now()->month);
+                        ->whereYear('worksheets.created_at', '=', now()->year)
+                        ->whereMonth('worksheets.created_at', '=', now()->month);
                 });
                 break;
             case 'week':
-                $builder->whereBetween('worksheet_actions.begin_at', [
+                $builder->whereBetween('worksheets.created_at', [
                     now()->startOfWeek(), now()->endOfWeek()
                 ]);
                 break;
             case 'today':
-                $builder->whereDate('worksheet_actions.begin_at', now());
+                $builder->whereDate('worksheets.created_at', now());
                 break;
             case 'tomorrow':
-                $builder->whereDate('worksheet_actions.begin_at', now()->nextDay());
+                $builder->whereDate('worksheets.created_at', now()->nextDay());
                 break;
             default:
                 break;

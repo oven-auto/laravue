@@ -25,6 +25,9 @@ class UserSaveResource extends JsonResource
                 'appeals' => isset($this->appeals) ? $this->appeals->map(function($item){
                     return $item->id;
                 }) : [],
+                'trafic_appeals' => isset($this->trafic_appeals) ? $this->trafic_appeals->map(function($item){
+                    return $item->id;
+                }) : [],
                 'structures' => isset($this->structures) ? $this->structures->map(function($item){
                     return $item->company_structure_id;
                 }) : [],

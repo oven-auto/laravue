@@ -123,7 +123,10 @@ Class WorksheetAnalyticFilter extends AbstractFilter
 
     public function structureIds(Builder $builder, $value)
     {
-        $builder->leftJoin('company_structures', 'company_structures.structure_id', 'worksheets.structure_id');
+        $builder->leftJoin('company_structures', function($join){
+            $join->on('company_structures.structure_id', 'worksheets.structure_id');
+            $join->on('company_structures.company_id', 'worksheets.company_id');
+        });
 
         $builder->whereIn('company_structures.id', $value);
     }

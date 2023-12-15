@@ -133,11 +133,14 @@ class ClientEventFilter extends AbstractFilter
     {
         $this->delWhere($builder,'client_events.personal');
 
-        foreach($builder->getQuery()->wheres as $key => &$itemWhere)
-            if(isset($itemWhere['query']) )
-                foreach($itemWhere['query']->wheres as $subQ)
-                    if(isset($subQ['column']) && $subQ['column'] == 'client_events.personal')
-                        $itemWhere['boolean'] = 'and';
+        $builder->where(function($query) use ($value){
+            $query->where('client_events.personal', 1)->where('client_event_executors.executor_id', auth()->user()->id);
+        });
+        // foreach($builder->getQuery()->wheres as $key => &$itemWhere)
+        //     if(isset($itemWhere['query']) )
+        //         foreach($itemWhere['query']->wheres as $subQ)
+        //             if(isset($subQ['column']) && $subQ['column'] == 'client_events.personal')
+        //                 $itemWhere['boolean'] = 'and';
     }
 
     public function completerIds(Builder $builder, $value){

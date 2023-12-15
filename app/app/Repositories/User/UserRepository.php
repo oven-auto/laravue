@@ -13,8 +13,8 @@ Class UserRepository
             return [];
 
         $users = User::counterSelect()
-            ->leftJoin('appeal_users', 'appeal_users.user_id', '=', 'users.id')
-            ->leftJoin('trafic_appeals', 'trafic_appeals.appeal_id', '=',  'appeal_users.appeal_id')
+            ->leftJoin('trafic_user_appeals', 'trafic_user_appeals.user_id', '=', 'users.id')
+            ->leftJoin('trafic_appeals', 'trafic_appeals.appeal_id', '=',  'trafic_user_appeals.appeal_id')
             ->leftJoin('trafics', 'trafics.manager_id','users.id')
             ->leftJoin('user_company_structures', 'user_company_structures.user_id', 'users.id')
             ->where('trafic_appeals.id', $appeal_id)

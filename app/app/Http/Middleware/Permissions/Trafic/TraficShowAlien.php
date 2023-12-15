@@ -14,16 +14,21 @@ class TraficShowAlien
      * @param  \Closure  $next
      * @return mixed
      */
-    public function handle(Request $request, Closure $next, $permission, $permission2 = '', $permission3 = '')
+    public function handle(Request $request, Closure $next, $permission, $permission2 = '', $permission3 = '', $permission4 = '')
     {
         //Все права пользователя из роли
         $userPermissions = auth()->user()->role->permissions;
 
-        $trafic = \App\Models\Trafic::findOrFail($request->trafic);
+        $trafic = \App\Models\Trafic::withTrashed()->findOrFail($request->trafic);
 
         //Если трафик ожидающий
-        if(\App\Models\Trafic::checkCanIClick($trafic, auth()->user(), $permission3))
+        if(\App\Models\Trafic::checkTrafic('waiting', $trafic, $permission3))
             return $next($request);
+        //dump(\App\Models\Trafic::checkTrafic('waiting', $trafic, $permission3));
+
+        if(\App\Models\Trafic::checkTrafic('all', $trafic, $permission4))
+            return $next($request);
+        //dump(\App\Models\Trafic::checkTrafic('all', $trafic, $permission4));
 
         //Проверка что есть права либо что ответсвенный за трафик тот же кто залогенен
         $boolRes = (

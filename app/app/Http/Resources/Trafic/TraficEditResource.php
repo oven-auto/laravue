@@ -25,7 +25,10 @@ class TraficEditResource extends JsonResource
             || (Trafic::checkCanIClick($this->resource, auth()->user(), 'show_waiting_for_my_appeals'))
         ) ? 1 : 0;
 
-        $showSuperBykovSecurity = ($request->has('author_id') || $request->has('manager_id'));
+        $showSuperBykovSecurity = (
+            $request->get('author_id') == auth()->user()->id
+            || $request->has('manager_id') == auth()->user()->id
+        );
 
         return [
             'id' => $this->id,

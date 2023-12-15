@@ -31,7 +31,7 @@ Class WorksheetAuthor
         $query->where('worksheets.status_id', 'work');
 
         $query->groupBy('worksheets.author_id');
-
+        //$query->dd();
         $result = $query->get()->map(function($item) use ($count){
             return [
                 'name' => $item['name'],

@@ -71,6 +71,9 @@ Class AuthService
         if(isset($data['appeals']))
             $user->appeals()->sync($data['appeals']);
 
+        if(isset($data['trafic_appeals']))
+            $user->trafic_appeals()->sync($data['trafic_appeals']);
+
         $this->saveStructures($user, $data['structures']);
 
         return $user;
@@ -93,6 +96,9 @@ Class AuthService
 
         if(isset($data['appeals']))
             $user->appeals()->sync($data['appeals']);
+
+        if(isset($data['trafic_appeals']))
+            $user->trafic_appeals()->sync($data['trafic_appeals']);
 
         $this->saveStructures($user, $data['structures']);
 
