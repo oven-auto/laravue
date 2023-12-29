@@ -17,6 +17,8 @@ class ClientCar extends Model implements CommentInterface
         'updated_at',
     ];
 
+    protected $with = ['color', 'brand', 'mark', 'transmission', 'drive', 'type', 'bodywork', ];
+
     public function writeComment(array $data)
     {
         ClientComment::create($data);
@@ -50,5 +52,25 @@ class ClientCar extends Model implements CommentInterface
     public function editor()
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'editor_id')->withDefault();
+    }
+
+    public function transmission()
+    {
+        return $this->hasOne(\App\Models\MotorTransmission::class,'id', 'gearbox_type_id')->withDefault();
+    }
+
+    public function drive()
+    {
+        return $this->hasOne(\App\Models\MotorDriver::class,'id', 'type_of_drive_id')->withDefault();
+    }
+
+    public function type()
+    {
+        return $this->hasOne(\App\Models\MotorType::class,'id', 'engine_type_id')->withDefault();
+    }
+
+    public function color()
+    {
+        return $this->hasOne(\App\Models\Color::class,'id', 'color_id')->withDefault();
     }
 }

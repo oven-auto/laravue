@@ -20,8 +20,6 @@ class WorksheetCreate
         $user = auth()->user();
         $userPermissions = $user->role->permissions;
 
-        $message = [];
-
         if($userPermissions->contains('slug','worksheet_create_any'))
             return $next($request);
 

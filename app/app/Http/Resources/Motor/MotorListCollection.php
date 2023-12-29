@@ -17,7 +17,7 @@ class MotorListCollection extends ResourceCollection
     {
         return [
             'data' => $this->collection,
-            'status' => $this->collection->count() ? 1 : 0,
+            'success' => $this->collection->count() ? 1 : 0,
             'message' => 'Найдено '.$this->collection->count().' агрегатов',
             'count' => $this->collection->count()
         ];

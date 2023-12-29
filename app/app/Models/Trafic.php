@@ -351,8 +351,12 @@ class Trafic extends Model implements CommentInterface
         //if($trafic->trafic_status_id == 1 && $userPermissions->contains('slug', $permission3))
         //{
             $userSalons = auth()->user()->companies;
-            $userStructures = auth()->user()->mystructures;
+            $userStructures = auth()->user()->mystructures->map(fn($item) => ['id' => $item->structure->id]);
             $userAppeals = auth()->user()->appeals;
+
+            //dump($userSalons->toArray());
+            //dump($userStructures);
+            //dump($userAppeals->toArray());
 
             $traficCompany = $trafic->salon;
             $traficStructure = $trafic->structure;
@@ -361,7 +365,7 @@ class Trafic extends Model implements CommentInterface
             $isSalon = $userSalons->contains('id', $traficCompany->id);
             $isStructure = $userStructures->contains('id', $traficStructure->id);
             $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
-
+            //dump($traficStructure->id);
             if($isSalon && $isStructure && $isAppeal)
                 return true;
         //}
@@ -391,6 +395,7 @@ class Trafic extends Model implements CommentInterface
             case 'all':
                 $isOnMyAppeals = self::checkCanIClick($trafic, $permission);
                 $isPermission = $userPermissions->contains('slug', $permission);
+
 
                 if($isOnMyAppeals && $isPermission)
                     $result = true;

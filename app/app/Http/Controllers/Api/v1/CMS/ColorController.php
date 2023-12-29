@@ -20,7 +20,13 @@ class ColorController extends Controller
     public function index(Request $request)
     {
         $colors = $this->repo->filter($request->input());
-        return new ColorListCollection($colors);
+
+        return response()->json([
+            'data' => $colors->map(function($item) {
+                return ['id' => $item->id, 'name' => $item->name, 'code' => $item->web];
+            }),
+            'success' => 1
+        ]);
     }
 
     public function edit(Color $color)

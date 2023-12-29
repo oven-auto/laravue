@@ -23,7 +23,13 @@ class ClientCarEditResource extends JsonResource
                 'vin' => $this->vin ? $this->vin : '',
                 'odometer' => $this->odometer ? $this->odometer : '',
                 'register_plate' => $this->register_plate ? $this->register_plate : '',
-                'year' => $this->year ? $this->year : ''
+                'year' => $this->year ? $this->year : '',
+                'motor_size' => $this->motor_size,
+                'motor_power' => $this->motor_power,
+                'motor_transmission_id' => $this->motor_transmission_id,
+                'motor_driver_id' => $this->motor_driver_id,
+                'motor_type_id' => $this->motor_type_id,
+                'color_id' => $this->color_id,
             ],
             'success' => 1
         ];

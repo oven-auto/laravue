@@ -29,7 +29,12 @@ Class ClientCarRepository
         $data['author_id'] = auth()->user()->id;
         $data['editor_id'] = auth()->user()->id;
 
-        return $client->cars()->create($data);
+        $mas = array_map(function($item){
+            if($item)
+                return $item;
+        }, $data);
+
+        return $client->cars()->create($mas);
     }
     /**
      * Изменить машину клиента
@@ -50,7 +55,13 @@ Class ClientCarRepository
         }
 
         $data['editor_id'] = auth()->user()->id;
-        $car->fill($data)->save();
+
+        $mas = array_map(function($item){
+            if($item)
+                return $item;
+        }, $data);
+
+        $car->fill($mas)->save();
     }
 
     /**

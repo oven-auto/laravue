@@ -151,6 +151,10 @@ Route::prefix('services')->group(function () {
            Route::get('transmissiontypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\TransmissionTypeSelectController::class, 'index']);
            Route::get('drivertypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DriverTypeSelectController::class, 'index']);
            Route::get('deliverytypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryTypeSelectController::class, 'index']);
+           Route::get('colors', [\App\Http\Controllers\Api\v1\Services\Html\Color\ColorController::class, 'index']);
+
+
+
            Route::get('deliverystages', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryStageSelectController::class, 'index']);
            Route::get('markers', [\App\Http\Controllers\Api\v1\Services\Html\Select\MarkerSelectController::class, 'index']);
            Route::get('users', [\App\Http\Controllers\Api\v1\Services\Html\Select\UserSelectController::class, 'index']);
@@ -226,6 +230,12 @@ Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\A
     });
     Route::get('/trafic/buttons', 'TraficButtonFilterController');
     Route::get('/company/structures', 'CompanyStructureController');
+    Route::prefix('redemptions')->group(function() {
+        Route::get('types', '\App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Listing\RedemptionListingController@type');
+        Route::get('signs/{type?}', '\App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Listing\RedemptionListingController@sign');
+    });
+    //Route::get('salesigns', [\App\Http\Controllers\Api\v1\Listing\SaleSignController::class, 'index']);
+    Route::get('deliverytypes', [\App\Http\Controllers\Api\v1\Services\Html\Select\DeliveryTypeSelectController::class, 'index']);
 });
 
 //
@@ -592,6 +602,25 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
      * ВЕРНУТЬ РЛ В РАБОТУ
      */
     Route::get('revert/{worksheet}', 'WorksheetController@revert')->middleware(['permission.worksheet.revert']);
+
+    /**
+     * REDEMPTION MODULE
+     */
+    Route::prefix('modules')->group(function(){
+        Route::prefix('redemptions')->group(function() {
+            Route::get('count', 'Modules\RedemptionController@counter');
+            Route::get('links/{redemption}', 'Modules\RedemptionController@links');
+            Route::post('links/{redemption}', 'Modules\RedemptionController@storelink');
+
+            Route::get('{worksheet?}', 'Modules\RedemptionController@index');
+            Route::post('{worksheet}', 'Modules\RedemptionController@store');
+            Route::patch('{redemption}', 'Modules\RedemptionController@update');
+
+            Route::put('{redemption}', 'Modules\RedemptionController@saveprice');
+            Route::patch('{redemption}/close', 'Modules\RedemptionController@close');
+            Route::patch('{redemption}/buy', 'Modules\RedemptionController@buy');
+        });
+    });
 });
 
 

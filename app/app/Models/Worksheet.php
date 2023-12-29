@@ -23,6 +23,13 @@ class Worksheet extends Model
         'work', 'check'
     ];
 
+    public function isClosing()
+    {
+        if($this->status_id == 'confirm')
+            return true;
+        return false;
+    }
+
     public function getCreatedDateAttribute()
     {
         return $this->created_at ? $this->created_at->format('d.m.Y') : '';
@@ -113,5 +120,20 @@ class Worksheet extends Model
     public function files()
     {
         return $this->hasMany(\App\Models\WorksheetFile::class, 'worksheet_id', 'id');
+    }
+
+    public function modul_list()
+    {
+        $modules = \App\Models\Modul::select('moduls.*')
+            ->leftJoin('modul_appeals', 'modul_appeals.modul_id', 'moduls.id')
+            ->where('modul_appeals.appeal_id', $this->appeal_id)
+            ->get();
+
+        return $modules;
+    }
+
+    public function redemptions()
+    {
+        return $this->hasMany(\App\Models\WSMRedemptionCar::class, 'worksheet_id', 'id');
     }
 }

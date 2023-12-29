@@ -16,7 +16,7 @@ class TypeListCollection extends ResourceCollection
     {
         return [
             'data' => $this->collection,
-            'status' => $this->collection->count() ? 1 : 0,
+            'success' => $this->collection->count() ? 1 : 0,
             'message' => 'Найдено '.$this->collection->count().' типов моторов',
             'count' => $this->collection->count()
         ];

@@ -57,12 +57,12 @@ class WorksheetSaveResource extends JsonResource
                     'last_comment' => [
                         'created_at' => $this->last_action->last_user_comment->created_at ? $this->last_action->last_user_comment->created_at->format('d.m.Y (H:i)') : '',
                         'text' => $this->last_action->last_user_comment->text,
-                        'author' => '---'.$this->last_action->last_user_comment->author->cut_name
+                        'author' => $this->last_action->last_user_comment->author->cut_name
                     ]
                 ],
                 'links' => $this->links_count,
                 'files' => $this->files_count,
-                //'available_modules' => \App\Models\Modul::select('modules.*')->joinLeft(''),
+                'available_modules' => $this->modul_list(),
             ],
             'success' => 1,
         ];

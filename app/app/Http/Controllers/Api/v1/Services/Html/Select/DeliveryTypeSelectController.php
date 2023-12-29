@@ -13,7 +13,7 @@ class DeliveryTypeSelectController extends Controller
         $data = DeliveryType::get();
         return response()->json([
             'data' => $data,
-            'status' => 1
+            'success' => 1
         ]);
     }
 }
