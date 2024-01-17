@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 
 class AppendUserController extends Controller
 {
+    /**
+     * ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ В ИСПОЛНИТЕЛИ
+     */
     public function append(WorksheetAppendExecutorRequest $request)
     {
         $users = User::whereIn('id', $request->user_ids)->get();
@@ -24,6 +27,11 @@ class AppendUserController extends Controller
         ]);
     }
 
+
+
+    /**
+     * УДАЛИТЬ ПОЛЬЗОВАТЕЛЯ ИЗ ИСПОЛНИТЕЛЕЙ
+     */
     public function destroy(WorksheetDeleteExecutorRequest $request)
     {
         WorksheetUser::detach(

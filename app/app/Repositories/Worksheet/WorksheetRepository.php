@@ -9,10 +9,24 @@ use App\Repositories\Client\ClientRepository;
 use App\Services\Comment\Comment;
 use App\Services\Worksheet\ActionSave;
 
+/**
+ * РЕПОЗИТОРИЙ РАБОЧЕГО ЛИСТА
+ * - СОЗДАТЬ РЛ ИЗ ТРАФИКА
+ * - [private] КОНФИГУРИРОВАНИЕ ФИЛЬТРА ПО ПАРАМЕТРАМ
+ * - СПИСОК РАБОЧИХ ЛИСТОВ В ВИДЕ ПАГИНАЦИИ
+ * - СПИСОК РАБОЧИХ ЛИСТОВ В ВИДЕ КОЛЛЕКЦИИ
+ * - КОЛ-ВО РАБОЧИХ ЛИСТОВ, ПОДХОДЯЩИХ ПОД ПАРАМЕТРЫ ФИЛЬТРАЦИИ
+ * - ПОЛУЧИТЬ КОЛ-ВО РАБОЧИХ ЛИСТОВ НАХОДЯЩИХСЯ В РАБОТЕ
+ * - ПОЛУЧИТЬ СПИСОК РЛ ДЛЯ ЖУРНАЛА ЗАДАЧ
+ * - ЗАКРЫТЬ РЛ
+ * - ВЕРНУТЬ РЛ В РАБОТУ
+ *
+ * 11-09-2023
+ */
 class WorksheetRepository
 {
     /**
-     * Создать РЛ из трафика
+     * СОЗДАТЬ РЛ ИЗ ТРАФИКА
      * @param int $trafic_id
      * @return Worksheet
      */
@@ -45,6 +59,14 @@ class WorksheetRepository
         return $worksheet;
     }
 
+
+
+    /**
+     * КОНФИГУРИРОВАНИЕ ФИЛЬТРА ПО ПАРАМЕТРАМ
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param array $data
+     * @return \Illuminate\Database\Eloquent\Builder
+     */
     private function filter($query, $data = []) :  \Illuminate\Database\Eloquent\Builder
     {
         $query->leftJoin('worksheet_actions', function($join) {
@@ -60,7 +82,15 @@ class WorksheetRepository
         return $query->filter($filter);
     }
 
-    public function paginate(array $data, $paginate = 20)
+
+
+    /**
+     * СПИСОК РАБОЧИХ ЛИСТОВ В ВИДЕ ПАГИНАЦИИ
+     * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
+     * @param int $paginate
+     * @return \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function paginate(array $data, $paginate = 20) : \Illuminate\Contracts\Pagination\Paginator
     {
         $this->setDefaultStatus($data);
 
@@ -79,7 +109,14 @@ class WorksheetRepository
         return $result;
     }
 
-    public function get(array $data)
+
+
+    /**
+     * СПИСОК РАБОЧИХ ЛИСТОВ В ВИДЕ КОЛЛЕКЦИИ, АККУРАТНО С ФИЛЬТРОМ, ИНАЧЕ МОЖЕТ ВЕРНУТЬ ВСЕ А ЭТО МНОГО
+     * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function get(array $data) : \Illuminate\Database\Eloquent\Collection
     {
         $query = Worksheet::query()->select('worksheets.*');
 
@@ -94,7 +131,14 @@ class WorksheetRepository
         return $result;
     }
 
-    public function counter(array $data)
+
+
+    /**
+     * КОЛ-ВО РАБОЧИХ ЛИСТОВ, ПОДХОДЯЩИХ ПОД ПАРАМЕТРЫ ФИЛЬТРАЦИИ
+     * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
+     * @return int
+     */
+    public function counter(array $data) : int
     {
         $this->setDefaultStatus($data);
 
@@ -115,23 +159,28 @@ class WorksheetRepository
         return $result;
     }
 
-    public function workingCount($data)
+
+
+    /**
+     * ПОЛУЧИТЬ КОЛ-ВО РАБОЧИХ ЛИСТОВ НАХОДЯЩИХСЯ В РАБОТЕ + ПОДХОДЯЩИХ ПОД ПАРАМЕТРЫ ФИЛЬТРАЦИИ
+     * @param $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
+     * @return int
+     */
+    public function workingCount($data) : int
     {
         $data['status_ids'] = ['work'];
         $count = $this->counter($data);
         return $count;
     }
 
-    public function setDefaultStatus(&$data)
-    {
 
-    }
 
     /**
-     * Получить список РЛ для журнала задач
-     * @param array $data
+     * ПОЛУЧИТЬ СПИСОК РЛ ДЛЯ ЖУРНАЛА ЗАДАЧ
+     * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
+     * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getWorksheetsForTaskList(array $data)
+    public function getWorksheetsForTaskList(array $data) : \Illuminate\Database\Eloquent\Collection
     {
         $filter = app()->make(\App\Http\Filters\WorksheetListFilter::class, ['queryParams' => array_filter($data)]);
 
@@ -144,9 +193,12 @@ class WorksheetRepository
         return $result;
     }
 
+
+
     /**
-     * Закрыть РЛ
+     * ЗАКРЫТЬ РЛ
      * @param Worksheet $worksheet
+     * @return void
      */
     public function close(Worksheet $worksheet) : void
     {
@@ -164,9 +216,12 @@ class WorksheetRepository
         Comment::add($worksheet->last_action, 'close');
     }
 
+
+
     /**
-     * Вернуть закрытый РЛ в работу
+     * ВЕРНУТЬ РЛ В РАБОТУ
      * @param Worksheet $worksheet
+     * @return void
      */
     public function revert(Worksheet $worksheet) : void
     {
@@ -188,5 +243,10 @@ class WorksheetRepository
         ])->save();
 
         Comment::add($worksheet->last_action, 'revert');
+    }
+
+    public function setDefaultStatus(&$data)
+    {
+
     }
 }

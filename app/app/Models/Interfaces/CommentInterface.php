@@ -4,8 +4,5 @@ namespace App\Models\Interfaces;
 
 Interface CommentInterface
 {
-    // public function addComment(String $message);
-    // public function selfRussianName();
-    // public function changesList(Array $arr);
     public function writeComment(array $data);
 }

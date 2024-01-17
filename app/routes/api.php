@@ -612,13 +612,31 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
             Route::get('links/{redemption}', 'Modules\RedemptionController@links');
             Route::post('links/{redemption}', 'Modules\RedemptionController@storelink');
 
-            Route::get('{worksheet?}', 'Modules\RedemptionController@index');
+            Route::get('/{worksheet?}', 'Modules\RedemptionController@index');
+
             Route::post('{worksheet}', 'Modules\RedemptionController@store');
             Route::patch('{redemption}', 'Modules\RedemptionController@update');
 
             Route::put('{redemption}', 'Modules\RedemptionController@saveprice');
             Route::patch('{redemption}/close', 'Modules\RedemptionController@close');
             Route::patch('{redemption}/buy', 'Modules\RedemptionController@buy');
+        });
+    });
+
+    Route::prefix('subactions')->group(function() {
+        Route::get('{worksheetId}', 'SubAction\SubActionController@index');
+        Route::get('comments/{subAction}', 'SubAction\SubActionController@comments');
+        Route::get('/show/{subAction}', 'SubAction\SubActionController@show');
+        Route::post('', 'SubAction\SubActionController@store');
+        Route::patch('{subAction}', 'SubAction\SubActionController@update')->middleware('subaction.iswork');
+        Route::delete('{subAction}', 'SubAction\SubActionController@close')->middleware('subaction.iswork');
+        Route::prefix('executors')->middleware('subaction.iswork')->group(function() {
+            Route::patch('{subAction}', 'SubAction\SubActionController@append');
+            Route::delete('{subAction}', 'SubAction\SubActionController@remove');
+        });
+        Route::prefix('reporters')->middleware('subaction.iswork')->group(function() {
+            Route::patch('{subAction}', 'SubAction\SubActionController@report');
+            Route::delete('{subAction}', 'SubAction\SubActionController@deport');
         });
     });
 });

@@ -20,6 +20,11 @@ class WorksheetController extends Controller
         $this->service = $service;
     }
 
+
+
+    /**
+     * СПИСОК РЛ
+     */
     public function index(Request $request, WorksheetRepository $repo)
     {
         $worksheets = $repo->paginate($request->all(), 20);
@@ -27,6 +32,11 @@ class WorksheetController extends Controller
         return new WorksheetListCollection($worksheets);
     }
 
+
+
+    /**
+     * СОЗДАТЬ РЛ
+     */
     public function store(WorksheetStoreRequest $request)
     {
         $worksheet = $this->service->createFromTrafic($request->trafic_id);
@@ -36,6 +46,11 @@ class WorksheetController extends Controller
         return new WorksheetCreateResource($worksheet);
     }
 
+
+
+    /**
+     * ОТКРЫТЬ РЛ
+     */
     public function show($worksheet)
     {
         $worksheet = Worksheet::linksCount()->filesCount()->find($worksheet);
@@ -45,6 +60,11 @@ class WorksheetController extends Controller
         return new \App\Http\Resources\Worksheet\WorksheetSaveResource($worksheet);
     }
 
+
+
+    /**
+     * ПОМЕТИТЬ РЛ КАК ЗАКРЫТЫЙ
+     */
     public function close(Worksheet $worksheet)
     {
         $this->service->close($worksheet);
@@ -57,6 +77,11 @@ class WorksheetController extends Controller
         ]);
     }
 
+
+
+    /**
+     * ВЕРНУТЬ РЛ В РАБОТУ
+     */
     public function revert(Worksheet $worksheet)
     {
         $this->service->revert($worksheet);

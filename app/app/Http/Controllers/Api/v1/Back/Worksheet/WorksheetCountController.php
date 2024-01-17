@@ -10,6 +10,7 @@ class WorksheetCountController extends Controller
     public function __invoke(Request $request, \App\Repositories\Worksheet\WorksheetRepository $repo)
     {
         $count = $repo->counter($request->all());
+
         return response()->json([
             'data' => $count,
             'success' => 1,

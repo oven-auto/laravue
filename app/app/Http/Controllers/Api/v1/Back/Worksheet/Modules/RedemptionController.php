@@ -23,10 +23,15 @@ class RedemptionController extends Controller
         $this->repo = $repo;
     }
 
+
+
     /**
      * ПОЛУЧИТЬ СПИСОК ОЦЕНОК
+     * @param int $worksheet
+     * @param Request $request
+     * @return mixed RedemptionCollection|RedemptionListResource
      */
-    public function index(int $worksheet = 0, Request $request)
+    public function index(Request $request, int $worksheet = 0 )
     {
         if($worksheet)
         {
@@ -40,10 +45,15 @@ class RedemptionController extends Controller
         }
     }
 
+
+
     /**
      * СОЗДАТЬ ОЦЕНКУ
+     * @param Worksheet $worksheet
+     * @param RedemptionStoreRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function store(Worksheet $worksheet, RedemptionStoreRequest $request)
+    public function store(Worksheet $worksheet, RedemptionStoreRequest $request) : \Illuminate\Http\JsonResponse
     {
         $redemption = $this->repo->store($worksheet, $request->all());
 
@@ -54,10 +64,15 @@ class RedemptionController extends Controller
         ]);
     }
 
+
+
     /**
      * СОХРАНИТЬ СВОДНЫЕ ДАННЫЕ ОЦЕНКИ (РАСЧЕТНАЯ ЦЕНА, ПРЕДЛОЖЕНИЕ, ФАКТ)
+     * @param WSMRedemptionCar $redemption
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function saveprice(WSMRedemptionCar $redemption, Request $request)
+    public function saveprice(WSMRedemptionCar $redemption, Request $request) : \Illuminate\Http\JsonResponse
     {
         $this->repo->save($redemption, $request->all());
 
@@ -70,10 +85,15 @@ class RedemptionController extends Controller
         ]);
     }
 
+
+
     /**
      * ИЗМЕНИТЬ ОЦЕНКУ
+     * @param Worksheet $worksheet
+     * @param RedemptionStoreRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function update(WSMRedemptionCar $redemption, Request $request)
+    public function update(WSMRedemptionCar $redemption, Request $request) : \Illuminate\Http\JsonResponse
     {
         $this->repo->update($redemption, $request->all());
 
@@ -84,10 +104,15 @@ class RedemptionController extends Controller
         ]);
     }
 
+
+
     /**
      * СОХРАНИТЬ ССЫЛКУ
+     * @param Worksheet $worksheet
+     * @param RedemptionStoreRequest $request
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function storelink(WSMRedemptionCar $redemption, Request $request)
+    public function storelink(WSMRedemptionCar $redemption, Request $request) : \Illuminate\Http\JsonResponse
     {
         $link = $this->repo->saveLink($redemption, $request->all());
 
@@ -98,7 +123,14 @@ class RedemptionController extends Controller
         ]);
     }
 
-    public function buy(WSMRedemptionCar $redemption)
+
+
+    /**
+     * ПЕРЕНЕСТИ АВТОМОБИЛЬ ОЦЕНКИ НА СКЛАД, И ЗАКРЫТЬ ОЦЕНКУ, ПРИСВОИТЬ СТАТУС НА СКЛАДЕ
+     * @param Worksheet $worksheet
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function buy(WSMRedemptionCar $redemption) : \Illuminate\Http\JsonResponse
     {
         $this->repo->buyCar($redemption);
 
@@ -109,10 +141,14 @@ class RedemptionController extends Controller
         ]);
     }
 
+
+
     /**
-     * ЗАКРЫТЬ ОЦЕНКУ
+     * ЗАКРЫТЬ ОЦЕНКУ СО СТАТУСОМ ЗАКРЫТО, АВТОМОБИЛЬ НЕ ВЫКУПЛЕН
+     * @param Worksheet $worksheet
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function close(WSMRedemptionCar $redemption)
+    public function close(WSMRedemptionCar $redemption) : \Illuminate\Http\JsonResponse
     {
         $this->repo->close($redemption);
 
@@ -123,8 +159,12 @@ class RedemptionController extends Controller
         ]);
     }
 
+
+
     /**
      * ПОЛУЧИТЬ СПИСОК ВСЕХ ССЫЛОК ЗАДАНОЙ ОЦЕНКИ
+     * @param Worksheet $worksheet
+     * @return \Illuminate\Http\JsonResponse
      */
     public function links(WSMRedemptionCar $redemption)
     {
@@ -134,8 +174,12 @@ class RedemptionController extends Controller
         ]);
     }
 
+
+
     /**
-     * ПОЛУЧИТЬ КОЛ-ВО ОЦЕНОК ПО ПААМЕТРАМ
+     * ПОЛУЧИТЬ КОЛ-ВО ОЦЕНОК ПО ПАРАМЕТРАМ
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
      */
     public function counter(Request $request)
     {

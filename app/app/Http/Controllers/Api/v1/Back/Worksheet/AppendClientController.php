@@ -10,6 +10,9 @@ use App\Models\Worksheet;
 
 class AppendClientController extends Controller
 {
+    /**
+     * ДОБАВИТЬ КОНТАКТНОЕ ЛИЦО В РЛ
+     */
     public function append(WorksheetAppendSubClientRequest $request)
     {
         $client = Client::find($request->client_id);
@@ -29,6 +32,11 @@ class AppendClientController extends Controller
         ]);
     }
 
+
+
+    /**
+     * УДАЛИТЬ КОНТАКТНОЕ ЛИЦО ИЗ РЛ
+     */
     public function destroy(WorksheetAppendSubClientRequest $request)
     {
         $client = Client::find($request->client_id);

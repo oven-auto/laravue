@@ -10,9 +10,37 @@ use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Репазиторий модели Trafic
+ * - ПОДСТАВИТЬ ПРИ СОЗДАНИИ ТРАФИКА СВОЮ ДАТУ СОЗДАНИЯ В created_at
+ * - Сохранение трафика
+ * - КОНФИГУРИРОВАНИЕ ФИЛЬТРА ПО ПАРАМЕТРАМ
+ * - КОЛ-ВО ТРАФИКОВ УДОВЛЕТВОРЯЮЩИХ УСЛОВИЯМ ФИЛЬТРАЦИИ
+ * - СПИСОК ТРАФИКОВ ВВИДЕ ПАГИНАЦИИ, ПОДХОДЯЩИХ УСЛОВИЯМ ФИЛЬТРАЦИИ
+ * - СПИСОК ТРАФИКОВ ВВИДЕ КОЛЛЕКЦИИ, ПОДХОДЯЩИХ ПОД УСЛОВИЕ ФИЛЬТРАЦИИ
+ * - ЭКСПОРТ
+ * - Метод поиск трафик по id
+ * - ПОЛУЧИТЬ СПИСОК ТРАФИКОВ ДЛЯ ЖУРНАЛА ЗАДАЧ
+ *
+ * 05-02-2023
  */
 Class TraficRepository
 {
+    /**
+     * ПОДСТАВИТЬ ПРИ СОЗДАНИИ ТРАФИКА СВОЮ ДАТУ СОЗДАНИЯ В created_at
+     * @param string
+     * @return string
+     */
+    private function createDate($string) : string
+    {
+        if(date('Y',\strtotime($string)) != now()->year)
+            return now();
+        else
+            return date('Y-m-d H:i',\strtotime($string));
+
+        return date('Y-m-d H:i:s');
+    }
+
+
+
     /**
      * Сохранение трафика, работает как на создание , так и на изменение
      * @param Trafic $trafic Модель трафика, может быть пустой
@@ -22,13 +50,7 @@ Class TraficRepository
     public function save(Trafic $trafic, $data) : Trafic
     {
         if(!$trafic->created_at)
-            $trafic->created_at     = isset($data['time'])
-                                        ?(
-                                            date('Y',\strtotime($data['time'])) != now()->year
-                                                ? now()
-                                                : date('Y-m-d H:i',\strtotime($data['time']))
-                                        )
-                                        : date('Y-m-d H:i:s');
+            $trafic->created_at = isset($data['time']) ?? $this->createDate($data['time']);
 
         $trafic->fill([
             'author_id'             => $data['author_id'] ?? $trafic->author_id,
@@ -67,15 +89,19 @@ Class TraficRepository
         return $trafic;
     }
 
+
+
     /**
-     * Метод задает запрос на получение списка трафиков удовлетворяющих заданным свойствам фильтра
+     * КОНФИГУРИРОВАНИЕ ФИЛЬТРА ПО ПАРАМЕТРАМ
      * @param array $data данные для фильтра
      * @return Builder $query Builder
      */
     private function filter($data = []) : Builder
     {
         $query = Trafic::select('trafics.*')->withTrashed();
+
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
+
         return $query
             ->filter($filter)
             ->orderBy(DB::raw('trafics.manager_id IS NULL'),'DESC')
@@ -83,67 +109,87 @@ Class TraficRepository
             ->groupBy('trafics.id');
     }
 
+
+
     /**
-     * Метод возращает количество трафиков, удовлетворяющих условию фильтра
+     * КОЛ-ВО ТРАФИКОВ УДОВЛЕТВОРЯЮЩИХ УСЛОВИЯМ ФИЛЬТРАЦИИ
      * @param array $data данные для фильтра
      * @return int $result int
      */
     public function counter($data = []) : int
     {
-        $query = Trafic::select(\DB::raw('count(trafics.id)'))->withTrashed();
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
-        $query->filter($filter)
-            ->groupBy('trafics.id');
-        $query->where('trafics.trafic_status_id', '<>', 6);
+
+        $query = Trafic::select(\DB::raw('count(trafics.id)'))
+            ->withTrashed()
+            ->filter($filter)
+            ->groupBy('trafics.id')
+            ->where('trafics.trafic_status_id', '<>', 6);
+
         $result = $query->get()->count();
+
         return $result;
     }
 
+
+
     /**
-     * Метод возращает постраничную коллекию трафиков, прошедших фильтрацию
+     * СПИСОК ТРАФИКОВ ВВИДЕ ПАГИНАЦИИ, ПОДХОДЯЩИХ УСЛОВИЯМ ФИЛЬТРАЦИИ
      * @param array $data данные для фильтра
      * @param integer $paginate не обязательное поле, по умолчанию 10
-     * @return \Illuminate\Contracts\Pagination\Paginator $result \Illuminate\Contracts\Pagination\Paginator
+     * @return \Illuminate\Contracts\Pagination\Paginator $result
      */
     public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
     {
-        //$query = Trafic::select('trafics.*')->withTrashed();
-        $query = $this->filter($data);
-        $query->with([
-            'needs', 'sex', 'zone', 'chanel.myparent',
-            'salon', 'structure', 'appeal', 'manager',
-            'author', 'worksheet', 'processing', 'files', 'person',
-        ])->withCount('links');
-
-        $query->where('trafics.trafic_status_id', '<>', 6);
+        $query = $this->filter($data)
+            ->with([
+                'needs', 'sex', 'zone', 'chanel.myparent',
+                'salon', 'structure', 'appeal', 'manager',
+                'author', 'worksheet', 'processing', 'files', 'person',
+            ])
+            ->withCount('links')
+            ->where('trafics.trafic_status_id', '<>', 6);
 
         $result = $query->simplePaginate($paginate);
 
         return $result;
     }
 
-    public function get($data = [])
+
+
+    /**
+     * СПИСОК ТРАФИКОВ ВВИДЕ КОЛЛЕКЦИИ, ПОДХОДЯЩИХ ПОД УСЛОВИЕ ФИЛЬТРАЦИИ
+     * @param array $data данные для фильтра
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function get($data = []) : \Illuminate\Database\Eloquent\Collection
     {
-        //$query = Trafic::select('trafics.*')->withTrashed();
-        $query = $this->filter($data);
-        $query->with([
-            'needs', 'sex', 'zone', 'chanel.myparent',
-            'salon', 'structure', 'appeal', 'manager',
-            'author', /*'worksheet', 'processing', 'files',*/ 'person'
-        ]);
-        $result = $query->orderBy('trafics.begin_at')->get();
+        $query = $this->filter($data)
+            ->with([
+                'needs', 'sex', 'zone', 'chanel.myparent',
+                'salon', 'structure', 'appeal', 'manager',
+                'author', /*'worksheet', 'processing', 'files',*/ 'person'
+            ])
+            ->orderBy('trafics.begin_at');
+
+        $result = $query->get();
+
         return $result;
     }
 
+
+
     /**
-     * Метод возращает коллекию трафиков (нет постраничного вывода!!!), прошедших фильтрацию
+     * ЭКСПОРТ (нет постраничного вывода!!!), прошедших фильтрацию
      * @param array $data данные для фильтра
-     * @return \Illuminate\Database\Eloquent\Collection $result \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection $result
      */
     public function export($data = []) : \Illuminate\Database\Eloquent\Collection
     {
         $query = $this->filter($data);
+
         $result = $query->get();
+
         return $result;
     }
 
@@ -154,13 +200,21 @@ Class TraficRepository
      * @param int $id id-трафика
      * @return Trafic $result Trafic
      */
-    public function find($id)
+    public function find($id) : Trafic
     {
         $result = Trafic::fullest()->find($id);
+
         return $result;
     }
 
-    public function getTraficsForTaskList(array $data)
+
+
+    /**
+     * ПОЛУЧИТЬ СПИСОК ТРАФИКОВ ДЛЯ ЖУРНАЛА ЗАДАЧ
+     * @param $data данные для фильтрации
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getTraficsForTaskList(array $data) : \Illuminate\Database\Eloquent\Collection
     {
         $query = Trafic::select('trafics.*')->withTrashed();
 
@@ -176,7 +230,6 @@ Class TraficRepository
             $q->whereIn('trafics.company_structure_id', auth()->user()->structures->pluck('company_structure_id'));//структура трафика равна структуре цели обращения
         });
 
-        //$query->dd();
         $query->with([
             'needs', 'sex', 'zone', 'chanel.myparent',
             'salon', 'structure', 'appeal', 'manager',

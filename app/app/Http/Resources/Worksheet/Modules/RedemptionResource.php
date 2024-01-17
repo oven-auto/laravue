@@ -16,6 +16,7 @@ class RedemptionResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'author' => $this->author->cut_name,
             'car' => [
                 'car_id' => $this->client_car_id,
                 'brand' => $this->client_car->brand->name,

@@ -92,5 +92,7 @@ class Kernel extends HttpKernel
 
         'director.request' => \App\Http\Middleware\DirectorRequestMiddleware::class,
 
+        'subaction.iswork' => \App\Http\Middleware\Worksheet\SubAction\SubActionChangeMiddlewar::class,
+
     ];
 }

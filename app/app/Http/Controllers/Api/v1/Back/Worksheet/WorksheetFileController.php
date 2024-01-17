@@ -18,6 +18,11 @@ class WorksheetFileController extends Controller
         $this->repo = $repo;
     }
 
+
+
+    /**
+     * Список фаилов в РЛ
+     */
     public function index(Worksheet $worksheet)
     {
         return response()->json([
@@ -34,6 +39,11 @@ class WorksheetFileController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Загрузить фаил
+     */
     public function store(Worksheet $worksheet, Request $request)
     {
         $res = collect($this->repo->saveFiles($worksheet, $request->allFiles()));
@@ -55,6 +65,11 @@ class WorksheetFileController extends Controller
         ]);
     }
 
+
+
+    /**
+     * Удалить фаил
+     */
     public function delete(WorksheetFile $worksheetfile)
     {
         Comment::add($worksheetfile, 'delete');

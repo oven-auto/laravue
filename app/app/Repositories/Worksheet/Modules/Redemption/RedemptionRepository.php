@@ -11,6 +11,21 @@ use App\Models\WSMRedemptionLink;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Support\Arr;
 
+/**
+ * РЕПОЗИТОРИЙ ОЦЕНОК
+ * - ПОЛУЧИТЬ ВСЕ ОЦЕНКИ ИЗ РАБОЧЕГО ЛИСТА
+ * - ПОЛУЧИТЬ СПИСОК ОЦЕНОК ВВИДЕ ПАГИНАЦИИ, ПО ОПРЕДЕЛЕННЫМ ПАРАМЕТРАМ
+ * - ПОЛУЧИТЬ КОЛ-ВО ОЦЕНОК, ПО ОПРЕДЕЛЕННЫМ ПАРАМЕТРАМ
+ * - СОЗДАТЬ ОЦЕНКУ АВТОМОБИЛЯ В РАМАХ РЛ
+ * - ИЗМЕНИТЬ ОЦЕНКУ
+ * - ПЕРЕВЕСТИ МАШИНУ НА СКЛАД
+ * - СОХРАНИТЬ СВОДНЫЕ ДАННЫЕ ОЦЕНКИ
+ * - ПРОВЕРИТЬ МАШИНУ , ЧТО ОНА НЕ СОДЕРЖИТСЯ В ОЦЕНКЕ В РАМКАХ ОДНОГО РЛ
+ * - СОХРАНИТЬ ССЫЛКУ В ОЦЕНКУ
+ * - ЗАВЕРШИТЬ ОЦЕНКУ
+ *
+ * 16-01-2024
+ */
 Class RedemptionRepository
 {
     /**
@@ -23,7 +38,8 @@ Class RedemptionRepository
         $query = WSMRedemptionCar::select('wsm_redemption_cars.*');
 
         $query->with([
-            'offers', 'calculations', 'purchases', 'status', 'author', 'client_car', 'car_sale_sign', 'links', 'status'
+            'offers', 'calculations', 'purchases', 'status', 'author',
+            'client_car', 'car_sale_sign', 'links', 'status'
         ]);
 
         if($worksheet)
@@ -34,7 +50,15 @@ Class RedemptionRepository
         return $redemptions;
     }
 
-    public function paginate(array $data, $paginate = 20)
+
+
+    /**
+     * ПОЛУЧИТЬ СПИСОК ОЦЕНОК ВВИДЕ ПАГИНАЦИИ, ПО ОПРЕДЕЛЕННЫМ ПАРАМЕТРАМ
+     * @param array $data
+     * @param int $paginate
+     * @return \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function paginate(array $data, $paginate = 20) : \Illuminate\Contracts\Pagination\Paginator
     {
         $query = WSMRedemptionCar::select('wsm_redemption_cars.*');
 
@@ -52,7 +76,14 @@ Class RedemptionRepository
         return $result;
     }
 
-    public function count(array $data)
+
+
+    /**
+     * ПОЛУЧИТЬ КОЛ-ВО ОЦЕНОК, ПО ОПРЕДЕЛЕННЫМ ПАРАМЕТРАМ
+     * @param array $data
+     * @return int
+     */
+    public function count(array $data) : int
     {
         $subQuery = WSMRedemptionCar::select('wsm_redemption_cars.id');
 
@@ -64,6 +95,8 @@ Class RedemptionRepository
 
         return $res;
     }
+
+
 
     /**
      * СОЗДАТЬ ОЦЕНКУ АВТОМОБИЛЯ В РАМАХ РЛ
@@ -93,6 +126,8 @@ Class RedemptionRepository
         return $redemption;
     }
 
+
+
     /**
      * ИЗМЕНИТЬ ОЦЕНКУ
      * @param WSMRedemptionCar $redemption
@@ -112,7 +147,14 @@ Class RedemptionRepository
         return $redemption;
     }
 
-    public function buyCar(WSMRedemptionCar $redemption)
+
+
+    /**
+     * ПЕРЕВЕСТИ МАШИНУ НА СКЛАД
+     * @param WSMRedemptionCar $redemption
+     * @return void
+     */
+    public function buyCar(WSMRedemptionCar $redemption) : void
     {
         if(!$redemption->last_purchase->price)
             throw new \Exception('Фактический закуп не заполнен, не могу перенести такой автомобиль на склад');
@@ -132,9 +174,10 @@ Class RedemptionRepository
         $carData['author_id'] = auth()->user()->id;
         $carData['wsm_redemption_car_id'] = $redemption->id;
         $carData['purchase_price'] = $redemption->last_purchase->price;
-        $userCar = UsedCar::create(Arr::except($carData, ['created_at','updated_at','client_id','actual','editor_id']));
-
+        UsedCar::create(Arr::except($carData, ['created_at','updated_at','client_id','actual','editor_id']));
     }
+
+
 
     /**
      * СОХРАНИТЬ СВОДНЫЕ ДАННЫЕ ОЦЕНКИ (РАСЧЕТНАЯ ЦЕНА, ПРЕДЛОЖЕНИЕ, ФАКТ)
@@ -169,6 +212,8 @@ Class RedemptionRepository
             ]);
     }
 
+
+
     /**
      * ПРОВЕРИТЬ МАШИНУ , ЧТО ОНА НЕ СОДЕРЖИТСЯ В ОЦЕНКЕ В РАМКАХ ОДНОГО РЛ
      * @param Worksheet $worksheet ID Рабочего листа
@@ -184,6 +229,8 @@ Class RedemptionRepository
         if($check)
             throw new \Exception('Оценка этого автомобиля уже проводится в рамках данного рабочего листа');
     }
+
+
 
     /**
      * СОХРАНИТЬ ССЫЛКУ В ОЦЕНКУ
@@ -203,6 +250,8 @@ Class RedemptionRepository
         return $link;
     }
 
+
+
     /**
      * ЗАВЕРШИТЬ ОЦЕНКУ
      * @param WSMRedemptionCar $redemption
@@ -219,4 +268,10 @@ Class RedemptionRepository
             $redemption->final_author()->create(['author_id' => auth()->user()->id]);
         }
     }
+
+
+
+    /**
+     *
+     */
 }

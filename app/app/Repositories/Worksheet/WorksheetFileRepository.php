@@ -14,19 +14,15 @@ Class WorksheetFileRepository
         $this->service = $service;
     }
 
-    public function getByParam(Array $data)
-    {
-        // $query = WorksheetFileModel::query();
 
-        // if(isset($data['client_id']))
-        //     $query->where('client_id', $data['client_id']);
 
-        // $files = $query->orderBy('id','DESC')->get();
-
-        // return $files;
-    }
-
-    public function saveFiles(\App\Models\Worksheet $worksheet, $files = [])
+    /**
+     * СОХРАНИТЬ ФАИЛ В РЛ
+     * @param \App\Models\Worksheet $worksheet
+     * @param array $files
+     * @return array
+     */
+    public function saveFiles(\App\Models\Worksheet $worksheet, $files = []) : array
     {
         $res = [];
 

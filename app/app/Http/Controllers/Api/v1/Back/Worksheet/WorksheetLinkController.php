@@ -13,6 +13,9 @@ use App\Services\Comment\Comment;
 
 class WorksheetLinkController extends Controller
 {
+    /**
+     * СПИСОК ВСЕХ ССЫЛОК РЛ
+     */
     public function index(Worksheet $worksheet, Request $request)
     {
         $links = $worksheet->links;
@@ -20,6 +23,11 @@ class WorksheetLinkController extends Controller
         return new LinkCollection($links);
     }
 
+
+
+    /**
+     * СОЗДАТЬ ССЫЛКУ
+     */
     public function store(Worksheet $worksheet, Request $request)
     {
         $link = $worksheet->links()->create([
@@ -35,6 +43,11 @@ class WorksheetLinkController extends Controller
         ]);
     }
 
+
+
+    /**
+     * УДАЛИТЬ ССЫЛКУ
+     */
     public function delete(WorksheetLink $worksheetLink)
     {
         Comment::add($worksheetLink, 'delete');

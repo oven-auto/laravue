@@ -40,6 +40,8 @@ class WorksheetActionController extends Controller
         return new \App\Http\Resources\Worksheet\Action\ActionSaveResource($worksheet->last_action);
     }
 
+
+
     /**
      * Добавить пользовательский комментарий
      */
@@ -47,6 +49,8 @@ class WorksheetActionController extends Controller
     {
         return new CommentSaveResource(Comment::text(WorksheetAction::find($request->action_id), $request->text));
     }
+
+
 
     /**
      * Записать комментарий для подтверждения/отмены события
