@@ -25,6 +25,8 @@ Class WorksheetExecutorComment extends AbstractComment
         ];
     }
 
+
+
     public function attach(CommentInterface $model)
     {
         $user = User::find($model->user_id);
@@ -34,11 +36,35 @@ Class WorksheetExecutorComment extends AbstractComment
         ]);
     }
 
+
+
     public function detach(CommentInterface $model)
     {
-        $user = USer::find($model->user_id);
+        $user = User::find($model->user_id);
         return array_merge($this->data, [
             'text' => 'Удален ответственный '.$user->cut_name,
+            'type' => 1
+        ]);
+    }
+
+
+
+    public function report(CommentInterface $model)
+    {
+        $user = User::find($model->user_id);
+        return array_merge($this->data, [
+            'text' => 'Пользователь отчитался за рабочий лист '.$user->cut_name,
+            'type' => 1
+        ]);
+    }
+
+
+
+    public function deport(CommentInterface $model)
+    {
+        $user = User::find($model->user_id);
+        return array_merge($this->data, [
+            'text' => 'Отчет пользователя '.$user->cut_name. ' отменен',
             'type' => 1
         ]);
     }

@@ -2,16 +2,16 @@
 
 namespace App\Http\Filters;
 
+use App\Models\SubAction;
 use Illuminate\Database\Eloquent\Builder;
 
-Class WorksheetListFilter extends AbstractFilter
+Class WorksheetSubActionFilter extends AbstractFilter
 {
     public const SHOW = 'show';
     public const CONTROL_DATE = 'control_date';
     public const EXECUTOR_IDS = 'executor_ids';
     public const DATE_FOR_CLOSING = 'date_for_closing';
-    public const OPENING = ['work'];
-    public const CLOSING = ['confirm','abort','check'];
+
     public const INIT = 'init';
 
     public function __construct(array $queryParams)
@@ -34,12 +34,7 @@ Class WorksheetListFilter extends AbstractFilter
     public function init(Builder $builder)
     {
         $builder
-            ->select('worksheets.*')
-            ->leftJoin('worksheet_actions', function($join) {
-                $join->on('worksheet_actions.worksheet_id','worksheets.id');
-            })
-            ->groupBy('worksheets.id')->groupBy('worksheet_actions.begin_at')
-            ->orderBy('worksheet_actions.begin_at');
+            ->orderBy('sub_actions.id');
     }
 
     public function dateForClosing(Builder $builder, $value)
@@ -53,11 +48,11 @@ Class WorksheetListFilter extends AbstractFilter
     {
         switch( $value ) {
             case 'opening':
-                $builder->whereIn('worksheets.status_id', self::OPENING);
+                $builder->where('sub_actions.status', \App\Models\SubAction::STATUS_SYNONIM['work']);
                 break;
 
             case 'closing':
-                $builder->whereIn('worksheets.status_id', self::CLOSING);
+                $builder->where('sub_actions.status', \App\Models\SubAction::STATUS_SYNONIM['close']);
                 break;
         }
     }
@@ -67,17 +62,17 @@ Class WorksheetListFilter extends AbstractFilter
         $date = $this->formatDate($value);
 
         if(now()->format('Y-m-d') >= $date)
-            $builder->whereDate('worksheet_actions.begin_at', '<=', $date);
+            $builder->whereDate('sub_actions.created_at', '<=', $date);
         else
-            $builder->whereDate('worksheet_actions.begin_at', '=', $date);
+            $builder->whereDate('sub_actions.created_at', '=', $date);
     }
 
     public function executorIds(Builder $builder, $value)
     {
-        $builder->leftJoin('worksheet_executors','worksheet_executors.worksheet_id','worksheets.id');
+        $builder->leftJoin('sub_action_executors','sub_action_executors.sub_action_id','sub_actions.id');
 
         $builder->where(function($query) use ($value){
-            $query->whereIn('worksheet_executors.user_id', $value);
+            $query->whereIn('sub_action_executors.user_id', $value);
         });
     }
 }

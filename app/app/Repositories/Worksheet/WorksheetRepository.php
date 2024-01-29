@@ -2,12 +2,14 @@
 
 namespace App\Repositories\Worksheet;
 
+use App\Models\SubAction;
 use App\Models\Task;
 use App\Models\Worksheet;
 use App\Models\Trafic;
 use App\Repositories\Client\ClientRepository;
 use App\Services\Comment\Comment;
 use App\Services\Worksheet\ActionSave;
+use stdClass;
 
 /**
  * РЕПОЗИТОРИЙ РАБОЧЕГО ЛИСТА
@@ -22,6 +24,7 @@ use App\Services\Worksheet\ActionSave;
  * - ВЕРНУТЬ РЛ В РАБОТУ
  *
  * 11-09-2023
+ *
  */
 class WorksheetRepository
 {
@@ -180,7 +183,7 @@ class WorksheetRepository
      * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getWorksheetsForTaskList(array $data) : \Illuminate\Database\Eloquent\Collection
+    public function getWorksheetsForTaskList(array $data) //: \Illuminate\Database\Eloquent\Collection
     {
         $filter = app()->make(\App\Http\Filters\WorksheetListFilter::class, ['queryParams' => array_filter($data)]);
 
@@ -188,9 +191,55 @@ class WorksheetRepository
             ->with(['last_action.task','author', 'executors','company','structure', 'appeal','client.type'])
             ->filter($filter);
 
-        $result = $query->get();
+        $result = $query->get()->map(fn($item) => (object)[
+            'id'                => $item->id,
+            'type'              => $item->last_action->task->name,
+            'status'            => $item->last_action->statusMsg(),
+            'client'            => $item->client->fullNameOrType,
+            'begin_at'          => $item->last_action->begin_at->format('d.m.Y (H:i)'),
+            'end_at'            => $item->last_action->end_at->format('d.m.Y (H:i)'),
+            'appeal'            => $item->appeal->name,
+            'comment'           => $item->last_action->last_user_comment->text,
+            'author'            => $item->author->cut_name,
+            'managers'          => $item->executors->map(fn($executor) => $executor->cut_name)->toArray(),
+            'worksheet_status'  => $item->status->name,
+            'salon'             => $item->company->name,
+            'structure'         => isset($item->structure) ? $item->structure->name : '',
+            'sub_action_id'     => '',
+            'reporters'         => [],
+        ])->toArray();
 
         return $result;
+    }
+
+    public function getSubActionForTaskList(array $data)
+    {
+        $filterSubAction = app()->make(\App\Http\Filters\WorksheetSubActionFilter::class, ['queryParams' => array_filter($data)]);
+        $querySubAction = SubAction::query()
+            ->with(['worksheet', 'executors','reporters'])
+            ->filter($filterSubAction);
+
+        $resultSubAction = $querySubAction->get();
+
+        $resultSubAction = $querySubAction->get()->map(fn($item) => (object)[
+            'id'                => $item->worksheet_id,
+            'type'              => '',
+            'status'            => SubAction::STATUSES[$item->status],
+            'client'            => $item->title,
+            'begin_at'          => $item->created_at->format('d.m.Y (H:i)'),
+            'end_at'            => $item->created_at->addMinutes($item->duration)->format('d.m.Y (H:i)'),
+            'appeal'            => '',
+            'comment'           => '',
+            'author'            => $item->author->cut_name,
+            'managers'          => $item->executors->map(fn($executor) => $executor->cut_name)->toArray(),
+            'worksheet_status'  => '',
+            'salon'             => '',
+            'structure'         => '',
+            'sub_action_id'     => $item->id,
+            'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray()
+        ])->toArray();
+
+        return $resultSubAction;
     }
 
 

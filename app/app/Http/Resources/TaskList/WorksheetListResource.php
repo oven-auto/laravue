@@ -15,21 +15,21 @@ class WorksheetListResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'        => $this->id,
-            'type'      => $this->last_action->task->name,
-            'status'    => $this->last_action->statusMsg(),
-            'client'    => $this->client->fullNameOrType,
-            'begin_at'  => $this->last_action->begin_at->format('d.m.Y (H:i)'),
-            'end_at'    => $this->last_action->end_at->format('d.m.Y (H:i)'),
-            'appeal'    => $this->appeal->name,
-            'comment'   => $this->last_action->last_user_comment->text,
-            'author'    => $this->author->cut_name,
-            'managers'  => $this->executors->map(function($executor){
-                return $executor->cut_name;
-            }),
-            'worksheet_status' => $this->status->name,
-            'salon' => $this->company->name,
-            'structure' => isset($this->structure) ? $this->structure->name : '',
+            'id'                => $this->id,
+            'type'              => $this->type,
+            'status'            => $this->status,
+            'client'            => $this->client,
+            'begin_at'          => $this->begin_at,
+            'end_at'            => $this->end_at,
+            'appeal'            => $this->appeal,
+            'comment'           => $this->comment,
+            'author'            => $this->author,
+            'managers'          => $this->managers,
+            'worksheet_status'  => $this->worksheet_status,
+            'salon'             => $this->salon,
+            'structure'         => $this->structure,
+            'sub_action_id'     => $this->sub_action_id,
+            'reporters'         => $this->reporters,
         ];
     }
 }

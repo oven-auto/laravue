@@ -39,9 +39,9 @@ class SubActionResource extends JsonResource
                         'name' => $itemReporter->cut_name,
                     ];
                 }),
-                'comment' => $this->comments->last() ? [
-                    'text' => $this->comments->last()->text,
-                    'author' => $this->comments->last()->author->cut_name,
+                'comment' => $this->comments->first() ? [
+                    'text' => $this->comments->first()->text,
+                    'author' => $this->comments->first()->author->cut_name,
                 ] : [],
             ],
             'success' => 1,

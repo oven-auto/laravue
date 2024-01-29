@@ -35,7 +35,7 @@ class WorksheetShow
             $arr[] = 'ws_show_author';
 
         //where i`m executor
-        if($worksheet->executors->contains('id', $user->id) && $userPermissions->contains('slug', 'ws_show_executor'))
+        if($worksheet->reporters->contains('id', $user->id) || $worksheet->executors->contains('id', $user->id) && $userPermissions->contains('slug', 'ws_show_executor'))
             return $next($request);
         else
             $arr[] = 'ws_show_executor';

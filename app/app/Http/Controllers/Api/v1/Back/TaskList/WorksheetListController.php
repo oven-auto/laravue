@@ -13,7 +13,11 @@ class WorksheetListController extends Controller
     {
         $worksheets = $repo->getWorksheetsForTaskList($request->all());
 
-        return (new WorksheetListCollection($worksheets));
+        $subAction = $repo->getSubActionForTaskList($request->all());
+
+        $merged = collect(array_merge($worksheets, $subAction))->sortBy('begin_at');
+
+        return (new WorksheetListCollection($merged));
     }
 }
 

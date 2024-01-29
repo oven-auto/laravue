@@ -20,10 +20,12 @@ class CommentListResource extends JsonResource
                 return [
                     'created_at' => $item->created_at->format('d.m.Y (H:i)'),
                     'text' => $item->text,
-                    'writer' => $item->author->cut_name,
+                    'writer' => $item->writer,
                     'status' => $item->status,
                     'type' => $item->type,
-                    'author_id' => $item->author_id
+                    'author_id' => $item->author_id,
+                    'context' => $item->context,
+                    'color' => $item->color
                 ];
             }),
             'success' => 1

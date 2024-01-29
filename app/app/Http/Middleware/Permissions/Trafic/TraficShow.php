@@ -2,8 +2,10 @@
 
 namespace App\Http\Middleware\Permissions\Trafic;
 
+use App\Models\Trafic;
 use Closure;
 use Illuminate\Http\Request;
+use \Illuminate\Pipeline\Pipeline;
 
 class TraficShow
 {
@@ -21,6 +23,10 @@ class TraficShow
         foreach($userPermissions as $item)
             if($item->slug == $permission)
                  return $next($request);
+
+        $trafic = Trafic::findOrFail($request->trafic);
+        if($trafic->isTraficFromEnabledWorksheet())
+            return $next($request);
 
         //Получение текущего права, что бы вернуть исключение
         $permission = \App\Models\Permission::where('slug', $permission)->first();

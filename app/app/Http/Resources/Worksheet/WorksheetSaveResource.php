@@ -63,8 +63,13 @@ class WorksheetSaveResource extends JsonResource
                 'links' => $this->links_count,
                 'files' => $this->files_count,
                 'available_modules' => $this->modul_list(),
+                'reporters' => $this->reporters->map(fn($item) => [
+                    'id' => $item->id,
+                    'name' => $item->cut_name,
+                ]),
             ],
             'success' => 1,
+
         ];
     }
 }

@@ -3,7 +3,8 @@
 namespace App\Repositories\Worksheet\SubAction;
 
 use App\Models\SubAction;
-use Exception;
+use App\Services\Worksheet\WorksheetUser;
+use App\Models\User;
 use \Illuminate\Database\Eloquent\Collection;
 
 /**
@@ -19,6 +20,7 @@ use \Illuminate\Database\Eloquent\Collection;
  * 9 - ПОЛУЧИТЬ ВСЕ КОММЕНТАРИИ ПОДЗАДАЧИ В ВИДЕ МАССИВА
  *
  * 16-01-2024
+ *
  */
 Class SubActionRepository
 {
@@ -29,7 +31,7 @@ Class SubActionRepository
      */
     public function getAllByWorksheetId(int $worksheetId) : Collection
     {
-        $result = SubAction::where('worksheet_id', $worksheetId)->get();
+        $result = SubAction::where('worksheet_id', $worksheetId)->orderBy('id','DESC')->get();
 
         return $result;
     }
@@ -44,12 +46,19 @@ Class SubActionRepository
      */
     public function save(SubAction $subAction, array $data) : void
     {
-        $subAction->author_id = auth()->user()->id;
+        if(!$subAction->author_id)
+            $subAction->author_id = auth()->user()->id;
+
+        if($subAction->title && $subAction->title != $data['title'])
+            $this->writeComment($subAction, 'Изменено название задачи, новое название '.$data['title']);
 
         $subAction->fill([
             'worksheet_id' => $data['worksheet_id'],
             'title' => $data['title'],
         ])->save();
+
+        if(!isset($data['executors']))
+            $data['executors'] = [auth()->user()->id];
 
         if(isset($data['executors']))
             $this->setExecutors($subAction, $data['executors']);
@@ -58,6 +67,8 @@ Class SubActionRepository
             $this->writeComment($subAction, $data['comment']);
 
         $subAction->refresh();
+
+        $subAction->load(['comments', 'executors']);
     }
 
 
@@ -84,9 +95,18 @@ Class SubActionRepository
     public function setExecutors(SubAction $subAction, array $executorsArray) : void
     {
         $originalExecutorsArray = $subAction->executors->pluck('id')->toArray();
+
         $executorsArray[] = auth()->user()->id;
+
         $executorsArray = array_merge($executorsArray, $originalExecutorsArray);
+
         $subAction->executors()->sync($executorsArray);
+
+        WorksheetUser::attach(
+            \App\Models\Worksheet::findOrFail($subAction->worksheet_id),
+            \App\Models\User::whereIn('id', $executorsArray)->get()
+        );
+
         $subAction->load('executors');
     }
 
@@ -112,13 +132,20 @@ Class SubActionRepository
      * @param int $reporterId
      * @return void
      */
-    public function report(SubAction $subAction, int $reporterId) : void
+    public function report(SubAction|int $subAction, int|User $reporterId) : void
     {
-        if($subAction->executors->contains('id', $reporterId))
-        {
-            $subAction->reporters()->attach($reporterId);
-            $this->removeExecutor($subAction, $reporterId);
-        }
+        if(is_numeric($subAction))
+            $subAction = SubAction::findOrFail($subAction);
+
+        if(is_numeric($reporterId))
+            $reporterId = User::findOrFail($reporterId);
+
+        if(!$subAction->executors->contains('id', $reporterId->id))
+            throw new \Exception('Вы не являетесь участником задачи');
+
+        $subAction->reporters()->attach($reporterId->id);
+
+        $this->removeExecutor($subAction, $reporterId->id);
     }
 
 

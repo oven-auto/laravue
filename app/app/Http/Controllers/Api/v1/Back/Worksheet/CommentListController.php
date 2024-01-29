@@ -5,14 +5,23 @@ namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Worksheet\Action\CommentListRequest;
 use App\Http\Resources\Worksheet\Action\CommentListResource;
-use App\Services\Worksheet\Comment;
+use App\Repositories\Worksheet\CommentHistory\HistoryRepository;
 
 class CommentListController extends Controller
 {
-    public function list(CommentListRequest $request, Comment $service)
+    public function list(CommentListRequest $request, HistoryRepository $history)
     {
-        $comments = $service->getAllCommentInWorksheet($request->input());
+        $comments[] = $history->getWorksheetHistory(\App\Models\WorksheetActionComment::class, $request->all());
 
-        return new CommentListResource($comments);
+        $comments[] = $history->getWorksheetHistory(\App\Models\SubActionComment::class, $request->all());
+
+        $collect = collect();
+
+        foreach($comments as $item)
+            $collect = $collect->merge($item);
+
+        $collect = $collect->sortBy(['created_at'])->reverse()->values();
+
+        return new CommentListResource($collect);
     }
 }

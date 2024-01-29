@@ -406,4 +406,14 @@ class Trafic extends Model implements CommentInterface
 
         return $result;
     }
+
+    public function isTraficFromEnabledWorksheet()
+    {
+        $executors = $this->worksheet->executors;
+        $reporters = $this->worksheet->reporters;
+        $users = $executors->merge($reporters);
+        if($users->contains('id', auth()->user()->id))
+            return true;
+        return false;
+    }
 }

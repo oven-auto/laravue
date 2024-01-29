@@ -311,6 +311,8 @@ Class WorksheetFilter extends AbstractFilter
         if(!$this->checkJoin($builder, 'client_emails'))
             $builder->leftJoin('client_emails', 'client_emails.client_id','clients.id');
 
+        //$builder->leftJoin('sub_actions', 'sub_actions.worksheet_id', 'worksheets.id');
+
         $builder->where(function($query) use ($value)
         {
             if(preg_match('/\s/',$value))
@@ -345,6 +347,8 @@ Class WorksheetFilter extends AbstractFilter
             $query->orWhere('client_inns.number', 'like', '%'. $value.'%');
 
             $query->orWhere('worksheets.id', $value);
+
+            //$query->orWhere('sub_actions.id', $value);
         });
     }
 }

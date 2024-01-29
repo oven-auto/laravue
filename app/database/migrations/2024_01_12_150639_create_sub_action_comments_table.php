@@ -18,6 +18,7 @@ class CreateSubActionCommentsTable extends Migration
             $table->foreignId('sub_action_id')->references('id')->on('sub_actions')->onDelete('cascade')->onUpdate('cascade');
             $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade')->onUpdate('cascade');
             $table->text('text');
+            $table->integer('type')->default(0);
             $table->timestamps();
         });
     }

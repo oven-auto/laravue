@@ -30,6 +30,13 @@ class Worksheet extends Model
         return false;
     }
 
+    public function canIChange()
+    {
+        $user = auth()->user();
+
+        $appeal = $user->appeals->contains('id', $this->appeal_id);
+    }
+
     public function getCreatedDateAttribute()
     {
         return $this->created_at ? $this->created_at->format('d.m.Y') : '';
@@ -135,5 +142,10 @@ class Worksheet extends Model
     public function redemptions()
     {
         return $this->hasMany(\App\Models\WSMRedemptionCar::class, 'worksheet_id', 'id');
+    }
+
+    public function reporters()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'worksheet_reporters', 'worksheet_id');
     }
 }

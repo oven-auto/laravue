@@ -4,6 +4,7 @@ namespace App\Http\Middleware\Permissions\Trafic;
 
 use Closure;
 use Illuminate\Http\Request;
+Use App\Models\Trafic;
 
 class TraficShowAlien
 {
@@ -39,6 +40,10 @@ class TraficShowAlien
         );
 
         if($boolRes)
+            return $next($request);
+
+        $trafic = Trafic::findOrFail($request->trafic);
+        if($trafic->isTraficFromEnabledWorksheet())
             return $next($request);
 
         //Получение текущего права, что бы вернуть исключение

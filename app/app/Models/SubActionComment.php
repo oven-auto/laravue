@@ -2,12 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\IAmComment;
+use App\Models\Traits\GetCommentData;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class SubActionComment extends Model
+class SubActionComment extends Model implements IAmComment
 {
-    use HasFactory;
+    use HasFactory, GetCommentData;
 
     protected $guarded = [];
 

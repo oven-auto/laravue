@@ -8,29 +8,21 @@ use App\Models\Trafic;
 
 Class WorksheetCheck
 {
+    /**
+     * ПРОВЕРКА РАБОЧЕГО ЛИСТА ПРИ СОЗДАНИЕ НА НАЛИЧИЕ УЖЕ СОЗДАННОГО С ТАКИМИ ЖЕ ПАРАМЕТРАМИ
+     */
     public static function check(Client $client, Trafic $trafic)
     {
         $worksheets = $client->open_worksheets;
-        $worksheetExistArray = [];
-        // dump([
-        //     'trafic_company' => $trafic->company_id,
-        //     'trafic_structure' => $trafic->structure->id,
-        // ]);
 
         foreach ($worksheets as $item)
         {
-            // dump([
-            //     'ws_company_id' => $item->company_id,
-            //     'ws_stucture' => $item->structure_id,
-            // ]);
-            if(
-                //$item->appeal_id == $trafic->appeal_id &&
-                $item->structure_id == $trafic->structure->id &&
-                $item->company_id == $trafic->company_id
-            )
-            {
+            $isAppeal = $item->appeal->id == $trafic->appeal->id;
+            $isCompany = $item->company_id == $trafic->company_id;
+            $isStructure = $item->structure_id == $trafic->structure->id;
+
+            if($isAppeal && $isCompany && $isStructure)
                 return new WorksheetSaveResource($item);
-            }
         }
 
         return 0;

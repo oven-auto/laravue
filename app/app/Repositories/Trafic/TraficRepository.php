@@ -35,8 +35,6 @@ Class TraficRepository
             return now();
         else
             return date('Y-m-d H:i',\strtotime($string));
-
-        return date('Y-m-d H:i:s');
     }
 
 
@@ -50,7 +48,7 @@ Class TraficRepository
     public function save(Trafic $trafic, $data) : Trafic
     {
         if(!$trafic->created_at)
-            $trafic->created_at = isset($data['time']) ?? $this->createDate($data['time']);
+            $trafic->created_at = isset($data['time']) ? $this->createDate($data['time']) : now();
 
         $trafic->fill([
             'author_id'             => $data['author_id'] ?? $trafic->author_id,

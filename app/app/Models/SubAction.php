@@ -5,20 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Interfaces\CommentInterface;
+use App\Models\Traits\Filterable;
 
 class SubAction extends Model implements CommentInterface
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $guarded = [];
 
-    private const STATUSES = [
+    public const STATUSES = [
         1 => 'В работе',
         2 => 'На проверке',
         3 => 'Закрыто'
     ];
 
-    private const STATUS_SYNONIM = [
+    public const STATUS_SYNONIM = [
         'work' => 1,
         'check' => 2,
         'close' => 3
@@ -26,7 +27,7 @@ class SubAction extends Model implements CommentInterface
 
     public function writeComment(array $data)
     {
-        return 1;
+        return SubActionComment::create($data);
     }
 
     public function isWork()
@@ -83,6 +84,6 @@ class SubAction extends Model implements CommentInterface
 
     public function comments()
     {
-        return $this->hasMany(\App\Models\SubActionComment::class, 'sub_action_id', 'id');
+        return $this->hasMany(\App\Models\SubActionComment::class, 'sub_action_id', 'id')->orderBy('id', 'DESC');
     }
 }

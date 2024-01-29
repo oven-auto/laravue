@@ -517,6 +517,13 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 });
 
 Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Worksheet')->group(function() {
+    /**
+     * ОТЧИТАТЬСЯ ЗА РАБОЧИЙ ЛИСТ, ЛИБО ОТМЕНИТЬ ОТЧЕТ
+     */
+    Route::prefix('report')->group(function() {
+        Route::patch('', 'WorksheetReportController@report');
+        Route::delete('', 'WorksheetReportController@deport');
+    });
 
     /**
      * ССЫЛКИ РЛ
