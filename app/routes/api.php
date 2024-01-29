@@ -653,6 +653,7 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
 Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
     Route::get('deliver/brands', 'Deliver\BrandController');
     Route::get('deliver/marks', 'Deliver\MarkController');
+    Route::get('gain/brands', 'Gain\BrandController');
 });
 
 /**

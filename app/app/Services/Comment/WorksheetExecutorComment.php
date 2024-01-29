@@ -53,7 +53,7 @@ Class WorksheetExecutorComment extends AbstractComment
     {
         $user = User::find($model->user_id);
         return array_merge($this->data, [
-            'text' => 'Пользователь отчитался за рабочий лист '.$user->cut_name,
+            'text' => 'Участник отчитался и больше не отслеживает рабочий лист',
             'type' => 1
         ]);
     }

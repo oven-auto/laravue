@@ -143,20 +143,20 @@ class WorksheetRepository
      */
     public function counter(array $data) : int
     {
-        $this->setDefaultStatus($data);
-
         $query = Worksheet::query();
 
-        $subQuery = Worksheet::query()->select('worksheets.id');
+        $subQuery = Worksheet::query()->select('worksheets.*');
 
         $this->filter($subQuery,$data);
+
+        //dd($subQuery->dd());
 
         $query->rightJoinSub($subQuery, 'subQuery', function($join){
 
             $join->on('subQuery.id','=','worksheets.id');
 
         });
-
+        //dd($data);
         $result = $query->count();
 
         return $result;

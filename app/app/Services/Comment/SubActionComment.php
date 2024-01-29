@@ -72,7 +72,7 @@ Class SubActionComment extends AbstractComment
             $user = User::find($data['reporter']);
             if($user)
                 return array_merge($this->data, [
-                    'text' => 'Я отчитался и больше не отслеживаю задачу',
+                    'text' => 'Сотрудник отчитался и больше не отслеживаю задачу',
                     'type' => 0,
                 ]);
         }
@@ -85,7 +85,7 @@ Class SubActionComment extends AbstractComment
             $user = User::find($data['reporter']);
             if($user)
                 return array_merge($this->data, [
-                    'text' => 'Отчет участника '.$user->cut_name.' по задаче '.$model->id.' отменен',
+                    'text' => 'Отчет сотрудника '.$user->cut_name.' по задаче '.$model->id.' отменен',
                     'type' => 0
                 ]);
         }

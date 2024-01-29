@@ -12,21 +12,25 @@ class BrandController extends Controller
     {
         $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
 
-        $url = 'https://appraisal.api.cm.expert/v1/autocatalog/brands';
+        //$url = 'https://lk.cm.expert/api/v1/cars/appraisals/requests';
+        //$url = 'https://lk.cm.expert/api/v1//cars/appraisals';
+        $url = 'https://lk.cm.expert/api/v1/doc#!/105410941077108510821072/get_cars_appraisals';
 
         $response = Http::withHeaders([
             'Authorization' => $token
         ])->get($url, []);
 
-        foreach($response['brands'] as $item)
-            \App\Models\Brand::create([
-                'uid' => $item['id'],
-                'name' => $item['text'],
-                'slug' => \Str::slug($item['text'])
-            ]);
+        dd($response);
 
-        return response()->json([
-            'success' => 1
-        ]);
+        // foreach($response['brands'] as $item)
+        //     \App\Models\Brand::create([
+        //         'uid' => $item['id'],
+        //         'name' => $item['text'],
+        //         'slug' => \Str::slug($item['text'])
+        //     ]);
+
+        // return response()->json([
+        //     'success' => 1
+        // ]);
     }
 }

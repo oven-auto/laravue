@@ -42,4 +42,18 @@ Class WorksheetAuthor
 
         return $result;
     }
+
+    public static function getCount(array $data)
+    {
+        $filter = app()->make(\App\Http\Filters\WorksheetAnalyticFilter::class, ['queryParams' => array_filter($data)]);
+
+        $count = Worksheet::select([\DB::raw('COUNT(worksheets.id) as count'),])
+            ->where('worksheets.status_id','work')
+            ->filter($filter)
+            ->groupBy('worksheets.id')
+            ->get()
+            ->count();
+
+        return $count;
+    }
 }

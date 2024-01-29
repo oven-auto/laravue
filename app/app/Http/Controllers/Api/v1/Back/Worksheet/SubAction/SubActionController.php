@@ -123,7 +123,7 @@ class SubActionController extends Controller
     {
         $this->repo->removeExecutor(subAction: $subAction, executorId: $request->executor);
 
-        Comment::add($subAction, 'detach_executor', ['executor' => $request->executor]);
+        //Comment::add($subAction, 'detach_executor', ['executor' => $request->executor]);
 
         return (new SubActionUserCollection($subAction->executors))->additional(['message' => 'Исполнитель удален']);
     }
