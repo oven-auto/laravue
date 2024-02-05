@@ -14,14 +14,43 @@ Class TraficListFilter extends AbstractFilter{
     public const OPENING = [1,2,6];
     public const CLOSING = [3,4,5];
 
+    public const INIT = 'init';
+
+    public function __construct(array $queryParams)
+    {
+        $queryParams['init'] = 'init';
+        parent::__construct($queryParams);
+    }
+
     protected function getCallbacks(): array
     {
         return [
+
             self::SHOW              => [$this, 'show'],
             self::CONTROL_DATE      => [$this, 'controlDate'],
             self::MANAGER_ID        => [$this, 'managerId'],
             self::DATE_FOR_CLOSING  => [$this, 'dateForClosing'],
+            self::INIT              => [$this, 'init'],
+
         ];
+    }
+
+    public function init(Builder $builder)
+    {
+        if(!$this->getQueryParam('date_for_closing'))
+        {
+            //Получить ожидающие которые может обработать пользователь
+            //добавляем таблицу ссылок цели обращения
+            $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');
+            $builder->orWhere(function($q){
+                //только ожидающие
+                $q->where('trafics.trafic_status_id',1);
+                //цель должна быть у пользователя
+                $q->whereIn('trafic_appeals.appeal_id', auth()->user()->appeals->pluck('id'));
+                //структура трафика равна структуре цели обращения
+                $q->whereIn('trafics.company_structure_id', auth()->user()->structures->pluck('company_structure_id'));
+            });
+        }
     }
 
     public function show(Builder $builder, $value)

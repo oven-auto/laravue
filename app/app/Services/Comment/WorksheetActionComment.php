@@ -27,7 +27,7 @@ Class WorksheetActionComment extends AbstractComment
     {
         return array_merge($this->data, [
             'text' => 'Рабочий лист просматривался пользователем.',
-            'type' => 1
+            'type' => 2
         ]);
     }
 
@@ -42,24 +42,29 @@ Class WorksheetActionComment extends AbstractComment
     public function revert(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Возобновить работу в данном рабочем листе.',
-            'type' => 0
+            'text' => 'Рабочий лист отправлен на доработку.',
+            'type' => 1
         ]);
     }
 
     public function set_client(CommentInterface $model)
     {
         $model->load('worksheet');
+
+        $client = $model->worksheet->client;
+
         return array_merge($this->data, [
-            'text' => 'Новый клиент '.$model->worksheet->client->full_name,
+            'text' => 'Новый клиент '.$client->full_name.' ('.$client->phones->first()->phone.')',
             'type' => 1
         ]);
     }
 
     public function delete_client(CommentInterface $model)
     {
+        $client = $model->worksheet->client;
+
         return array_merge($this->data, [
-            'text' => 'Удален клиент '.$model->worksheet->client->full_name,
+            'text' => 'Старый клиент '.$client->full_name.' ('.$client->phones->first()->phone.')',
             'type' => 1
         ]);
     }
@@ -67,7 +72,7 @@ Class WorksheetActionComment extends AbstractComment
     public function register_action(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => "Актуальное событие: {$model->task->name} {$model->begin_at->format('d.m.Y (H:i)')}",
+            'text' => "Новое событие: {$model->task->name} {$model->begin_at->format('d.m.Y (H:i)')}",
             'type' => 1,
         ]);
     }

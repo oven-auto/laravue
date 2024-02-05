@@ -17,7 +17,7 @@ Class WorksheetUser
     * @param Worksheet $worksheet РЛ в который хотим добавить ответственных лицо
     * @param Collection $users Пользователи которых хотим сделать ответственными лицами
     */
-    public static function attach(Worksheet $worksheet, Collection $users) : void
+    public static function attach(Worksheet $worksheet, Collection $users, $comment = true) : void
     {
         //users from worksheet
         $currentUsers = $worksheet->executors;
@@ -27,9 +27,12 @@ Class WorksheetUser
         $currentUsers = $currentUsers->merge($users);
         //delete dublicate from users collection
         $currentUsers = $currentUsers->unique();
-        //
+        //check in reporters
         $filtered = $currentUsers->reject(fn($item) => $worksheet->reporters->contains('id', $item->id));
-
+        //add comment
+        if($comment)
+            Comment::add(self::commentModel($worksheet, new User()), 'attach',  $users);
+        //sync executors
         $worksheet->executors()->sync($filtered);
     }
 
@@ -40,8 +43,7 @@ Class WorksheetUser
     */
     public static function detach(Worksheet $worksheet, User $user) : void
     {
-        Comment::add(self::commentModel($worksheet, $user), 'detach');
-
+        //detach user from executor list
         $worksheet->executors()->detach($user->id);
     }
 
@@ -68,11 +70,11 @@ Class WorksheetUser
 
         if(!$worksheet->executors->contains('id', $user->id))
             throw new \Exception('Вы не можете отчитаться за рабочий лист, тк не являетесь его участником');
-
+        //append user to reporters list
         $worksheet->reporters()->attach($user->id);
-
+        //make comment
         Comment::add(self::commentModel($worksheet, $user), 'report');
-
+        //detach user from executors list
         self::detach($worksheet, $user);
     }
 
@@ -94,12 +96,14 @@ Class WorksheetUser
 
         if(!$worksheet->reporters->contains('id', $user->id))
             throw new \Exception('Пользователя нет в списке отчитавшихся');
-
+        //delete user from reporter list
         $worksheet->reporters()->detach($user->id);
-
+        //update reporters
+        $worksheet->load('reporters');
+        //make comment
         Comment::add(self::commentModel($worksheet, $user), 'deport');
-
-        self::attach($worksheet, collect([$user]));
+        //append user to executor list
+        self::attach($worksheet, collect([$user]), false);
     }
 
 

@@ -7,6 +7,7 @@ Trait GetCommentData
     public function getCommentData() : array
     {
         return [
+            'id'            => $this->id,
             'created_at'    => $this->created_at,
             'text'          => $this->text,
             'writer'        => $this->author->cut_name,

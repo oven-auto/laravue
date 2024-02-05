@@ -12,15 +12,36 @@ class BrandController extends Controller
     {
         $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
 
-        //$url = 'https://lk.cm.expert/api/v1/cars/appraisals/requests';
+        //$url = 'https://appraisal.api.cm.expert/v1/regions';
+        //$url = 'https://appraisal.api.cm.expert/v1/autocatalog/engines';
         //$url = 'https://lk.cm.expert/api/v1//cars/appraisals';
-        $url = 'https://lk.cm.expert/api/v1/doc#!/105410941077108510821072/get_cars_appraisals';
+        //$url = 'https://lk.cm.expert/api/v1/doc#!/105410941077108510821072/get_cars_appraisals';
+
+        $url = 'https://lk.cm.expert/api/v1/cars/appraisals/requests';
+
+        $mas = [
+            "contractType" => "tradein",
+            "customerPhone" => "89042748959",
+            "customerFirstName" => "ИВАН",
+            "brandId" => 87,
+            "modelId" => 3641,
+            "year" => 2020,
+            "mileage" => 1000,
+            "vehicleType" => "pc",
+            "body" => "sed",
+            "gear" => "mt",
+            "drive" => "fwd",
+            "engine" => "petrol",
+            "volume" => 1.6,
+            "power" => 106,
+            "dealerId" => 10591
+        ];
 
         $response = Http::withHeaders([
             'Authorization' => $token
-        ])->get($url, []);
+        ])->post($url, $mas);
 
-        dd($response);
+        dd($response->body());
 
         // foreach($response['brands'] as $item)
         //     \App\Models\Brand::create([

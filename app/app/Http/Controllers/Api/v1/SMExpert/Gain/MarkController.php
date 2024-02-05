@@ -12,36 +12,40 @@ class MarkController extends Controller
     {
         $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
 
-        $url = 'https://appraisal.api.cm.expert/v1/autocatalog/models';
+        $urlBodies = 'https://appraisal.api.cm.expert/v1/autocatalog/bodies';
+        $responseBodies = Http::withHeaders([
+            'Authorization' => $token
+        ])->get($urlBodies, []);
 
-        $brands = \App\Models\Brand::select(['uid','id'])->get();
+        $urlGears = 'https://appraisal.api.cm.expert/v1/autocatalog/gears';
+        $responseGears = Http::withHeaders([
+            'Authorization' => $token
+        ])->get($urlGears, []);
 
-        foreach($brands as $itemBrand)
-        {
-            $response = Http::withHeaders([
-                'Authorization' => $token
-            ])->get($url, [
-                'brand' => $itemBrand->uid
-            ]);
+        $urlDrives = 'https://appraisal.api.cm.expert/v1/autocatalog/drives';
+        $responseDrives = Http::withHeaders([
+            'Authorization' => $token
+        ])->get($urlDrives, []);
 
-            foreach($response['models'] as $itemModel)
-                \App\Models\Mark::create([
-                    'uid' => $itemModel['id'],
-                    'name' => $itemModel['text'],
-                    'slug' => \Str::slug($itemModel['text']),
-                    'brand_id' => $itemBrand->id,
-                ]);
-        }
+        $urlEngines = 'https://appraisal.api.cm.expert/v1/autocatalog/engines';
+        $responseEngines = Http::withHeaders([
+            'Authorization' => $token
+        ])->get($urlEngines, []);
 
-        // foreach($response['brands'] as $item)
-        //     \App\Models\Mark::create([
-        //         'uid' => $item['id'],
-        //         'name' => $item['text'],
-        //         'slug' => \Str::slug($item['text'])
-        //     ]);
+        $urlColors = 'https://appraisal.api.cm.expert/v1/autocatalog/colors';
+        $responseColors = Http::withHeaders([
+            'Authorization' => $token
+        ])->get($urlColors, []);
 
         return response()->json([
-            'success' => 12
+            'success' => 12,
+            'data' => [
+                $responseBodies->json(),
+                $responseGears->json(),
+                $responseDrives->json(),
+                $responseEngines->json(),
+                $responseColors->json()
+            ],
         ]);
     }
 }

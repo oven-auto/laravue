@@ -654,6 +654,7 @@ Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->g
     Route::get('deliver/brands', 'Deliver\BrandController');
     Route::get('deliver/marks', 'Deliver\MarkController');
     Route::get('gain/brands', 'Gain\BrandController');
+    Route::get('gain/test', 'Gain\MarkController');
 });
 
 /**

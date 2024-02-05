@@ -29,7 +29,7 @@ Class WorksheetSubClientComment extends AbstractComment
     {
         $client = Client::find($model->client_id);
         return array_merge($this->data, [
-            'text' => 'Добавлено новое контактное лицо '.$client->full_name,
+            'text' => 'Добавлено новое контактное лицо '.$client->full_name.' ('.$client->phones->first()->phone.')',
             'type' => 1
         ]);
     }
@@ -38,7 +38,7 @@ Class WorksheetSubClientComment extends AbstractComment
     {
         $client = Client::find($model->client_id);
         return array_merge($this->data, [
-            'text' => 'Удалено контактное лицо '.$client->full_name,
+            'text' => 'Удалено контактное лицо '.$client->full_name.' ('.$client->phones->first()->phone.')',
             'type' => 1
         ]);
     }

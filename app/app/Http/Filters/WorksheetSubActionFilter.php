@@ -39,9 +39,9 @@ Class WorksheetSubActionFilter extends AbstractFilter
 
     public function dateForClosing(Builder $builder, $value)
     {
-        //$date = $this->formatDate($value);
+        $date = $this->formatDate($value);
 
-        //$builder->whereDate('worksheet_actions.begin_at', '=', $date);
+        $builder->whereDate('sub_actions.closed_at', '=', $date);
     }
 
     public function show(Builder $builder, $value)

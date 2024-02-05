@@ -345,30 +345,27 @@ class Trafic extends Model implements CommentInterface
 
     public static function checkCanIClick(Trafic $trafic, $permission3)
     {
+        if($trafic->trafic_status_id == 6)
+            return true;
+
         $user = auth()->user();
+
         $userPermissions = $user->role->permissions;
 
-        //if($trafic->trafic_status_id == 1 && $userPermissions->contains('slug', $permission3))
-        //{
-            $userSalons = auth()->user()->companies;
-            $userStructures = auth()->user()->mystructures->map(fn($item) => ['id' => $item->structure->id]);
-            $userAppeals = auth()->user()->appeals;
+        $userSalons = auth()->user()->companies;
+        $userStructures = auth()->user()->mystructures->map(fn($item) => ['id' => $item->structure->id]);
+        $userAppeals = auth()->user()->appeals;
 
-            //dump($userSalons->toArray());
-            //dump($userStructures);
-            //dump($userAppeals->toArray());
+        $traficCompany = $trafic->salon;
+        $traficStructure = $trafic->structure;
+        $traficAppeal = $trafic->appeal;
 
-            $traficCompany = $trafic->salon;
-            $traficStructure = $trafic->structure;
-            $traficAppeal = $trafic->appeal;
+        $isSalon = $userSalons->contains('id', $traficCompany->id);
+        $isStructure = $userStructures->contains('id', $traficStructure->id);
+        $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
 
-            $isSalon = $userSalons->contains('id', $traficCompany->id);
-            $isStructure = $userStructures->contains('id', $traficStructure->id);
-            $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
-            //dump($traficStructure->id);
-            if($isSalon && $isStructure && $isAppeal)
-                return true;
-        //}
+        if($isSalon && $isStructure && $isAppeal)
+            return true;
 
         return false;
     }

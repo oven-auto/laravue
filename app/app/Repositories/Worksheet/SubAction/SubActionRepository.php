@@ -6,6 +6,7 @@ use App\Models\SubAction;
 use App\Services\Worksheet\WorksheetUser;
 use App\Models\User;
 use \Illuminate\Database\Eloquent\Collection;
+use \App\Services\Comment\Comment;
 
 /**
  * РЕПОЗИТОРИЙ ПОДЗАДАЧИ
@@ -49,13 +50,15 @@ Class SubActionRepository
         if(!$subAction->author_id)
             $subAction->author_id = auth()->user()->id;
 
-        if($subAction->title && $subAction->title != $data['title'])
-            $this->writeComment($subAction, 'Изменено название задачи, новое название '.$data['title']);
+        $oldTitle = $subAction->title;
 
         $subAction->fill([
             'worksheet_id' => $data['worksheet_id'],
             'title' => $data['title'],
         ])->save();
+
+        if($subAction->title && $subAction->title != $oldTitle)
+            Comment::add($subAction, 'update');
 
         if(!isset($data['executors']))
             $data['executors'] = [auth()->user()->id];
@@ -94,6 +97,12 @@ Class SubActionRepository
      */
     public function setExecutors(SubAction $subAction, array $executorsArray) : void
     {
+        $upUser = [];
+
+        foreach($executorsArray as $key => $item)
+            if(!$subAction->worksheet->executors->contains('id', $item))
+                $upUser[] = $item;
+
         $originalExecutorsArray = $subAction->executors->pluck('id')->toArray();
 
         $executorsArray[] = auth()->user()->id;
@@ -102,10 +111,13 @@ Class SubActionRepository
 
         $subAction->executors()->sync($executorsArray);
 
-        WorksheetUser::attach(
-            \App\Models\Worksheet::findOrFail($subAction->worksheet_id),
-            \App\Models\User::whereIn('id', $executorsArray)->get()
-        );
+        //$worksheetExecutors = $subAction->worksheet->executors;
+
+        if($upUser)
+            WorksheetUser::attach(
+                \App\Models\Worksheet::findOrFail($subAction->worksheet_id),
+                \App\Models\User::whereIn('id', $upUser)->get()
+            );
 
         $subAction->load('executors');
     }

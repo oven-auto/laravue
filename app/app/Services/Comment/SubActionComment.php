@@ -28,11 +28,21 @@ Class SubActionComment extends AbstractComment
 
 
 
+    public function update(CommentInterface $model)
+    {
+        return array_merge($this->data, [
+            'text' => 'Автор уточнил задачу, новая формулировка - '.$model->title,
+            'type' => 0,
+        ]);
+    }
+
+
+
     public function close(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Завершена.',
-            'type' => 0
+            'text' => 'Задача завершена.',
+            'type' => 1
         ]);
     }
 
@@ -43,7 +53,7 @@ Class SubActionComment extends AbstractComment
         if(isset($data['executors']))
             $users = User::whereIn('id', $data['executors'])->get()->map(fn($item) => $item->cut_name)->toArray();
             return array_merge($this->data, [
-                'text' => 'Добавлены новые участники: '.join(' ', $users),
+                'text' => 'В задачу добавлен новый участник: '.join(' ', $users),
                 'type' => 1,
             ]);
     }
@@ -72,8 +82,8 @@ Class SubActionComment extends AbstractComment
             $user = User::find($data['reporter']);
             if($user)
                 return array_merge($this->data, [
-                    'text' => 'Сотрудник отчитался и больше не отслеживаю задачу',
-                    'type' => 0,
+                    'text' => 'Участник отчитался и больше не отслеживает задачу.',
+                    'type' => 1,
                 ]);
         }
     }
@@ -85,8 +95,8 @@ Class SubActionComment extends AbstractComment
             $user = User::find($data['reporter']);
             if($user)
                 return array_merge($this->data, [
-                    'text' => 'Отчет сотрудника '.$user->cut_name.' по задаче '.$model->id.' отменен',
-                    'type' => 0
+                    'text' => 'Отчет об исполнении отозван, '.$user->cut_name.' снова отслеживает задачу.',
+                    'type' => 1
                 ]);
         }
     }

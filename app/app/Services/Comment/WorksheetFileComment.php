@@ -18,7 +18,7 @@ Class WorksheetFileComment extends AbstractComment
     public function create(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Файлы добавлены.',
+            'text' => 'В рабочий лист добавлены файлы.',
             'type' => 1
         ]);
     }
@@ -26,7 +26,7 @@ Class WorksheetFileComment extends AbstractComment
     public function delete(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Файл удален.',
+            'text' => 'Из рабочего листа удалены файлы.',
             'type' => 1
         ]);
     }

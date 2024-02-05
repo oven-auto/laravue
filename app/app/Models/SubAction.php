@@ -40,6 +40,7 @@ class SubAction extends Model implements CommentInterface
     public function close()
     {
         $this->status = self::STATUS_SYNONIM['close'];
+        $this->closed_at = now();
         $this->save();
     }
 

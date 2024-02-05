@@ -27,11 +27,11 @@ Class WorksheetExecutorComment extends AbstractComment
 
 
 
-    public function attach(CommentInterface $model)
+    public function attach(CommentInterface $model, \Illuminate\Support\Collection $data)
     {
-        $user = User::find($model->user_id);
+        $names = $data->map(fn($item) => $item->cut_name)->toArray();
         return array_merge($this->data, [
-            'text' => 'Добавлен ответственный '.$user->cut_name,
+            'text' => 'В рабочий лист добавлены новые участники: '.join(', ',$names),
             'type' => 1
         ]);
     }
@@ -42,7 +42,7 @@ Class WorksheetExecutorComment extends AbstractComment
     {
         $user = User::find($model->user_id);
         return array_merge($this->data, [
-            'text' => 'Удален ответственный '.$user->cut_name,
+            'text' => 'В рабочем листе удален участник '.$user->cut_name,
             'type' => 1
         ]);
     }
@@ -53,7 +53,7 @@ Class WorksheetExecutorComment extends AbstractComment
     {
         $user = User::find($model->user_id);
         return array_merge($this->data, [
-            'text' => 'Участник отчитался и больше не отслеживает рабочий лист',
+            'text' => 'Участник отчитался и больше не отслеживает работу с клиентом.',
             'type' => 1
         ]);
     }
@@ -64,7 +64,7 @@ Class WorksheetExecutorComment extends AbstractComment
     {
         $user = User::find($model->user_id);
         return array_merge($this->data, [
-            'text' => 'Отчет пользователя '.$user->cut_name. ' отменен',
+            'text' => 'Отчет об исполнении отозван, '.$user->cut_name.' снова отслеживает работу с клиентом.',
             'type' => 1
         ]);
     }

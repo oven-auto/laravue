@@ -7,8 +7,11 @@ use Illuminate\Support\Facades\Http;
 Class Token {
     protected static $instance;
 
-    private static $login = 'oven-g-syktyvkar-sandbox';
-    private static $password = 'fUY2CluQLmCK5dUarfDf';
+    //private static $login = 'oven-g-syktyvkar-sandbox';
+    //private static $password = 'fUY2CluQLmCK5dUarfDf';
+    private static $login = 'client4434';
+    private static $password = 'Y6wo7tT3sz7gMeAmAr8X';
+
     private static $url = 'https://lk.cm.expert/oauth/token';
     private static $token;
 

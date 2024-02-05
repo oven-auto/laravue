@@ -18,7 +18,7 @@ Class WorksheetLinkComment extends AbstractComment
     public function create(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Ссылка добавлена.',
+            'text' => 'В рабочий лист добавлена ссылка.',
             'type' => 1
         ]);
     }
@@ -26,7 +26,7 @@ Class WorksheetLinkComment extends AbstractComment
     public function delete(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Ссылка удалена.',
+            'text' => 'Из рабочего листа удалена ссылка.',
             'type' => 1
         ]);
     }

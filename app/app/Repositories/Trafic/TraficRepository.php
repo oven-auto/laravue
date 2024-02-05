@@ -221,13 +221,13 @@ Class TraficRepository
         $query->filter($filter);
 
         //Получить ожидающие которые может обработать пользователь
-        $query->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');//добавляем таблицу ссылок цели обращения
-        $query->orWhere(function($q){
-            $q->where('trafics.trafic_status_id',1);//только ожидающие
-            $q->whereIn('trafic_appeals.appeal_id', auth()->user()->appeals->pluck('id'));//цель должна быть у пользователя
-            $q->whereIn('trafics.company_structure_id', auth()->user()->structures->pluck('company_structure_id'));//структура трафика равна структуре цели обращения
-        });
-
+        // $query->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');//добавляем таблицу ссылок цели обращения
+        // $query->orWhere(function($q){
+        //     $q->where('trafics.trafic_status_id',1);//только ожидающие
+        //     $q->whereIn('trafic_appeals.appeal_id', auth()->user()->appeals->pluck('id'));//цель должна быть у пользователя
+        //     $q->whereIn('trafics.company_structure_id', auth()->user()->structures->pluck('company_structure_id'));//структура трафика равна структуре цели обращения
+        // });
+        //$query->dd();
         $query->with([
             'needs', 'sex', 'zone', 'chanel.myparent',
             'salon', 'structure', 'appeal', 'manager',

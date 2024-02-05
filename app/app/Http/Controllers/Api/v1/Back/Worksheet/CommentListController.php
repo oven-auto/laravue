@@ -20,7 +20,13 @@ class CommentListController extends Controller
         foreach($comments as $item)
             $collect = $collect->merge($item);
 
-        $collect = $collect->sortBy(['created_at'])->reverse()->values();
+        $collect = $collect->sortBy([['created_at'], ['id']])->reverse()->values();
+
+        // $collect = $collect->sortBy(function($item, $key){
+        //     $x = $item->id * 0.1;
+        //     $sort = 10 + ($x - floor($x));
+        //     return $item->created_at->addSeconds($sort);
+        // })->reverse()->values();
 
         return new CommentListResource($collect);
     }

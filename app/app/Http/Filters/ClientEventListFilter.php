@@ -45,7 +45,7 @@ Class ClientEventListFilter extends AbstractFilter
     {
         $date = $this->formatDate($value);
 
-        $builder->whereDate('client_event_statuses.date_at', '=', $date);
+        $builder->whereDate('client_event_statuses.processed_at', '=', $date);
     }
 
     public function controlDate(Builder $builder, $value)

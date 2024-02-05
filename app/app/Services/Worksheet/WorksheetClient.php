@@ -17,7 +17,7 @@ Class WorksheetClient
      * @param Worksheet $worksheet РЛ в который хотим добавить контактное лицо
      * @param Client $client Клиент которого хотим сделать контактным лицом
      */
-    public static function attach(Worksheet $worksheet, Client $client) : void
+    public static function attach(Worksheet $worksheet, Client $client, $comment = 0) : void
     {
         if($worksheet->subclients->contains('id', $client->id))
             throw new \Exception('Клиент уже добавлен');
@@ -32,7 +32,8 @@ Class WorksheetClient
 
         $worksheetSubClient->fill(['worksheet_id' => $worksheet->id, 'client_id' => $client->id]);
 
-        Comment::add($worksheetSubClient, 'attach');
+        if($comment == 0)
+            Comment::add($worksheetSubClient, 'attach');
     }
 
     /**
@@ -40,13 +41,14 @@ Class WorksheetClient
      * @param Worksheet $worksheet РЛ в который хотим добавить контактное лицо
      * @param Client $client Клиент которого хотим сделать контактным лицом
      */
-    public static function detach(Worksheet $worksheet, Client $client) : void
+    public static function detach(Worksheet $worksheet, Client $client, $comment = 0) : void
     {
         $worksheetSubClient = new WorksheetSubClient();
 
         $worksheetSubClient->fill(['worksheet_id' => $worksheet->id, 'client_id' => $client->id]);
 
-        Comment::add($worksheetSubClient, 'detach');
+        if($comment == 0)
+            Comment::add($worksheetSubClient, 'detach');
 
         $worksheet->subclients()->detach($client->id);
     }
@@ -64,8 +66,8 @@ Class WorksheetClient
 
         $worksheet->fill(['client_id' => $newClient->id])->save();
 
-        WorksheetClient::attach($worksheet, $oldClient);
-        WorksheetClient::detach($worksheet, $newClient);
+        WorksheetClient::attach($worksheet, $oldClient, 1);
+        WorksheetClient::detach($worksheet, $newClient, 1);
 
         Comment::add($worksheet->last_action, 'set_client');
 

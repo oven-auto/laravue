@@ -12,6 +12,7 @@ Class AbstractComment
     public $status;
     public $type;
     public $author_id;
+    public $id;
 
     public function __construct(IAmComment $model)
     {
