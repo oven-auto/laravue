@@ -52,12 +52,13 @@ Class CMExpertService
             "power" => $redemption->client_car->motor_power,
             "dealerId" => env('CME_DEALER_ID'),
             "customerExpectedBuyoutPrice" => $redemption->expectation,
-            "vin"   => $redemption->client_car->vin,
         ];
 
         foreach($mas as $key => $item)
             if(!$item)
                 throw new \Exception("Поле ".self::FIELDS[$key]." не заполнено");
+
+        $mas["vin"] = $redemption->client_car->vin;
 
         $response = Http::withHeaders([
             'Authorization' => $token
