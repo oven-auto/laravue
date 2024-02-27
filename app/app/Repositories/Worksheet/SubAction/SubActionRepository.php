@@ -57,7 +57,7 @@ Class SubActionRepository
             'title' => $data['title'],
         ])->save();
 
-        if($subAction->title && $subAction->title != $oldTitle)
+        if($subAction->title && $subAction->title != $oldTitle && $oldTitle)
             Comment::add($subAction, 'update');
 
         if(!isset($data['executors']))

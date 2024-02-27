@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 //use Illuminate\Http\Request;
+
+use App\Classes\Vin\Vin;
 use App\Models\ClientUnion;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
@@ -31,11 +33,9 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function test()
+    public function test(Vin $vinService)
     {
-        $modules = \App\Models\Modul::with('appeals')->get();
-
-        dd($modules);
+        $obj = $vinService->parse('X7LLSRB1HAH548712');
     }
 
     public function addYear($date, $year = 1)

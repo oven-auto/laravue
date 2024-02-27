@@ -27,7 +27,8 @@ class CanShowDraft
         else
             return $next($request);
 
-        $permission = \App\Models\Permission::where('slug', $permission)->first();
-        throw new \Exception('Отсутствуют права "'.$permission->name.'"');
+        //$permission = \App\Models\Permission::where('slug', $permission)->first();
+        //throw new \Exception('Отсутствуют права "'.$permission->name.'"');
+        throw new \Exception('Доступ ограничен! Вы не можете отслеживать работу с этим клиентом.');
     }
 }

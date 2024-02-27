@@ -5,14 +5,21 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Interfaces\CommentInterface;
+use App\Models\WSMRedemptionComment;
 
-class WSMRedemptionCar extends Model
+class WSMRedemptionCar extends Model implements CommentInterface
 {
     use HasFactory, Filterable;
 
     protected $guarded = [];
 
     protected $table = 'wsm_redemption_cars';
+
+    public function writeComment(array $data)
+    {
+        return WSMRedemptionComment::create($data);
+    }
 
     public function lastAuthor()
     {
@@ -43,20 +50,26 @@ class WSMRedemptionCar extends Model
     {
         $arr = [];
         if($this->redemption_status_id == 3)
-            $arr = ['title' => 'Завершено', 'color' => 'grey', 'text' => ''];
+            $arr = ['title' => 'Упущена', 'color' => 'red', 'text' => ''];
 
         if($this->redemption_status_id == 2)
             $arr = ['title' => 'На складе', 'color' => 'green', 'text' => ''];
 
         if($this->redemption_status_id == 1)
-            if($this->worksheet->isClosing())
-                $arr = ['title' => 'В работе', 'color' => 'red', 'text' => 'Рабочий лист завершен, а оценка «Ожидает» или «В работе»'];
-
-            elseif($this->last_purchase->price)
-                $arr = ['title' => 'В работе', 'color' => 'red', 'text' => 'Реквизит «Фактический закуп» заполнен, но команда «Переместить на склад» не применялась'];
-
-            elseif($this->isWaiting())
+            if($this->isWaiting())
                 $arr = ['title' => 'Ожидает', 'color' => 'yellow', 'text' => ''];
+            elseif(!$this->isWaiting())
+                $arr = ['title' => 'В работе', 'color' => 'yellow', 'text' => ''];
+            // if($this->worksheet->isClosing() && $this->isWaiting())
+            //     $arr = ['title' => 'Ожидает', 'color' => 'red', 'text' => 'Рабочий лист завершен, а оценка «Ожидает»'];
+
+            // if($this->worksheet->isClosing() && !$this->isWaiting())
+            //     $arr = ['title' => 'В работе', 'color' => 'red', 'text' => 'Рабочий лист завершен, а оценка «Ожидает»'];
+            //elseif($this->last_purchase->price)
+                //$arr = ['title' => 'В работе', 'color' => 'red', 'text' => 'Реквизит «Согласовано» заполнен, но команда «Переместить на склад» не применялась'];
+
+            // elseif($this->isWaiting())
+            //     $arr = ['title' => 'Ожидает', 'color' => 'yellow', 'text' => ''];
 
             else
                 $arr = ['title' => 'В работе', 'color' => 'yellow', 'text' => ''];
@@ -138,5 +151,20 @@ class WSMRedemptionCar extends Model
     public function status()
     {
         return $this->hasOne(\App\Models\RedemptionStatus::class, 'id', 'redemption_status_id')->withDefault();
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(\App\Models\WSMRedemptionComment::class, 'redemption_car_id', 'id')->orderBy('id', 'DESC');
+    }
+
+    public function last_comment()
+    {
+        return $this->hasOne(\App\Models\WSMRedemptionComment::class, 'redemption_car_id', 'id')->orderBy('id', 'DESC');
+    }
+
+    public function apprailsal()
+    {
+        return $this->hasOne(\App\Models\WSMRedemptionAppraisal::class, 'redemption_id', 'id');
     }
 }

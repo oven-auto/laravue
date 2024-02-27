@@ -12,7 +12,7 @@ use App\Models\Worksheet;
 use App\Models\WSMRedemptionCar;
 use App\Repositories\Worksheet\Modules\Redemption\RedemptionRepository;
 use Illuminate\Http\Request;
-use App\Services\GetShortCutFromURL\GetShortCutFromURL;
+
 
 class RedemptionController extends Controller
 {
@@ -168,9 +168,26 @@ class RedemptionController extends Controller
      */
     public function links(WSMRedemptionCar $redemption)
     {
+        $links = [];
+
+        if($redemption->apprailsal)
+            $links[] = [
+                'url' => $redemption->apprailsal->url(),
+                'created_at' => $redemption->apprailsal->created_at,
+            ];
+
+        $other = $redemption->links->map(function($item) use ($links){
+            return [
+                'url' => $item->url,
+                'created_at' => $item->created_at,
+            ];
+        })->toArray();
+
+        $links = array_merge($links, $other);
+
         return response()->json([
-            'data' => $redemption->links,
-            'success' => 1
+            'data' => $links,
+            'success' => 1,
         ]);
     }
 
@@ -188,6 +205,50 @@ class RedemptionController extends Controller
         return response()->json([
             'data' => $count,
             'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * ПОЛУЧИТЬ СПИСОК КОММЕНТАИЕВ ВЫБРАННОЙ ОЦЕНКИ
+     */
+    public function commentList(WSMRedemptionCar $redemption)
+    {
+        return response()->json([
+            'data' => $this->repo->getComments($redemption),
+            'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * Добавить комментарий в оценку
+     */
+    public function addComment(WSMRedemptionCar $redemption, Request $request)
+    {
+        $this->repo->addComment($redemption, $request->text);
+
+        return response()->json([
+            'message' => 'Комментарий добавлен',
+            'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * REVERT APPRAISAL
+     */
+    public function revert(WSMRedemptionCar $redemption)
+    {
+        $this->repo->revert($redemption);
+
+        return response()->json([
+            'data' => new RedemptionResource($redemption),
+            'success' => 1,
+            'message' => 'Оценка в работе',
         ]);
     }
 }

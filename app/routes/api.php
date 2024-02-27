@@ -212,6 +212,7 @@ Route::group(['prefix' => 'front'], function() {
 // Route::get('broadcasting/auth', '\App\Http\Controllers\Broadcast\BroadcastController@auth')->middleware(['corsing','userfromtoken']);
 
 Route::prefix('listing')->middleware(['corsing','userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function() {
+    Route::get('vehicletypes', 'VehicleTypeController');
     Route::get('users', 'UserController@index');
     Route::get('zones', 'ZoneController@index');
     Route::get('chanels', 'ChanelController@index');
@@ -615,46 +616,64 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
      */
     Route::prefix('modules')->group(function(){
         Route::prefix('redemptions')->group(function() {
-            Route::get('count', 'Modules\RedemptionController@counter');
-            Route::get('links/{redemption}', 'Modules\RedemptionController@links');
-            Route::post('links/{redemption}', 'Modules\RedemptionController@storelink');
 
+            Route::get('count', 'Modules\RedemptionController@counter');
             Route::get('/{worksheet?}', 'Modules\RedemptionController@index');
 
-            Route::post('{worksheet}', 'Modules\RedemptionController@store');
-            Route::patch('{redemption}', 'Modules\RedemptionController@update');
 
-            Route::put('{redemption}', 'Modules\RedemptionController@saveprice');
-            Route::patch('{redemption}/close', 'Modules\RedemptionController@close');
-            Route::patch('{redemption}/buy', 'Modules\RedemptionController@buy');
+            Route::post('{worksheet}', 'Modules\RedemptionController@store')->middleware('permission.redemptions:create');
+
+            Route::prefix('')->middleware('permission.redemptions:update')->group(function() {
+                Route::get('links/{redemption}', 'Modules\RedemptionController@links');
+                Route::post('links/{redemption}', 'Modules\RedemptionController@storelink');
+                Route::get('comments/{redemption}', 'Modules\RedemptionController@commentList');
+                Route::post('comments/{redemption}', 'Modules\RedemptionController@addComment');
+                Route::patch('{redemption}', 'Modules\RedemptionController@update');
+                Route::put('{redemption}', 'Modules\RedemptionController@saveprice');
+                Route::patch('{redemption}/close', 'Modules\RedemptionController@close');
+                Route::patch('{redemption}/buy', 'Modules\RedemptionController@buy');
+                Route::patch('{redemption}/revert', 'Modules\RedemptionController@revert');
+            });
+
+
         });
     });
-
+    //->middleware('permission.worksheet.action:ws_action_executor,ws_action_any')
     Route::prefix('subactions')->group(function() {
-        Route::get('{worksheetId}', 'SubAction\SubActionController@index');
-        Route::get('comments/{subAction}', 'SubAction\SubActionController@comments');
-        Route::get('/show/{subAction}', 'SubAction\SubActionController@show');
-        Route::post('', 'SubAction\SubActionController@store');
-        Route::patch('{subAction}', 'SubAction\SubActionController@update')->middleware('subaction.iswork');
-        Route::delete('{subAction}', 'SubAction\SubActionController@close')->middleware('subaction.iswork');
-        Route::prefix('executors')->middleware('subaction.iswork')->group(function() {
-            Route::patch('{subAction}', 'SubAction\SubActionController@append');
-            Route::delete('{subAction}', 'SubAction\SubActionController@remove');
-        });
-        Route::prefix('reporters')->middleware('subaction.iswork')->group(function() {
-            Route::patch('{subAction}', 'SubAction\SubActionController@report');
-            Route::delete('{subAction}', 'SubAction\SubActionController@deport');
+        Route::get('{worksheetId}', 'SubAction\SubActionController@index')->middleware('permission.subaction:show');
+
+        Route::post('', 'SubAction\SubActionController@store')->middleware('permission.subaction:create');
+
+        Route::prefix('')->middleware('permission.subaction:update')->group(function() {
+            Route::get('comments/{subAction}', 'SubAction\SubActionController@comments');
+            Route::get('/show/{subAction}', 'SubAction\SubActionController@show');
+            Route::patch('{subAction}', 'SubAction\SubActionController@update')->middleware('subaction.iswork');
+            Route::delete('{subAction}', 'SubAction\SubActionController@close')->middleware('subaction.iswork');
+            Route::prefix('executors')->middleware('subaction.iswork')->group(function() {
+                Route::patch('{subAction}', 'SubAction\SubActionController@append');
+                Route::delete('{subAction}', 'SubAction\SubActionController@remove');
+            });
+            Route::prefix('reporters')->middleware('subaction.iswork')->group(function() {
+                Route::patch('{subAction}', 'SubAction\SubActionController@report');
+                Route::delete('{subAction}', 'SubAction\SubActionController@deport');
+            });
         });
     });
 });
 
 
+/**
+ * CMEXPERT
+ */
+Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')
+    ->middleware(['corsing','userfromtoken'])->group(function(){
 
-Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
-    Route::get('deliver/brands', 'Deliver\BrandController');
-    Route::get('deliver/marks', 'Deliver\MarkController');
-    Route::get('gain/brands', 'Gain\BrandController');
-    Route::get('gain/test', 'Gain\MarkController');
+        Route::post('create/redemptions/{redemption}', 'Deliver\CreateRedemptionController');
+
+        // Route::get('gain/brands', 'Gain\BrandController');
+        // Route::get('gain/test', 'Gain\MarkController');
+        // Route::get('deliver/brands', 'Deliver\BrandController');
+        // Route::get('deliver/marks', 'Deliver\MarkController');
 });
 
 /**

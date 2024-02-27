@@ -58,8 +58,10 @@ class WorksheetShow
             if($userPermissions->contains('slug', $item))
                 unset($arr[$key]);
 
-        $neededPermission = Permission::whereIn('slug', $arr)->pluck('name')->toArray();
+        //$neededPermission = Permission::whereIn('slug', $arr)->pluck('name')->toArray();
 
-        throw new \Exception("Недостаточно прав для просмотра рабочего листа\n\r".implode("\n\r", $neededPermission));
+        //throw new \Exception("Недостаточно прав для просмотра рабочего листа\n\r".implode("\n\r", $neededPermission));
+
+        throw new \Exception('Доступ ограничен! Вы не можете отслеживать работу с этим клиентом. Запросите расширение прав у участников Рабочего листа.');
     }
 }

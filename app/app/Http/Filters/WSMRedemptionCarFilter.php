@@ -12,6 +12,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
     private const INTERVAL = 'interval';
     private const STATUS = 'status';
     private const INPUT = 'input';
+    private const WORKSHEET_ID = 'worksheet_id';
 
     public function __construct(array $queryParams)
     {
@@ -28,6 +29,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
             self::INTERVAL           => [$this, 'interval'],
             self::STATUS             => [$this, 'status'],
             self::INPUT              => [$this, 'input'],
+            self::WORKSHEET_ID       => [$this, 'worksheetId'],
         ];
     }
 
@@ -40,6 +42,11 @@ Class WSMRedemptionCarFilter extends AbstractFilter
         $builder->leftJoin('wsm_redemption_purchases', 'wsm_redemption_purchases.wsm_redemption_car_id', 'wsm_redemption_cars.id');
 
         $builder->groupBy('wsm_redemption_cars.id');
+    }
+
+    public function worksheetId(Builder $builder, $value)
+    {
+        $builder->where('wsm_redemption_cars.worksheet_id', $value);
     }
 
     public function authorIds(Builder $builder, $value)
@@ -87,14 +94,14 @@ Class WSMRedemptionCarFilter extends AbstractFilter
                 break;
             case 'wait':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 1)
-                    ->whereIn('worksheets.status_id', ['work', 'check'])
+                    //->whereIn('worksheets.status_id', ['work', 'check'])
                     ->havingRaw(\DB::raw('COUNT(wsm_redemption_calculations.id) < 1'))
                     ->havingRaw(\DB::raw('COUNT(wsm_redemption_offers.id) < 1'))
                     ->havingRaw(\DB::raw('COUNT(wsm_redemption_purchases.id) < 1'));
                 break;
             case 'work':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 1)
-                    ->whereIn('worksheets.status_id', ['work', 'check'])
+                    //->whereIn('worksheets.status_id', ['work', 'check'])
                     ->orHavingRaw(\DB::raw('COUNT(wsm_redemption_calculations.id) > 0'))
                     ->orHavingRaw(\DB::raw('COUNT(wsm_redemption_offers.id) > 0'))
                     ->orHavingRaw(\DB::raw('COUNT(wsm_redemption_purchases.id) > 0'));
@@ -104,7 +111,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
                 break;
             case 'control':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 1)
-                    ->where('worksheets.status_id', ['confirm']);
+                    ->whereIn('worksheets.status_id', ['confirm','check']);
                 break;
         }
     }

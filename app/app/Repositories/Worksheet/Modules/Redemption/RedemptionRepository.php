@@ -10,6 +10,8 @@ use App\Models\WSMRedemptionCar;
 use App\Models\WSMRedemptionLink;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Support\Arr;
+use \App\Services\Comment\Comment;
+use Illuminate\Support\Facades\Http;
 
 /**
  * РЕПОЗИТОРИЙ ОЦЕНОК
@@ -25,6 +27,10 @@ use Illuminate\Support\Arr;
  * - ЗАВЕРШИТЬ ОЦЕНКУ
  *
  * 16-01-2024
+ *
+ * - СПИСОК ВСЕХ КОММЕНТАРИЕВ
+ * - ДОБАВИТЬ КОММЕНТАРИЙ
+ * - ВЕРНУТЬ ОЦЕНКУ ЗАКРЫТУЮ (НЕ ВЫКУПЛЕННУЮ) В РАБОТУ
  */
 Class RedemptionRepository
 {
@@ -123,6 +129,8 @@ Class RedemptionRepository
 
         $this->save($redemption, $data);
 
+        Comment::add($redemption, 'create');
+
         return $redemption;
     }
 
@@ -175,6 +183,8 @@ Class RedemptionRepository
         $carData['wsm_redemption_car_id'] = $redemption->id;
         $carData['purchase_price'] = $redemption->last_purchase->price;
         UsedCar::create(Arr::except($carData, ['created_at','updated_at','client_id','actual','editor_id']));
+
+        Comment::add($redemption, 'buy');
     }
 
 
@@ -194,9 +204,12 @@ Class RedemptionRepository
                 'wsm_redemption_car_id' => $redemption->id,
                 'price' => $data['offer'],
             ]);
+
+            //Comment::add($redemption, 'offer');
         }
 
         if(isset($data['price_begin']) || isset($data['price_end']))
+        {
             $redemption->calculations()->create([
                 'author_id' => auth()->user()->id,
                 'wsm_redemption_car_id' => $redemption->id,
@@ -204,12 +217,19 @@ Class RedemptionRepository
                 'price_end' => $data['price_end'] ?? 0,
             ]);
 
+            //Comment::add($redemption, 'calculation');
+        }
+
         if(isset($data['purchase']))
+        {
             $redemption->purchases()->create([
                 'author_id' => auth()->user()->id,
                 'wsm_redemption_car_id' => $redemption->id,
                 'price' => $data['purchase'],
             ]);
+
+            //Comment::add($redemption, 'purchase');
+        }
     }
 
 
@@ -266,12 +286,55 @@ Class RedemptionRepository
             ])->save();
 
             $redemption->final_author()->create(['author_id' => auth()->user()->id]);
+
+            Comment::add($redemption, 'close');
         }
+
+        else
+            throw new \Exception('Эта оценка не является рабочей');
     }
 
 
 
     /**
-     *
+     *  СПИСОК ВСЕХ КОММЕНТАРИЕВ ОЦЕНКИ
      */
+    public function getComments(WSMRedemptionCar $redemption)
+    {
+        return $redemption->comments->map(fn($item) => [
+            'text' => $item->text,
+            'id' => $item->id,
+            'author' => $item->author->cut_name,
+            'created_at' => $item->created_at->format('d.m.Y (H:i)'),
+        ]);
+    }
+
+
+
+    /**
+     * ДОБАВИТЬ КОММЕНТАРИЙ
+     */
+    public function addComment(WSMRedemptionCar $redemption, string $text)
+    {
+        $redemption->comments()->create([
+            'text' => $text,
+            'author_id' => auth()->user()->id,
+        ]);
+    }
+
+
+
+    /**
+     * ВЕРНУТЬ ОЦЕНКУ ЗАКРЫТУЮ (НЕ ВЫКУПЛЕННУЮ) В РАБОТУ
+     */
+    public function revert(WSMRedemptionCar $redemption)
+    {
+        if($redemption->status->slug !== 'closed')
+            throw new \Exception('Оценка не завершена');
+
+        $redemption->redemption_status_id = 1;
+        $redemption->final_author()->delete();
+        $redemption->save();
+        $redemption->load('status');
+    }
 }

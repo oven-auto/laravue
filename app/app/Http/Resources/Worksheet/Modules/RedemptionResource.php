@@ -15,6 +15,15 @@ class RedemptionResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'executor' => [
+                'author' => $this->final_author->author->cut_name,
+                'data' => $this->final_author->created_at ? $this->final_author->created_at->format('d.m.Y (H:i)') : '' ,
+            ],
+            'apprailsal' => $this->apprailsal ? [
+                'url' => $this->apprailsal->url(),
+                'created_at' => $this->apprailsal->created_at->format('d.m.Y (H:i)'),
+                'author' => $this->apprailsal->author->cut_name,
+            ] : null,
             'id' => $this->id,
             'author' => $this->author->cut_name,
             'car' => [
@@ -25,6 +34,10 @@ class RedemptionResource extends JsonResource
                 'odometer' => $this->client_car->odometer,
                 'register_plate' => $this->client_car->register_plate,
                 'vin' => $this->client_car->vin,
+            ],
+            'last_comment' => [
+                'author' => $this->last_comment ? $this->last_comment->author->cut_name : '',
+                'text' => $this->last_comment ? $this->last_comment->text : '',
             ],
             'car_sale_sign_id' => $this->car_sale_sign_id,
             'redemption_type_id' => $this->redemption_type_id,

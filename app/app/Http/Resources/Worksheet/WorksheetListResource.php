@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Worksheet;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Client\Event\Reporter\ClientEventReporterResource;
 
 class WorksheetListResource extends JsonResource
 {
@@ -29,18 +30,26 @@ class WorksheetListResource extends JsonResource
         if(!$this->executors->contains('id', $this->author_id))
             $executors->prepend($this->author);
 
+        $executors = $executors->map(function($item){
+                return [
+                    'type' => $item->id == $this->author_id ? 'Автор' : 'Участник',
+                    'name' => $item->cut_name,
+                    'id' => $item->id,
+                ];
+            })->toArray();
+
+        uasort($executors, function($a, $b) {
+            return $a['type'] > $b['type'];
+        });
+
         return [
+            'created_at' => $this->created_at->format('d.m.Y (H:i)'),
             'id' => $this->id,
             'salon' => $this->company->name,
             'structure' => $this->structure->name,
             'appeal' => $this->appeal->name,
             'author' => $this->author->cut_name,
-            'executors' => $executors->map(function($item){
-                return [
-                    'type' => $item->id == $this->author_id ? 'Ответственный' : 'Отслеживает',
-                    'name' => $item->cut_name,
-                ];
-            }),
+            'executors' => $executors,
             'status' => $this->status->name,
             'client' => [
                 'type' => $this->client->type->name,
@@ -54,6 +63,9 @@ class WorksheetListResource extends JsonResource
             ],
             'row_color' => $class,
             'can_i_change' => 1,
+            'reporters_count' => $this->reporters->count(),
+            'reporters' => ClientEventReporterResource::collection($this->reporters),
+            'me_in_reporters' => ($this->reporters->contains('id', auth()->user()->id)) ? 1 : 0,
         ];
     }
 }

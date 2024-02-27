@@ -30,6 +30,7 @@ class DeleteTraficMiddleware
         if($userPermission->contains('slug', $permission_author) && $trafic->author_id == auth()->user()->id)
             return $next($request);
 
-        throw new \Exception('Недостаточно прав для удаления трафика №'.$trafic->id);
+        //throw new \Exception('Недостаточно прав для удаления трафика №'.$trafic->id);
+        throw new \Exception('Доступ ограничен! Вы не можете удалять работу с этим клиентом.');
     }
 }

@@ -9,8 +9,8 @@ Class Token {
 
     //private static $login = 'oven-g-syktyvkar-sandbox';
     //private static $password = 'fUY2CluQLmCK5dUarfDf';
-    private static $login = 'client4434';
-    private static $password = 'Y6wo7tT3sz7gMeAmAr8X';
+    // private static $login = 'client4434';
+    // private static $password = 'Y6wo7tT3sz7gMeAmAr8X';
 
     private static $url = 'https://lk.cm.expert/oauth/token';
     private static $token;
@@ -28,7 +28,7 @@ Class Token {
 
     public function token()
     {
-        $response = Http::withBasicAuth(self::$login, self::$password)
+        $response = Http::withBasicAuth(env('CME_LOGIN'), env('CME_PASS'))
             ->post(self::$url, [
                 'grant_type' => 'client_credentials'
             ]);

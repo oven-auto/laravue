@@ -34,12 +34,12 @@ Class EventComment extends CommentService
 
     public static function appendFile(CommentInterface $model)
     {
-        self::customMessage($model, 'Добавлены фаилы');
+        self::customMessage($model, 'Добавлены файлы');
     }
 
     public static function deleteFile(CommentInterface $model)
     {
-        self::customMessage($model, 'Удалены фаилы');
+        self::customMessage($model, 'Удалены файлы');
     }
 
     public static function appendLink(CommentInterface $model, ClientEventLink $link)

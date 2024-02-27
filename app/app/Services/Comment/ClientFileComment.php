@@ -17,21 +17,21 @@ Class ClientFileComment extends AbstractComment
     public function create(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Добавлены фаилы.'
+            'text' => 'Добавлены файлы.'
         ]);
     }
 
     public function update(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Изменены фаилы.'
+            'text' => 'Изменены файлы.'
         ]);
     }
 
     public function delete(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Удалены фаилы.'
+            'text' => 'Удалены файлы.'
         ]);
     }
 }

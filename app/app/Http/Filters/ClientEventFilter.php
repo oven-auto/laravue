@@ -27,6 +27,9 @@ class ClientEventFilter extends AbstractFilter
     public const SHOW       = 'show';
     public const DATE_FOR_CLOSING = 'date_for_closing';
     public const REPORTING = 'reporting';
+    public const CREATED_BEGIN = 'created_begin';
+    public const CREATED_END = 'created_end';
+    public const REPORTER_IDS = 'reporter_ids';
 
     protected function getCallbacks(): array
     {
@@ -52,7 +55,20 @@ class ClientEventFilter extends AbstractFilter
             self::SHOW                  => [$this, 'show'],
             self::DATE_FOR_CLOSING      => [$this, 'dateForClosing'],
             self::REPORTING             => [$this, 'reporting'],
+            self::CREATED_BEGIN         => [$this, 'createdBegin'],
+            self::CREATED_END           => [$this, 'createdEnd'],
+            self::REPORTER_IDS          => [$this, 'reporterIds'],
         ];
+    }
+
+    public function reporterIds(Builder $builder, $value)
+    {
+        if(!$this->checkJoin($builder, 'client_event_reporters'))
+            $builder->leftJoin('client_event_reporters', 'client_event_reporters.event_id','client_event_statuses.id');
+        $builder->whereIn('client_event_reporters.user_id', $value);
+
+        //$builder->dd();
+        //$builder->groupBy('client_event_executors.executor_id');
     }
 
     public function reporting(Builder $builder, $value)
@@ -60,6 +76,16 @@ class ClientEventFilter extends AbstractFilter
         $builder->leftJoin('client_event_reporters', 'client_event_reporters.event_id','client_event_statuses.id')
             ->where('client_event_reporters.user_id', auth()->user()->id);
 
+    }
+
+    public function createdBegin(Builder $builder, String $value)
+    {
+        $builder->whereDate('client_event_statuses.created_at','>=', $this->formatDate($value));
+    }
+
+    public function createdEnd(Builder $builder, String $value)
+    {
+        $builder->whereDate('client_event_statuses.created_at','<=', $this->formatDate($value));
     }
 
     public function dateForClosing(Builder $builder, $value)
@@ -154,29 +180,24 @@ class ClientEventFilter extends AbstractFilter
         switch ($value){
             case 'today':
                 $builder->where(function($builder) {
-                    $builder->whereDate('client_event_statuses.date_at','=', now()->format('Y-m-d'));
+                    $builder->whereDate('client_event_statuses.created_at','=', now()->format('Y-m-d'));
                 });
                 break;
             case 'tomorrow':
-                $builder->whereDate('client_event_statuses.date_at','=',  now()->addDay());
+                $builder->whereDate('client_event_statuses.created_at','=',  now()->addDay());
                 break;
             case 'week':
-                $builder->whereBetween('client_event_statuses.date_at', [
+                $builder->whereBetween('client_event_statuses.created_at', [
                     now()->startOfWeek(), now()->endOfWeek()
                 ]);
                 break;
             case 'month':
                 $builder->where(function($query)  {
                     $query
-                        ->whereYear('client_event_statuses.date_at', '=', now()->year)
-                        ->whereMonth('client_event_statuses.date_at', '=', now()->month);
+                        ->whereYear('client_event_statuses.created_at', '=', now()->year)
+                        ->whereMonth('client_event_statuses.created_at', '=', now()->month);
                 });
                 break;
-            // case 'finish_today':
-            //     $this->delWhere($builder, 'client_event_statuses.confirm');
-            //     $builder->where('client_event_statuses.confirm','processed');
-            //     $builder->whereDate('client_event_statuses.processed_at','=',  now());
-            //     break;
         }
     }
 
@@ -211,10 +232,10 @@ class ClientEventFilter extends AbstractFilter
 
     public function status(Builder $builder, $value)
     {
-        $statuses = \App\Models\ClientEventStatusDescription::where('confirm',$value)->pluck('confirm');
+        //$statuses = \App\Models\ClientEventStatusDescription::where('confirm',$value)->pluck('confirm');
 
-        if($statuses)
-            $builder->whereIn('client_event_statuses.confirm', $statuses);
+        //if($statuses)
+            $builder->whereIn('client_event_statuses.confirm', $value);
     }
 
     public function ids(Builder $builder, $value)

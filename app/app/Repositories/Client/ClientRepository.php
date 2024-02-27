@@ -109,7 +109,7 @@ Class ClientRepository
             $query->leftJoin('client_phones','client_phones.client_id','clients.id')
                 ->where('client_phones.phone', $trafic->phone);
 
-        elseif($trafic->client_type_id == 2)
+        elseif($trafic->client_type_id == 2 || $trafic->client_type_id == 3)
             $query->leftJoin('client_inns','client_inns.client_id','clients.id')
                 ->where('client_inns.number', $trafic->inn);
 

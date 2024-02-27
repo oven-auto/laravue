@@ -13,6 +13,12 @@ class SubAction extends Model implements CommentInterface
 
     protected $guarded = [];
 
+    protected $dates = [
+        'created_at',
+        'updated_at',
+        'closed_at',
+    ];
+
     public const STATUSES = [
         1 => 'В работе',
         2 => 'На проверке',

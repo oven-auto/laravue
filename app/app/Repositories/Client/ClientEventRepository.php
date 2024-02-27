@@ -122,6 +122,7 @@ class ClientEventRepository
         $query->rightJoinSub($subQuery, 'subQuery', function($join){
             $join->on('subQuery.id','=','client_event_statuses.id');
         });
+
         $result = $query->count();
 
         return $result;

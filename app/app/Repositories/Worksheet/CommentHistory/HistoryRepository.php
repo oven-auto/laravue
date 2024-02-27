@@ -24,6 +24,13 @@ Class HistoryRepository
             $result = $comments->map(fn($item) => new SubActionCommentData($item));
             return $result;
         }
+
+        elseif($model instanceof \App\Models\WSMRedemptionComment)
+        {
+            $comments = $this->getRedemptionComment($model, $data);
+            $result = $comments->map(fn($item) => new RedemptionCommentData($item));
+            return $result;
+        }
     }
 
     private function getWorksheetActionComment($model, $param)
@@ -47,5 +54,17 @@ Class HistoryRepository
             ->get();
 
         return $data;
+    }
+
+    public function getRedemptionComment($model, $param)
+    {
+        $data = $model->select('wsm_redemption_comments.*')
+            ->with('author')
+            ->leftJoin('wsm_redemption_cars', 'wsm_redemption_cars.id', 'wsm_redemption_comments.redemption_car_id')
+            ->where('wsm_redemption_cars.worksheet_id', $param['worksheet_id'])
+            ->get();
+
+        return $data;
+
     }
 }

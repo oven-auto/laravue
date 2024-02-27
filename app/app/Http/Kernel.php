@@ -85,7 +85,8 @@ class Kernel extends HttpKernel
 
         'permission.developer' => \App\Http\Middleware\Permissions\Developer\UserActionPerm::class,
         'permission.clientevent' => \App\Http\Middleware\Permissions\Client\ClientEvent::class,
-
+        'permission.subaction' => \App\Http\Middleware\Permissions\Worksheet\SubAction\SubActionMiddleware::class,
+        'permission.redemptions' => \App\Http\Middleware\Permissions\Worksheet\Modules\RedemptionsMiddleware::class,
 
 
         'tasklist.setmanager' => \App\Http\Middleware\TaskList\SetManagerMiddleware::class,

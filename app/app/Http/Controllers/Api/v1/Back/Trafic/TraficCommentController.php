@@ -12,7 +12,7 @@ class TraficCommentController extends Controller
     public function __invoke($trafic_id)
     {
         return response()->json([
-            'data' => TraficComment::with('author')->where('trafic_id', $trafic_id)->get()->map(function($item){
+            'data' => TraficComment::with('author')->where('trafic_id', $trafic_id)->orderBy('id', 'DESC')->get()->map(function($item){
                 return [
                     'author' => $item->author->cut_name,
                     'text' => $item->text,

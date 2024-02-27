@@ -38,6 +38,7 @@ class EventListResource extends JsonResource
                 return $item->cut_name;
             }),
             'personality'   => $this->event->personality(),
+            'closed_at'     => $this->processed_at ? $this->processed_at->format('d.m.Y (H:i)') : '',
         ];
     }
 }

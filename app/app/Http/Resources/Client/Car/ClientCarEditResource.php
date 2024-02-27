@@ -30,6 +30,7 @@ class ClientCarEditResource extends JsonResource
                 'motor_driver_id' => $this->motor_driver_id,
                 'motor_type_id' => $this->motor_type_id,
                 'color_id' => $this->color_id,
+                'vehicle_type_id' => $this->vehicle_type_id
             ],
             'success' => 1
         ];

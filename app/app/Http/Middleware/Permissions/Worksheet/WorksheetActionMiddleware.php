@@ -21,10 +21,15 @@ class WorksheetActionMiddleware
         $user = auth()->user();
         $userPermissions = $user->role->permissions;
 
+        //echo($request->worksheetId);
+        //return $next($request);
+
         if($request->has('action_id'))
             $worksheet = WorksheetAction::findOrFail($request->action_id)->worksheet;
         elseif($request->has('worksheet_id'))
             $worksheet = Worksheet::findOrFail($request->worksheet_id);
+        elseif(isset($request->worksheetId))
+            $worksheet = Worksheet::findOrFail($request->worksheetId);
         else
             throw new \Exception('Проблема: недостаточно данных для выполнения запроса');
 
@@ -34,8 +39,6 @@ class WorksheetActionMiddleware
         if($userPermissions->contains('slug', $executorPerm) && $worksheet->executors->contains('id', $user->id))
             return $next($request);
 
-        throw new \Exception('Нет прав для выполнения запроса в это рабочем листе.
-            Вы либо не находитесь в списке ответственных рабочего листа, либо у Вас нет полномочий вносить эти изменения в рабочий лист'
-        );
+        throw new \Exception('Доступ ограничен! Вы не можете отслеживать и редактировать работу с этим клиентом. Запросите расширение прав у участников Рабочего листа.');
     }
 }

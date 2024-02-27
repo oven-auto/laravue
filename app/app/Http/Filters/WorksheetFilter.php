@@ -35,6 +35,8 @@ Class WorksheetFilter extends AbstractFilter
     public const CLOSED_MONTH = 'closed_month';
     public const CLOSED_BEGIN = 'closed_date';
     public const CLOSED_END = 'closed_end';
+    public const REPORTER_IDS = 'reporter_ids';
+    public const INSPECTOR_IDS = 'inspector_ids';
 
     protected function getCallbacks(): array
     {
@@ -67,7 +69,23 @@ Class WorksheetFilter extends AbstractFilter
             self::CLOSED_END            => [$this, 'closedEnd'],
             self::CREATED_MONTH         => [$this, 'createdMonth'],
             self::CLOSED_MONTH          => [$this, 'closedMonth'],
+            self::REPORTER_IDS          => [$this, 'reporterIds'],
+            self::INSPECTOR_IDS         => [$this, 'inspectorIds'],
         ];
+    }
+
+    public function inspectorIds(Builder $builder, $value)
+    {
+        $builder->whereIn('inspector_id', $value);
+    }
+
+    public function reporterIds(Builder $builder, $value)
+    {
+        $builder->leftJoin('worksheet_reporters','worksheet_reporters.worksheet_id','worksheets.id');
+
+        $builder->where(function($query) use ($value){
+            $query->whereIn('worksheet_reporters.user_id', $value);
+        });
     }
 
     public function createdMonth(Builder $builder, $value)
@@ -251,6 +269,7 @@ Class WorksheetFilter extends AbstractFilter
             $builder->whereIn('worksheets.author_id', $value);
         if(is_string($value))
             $builder->where('worksheets.author_id', $value);
+        //$builder->dd();
     }
 
     public function statusIds(Builder $builder, $value)

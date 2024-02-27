@@ -56,21 +56,26 @@ class ClientCar extends Model implements CommentInterface
 
     public function transmission()
     {
-        return $this->hasOne(\App\Models\MotorTransmission::class,'id', 'gearbox_type_id')->withDefault();
+        return $this->hasOne(\App\Models\MotorTransmission::class,'id', 'motor_transmission_id')->withDefault();
     }
 
     public function drive()
     {
-        return $this->hasOne(\App\Models\MotorDriver::class,'id', 'type_of_drive_id')->withDefault();
+        return $this->hasOne(\App\Models\MotorDriver::class,'id', 'motor_driver_id')->withDefault();
     }
 
     public function type()
     {
-        return $this->hasOne(\App\Models\MotorType::class,'id', 'engine_type_id')->withDefault();
+        return $this->hasOne(\App\Models\MotorType::class,'id', 'motor_type_id')->withDefault();
     }
 
     public function color()
     {
         return $this->hasOne(\App\Models\Color::class,'id', 'color_id')->withDefault();
+    }
+
+    public function vehicle()
+    {
+        return $this->hasOne(\App\Models\VehicleType::class, 'id', 'vehicle_type_id')->withDefault();
     }
 }

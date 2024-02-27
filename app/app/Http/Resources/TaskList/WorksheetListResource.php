@@ -30,6 +30,8 @@ class WorksheetListResource extends JsonResource
             'structure'         => $this->structure,
             'sub_action_id'     => $this->sub_action_id,
             'reporters'         => $this->reporters,
+            'closed_at'          => $this->closed_at,
+            'sort' => $this->sort,
         ];
     }
 }

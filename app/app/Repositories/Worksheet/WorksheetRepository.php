@@ -74,11 +74,11 @@ class WorksheetRepository
     {
         $query->leftJoin('worksheet_actions', function($join) {
                 $join->on('worksheet_actions.worksheet_id','worksheets.id');
-            })
-            ->where(
-                'worksheet_actions.id',
-                \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
-            );
+            });
+            // ->where(
+            //     'worksheet_actions.id',
+            //     \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
+            // );
 
         $filter = app()->make(\App\Http\Filters\WorksheetFilter::class, ['queryParams' => array_filter($data)]);
 
@@ -206,7 +206,9 @@ class WorksheetRepository
             'salon'             => $item->company->name,
             'structure'         => isset($item->structure) ? $item->structure->name : '',
             'sub_action_id'     => '',
-            'reporters'         => [],
+            'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray(),
+            'closed_at'         => $item->close_at ? $item->close_at->format('d.m.Y (H:i)') : '',
+            'sort'              => $item->last_action->begin_at->format('Ymd'),
         ])->toArray();
 
         return $result;
@@ -236,7 +238,9 @@ class WorksheetRepository
             'salon'             => '',
             'structure'         => '',
             'sub_action_id'     => $item->id,
-            'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray()
+            'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray(),
+            'closed_at'         => $item->closed_at ? $item->closed_at->format('d.m.Y (H:i)') : '',
+            'sort'              => $item->created_at->format('Ymd'),
         ])->toArray();
 
         return $resultSubAction;

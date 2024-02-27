@@ -34,7 +34,7 @@ class TraficListResource extends JsonResource
                             }) : ['Товары\услуги не выбраны'],
             'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : '',
             'comment'       => $this->comment,
-
+            'closed_at'     => $this->deleted_at ? $this->deleted_at->format('d.m.Y (H:i)') : ($this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : ''),
         ];
     }
 }

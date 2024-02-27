@@ -22,10 +22,14 @@ class TraficController extends Controller
         'delete' => 'Трафик удален'
     ];
 
+
+
     public function __construct(TraficRepository $service)
     {
         $this->service = $service;
     }
+
+
 
     public function index(Request $request)
     {
@@ -33,6 +37,8 @@ class TraficController extends Controller
 
         return new TraficEditCollection($result);
     }
+
+
 
     public function store(Trafic $trafic, Request $request)
     {
@@ -48,6 +54,8 @@ class TraficController extends Controller
             ]);
     }
 
+
+
     public function edit($trafic, Request $request)
     {
         $trafic = Trafic::withTrashed()->linksCount()->filesCount()->find($trafic);
@@ -58,6 +66,8 @@ class TraficController extends Controller
         return (new TraficSaveResource($trafic))
             ->additional(['message' => Trafic::NOTICES['open']]);
     }
+
+
 
     public function update($trafic, Request $request)
     {
@@ -75,6 +85,8 @@ class TraficController extends Controller
         ]);
     }
 
+
+
     public function close($trafic, Request $request)
     {
         $trafic = Trafic::find($trafic);
@@ -88,6 +100,8 @@ class TraficController extends Controller
         return (new TraficSaveResource($trafic))
             ->additional(['message' => Trafic::NOTICES['close']]);
     }
+
+
 
     public function delete($trafic, Request $request)
     {

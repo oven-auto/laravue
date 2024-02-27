@@ -14,8 +14,22 @@ class RedemptionListResource extends JsonResource
      */
     public function toArray($request)
     {
+        $status = 'open';
+
+        if(($this->redemption_status_id == 1))
+            if($this->worksheet->status_id == 'work')
+                $status = 'open';
+            else
+                $status = 'close';
+
         return [
+            'id' => $this->id,
             'redemption' => [
+                'apprailsal' => $this->apprailsal ? [
+                    'url' => $this->apprailsal->url(),
+                    'created_at' => $this->apprailsal->created_at->format('d.m.Y (H:i)'),
+                    'author' => $this->apprailsal->author->cut_name,
+                ] : null,
                 'id' => $this->id,
                 'created_at' => $this->created_at->format('d.m.Y (H:i)'),
                 'author' => $this->author->cut_name,
@@ -30,6 +44,10 @@ class RedemptionListResource extends JsonResource
                 'offer' => [
                     'price' => $this->last_offer->price,
                     'author' => $this->last_offer->author->cut_name,
+                ],
+                'purchase' => [
+                    'author'    => $this->last_purchase->author->cut_name,
+                    'price'         => $this->last_purchase->price,
                 ],
                 'control_point' => $this->control_point(),
                 'executor' => [
@@ -55,8 +73,8 @@ class RedemptionListResource extends JsonResource
                     'code' => $this->client_car->color->web,
                 ],
                 'motor' => [
-                    'size' => $this->client_car->engine_size,
-                    'power' => $this->client_car->engine_power,
+                    'size' => $this->client_car->motor_size,
+                    'power' => $this->client_car->motor_power,
                     'transmission' => $this->client_car->transmission->acronym,
                     'drive' => $this->client_car->drive->acronym,
                 ],
@@ -65,9 +83,11 @@ class RedemptionListResource extends JsonResource
             'worksheet' => [
                 'id' => $this->worksheet->id,
                 'begin_at' => $this->worksheet->last_action->begin_at->format('d.m.Y (H:i)'),
-                'end_at' => $this->worksheet->last_action->end_at->format('d.m.Y (H:i)')
+                'end_at' => $this->worksheet->last_action->end_at->format('d.m.Y (H:i)'),
+                'status' => $status,
             ],
 
         ];
     }
 }
+

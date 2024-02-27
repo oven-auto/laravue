@@ -2,6 +2,7 @@
 
 namespace App\Services\Comment;
 
+use App\Models\Client;
 use App\Models\Interfaces\CommentInterface;
 
 Class WorksheetActionComment extends AbstractComment
@@ -13,6 +14,14 @@ Class WorksheetActionComment extends AbstractComment
             'action_id' => $model->id,
             'type' => 0,
         ];
+    }
+
+    public function getClientContactOrInn(Client $client)
+    {
+        if($client->phones->first())
+            return $client->phones->first()->phone;
+        elseif($client->inn)
+            return $client->inn->number;
     }
 
     public function create(CommentInterface $model)
@@ -54,7 +63,7 @@ Class WorksheetActionComment extends AbstractComment
         $client = $model->worksheet->client;
 
         return array_merge($this->data, [
-            'text' => 'Новый клиент '.$client->full_name.' ('.$client->phones->first()->phone.')',
+            'text' => 'Новый клиент '.$client->full_name.' ('.$this->getClientContactOrInn($client).')',
             'type' => 1
         ]);
     }
@@ -64,7 +73,7 @@ Class WorksheetActionComment extends AbstractComment
         $client = $model->worksheet->client;
 
         return array_merge($this->data, [
-            'text' => 'Старый клиент '.$client->full_name.' ('.$client->phones->first()->phone.')',
+            'text' => 'Старый клиент '.$client->full_name.' ('.$this->getClientContactOrInn($client).')',
             'type' => 1
         ]);
     }

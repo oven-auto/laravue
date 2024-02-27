@@ -38,6 +38,7 @@ class EventIndexResource extends JsonResource
         $isIExecutor = (request()->has('executor_ids') && in_array($author->id, request('executor_ids'))) ? 1 : 0;
 
         return [
+            'created_at' => $this->created_at->format('d.m.Y (H:i)'),
             'begin_time' => $this->begin,
             'end_time' => $this->end,
             'id' => $this->id,
@@ -54,6 +55,7 @@ class EventIndexResource extends JsonResource
             'type' => $this->event->type->name,
             'client' => $this->event->client->full_name,
             'status' => $this->description->name,
+            'working' => $this->confirm == 'waiting' ? 1 : 0,
             'processed_at' => $this->processed_at ? $this->processed_at->format('d.m.Y (H:i)') : '',
             'completer' => $this->completer->cut_name,
             'client_type' => $this->event->client->type->name,

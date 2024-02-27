@@ -38,46 +38,30 @@ class smexpertMark extends Command
      */
     public function handle()
     {
-        $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
+        // $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
 
-        $url = 'https://appraisal.api.cm.expert/v1/autocatalog/models';
+        // $url = 'https://appraisal.api.cm.expert/v1/autocatalog/models';
 
-        $brands = \App\Models\Brand::select(['uid','id'])->get();
+        // $brands = \App\Models\Brand::select(['uid','id'])->get();
 
-        $ladaModel = [
-            1602,
-            3641,
-            3642,
-            2004,
-            4148,
-            4180,
-            3819,
-            3957,
-            4074,
-            4071,
-            4073,
-            4072
-        ];
+        // foreach($brands as $itemBrand)
+        // {
+        //     $response = Http::withHeaders([
+        //         'Authorization' => $token
+        //     ])->get($url, [
+        //         'brand' => $itemBrand->uid
+        //     ]);
 
-        foreach($brands as $itemBrand)
-        {
-            $response = Http::withHeaders([
-                'Authorization' => $token
-            ])->get($url, [
-                'brand' => $itemBrand->uid
-            ]);
-
-            foreach($response['models'] as $itemModel){
-                if(!in_array($itemModel['id'], $ladaModel))
-                    \App\Models\Mark::create([
-                        'uid' => $itemModel['id'],
-                        'name' => $itemModel['text'],
-                        'slug' => \Str::slug($itemModel['text']),
-                        'brand_id' => $itemBrand->id,
-                        'brand_uid' => $itemBrand->uid,
-                        'status' => 0
-                    ]);
-            }
-        }
+        //     foreach($response['models'] as $itemModel){
+        //             \App\Models\Mark::create([
+        //                 'uid' => $itemModel['id'],
+        //                 'name' => $itemModel['text'],
+        //                 'slug' => \Str::slug($itemModel['text']),
+        //                 'brand_id' => $itemBrand->id,
+        //                 'brand_uid' => $itemBrand->uid,
+        //                 'status' => 0
+        //             ]);
+        //     }
+        // }
     }
 }

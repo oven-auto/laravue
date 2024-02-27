@@ -111,11 +111,11 @@ Class EventClose
     {
         $this->eventStaus = ClientEventStatus::with('event')->find($eventStatusId);
 
-        if(!$this->isWaiting())
-            throw new \Exception('Это событие уже было выполнено!');
+        // if(!$this->isWaiting())
+        //     throw new \Exception('Это событие уже было выполнено!');
 
-        if(!$this->canIClose())
-            throw new \Exception('Это событие может закрывать только автор!');
+        // if(!$this->canIClose())
+        //     throw new \Exception('Это событие может закрывать только автор!');
 
         //dd($this->eventStaus->begin_time);
 

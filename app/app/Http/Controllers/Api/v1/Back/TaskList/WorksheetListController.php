@@ -15,9 +15,12 @@ class WorksheetListController extends Controller
 
         $subAction = $repo->getSubActionForTaskList($request->all());
 
-        $merged = collect(array_merge($worksheets, $subAction))->sortBy('begin_at');
+        $collect = collect(array_merge($subAction, $worksheets));
 
-        return (new WorksheetListCollection($merged));
+        $merged = $collect->sortByDesc('sort')->values();
+
+        return (new WorksheetListCollection($merged->all()))
+            ->additional(['test' => ('11.12.2023' > '02.02.2024')]);
     }
 }
 
