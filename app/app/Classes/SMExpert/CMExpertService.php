@@ -50,7 +50,7 @@ Class CMExpertService
             "engine" => $redemption->client_car->type->acronym,
             "volume" => (float)str_replace(',', '.', $redemption->client_car->motor_size),
             "power" => $redemption->client_car->motor_power,
-            "dealerId" => 10591,
+            "dealerId" => env('CME_DEALER_ID'),
             "customerExpectedBuyoutPrice" => $redemption->expectation,
             "vin"   => $redemption->client_car->vin,
         ];

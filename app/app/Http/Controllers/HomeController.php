@@ -10,6 +10,7 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Contracts\Cache\Store;
+use Illuminate\Support\Facades\Http;
 
 class HomeController extends Controller
 {
@@ -35,7 +36,15 @@ class HomeController extends Controller
 
     public function test(Vin $vinService)
     {
-        $obj = $vinService->parse('X7LLSRB1HAH548712');
+        $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
+
+        $url = 'https://lk.cm.expert/api/v1/dealers';
+
+        $response = Http::withHeaders([
+            'Authorization' => $token
+        ])->get($url);
+
+        dd($response->json());
     }
 
     public function addYear($date, $year = 1)
