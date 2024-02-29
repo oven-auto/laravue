@@ -39,6 +39,15 @@ class ClientCarRequest extends FormRequest
                 'min:1'
             ];
 
+        if($action == 0)
+            $size = 'nullable';
+        else
+            $size = [
+                Rule::requiredIf($action == 1),
+                'string',
+                'min:1'
+            ];
+
         return [
             'brand_id' => 'required|integer',
             'mark_id' => 'required|integer',
@@ -59,7 +68,7 @@ class ClientCarRequest extends FormRequest
             'color_id' => $params,
             'motor_driver_id' => $params,
             'motor_power' => $params,
-            'motor_size' => $params,
+            'motor_size' => $size,
             'motor_transmission_id' => $params,
             'motor_type_id' => $params,
             'vehicle_type_id' => $params,
