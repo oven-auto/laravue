@@ -34,7 +34,40 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function test(Vin $vinService)
+    public function test()
+    {
+dd(1);
+        // $token = env('TELEGRAM_KEY');
+        $data = file_get_contents('php://input');
+        $data = json_decode($data, true);
+        file_put_contents(__DIR__ . '/message.txt', print_r($data, true));
+        //$bot = new \TelegramBot\Api\Client($token);
+
+        // $bot->command('start', function ($message) use ($bot) {
+        //     $answer = 'Добро пожаловать!';
+        //     $bot->sendMessage($message->getChat()->getId(), $answer);
+        // });
+
+        //$bot->run();
+        // Http::
+        // $ch = curl_init();
+        // curl_setopt_array(
+        //     $ch,
+        //     array(
+        //         CURLOPT_URL => 'https://api.telegram.org/bot' . $token . "/sendMessage?chat_id={$chatId}&text=HELLO",
+        //         //CURLOPT_POST => TRUE,
+        //         CURLOPT_RETURNTRANSFER => TRUE,
+        //         CURLOPT_TIMEOUT => 10,
+        //         // CURLOPT_POSTFIELDS => array(
+        //         //     'chat_id' => $chatId,
+        //         //     'text' => 'HELLO',
+        //         // ),
+        //     )
+        // );
+        // curl_exec($ch);
+    }
+
+    public function getCMEDealerID()
     {
         $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
 

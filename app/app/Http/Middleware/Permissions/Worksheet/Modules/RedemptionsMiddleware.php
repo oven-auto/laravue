@@ -14,7 +14,7 @@ class RedemptionsMiddleware
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next, $action)
+    public function handle(Request $request, Closure $next, $action, $permission = '')
     {
         $user = auth()->user();
         $userPermissions = $user->role->permissions;
@@ -22,7 +22,23 @@ class RedemptionsMiddleware
         $executorPerm = 'ws_action_executor';
         $superPerm = 'ws_action_any';
 
+
+
         switch($action) {
+            case 'delete':
+                $worksheet = \App\Models\Worksheet::findOrFail($request->redemption->worksheet_id);
+
+                if($userPermissions->contains('slug', $permission) && $worksheet->executors->contains('id', $user->id))
+                    return $next($request);
+                break;
+
+            case 'revert':
+                $worksheet = \App\Models\Worksheet::findOrFail($request->redemption->worksheet_id);
+
+                if($userPermissions->contains('slug', $permission) && $worksheet->executors->contains('id', $user->id))
+                    return $next($request);
+                break;
+
             case 'show' :
                 return $next($request);
                 break;

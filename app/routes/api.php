@@ -623,6 +623,12 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
 
             Route::post('{worksheet}', 'Modules\RedemptionController@store')->middleware('permission.redemptions:create');
 
+            Route::patch('{redemption}/revert', 'Modules\RedemptionController@revert')
+                ->middleware('permission.redemptions:revert,redemption_revert');
+
+            Route::patch('{redemption}/close', 'Modules\RedemptionController@close')
+                ->middleware('permission.redemptions:delete,redemption_close');
+
             Route::prefix('')->middleware('permission.redemptions:update')->group(function() {
                 Route::get('links/{redemption}', 'Modules\RedemptionController@links');
                 Route::post('links/{redemption}', 'Modules\RedemptionController@storelink');
@@ -630,9 +636,7 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
                 Route::post('comments/{redemption}', 'Modules\RedemptionController@addComment');
                 Route::patch('{redemption}', 'Modules\RedemptionController@update');
                 Route::put('{redemption}', 'Modules\RedemptionController@saveprice');
-                Route::patch('{redemption}/close', 'Modules\RedemptionController@close');
                 Route::patch('{redemption}/buy', 'Modules\RedemptionController@buy');
-                Route::patch('{redemption}/revert', 'Modules\RedemptionController@revert');
             });
 
 
