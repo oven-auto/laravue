@@ -74,7 +74,7 @@ class RedemptionController extends Controller
      */
     public function saveprice(WSMRedemptionCar $redemption, Request $request) : \Illuminate\Http\JsonResponse
     {
-        $this->repo->save($redemption, $request->all());
+        $this->repo->update($redemption, $request->all());
 
         $redemption->fresh();
 
