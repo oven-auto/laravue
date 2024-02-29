@@ -52,7 +52,7 @@ Class CMExpertService
             "power" => $redemption->client_car->motor_power,
             "dealerId" => (int)env('CME_DEALER_ID'),
             "customerExpectedBuyoutPrice" => $redemption->expectation,
-            "color" => $redemption->car->color->acronym,
+            "color" => $redemption->client_car->color->acronym,
         ];
 
         foreach($mas as $key => $item)
