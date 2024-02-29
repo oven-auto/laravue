@@ -17,7 +17,7 @@ class WorksheetListController extends Controller
 
         $collect = collect(array_merge($subAction, $worksheets));
 
-        $merged = $collect->sortByDesc('sort')->values();
+        $merged = $collect->sortBy('sort')->values();
 
         return (new WorksheetListCollection($merged->all()))
             ->additional(['test' => ('11.12.2023' > '02.02.2024')]);

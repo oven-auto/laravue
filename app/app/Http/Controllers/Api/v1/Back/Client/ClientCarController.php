@@ -35,7 +35,7 @@ class ClientCarController extends Controller
      * @param ClientCarRequest $request данные о машине
      * @return ClientCarCollection
      */
-    public function store(Client $client, ClientCarRequest $request) : ClientCarCollection
+    public function store(Client $client, ClientCarRequest $request) //: ClientCarCollection
     {
         $clientcar = $this->repo->store($client, $request->input());
 

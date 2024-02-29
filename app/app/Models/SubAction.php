@@ -93,4 +93,9 @@ class SubAction extends Model implements CommentInterface
     {
         return $this->hasMany(\App\Models\SubActionComment::class, 'sub_action_id', 'id')->orderBy('id', 'DESC');
     }
+
+    public function last_comment()
+    {
+        return $this->hasOne(\App\Models\SubActionComment::class, 'sub_action_id', 'id')->orderBy('id', 'DESC');
+    }
 }

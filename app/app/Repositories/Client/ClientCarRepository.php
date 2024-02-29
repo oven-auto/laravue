@@ -15,6 +15,9 @@ Class ClientCarRepository
      */
     public function store(Client $client, $data = []) : ClientCar
     {
+        if(isset($data['action']))
+            unset($data['action']);
+
         if(isset($data['odometer'])) {
             $odometer = '';
             $array = (str_split($data['odometer']));
@@ -44,6 +47,9 @@ Class ClientCarRepository
      */
     public function update(ClientCar $car, $data = []) : void
     {
+        if(isset($data['action']))
+            unset($data['action']);
+
         if(isset($data['odometer'])) {
             $odometer = '';
             $array = (str_split($data['odometer']));
