@@ -28,6 +28,15 @@ class TraficShow
         if($trafic->isTraficFromEnabledWorksheet())
             return $next($request);
 
+        if($trafic->worksheet->id)
+        {
+            if(
+                $trafic->worksheet->executors->contains('id', auth()->user()->id) ||
+                $trafic->worksheet->reporters->contains('id', auth()->user()->id)
+            )
+                return $next($request);
+        }
+
         //Получение текущего права, что бы вернуть исключение
         //$permission = \App\Models\Permission::where('slug', $permission)->first();
         //throw new \Exception('Отсутствуют права "'.$permission->name.'"');
