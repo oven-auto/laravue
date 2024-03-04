@@ -30,6 +30,7 @@ services:
     volumes:
       - ./app/:/var/www
       - ./docker/docker.ini:/usr/local/etc/php/conf.d/docker.ini
+      - ./docker/nginx/ssl:/etc/nginx/ssl
     links: 
       - mysql-sshop
       - redis-sshop

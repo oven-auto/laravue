@@ -17,4 +17,8 @@ RUN apt-get update && apt-get install -y apt-utils \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
+RUN rm -rf /etc/localtime
+RUN ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
+RUN echo "Europe/Moscow" > /etc/timezone
+
 WORKDIR /var/www

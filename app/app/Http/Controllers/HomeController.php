@@ -11,6 +11,9 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\Http;
+use Telegram\Bot\Api;
+use Telegram\Bot\FileUpload\InputFile;
+
 
 class HomeController extends Controller
 {
@@ -24,6 +27,43 @@ class HomeController extends Controller
 
     }
 
+
+
+    public function get()
+    {
+        $token = env('TELEGRAM_KEY');
+        $telegram = new Api($token);
+        $res = $telegram->getWebhookInfo();
+        dump(date('d-m-Y H:i'));
+        dump($res);
+    }
+
+
+
+    public function set()
+    {
+        $token = env('TELEGRAM_KEY');
+        $telegram = new Api($token);
+
+        $res = $telegram->setWebhook([
+            'certificate' => 'cert/sert1.pem',
+            'url' => 'https://62.182.31.140/test'
+        ]);
+
+        dump($res);
+    }
+
+
+    public function bot()
+    {
+        dump('tg-bot');
+        $tmpdata = json_decode(file_get_contents('php://input'),true);
+        $arrdataapi = print_r($tmpdata, true);
+        file_put_contents('apidata.txt', 'Данные от бота: $arrdataapi', FILE_APPEND);
+    }
+
+
+
     /**
      * Show the application dashboard.
      *
@@ -31,40 +71,35 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+
     }
 
     public function test()
     {
-dd(1);
+
+        // $user = \App\Models\User::find(47);
+        // $user->name = 1;
+        // $user->save();
+
         // $token = env('TELEGRAM_KEY');
-        $data = file_get_contents('php://input');
-        $data = json_decode($data, true);
-        file_put_contents(__DIR__ . '/message.txt', print_r($data, true));
-        //$bot = new \TelegramBot\Api\Client($token);
+        // $telegram = new Api($token);
+        // $result = $telegram->getWebhookUpdates();
 
-        // $bot->command('start', function ($message) use ($bot) {
-        //     $answer = 'Добро пожаловать!';
-        //     $bot->sendMessage($message->getChat()->getId(), $answer);
-        // });
+        // $text = $result["message"]["text"]; //Текст сообщения
+        // $chat_id = $result["message"]["chat"]["id"]; //Уникальный идентификатор пользователя
+        // $name = $result["message"]["from"]["username"]; //Юзернейм пользователя
+        // $keyboard = [["Последние статьи"],["Картинка"],["Гифка"]]; //Клавиатура
 
-        //$bot->run();
-        // Http::
-        // $ch = curl_init();
-        // curl_setopt_array(
-        //     $ch,
-        //     array(
-        //         CURLOPT_URL => 'https://api.telegram.org/bot' . $token . "/sendMessage?chat_id={$chatId}&text=HELLO",
-        //         //CURLOPT_POST => TRUE,
-        //         CURLOPT_RETURNTRANSFER => TRUE,
-        //         CURLOPT_TIMEOUT => 10,
-        //         // CURLOPT_POSTFIELDS => array(
-        //         //     'chat_id' => $chatId,
-        //         //     'text' => 'HELLO',
-        //         // ),
-        //     )
-        // );
-        // curl_exec($ch);
+        // if($text){
+        //     if ($text == "/start") {
+        //        $reply = "Добро пожаловать в бота!";
+        //        $reply_markup = $telegram->replyKeyboardMarkup([ 'keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => false ]);
+        //        $telegram->sendMessage([ 'chat_id' => $chat_id, 'text' => $reply, 'reply_markup' => $reply_markup ]);
+        //    }
+        // }
+        // else{
+        //     $telegram->sendMessage([ 'chat_id' => $chat_id, 'text' => "Отправьте текстовое сообщение." ]);
+        // }
     }
 
     public function getCMEDealerID()

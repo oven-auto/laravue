@@ -36,7 +36,7 @@ use Illuminate\Http\Request;
 //     return redirect("/home");
 // })->middleware('auth');
 
-// Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('phpinfo', function() {
     phpinfo();
 });
@@ -66,3 +66,10 @@ Route::prefix('pdf')->group(function () {
 // })->where('any', '.*');
 
 Route::get('test', '\App\Http\Controllers\HomeController@test');
+Route::post('test', '\App\Http\Controllers\HomeController@test');
+Route::patch('test', '\App\Http\Controllers\HomeController@test');
+Route::put('test', '\App\Http\Controllers\HomeController@test');
+
+Route::get('/telegram/set', '\App\Http\Controllers\HomeController@set');
+Route::get('/telegram/get', '\App\Http\Controllers\HomeController@get');
+Route::any('/telegram/bot', '\App\Http\Controllers\HomeController@bot');
