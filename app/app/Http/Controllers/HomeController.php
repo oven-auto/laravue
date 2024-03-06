@@ -29,37 +29,126 @@ class HomeController extends Controller
 
 
 
+    /**
+     * ПОЛУЧИТЬ СОСТОЯНИЕ ВЕБХУКА ТЕЛЕГРАМ
+     */
     public function get()
     {
         $token = env('TELEGRAM_KEY');
+
         $telegram = new Api($token);
+
         $res = $telegram->getWebhookInfo();
-        dump(date('d-m-Y H:i'));
+
         dump($res);
     }
 
 
 
+    /**
+     * УСТАНОВИТЬ ВЕБХУК ТЕЛЕГРАМ
+     */
     public function set()
     {
         $token = env('TELEGRAM_KEY');
-        $telegram = new Api($token);
 
-        $res = $telegram->setWebhook([
-            'certificate' => 'cert/sert1.pem',
-            'url' => 'https://62.182.31.140/test'
-        ]);
+        $url = 'https://62.182.31.140/telegram/bot';
 
-        dump($res);
+        $command = 'curl -k -F "url='.$url.'" -F "certificate=@cert/cert2.pem" "https://api.telegram.org/bot'.$token.'/setWebhook"';
+
+        exec($command, $out, $res);
+
+        dump($out);
     }
 
 
+
+    /**
+     * УДАЛИТЬ ВЕБХУК ТЕЛЕГРАМ
+     */
+    public function del()
+    {
+        $token = env('TELEGRAM_KEY');
+
+        $telegram = new Api($token);
+
+        $res = $telegram->removeWebhook();
+    }
+
+
+
+    /**
+     * БОТ ТЕЛЕГРАМ
+     */
     public function bot()
     {
-        dump('tg-bot');
-        $tmpdata = json_decode(file_get_contents('php://input'),true);
-        $arrdataapi = print_r($tmpdata, true);
-        file_put_contents('apidata.txt', 'Данные от бота: $arrdataapi', FILE_APPEND);
+        $offset = \App\Models\TelegramLongpollingOffset::firstOrNew();
+
+        $token = env('TELEGRAM_KEY');
+
+        $telegram = new Api($token);
+
+        $data = $telegram->getUpdates([
+            'offset' => $offset->value ?? '',
+        ]);
+
+        if(end($data))
+        {
+            $newOffset = end($data)->update_id + 1;
+            $offset->value = $newOffset;
+            $offset->save();
+        }
+
+        if(count($data))
+        {
+            foreach($data as $item)
+            {
+                $text = $item->message->text;
+
+                switch ($text) {
+                    case '/start' :
+                        $res = $telegram->sendMessage([
+                            'chat_id' => $item->message->chat->id,
+                            'text' => "Привет я бот ОвенАвто. \n\n".
+                                "Выбери нужную команду: \n\n".
+                                "/start = приветствие \n".
+                                "/register = регистрация \n"
+                            ,
+                            'parse_mode' => 'HTML',
+                            'disable_web_page_preview' => true,
+                        ]);
+                        break;
+                    case '/help':
+                        $res = $telegram->sendMessage([
+                            'chat_id' => $item->message->chat->id,
+                            'text' =>
+                                "Выбери нужную команду: \n\n".
+                                "/start = приветствие \n".
+                                "/register = регистрация \n"
+                            ,
+                            'parse_mode' => 'HTML',
+                            'disable_web_page_preview' => true,
+                        ]);
+                        break;
+                    case '/register' :
+
+                        $res = $telegram->sendMessage([
+                            'chat_id' => $item->message->chat->id,
+                            'text' => "Введите свой номер телефона (11 символов), и тогда CRM Сопка сможет отправлять Вам уведомления",
+                            'parse_mode' => 'HTML',
+                            'disable_web_page_preview' => true,
+                        ]);
+                        break;
+                    default:
+                        $res = $telegram->sendMessage([
+                            'chat_id' => $item->message->chat->id,
+                            'text' => "Не флуди! А то забаню, и удалю из всех рабочих листов. \nНе знаешь, что спросить напиши /help",
+                            'parse_mode' => 'HTML',
+                            'disable_web_page_preview' => true,
+                        ]);
+                }
+            }
+        }
     }
 
 

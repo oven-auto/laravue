@@ -49,7 +49,8 @@ return [
         'http://192.168.1.98',
         'sockjs-eu.pusher.com',
         'http://sockjs-eu.pusher.com',
-        'https://sockjs-eu.pusher.com'
+        'https://sockjs-eu.pusher.com',
+        'https://192.168.1.98',
     ],
 
     'max_age' => 0,
@@ -67,7 +68,7 @@ return [
         'http://192.168.1.6:8080',
         'http://192.168.1.6:8082',
         'http://192.168.1.6',
-
+        'https://192.168.1.98',
         'http://192.168.1.11:8080',
         'http://192.168.1.11:8082',
         'http://192.168.1.11',

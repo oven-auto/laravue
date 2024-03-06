@@ -73,3 +73,4 @@ Route::put('test', '\App\Http\Controllers\HomeController@test');
 Route::get('/telegram/set', '\App\Http\Controllers\HomeController@set');
 Route::get('/telegram/get', '\App\Http\Controllers\HomeController@get');
 Route::any('/telegram/bot', '\App\Http\Controllers\HomeController@bot');
+Route::get('/telegram/del', '\App\Http\Controllers\HomeController@del');
