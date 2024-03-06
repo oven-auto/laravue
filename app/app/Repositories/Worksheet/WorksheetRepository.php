@@ -208,7 +208,7 @@ class WorksheetRepository
             'sub_action_id'     => '',
             'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray(),
             'closed_at'         => $item->close_at ? $item->close_at->format('d.m.Y (H:i)') : '',
-            'sort'              => $item->last_action->begin_at->format('Ymd'),
+            'sort'              => $item->last_action->begin_at->format('YmdHi'),
         ])->toArray();
 
         return $result;
@@ -240,7 +240,7 @@ class WorksheetRepository
             'sub_action_id'     => $item->id,
             'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray(),
             'closed_at'         => $item->closed_at ? $item->closed_at->format('d.m.Y (H:i)') : '',
-            'sort'              => $item->created_at->format('Ymd'),
+            'sort'              => $item->created_at->format('YmdHi'),
         ])->toArray();
 
         return $resultSubAction;

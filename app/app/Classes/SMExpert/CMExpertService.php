@@ -59,7 +59,7 @@ Class CMExpertService
             if(!$item)
                 throw new \Exception("Поле ".self::FIELDS[$key]." не заполнено");
 
-        $mas["vin"] = $redemption->client_car->vin;
+        $mas["vin"] = strtoupper($redemption->client_car->vin);
 
         $response = Http::withHeaders([
             'Authorization' => $token
