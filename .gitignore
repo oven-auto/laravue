@@ -1,3 +1,4 @@
 /docker/images
 /backup
 /nbproject/private/
+/vendor
