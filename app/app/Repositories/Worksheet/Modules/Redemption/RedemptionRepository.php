@@ -143,16 +143,16 @@ Class RedemptionRepository
      * @return WSMRedemptionCar
      */
     public function update(WSMRedemptionCar $redemption, array $data) : WSMRedemptionCar
-    {///
+    {
         $obj = (object) $data;
 
         $redemption->fill([
-            'expectation' => $obj->expectation ?? 0,
+            'expectation' => $obj->expectation ?? $redemption->expectation,
             'car_sale_sign_id' => $obj->car_sale_sign_id ?? $redemption->car_sale_sign_id,
             'redemption_type_id' => $obj->redemption_type_id ?? $redemption->redemption_type_id,
         ])->save();
 
-        $this->save($redemption, $data);
+        //$this->save($redemption, $data);
 
         return $redemption;
     }

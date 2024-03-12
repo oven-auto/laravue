@@ -5,15 +5,14 @@ namespace App\Http\Controllers\Api\v1\Back\Director;
 use App\Http\Controllers\Controller;
 use App\Http\Filters\TraficAnalyticFilter;
 use App\Http\Filters\WorksheetAnalyticFilter;
-
-use App\Http\Filters\TraficFilter;
-use App\Http\Filters\WorksheetFilter;
-
-
+use App\Http\Filters\WSMRedemptionCarFilter;
 use App\Models\Trafic;
 use App\Models\Worksheet;
 use Illuminate\Http\Request;
 
+/**
+ * КОНТРОЛЬНЫЕ ПАКАЗАТЕЛИ
+ */
 class CounterController extends Controller
 {
     public function __invoke(Request $request)
@@ -23,44 +22,45 @@ class CounterController extends Controller
                 'second_interval_begin', 'second_interval_end',
                 'third_interval_begin', 'third_interval_end',
         ]);
-        //dd($nonIntervalArray);
-        $filterTrafic       = app()->make(TraficAnalyticFilter::class, ['queryParams' => array_filter($nonIntervalArray)]);
-        $filterWorkSheet    = app()->make(WorksheetAnalyticFilter::class, ['queryParams' => array_filter($nonIntervalArray)]);
+
+        $queryParams = ['queryParams' => array_filter($nonIntervalArray)];
+
+        $filterTrafic       = app()->make(TraficAnalyticFilter::class, $queryParams);
+        $filterWorkSheet    = app()->make(WorksheetAnalyticFilter::class, $queryParams);
+        $filterRedemption   = app()->make(WSMRedemptionCarFilter::class, ['queryParams' => ['status' => 'control']]);
+
+        $trafic = Trafic::select('trafics.id')->whereIn('trafics.trafic_status_id', [1,2])->filter($filterTrafic)->pluck('id');
+        $worksheetOverdue = Worksheet::select('worksheets.id')->overdue()->filter($filterWorkSheet)->pluck('id');
+        $worksheetCheck = Worksheet::select(['worksheets.id'])->check()->filter($filterWorkSheet)->pluck('id');
+        $redemption = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemption)->pluck('id');
 
         $counter = [
-            'trafic' => [
-                'count' => Trafic::query()->whereIn('trafics.trafic_status_id', [1,2])->filter($filterTrafic)->count(),
-                'ids' => Trafic::select('trafics.id')->whereIn('trafics.trafic_status_id', [1,2])->filter($filterTrafic)->pluck('id')
+            '0' => [
+                'name' => 'Необработанные обращения',
+                'count' => $trafic->count(),
+                'ids' => $trafic,
+                'type' => 'trafics'
             ],
 
-            'events' => [
-                'count' => Worksheet::select([\DB::raw('COUNT(worksheets.id) as count'),])
-                    ->where('worksheets.status_id','work')
-                    ->where('worksheet_actions.end_at','<', now())
-                    ->filter($filterWorkSheet)
-                    ->groupBy('worksheets.id')
-                    ->get()
-                    ->count(),
-                'ids' => Worksheet::select([\DB::raw('worksheets.id'),])
-                    ->where('worksheets.status_id','work')
-                    ->where('worksheet_actions.end_at','<', now())
-                    ->filter($filterWorkSheet)
-                    ->groupBy('worksheets.id')
-                    ->pluck('id'),
+            '1' => [
+                'name' => 'Просроченные события в РЛ',
+                'count' => $worksheetOverdue->count(),
+                'ids' => $worksheetOverdue,
+                'type' => 'events'
             ],
 
-            'worksheet' => [
-                'count' => Worksheet::select([\DB::raw('COUNT(worksheets.id) as count'),])
-                    ->where('worksheets.status_id','check')
-                    ->filter($filterWorkSheet)
-                    ->groupBy('worksheets.id')
-                    ->get()
-                    ->count(),
-                'ids' => Worksheet::select(['worksheets.id'])
-                ->where('worksheets.status_id','check')
-                ->filter($filterWorkSheet)
-                ->groupBy('worksheets.id')
-                ->pluck('id'),
+            '2' => [
+                'name' => 'РЛ на проверке',
+                'count' => $worksheetCheck->count(),
+                'ids' => $worksheetCheck,
+                'type' => 'worksheets'
+            ],
+
+            '3' => [
+                'name' => 'Оценки на контроле',
+                'count' => $redemption->count(),
+                'ids' => $redemption,
+                'type' => 'appraisals'
             ],
         ];
 

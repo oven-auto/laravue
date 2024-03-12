@@ -21,8 +21,8 @@ Class SubActionComment extends AbstractComment
     public function create(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => $model->title,
-            'type' => 0,
+            'text' => 'Создана подзадача '.$model->title,
+            'type' => 1,
         ]);
     }
 

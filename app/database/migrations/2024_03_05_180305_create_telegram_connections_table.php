@@ -18,6 +18,7 @@ class CreateTelegramConnectionsTable extends Migration
             $table->string('chat_id');
             $table->integer('user_id');
             $table->string('last_command');
+            $table->integer('state')->default(0);
             $table->timestamps();
         });
     }

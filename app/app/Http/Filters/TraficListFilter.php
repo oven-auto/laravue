@@ -45,10 +45,22 @@ Class TraficListFilter extends AbstractFilter{
             $builder->orWhere(function($q){
                 //только ожидающие
                 $q->where('trafics.trafic_status_id',1);
-                //цель должна быть у пользователя
-                $q->whereIn('trafic_appeals.appeal_id', auth()->user()->appeals->pluck('id'));
-                //структура трафика равна структуре цели обращения
-                $q->whereIn('trafics.company_structure_id', auth()->user()->structures->pluck('company_structure_id'));
+
+                if(auth()->user())
+                {
+                    //цель должна быть у пользователя
+                    $q->whereIn('trafic_appeals.appeal_id', auth()->user()->appeals->pluck('id'));
+                    //структура трафика равна структуре цели обращения
+                    $q->whereIn('trafics.company_structure_id', auth()->user()->structures->pluck('company_structure_id'));
+                }
+                else
+                {
+                    $user = \App\Models\User::find($this->getQueryParam('manager_id'));
+                    //цель должна быть у пользователя
+                    $q->whereIn('trafic_appeals.appeal_id', $user->appeals->pluck('id'));
+                    //структура трафика равна структуре цели обращения
+                    $q->whereIn('trafics.company_structure_id', $user->structures->pluck('company_structure_id'));
+                }
             });
         }
     }

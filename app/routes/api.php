@@ -566,7 +566,7 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     * Поменять клиента в рабочем листе
     * @param mixed $request [worksheet_id = int, client_id = int]
     */
-    Route::patch('change/client', 'ChangeClientController@change')->middleware('permission.worksheet.action:ws_subclient_attach');;
+    Route::patch('change/client', 'ChangeClientController@change')->middleware('permission.worksheet.action:ws_subclient_attach');
     /****************************************************************************15.05.23
      * Добавить клиента или менеджера в рабочий лист
      * @param mixed $request [worksheet_id = int, user_id = int|client_id = int]
@@ -611,37 +611,64 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
      */
     Route::get('revert/{worksheet}', 'WorksheetController@revert')->middleware(['permission.worksheet.revert']);
 
+
+
     /**
      * REDEMPTION MODULE
      */
     Route::prefix('modules')->group(function(){
         Route::prefix('redemptions')->group(function() {
 
+            //Кол-во оценок после фильтрации
             Route::get('count', 'Modules\RedemptionController@counter');
-            Route::get('/{worksheet?}', 'Modules\RedemptionController@index');
 
+            //список оценок, указан id рабочего листа, выдаст только оценки этого рл
+            Route::get('/{worksheet}', 'Modules\RedemptionController@index');
 
-            Route::post('{worksheet}', 'Modules\RedemptionController@store')->middleware('permission.redemptions:create');
+            //вернет все оценки после фильтрации. Параметры фильтрации смотри в App\Http\Filters\WSMRedemptionCarFilter
+            Route::get('/', 'Modules\RedemptionController@list')
+                ->middleware('permission.redemptions:list,redemption_list');
 
+            //Создать заявку на оценку
+            Route::post('{worksheet}', 'Modules\RedemptionController@store')
+                ->middleware('permission.redemptions:create');
+
+            //Вернуть оценку в работу
             Route::patch('{redemption}/revert', 'Modules\RedemptionController@revert')
                 ->middleware('permission.redemptions:revert,redemption_revert');
 
+            //Упустить оценку
             Route::patch('{redemption}/close', 'Modules\RedemptionController@close')
                 ->middleware('permission.redemptions:delete,redemption_close');
 
+            //Сохранить расчеты (расчетная цена, предложено, согласовано)
+            Route::put('{redemption}', 'Modules\RedemptionController@saveprice')
+                ->middleware('permission.redemptions:delete,redemption_appraisal');
+
+            //Список ссылок
+            Route::get('links/{redemption}', 'Modules\RedemptionController@links');
+
             Route::prefix('')->middleware('permission.redemptions:update')->group(function() {
-                Route::get('links/{redemption}', 'Modules\RedemptionController@links');
+                //Сохранить ссылку
                 Route::post('links/{redemption}', 'Modules\RedemptionController@storelink');
+
+                //Получить список комментариев
                 Route::get('comments/{redemption}', 'Modules\RedemptionController@commentList');
+
+                //Добавить комментарий
                 Route::post('comments/{redemption}', 'Modules\RedemptionController@addComment');
+
+                //Изменить оценку (по сути только 3 параметра: тип оценки, товарный признак, ожидание)
                 Route::patch('{redemption}', 'Modules\RedemptionController@update');
-                Route::put('{redemption}', 'Modules\RedemptionController@saveprice');
+
+                //выкуп/перемещение на склад
                 Route::patch('{redemption}/buy', 'Modules\RedemptionController@buy');
             });
-
-
         });
     });
+
+
+
     //->middleware('permission.worksheet.action:ws_action_executor,ws_action_any')
     Route::prefix('subactions')->group(function() {
         Route::get('{worksheetId}', 'SubAction\SubActionController@index')->middleware('permission.subaction:show');
@@ -672,12 +699,13 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
 Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')
     ->middleware(['corsing','userfromtoken'])->group(function(){
 
-        Route::post('create/redemptions/{redemption}', 'Deliver\CreateRedemptionController');
+        Route::post('create/redemptions/{redemption}', 'Deliver\CreateRedemptionController')
+            ->middleware('permission.redemptions:appraisal,redemption_appraisal');
 
         // Route::get('gain/brands', 'Gain\BrandController');
         // Route::get('gain/test', 'Gain\MarkController');
-        // Route::get('deliver/brands', 'Deliver\BrandController');
-        // Route::get('deliver/marks', 'Deliver\MarkController');
+        Route::get('deliver/brands', 'Deliver\BrandController');
+        Route::get('deliver/marks', 'Deliver\MarkController');
 });
 
 /**

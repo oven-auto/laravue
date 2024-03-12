@@ -23,6 +23,29 @@ class Worksheet extends Model
         'work', 'check'
     ];
 
+    /**BEGIN SCOPES */
+    public function scopeOverdue($query)
+    {
+        return $query->where('worksheets.status_id','work')
+            ->where('worksheet_actions.end_at','<', now());
+    }
+
+    public function scopeCheck($query)
+    {
+        return $query->where('worksheets.status_id','check');
+    }
+
+    public function scopeLinksCount($query)
+    {
+        return $query->withCount('links');
+    }
+
+    public function scopeFilesCount($query)
+    {
+        return $query->withCount('files');
+    }
+    /**END SCOPES */
+
     public function isClosing()
     {
         if($this->status_id == 'confirm')
@@ -114,15 +137,7 @@ class Worksheet extends Model
         return 0;
     }
 
-    public function scopeLinksCount($query)
-    {
-        return $query->withCount('links');
-    }
 
-    public function scopeFilesCount($query)
-    {
-        return $query->withCount('files');
-    }
 
     public function files()
     {

@@ -29,20 +29,25 @@ class RedemptionController extends Controller
      * ПОЛУЧИТЬ СПИСОК ОЦЕНОК
      * @param int $worksheet
      * @param Request $request
-     * @return mixed RedemptionCollection|RedemptionListResource
+     * @return mixed \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function index(Request $request, int $worksheet = 0 )
+    public function list(Request $request ) : \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
-        if($worksheet)
-        {
-            $redemptions = $this->repo->get($worksheet);
-            return new RedemptionCollection($redemptions);
-        }
-        else
-        {
-            $redemptions = $this->repo->paginate($request->all());
-            return (RedemptionListResource::collection($redemptions))->additional(['success' => 1]);
-        }
+        $redemptions = $this->repo->paginate($request->all());
+        return (RedemptionListResource::collection($redemptions))->additional(['success' => 1]);
+    }
+
+
+
+    /**
+     * ПОЛУЧИТЬ СПИСОК ОЦЕНОК В РАБОЧЕМ ЛИСТЕ
+     * @param Request $request
+     * @return mixed RedemptionCollection
+     */
+    public function index(int $worksheet) : RedemptionCollection
+    {
+        $redemptions = $this->repo->get($worksheet);
+        return new RedemptionCollection($redemptions);
     }
 
 

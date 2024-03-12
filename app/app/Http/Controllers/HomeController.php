@@ -80,75 +80,10 @@ class HomeController extends Controller
     /**
      * БОТ ТЕЛЕГРАМ
      */
-    public function bot()
+    public function bot(\App\Classes\Telegram\Scenario $scenario)
     {
-        $offset = \App\Models\TelegramLongpollingOffset::firstOrNew();
-
-        $token = env('TELEGRAM_KEY');
-
-        $telegram = new Api($token);
-
-        $data = $telegram->getUpdates([
-            'offset' => $offset->value ?? '',
-        ]);
-
-        if(end($data))
-        {
-            $newOffset = end($data)->update_id + 1;
-            $offset->value = $newOffset;
-            $offset->save();
-        }
-
-        if(count($data))
-        {
-            foreach($data as $item)
-            {
-                $text = $item->message->text;
-
-                switch ($text) {
-                    case '/start' :
-                        $res = $telegram->sendMessage([
-                            'chat_id' => $item->message->chat->id,
-                            'text' => "Привет я бот ОвенАвто. \n\n".
-                                "Выбери нужную команду: \n\n".
-                                "/start = приветствие \n".
-                                "/register = регистрация \n"
-                            ,
-                            'parse_mode' => 'HTML',
-                            'disable_web_page_preview' => true,
-                        ]);
-                        break;
-                    case '/help':
-                        $res = $telegram->sendMessage([
-                            'chat_id' => $item->message->chat->id,
-                            'text' =>
-                                "Выбери нужную команду: \n\n".
-                                "/start = приветствие \n".
-                                "/register = регистрация \n"
-                            ,
-                            'parse_mode' => 'HTML',
-                            'disable_web_page_preview' => true,
-                        ]);
-                        break;
-                    case '/register' :
-
-                        $res = $telegram->sendMessage([
-                            'chat_id' => $item->message->chat->id,
-                            'text' => "Введите свой номер телефона (11 символов), и тогда CRM Сопка сможет отправлять Вам уведомления",
-                            'parse_mode' => 'HTML',
-                            'disable_web_page_preview' => true,
-                        ]);
-                        break;
-                    default:
-                        $res = $telegram->sendMessage([
-                            'chat_id' => $item->message->chat->id,
-                            'text' => "Не флуди! А то забаню, и удалю из всех рабочих листов. \nНе знаешь, что спросить напиши /help",
-                            'parse_mode' => 'HTML',
-                            'disable_web_page_preview' => true,
-                        ]);
-                }
-            }
-        }
+        //SELECT FLOOR(1000 + (1999-1000)*RAND())
+        $scenario->handler();
     }
 
 

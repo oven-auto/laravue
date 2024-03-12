@@ -56,7 +56,8 @@ Class WorksheetAnalyticFilter extends AbstractFilter
             //     \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
             // )
             ->leftJoin('trafics', 'trafics.id', 'worksheets.trafic_id')
-            ->where('trafics.client_type_id', '<>', 3);
+            ->where('trafics.client_type_id', '<>', 3)
+            ->groupBy('worksheets.id');
     }
 
     public function createdBegin(Builder $builder, $value)

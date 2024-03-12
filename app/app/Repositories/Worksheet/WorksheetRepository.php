@@ -247,6 +247,19 @@ class WorksheetRepository
     }
 
 
+    public function getAmountList(array $data)
+    {
+        $worksheets = $this->getWorksheetsForTaskList($data);
+
+        $subActions = $this->getSubActionForTaskList($data);
+
+        $collect = collect(array_merge($worksheets, $subActions));
+
+        $merged = $collect->sortBy('sort')->values();
+
+        return $merged->all();
+    }
+
 
     /**
      * ЗАКРЫТЬ РЛ

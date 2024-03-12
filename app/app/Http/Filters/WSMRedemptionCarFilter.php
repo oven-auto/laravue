@@ -13,6 +13,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
     private const STATUS = 'status';
     private const INPUT = 'input';
     private const WORKSHEET_ID = 'worksheet_id';
+    private const EXECUTOR_ID = 'executor_id';
 
     public function __construct(array $queryParams)
     {
@@ -30,6 +31,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
             self::STATUS             => [$this, 'status'],
             self::INPUT              => [$this, 'input'],
             self::WORKSHEET_ID       => [$this, 'worksheetId'],
+            self::EXECUTOR_ID        => [$this, 'executorId'],
         ];
     }
 
@@ -40,6 +42,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
         $builder->leftJoin('wsm_redemption_calculations', 'wsm_redemption_calculations.wsm_redemption_car_id', 'wsm_redemption_cars.id');
         $builder->leftJoin('wsm_redemption_offers',     'wsm_redemption_offers.wsm_redemption_car_id', 'wsm_redemption_cars.id');
         $builder->leftJoin('wsm_redemption_purchases', 'wsm_redemption_purchases.wsm_redemption_car_id', 'wsm_redemption_cars.id');
+        $builder->leftJoin('wsm_redemption_appraisals', 'wsm_redemption_appraisals.redemption_id', 'wsm_redemption_cars.id');
 
         $builder->groupBy('wsm_redemption_cars.id');
     }
@@ -128,5 +131,10 @@ Class WSMRedemptionCarFilter extends AbstractFilter
             $query->orWhere('client_phones.phone', 'LIKE', '%'.$value.'%');
             $query->orWhere('clients.lastname', 'LIKE', '%'.$value.'%');
         });
+    }
+
+    public function executorId(Builder $builder, $value)
+    {
+        $builder->where('wsm_redemption_appraisals.author_id', $value);
     }
 }
