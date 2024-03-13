@@ -17,6 +17,7 @@ class ClientEventFileResource extends JsonResource
         $arr = explode('/',$this->file);
 
         return [
+            'tet' => file_exists(public_path('storage/'.$this->file)),
             'file' => \WebUrl::make_link($this->file),
             'author' => $this->author->cut_name,
             'created_at' =>$this->created_at->format('d.m.Y (H:i)'),

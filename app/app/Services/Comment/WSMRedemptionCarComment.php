@@ -21,7 +21,7 @@ Class WSMRedemptionCarComment extends AbstractComment
     public function create(CommentInterface $model)
     {
         return array_merge($this->data, [
-            'text' => 'Создана новая оценка автомобиля',
+            'text' => 'Заявлена новая оценка автомобиля',
             'type' => 1,
         ]);
     }

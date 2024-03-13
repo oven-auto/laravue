@@ -84,7 +84,7 @@ Class Telegram
     {
         $options['chat_id'] = $chatId;
         $options['text'] = $message;
-
+        //dump($options);
         $this->service->sendMessage($options);
     }
 }

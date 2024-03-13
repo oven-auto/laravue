@@ -643,7 +643,7 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
 
             //Сохранить расчеты (расчетная цена, предложено, согласовано)
             Route::put('{redemption}', 'Modules\RedemptionController@saveprice')
-                ->middleware('permission.redemptions:delete,redemption_appraisal');
+                ->middleware('permission.redemptions:update');
 
             //Список ссылок
             Route::get('links/{redemption}', 'Modules\RedemptionController@links');

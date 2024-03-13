@@ -23,7 +23,18 @@ Class Scenario
 
         foreach($messages as $item)
         {
-            $text = $item->message->text;
+            //$text = (array)$item->ShippingQuery();
+            $callback   = @dump($item->callbackQuery->data);
+            $text       = @dump($item->message->text);
+
+            dd();
+
+            $text = $callback ? $callback : $text;
+            //$text = $item->message->text;
+            // if(isset($item->message))
+            //     $text = $item->message->text;
+            // elseif(isset($item->CallbackQuery))
+            //     $text = '/help';
 
             $scene = $this->sceneFactory($text, $item);
 
