@@ -6,11 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use App\Models\Interfaces\CommentInterface;
+use App\Models\Traits\AttachMethod;
 
 class ClientEvent extends Model
 {
-    use HasFactory, Filterable, SoftDeletes;
+    use HasFactory, Filterable, SoftDeletes, AttachMethod;
 
     protected $guarded = [];
 
@@ -78,7 +78,9 @@ class ClientEvent extends Model
 
     public function executors()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'client_event_executors', 'event_id', 'executor_id', 'id');
+        return $this->belongsToMany(\App\Models\User::class, 'client_event_executors', 'event_id', 'executor_id', 'id')
+            ->using(ClientEventExecutor::class)
+            ->withPivot(['event_id', 'executor_id']);
     }
 
     public function statuses()

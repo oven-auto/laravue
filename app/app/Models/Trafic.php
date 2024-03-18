@@ -75,6 +75,29 @@ class Trafic extends Model implements CommentInterface
         'deleted_at'
     ];
 
+    public function usersIdByTraficAppeal($notMe = 0)
+    {
+        $query = \App\Models\User::select('users.id')
+            ->leftJoin('trafic_user_appeals', 'trafic_user_appeals.user_id', '=', 'users.id')
+            ->leftJoin('trafic_appeals', 'trafic_appeals.appeal_id', '=',  'trafic_user_appeals.appeal_id')
+            ->leftJoin('trafics', 'trafics.manager_id','users.id')
+            ->leftJoin('user_company_structures', 'user_company_structures.user_id', 'users.id')
+            ->where('trafic_appeals.id', $this->trafic_appeal_id)
+            ->where('user_company_structures.company_structure_id', $this->company_structure_id);
+
+        if($notMe)
+            $query->where('users.id', '<>', auth()->user()->id);
+
+        $query->groupBy('users.id');
+
+        $query->toSql();
+        //throw new \Exception($query->toSql().' --- '.$this->trafic_appeal_id. '   ---   '.$this->company_structure_id);
+        $users = $query->pluck('id');
+
+
+        return $users;
+    }
+
     public function isMy()
     {
         $me = auth()->user()->id;

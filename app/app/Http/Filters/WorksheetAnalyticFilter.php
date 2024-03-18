@@ -19,6 +19,8 @@ Class WorksheetAnalyticFilter extends AbstractFilter
     public const COMPANY_IDS = 'company_ids';
     public const STRUCTURE_IDS = 'structure_ids';
 
+    public static $GroupByWorkshhetId = 1;
+
     public function __construct($queryParams)
     {
         $queryParams['init'] = 'init';
@@ -56,8 +58,10 @@ Class WorksheetAnalyticFilter extends AbstractFilter
             //     \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
             // )
             ->leftJoin('trafics', 'trafics.id', 'worksheets.trafic_id')
-            ->where('trafics.client_type_id', '<>', 3)
-            ->groupBy('worksheets.id');
+            ->where('trafics.client_type_id', '<>', 3);
+
+        if(self::$GroupByWorkshhetId)
+            $builder->groupBy('worksheets.id');
     }
 
     public function createdBegin(Builder $builder, $value)

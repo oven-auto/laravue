@@ -11,6 +11,7 @@ use \App\Http\Requests\Worksheet\Action\StoreActionRequest;
 use App\Models\WorksheetAction;
 use \App\Services\Worksheet\ActionSave;
 use \App\Services\Comment\Comment;
+use \App\Classes\Telegram\Notice\TelegramNotice;
 
 class WorksheetActionController extends Controller
 {
@@ -20,6 +21,12 @@ class WorksheetActionController extends Controller
     public function store(StoreActionRequest $request, ActionSave $actionSave)
     {
         $worksheet = \App\Models\Worksheet::findOrFail($request->worksheet_id);
+
+        $old = implode(' ',[
+            $worksheet->last_action->task->name,
+            $worksheet->last_action->begin_at->format('d.m.Y'),
+            '('.$worksheet->last_action->begin_at->format('H:i').'-'.$worksheet->last_action->end_at->format('H:i').')'
+        ]);
 
         $task = \App\Models\Task::findOrFail( $request->task_id );
 
@@ -35,7 +42,12 @@ class WorksheetActionController extends Controller
         $worksheet->fill(['status_id' => $task->worksheet_label])->save();
 
         Comment::add($worksheet->last_action, 'register_action');
+
         Comment::text($worksheet->last_action, $request->text);
+
+        TelegramNotice::run($worksheet)
+            ->action($old)
+            ->send($worksheet->executors->keyBy('id')->forget(auth()->user()->id)->pluck('id')->toArray());
 
         return new \App\Http\Resources\Worksheet\Action\ActionSaveResource($worksheet->last_action);
     }

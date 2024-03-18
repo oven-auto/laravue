@@ -17,9 +17,11 @@ class AppendUserController extends Controller
      */
     public function append(WorksheetAppendExecutorRequest $request)
     {
+        $worksheet = Worksheet::findOrfail($request->worksheet_id);
+
         $users = User::whereIn('id', $request->user_ids)->get();
 
-        WorksheetUser::attach(Worksheet::findOrfail($request->worksheet_id), $users);
+        WorksheetUser::attach($worksheet, $users);
 
         return response()->json([
             'success' => 1,

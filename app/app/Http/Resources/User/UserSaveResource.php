@@ -22,6 +22,7 @@ class UserSaveResource extends JsonResource
                 'lastname' => $this->lastname,
                 'phone' => $this->phone,
                 'role_id' => $this->role_id,
+                'tg_token' => $this->tg_token,
                 'appeals' => isset($this->appeals) ? $this->appeals->map(function($item){
                     return $item->id;
                 }) : [],

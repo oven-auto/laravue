@@ -6,6 +6,7 @@ use App\Models\Worksheet;
 use App\Models\WorksheetExecutor;
 use Illuminate\Support\Collection;
 use App\Services\Comment\Comment;
+use App\Classes\Telegram\Notice\TelegramNotice;
 
 /**
  * Класс для добавления/удаления ответственных лиц из РЛ
@@ -19,21 +20,26 @@ Class WorksheetUser
     */
     public static function attach(Worksheet $worksheet, Collection $users, $comment = true) : void
     {
-        //users from worksheet
         $currentUsers = $worksheet->executors;
-        //append author to users
+
         $currentUsers->push($worksheet->author);
-        //append to users people from subaction
-        $currentUsers = $currentUsers->merge($users);
-        //delete dublicate from users collection
-        $currentUsers = $currentUsers->unique();
-        //check in reporters
-        $filtered = $currentUsers->reject(fn($item) => $worksheet->reporters->contains('id', $item->id));
-        //add comment
-        if($comment)
-            Comment::add(self::commentModel($worksheet, new User()), 'attach',  $users);
-        //sync executors
-        $worksheet->executors()->sync($filtered);
+
+        $filtered = [];
+
+        foreach($users as $item)
+            if(!$currentUsers->contains('id', $item->id) && !$worksheet->reporters->contains('id', $item->id))
+                $filtered[] = $item->id;
+
+        $comment ? Comment::add(self::commentModel($worksheet, new User()), 'attach',  $users) : '';
+
+        $worksheet->attachMethod('executors', $filtered);
+
+        $mas = [];
+        foreach($filtered as $item)
+            if($item != auth()->user()->id)
+                $mas[] = $item;
+
+        TelegramNotice::run($worksheet)->executor()->send($mas);
     }
 
     /**
@@ -70,11 +76,13 @@ Class WorksheetUser
 
         if(!$worksheet->executors->contains('id', $user->id))
             throw new \Exception('Вы не можете отчитаться за рабочий лист, тк не являетесь его участником');
-        //append user to reporters list
-        $worksheet->reporters()->attach($user->id);
-        //make comment
+
+        $worksheet->attachMethod('reporters', [$user->id]);
+
+        TelegramNotice::run($worksheet)->report()->send([$worksheet->author_id]);
+
         Comment::add(self::commentModel($worksheet, $user), 'report');
-        //detach user from executors list
+
         self::detach($worksheet, $user);
     }
 

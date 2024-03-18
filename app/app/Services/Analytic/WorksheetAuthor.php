@@ -8,6 +8,7 @@ Class WorksheetAuthor
 {
     public static function getCountAnalyticByAuthor($dataFilter)
     {
+        \App\Http\Filters\WorksheetAnalyticFilter::$GroupByWorkshhetId = 0;
         $filter = app()->make(\App\Http\Filters\WorksheetAnalyticFilter::class, ['queryParams' => array_filter($dataFilter)]);
 
         $count = Worksheet::select([\DB::raw('COUNT(worksheets.id) as count'),])
@@ -31,7 +32,7 @@ Class WorksheetAuthor
         $query->where('worksheets.status_id', 'work');
 
         $query->groupBy('worksheets.author_id');
-        //$query->dd();
+
         $result = $query->get()->map(function($item) use ($count){
             return [
                 'name' => $item['name'],

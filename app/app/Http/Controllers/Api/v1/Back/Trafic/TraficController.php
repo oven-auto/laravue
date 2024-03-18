@@ -13,6 +13,7 @@ use \App\Services\Comment\Comment;
 class TraficController extends Controller
 {
     public $service;
+    public $notice;
 
     private const EVENT_STATUS = [
         'open'   => 'Трафик открыт',
@@ -24,9 +25,10 @@ class TraficController extends Controller
 
 
 
-    public function __construct(TraficRepository $service)
+    public function __construct(TraficRepository $service, \App\Classes\Telegram\Notice\TelegramNotice $notice)
     {
         $this->service = $service;
+        $this->notice = $notice;
     }
 
 
@@ -96,6 +98,7 @@ class TraficController extends Controller
         Comment::add($trafic, 'close');
 
         //\App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['close']);
+
 
         return (new TraficSaveResource($trafic))
             ->additional(['message' => Trafic::NOTICES['close']]);

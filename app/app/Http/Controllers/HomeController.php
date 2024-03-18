@@ -98,33 +98,15 @@ class HomeController extends Controller
 
     }
 
-    public function test()
+
+
+    public function test(\App\Classes\Telegram\Notice\TelegramNotice $notice)
     {
-
-        // $user = \App\Models\User::find(47);
-        // $user->name = 1;
-        // $user->save();
-
-        // $token = env('TELEGRAM_KEY');
-        // $telegram = new Api($token);
-        // $result = $telegram->getWebhookUpdates();
-
-        // $text = $result["message"]["text"]; //Текст сообщения
-        // $chat_id = $result["message"]["chat"]["id"]; //Уникальный идентификатор пользователя
-        // $name = $result["message"]["from"]["username"]; //Юзернейм пользователя
-        // $keyboard = [["Последние статьи"],["Картинка"],["Гифка"]]; //Клавиатура
-
-        // if($text){
-        //     if ($text == "/start") {
-        //        $reply = "Добро пожаловать в бота!";
-        //        $reply_markup = $telegram->replyKeyboardMarkup([ 'keyboard' => $keyboard, 'resize_keyboard' => true, 'one_time_keyboard' => false ]);
-        //        $telegram->sendMessage([ 'chat_id' => $chat_id, 'text' => $reply, 'reply_markup' => $reply_markup ]);
-        //    }
-        // }
-        // else{
-        //     $telegram->sendMessage([ 'chat_id' => $chat_id, 'text' => "Отправьте текстовое сообщение." ]);
-        // }
+        $worksheet = \App\Models\Worksheet::first();
+        dd($worksheet->executors->keyBy('id')->forget(47)->pluck('id')->toArray());
     }
+
+
 
     public function getCMEDealerID()
     {

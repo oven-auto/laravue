@@ -696,11 +696,10 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
 /**
  * CMEXPERT
  */
-Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')
-    ->middleware(['corsing','userfromtoken'])->group(function(){
+Route::prefix('smexpert')->namespace('\App\Http\Controllers\Api\v1\SMExpert')->group(function(){
 
         Route::post('create/redemptions/{redemption}', 'Deliver\CreateRedemptionController')
-            ->middleware('permission.redemptions:appraisal,redemption_appraisal');
+            ->middleware(['corsing','userfromtoken', 'permission.redemptions:appraisal,redemption_appraisal']);
 
         // Route::get('gain/brands', 'Gain\BrandController');
         // Route::get('gain/test', 'Gain\MarkController');

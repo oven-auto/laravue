@@ -12,6 +12,11 @@ class ClientEventStatus extends Model implements CommentInterface
 {
     use HasFactory, Filterable;
 
+    public function attachInEvent(string $relation, $data)
+    {
+        $this->event->attachMethod($relation, $data);
+    }
+
     public function writeComment(array $data)
     {
 

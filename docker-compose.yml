@@ -120,7 +120,7 @@ services:
   #################
   telegram-bot:
     container_name: telegram-bot
-    #command: sh -c 'watch -x -n 1 curl --request GET "http://192.168.1.98:8280/telegram/bot"'
+    command: sh -c 'watch -x -n 1 curl --request GET "http://192.168.1.98:8280/telegram/bot"'
     build:
       context: ./
       dockerfile: docker/telegram-bot.docker

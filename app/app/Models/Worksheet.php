@@ -2,14 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\Traits\Filterable;
+use App\Models\Traits\AttachMethod;
 
 class Worksheet extends Model
 {
-    use HasFactory, Filterable;
+    use HasFactory, Filterable, AttachMethod;
 
     protected $guarded = [];
 

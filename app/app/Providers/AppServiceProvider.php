@@ -31,5 +31,6 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\Trafic::observe(\App\Observers\TraficObserver::class);
         \App\Models\Worksheet::observe(\App\Observers\WorksheetObserver::class);
         \App\Models\Role::observe(\App\Observers\RoleObserver::class);
+        \App\Models\ClientEvent::observe(\App\Observers\ClientEventObserver::class);
     }
 }

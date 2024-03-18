@@ -29,33 +29,16 @@ Class HelpScene extends AbstractScene implements SceneInterface
 
     public function bysinesLogic()
     {
+        $str = '<b>Журнал задач</b>';
 
+        $keyboard = [
+            [array('text' => 'мой трафик',          'callback_data' => '/mytrafic',),],
+            [array('text' => 'мои события',         'callback_data' => '/myevent',),],
+            [array('text' => 'мои рабочие листы',   'callback_data' => '/myworksheet',),],
+        ];
 
-        $str[] = "<b>Журнал задач</b>\n\n";
-        $str[] = "/mytrafic - мой трафик\n";
-        $str[] = "/myevent - мои события\n";
-        $str[] = "/myworksheet - мои рабочие листы\n";
-        $str = join("", $str);
+        $this->options['reply_markup'] = $this->prepareKeyboard($keyboard);
 
-        $this->options['reply_markup'] = json_encode(array(
-            'inline_keyboard' => array(
-                array(
-                    array(
-                        'text' => 'мой трафик',
-                        'callback_data' => '/mytrafic',
-                    ),
-                    array(
-                        'text' => 'мои события',
-                        'callback_data' => '/myevent',
-                    ),
-                    array(
-                        'text' => 'мои рабочие листы',
-                        'callback_data' => '/myworksheet',
-                    ),
-                )
-            ),
-        ));
-        //$this->options['reply_parameters'] = '666';
         if($this->user)
             $this->telegram->sendMessage($this->chatId, $str, $this->options);
     }

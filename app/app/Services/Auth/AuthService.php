@@ -27,6 +27,7 @@ Class AuthService
             'role' => $user->role->slug,
             'role_name' => $user->role->name,
             'super' => in_array($user->role->id, [1,8]),
+            'tg_token' => $user->tg_token,
         ];
 
         return \response()->json([

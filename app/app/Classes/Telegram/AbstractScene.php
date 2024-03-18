@@ -30,13 +30,13 @@ abstract Class AbstractScene implements SceneInterface
 
     public abstract function bysinesLogic();
 
-    public function __construct($obj)
+    public function __construct(array $obj)
     {
-        $this->chatId = $obj->message->chat->id;
+        $this->chatId = $obj['chatId'];
 
-        $this->userId = $obj->message->from->id;
+        $this->userId = $obj['userId'];
 
-        $this->text = $obj->message->text;
+        $this->text = $obj['text'];
 
         $this->telegram = \App\Classes\Telegram\Telegram::init();
 
@@ -45,6 +45,15 @@ abstract Class AbstractScene implements SceneInterface
         $this->rule = new \App\Classes\Telegram\Rules($this);
 
         $this->user = $this->getUser();
+    }
+
+
+
+    public function prepareKeyboard(array $keyboard)
+    {
+        return json_encode([
+            'inline_keyboard' => $keyboard,
+        ]);
     }
 
 

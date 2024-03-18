@@ -23,27 +23,32 @@ Class Scenario
 
         foreach($messages as $item)
         {
-            //$text = (array)$item->ShippingQuery();
-            $callback   = @dump($item->callbackQuery->data);
-            $text       = @dump($item->message->text);
+            $callback   = @($item->callbackQuery->data);
+            $text       = @($item->message->text);
 
-            dd();
+            if(isset($text))
+                $params = [
+                    'text' => $text,
+                    'chatId' => $item->message->chat->id,
+                    'userId' => $item->message->from->id,
+                ];
+            elseif(isset($callback))
+                $params = [
+                    'text' => $text,
+                    'chatId' => $item->callbackQuery->message->chat->id,
+                    'userId' => $item->callbackQuery->from->id,
+                ];
 
             $text = $callback ? $callback : $text;
-            //$text = $item->message->text;
-            // if(isset($item->message))
-            //     $text = $item->message->text;
-            // elseif(isset($item->CallbackQuery))
-            //     $text = '/help';
 
-            $scene = $this->sceneFactory($text, $item);
+            $scene = $this->sceneFactory($text, $params);
 
             if($scene)
                 $scene->sendCommand();
         }
     }
 
-    private function sceneFactory(string $string, $item)
+    private function sceneFactory(string $string, $params)
     {
         $isCommand = strpos($string, '/');
 
@@ -55,18 +60,18 @@ Class Scenario
 
             if(class_exists($class))
             {
-                $this->saveCommand($item, $string);
-                return new $class($item);
+                $this->saveCommand($params, $string);
+                return new $class($params);
             }
             else
             {
-                $this->saveCommand($item, '/error');
-                return self::errorScene($item);
+                $this->saveCommand($params, '/error');
+                return self::errorScene($params);
             }
         }
         elseif($isCommand === false)
         {
-            $prevAction = \App\Models\TelegramConnection::where('user_id', $item->message->from->id)->first();
+            $prevAction = \App\Models\TelegramConnection::where('user_id', $params['userId'])->first();
 
             if($prevAction && $prevAction->last_command)
             {
@@ -78,25 +83,25 @@ Class Scenario
                 {
                     $prevAction->state++;
                     $prevAction->save();
-                    return new $class($item);
+                    return new $class($params);
                 }
             }
         }
 
-        $this->saveCommand($item, '/error');
-        return self::errorScene($item);
+        $this->saveCommand($params, '/error');
+        return self::errorScene($params);
     }
 
-    private static function errorScene($item)
+    private static function errorScene($params)
     {
-        return new \App\Classes\Telegram\Scenes\ErrorScene($item);
+        return new \App\Classes\Telegram\Scenes\ErrorScene($params);
     }
 
-    public function saveCommand($item, $command)
+    public function saveCommand($params, $command)
     {
-        $obj = \App\Models\TelegramConnection::updateOrCreate(['user_id' => $item->message->from->id],[
-            'chat_id' => $item->message->chat->id,
-            'user_id' => $item->message->from->id,
+        $obj = \App\Models\TelegramConnection::updateOrCreate(['user_id' => $params['userId']],[
+            'chat_id' => $params['chatId'],
+            'user_id' => $params['userId'],
             'last_command' => $command,
             'state' => 0,
             'storage' => null

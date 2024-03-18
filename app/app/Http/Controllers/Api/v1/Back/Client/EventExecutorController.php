@@ -8,6 +8,7 @@ use App\Models\ClientEventStatus;
 use App\Models\User;
 use App\Services\Comment\EventComment;
 use Illuminate\Http\Request;
+use \App\Classes\Telegram\Notice\TelegramNotice;
 
 class EventExecutorController extends Controller
 {
@@ -18,7 +19,7 @@ class EventExecutorController extends Controller
         return new ClientEventExecutorCollection($executors->except(['id' => $clientEventStatus->event->author_id]));
     }
 
-    public function store(ClientEventStatus $clientEventStatus, Request $request)
+    public function store(ClientEventStatus $clientEventStatus, Request $request, TelegramNotice $notice)
     {
         $neededUserId = [];
 
@@ -27,7 +28,10 @@ class EventExecutorController extends Controller
             foreach($request->executor_ids as $item)
                 if(!$clientEventStatus->event->executors->contains('id', $item))
                     $neededUserId[] = $item;
-            $clientEventStatus->event->executors()->attach($neededUserId);
+
+            $clientEventStatus->attachInEvent('executors', $neededUserId);
+
+            TelegramNotice::run($clientEventStatus)->executor()->send($neededUserId);
         }
 
         $executors = User::whereIn('id', $neededUserId)->get();

@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Worksheet\SubAction;
 
+use App\Classes\Telegram\Notice\TelegramNotice;
 use App\Models\SubAction;
 use App\Services\Worksheet\WorksheetUser;
 use App\Models\User;
@@ -25,6 +26,14 @@ use \App\Services\Comment\Comment;
  */
 Class SubActionRepository
 {
+
+    public function __construct()
+    {
+
+    }
+
+
+
     /**
      * 1 - ПОЛУЧИТЬ ВСЕ ПОДЗАДАЧИ ИЗ ВЫБРАННОГО РЛ
      * @param int $worksheetId
@@ -84,7 +93,13 @@ Class SubActionRepository
     public function closeAction(SubAction $subAction) : void
     {
         if($subAction->author_id == auth()->user()->id)
+        {
             $subAction->close();
+
+            $users = $subAction->executors->keyBy('id')->forget(auth()->user()->id)->pluck('id')->toArray();
+
+            TelegramNotice::run($subAction)->close()->send($users);
+        }
     }
 
 
@@ -99,6 +114,8 @@ Class SubActionRepository
     {
         $upUser = [];
 
+        $requestUsers = $executorsArray;
+
         foreach($executorsArray as $key => $item)
             if(!$subAction->worksheet->executors->contains('id', $item))
                 $upUser[] = $item;
@@ -111,13 +128,19 @@ Class SubActionRepository
 
         $subAction->executors()->sync($executorsArray);
 
-        //$worksheetExecutors = $subAction->worksheet->executors;
-
         if($upUser)
             WorksheetUser::attach(
                 \App\Models\Worksheet::findOrFail($subAction->worksheet_id),
                 \App\Models\User::whereIn('id', $upUser)->get()
             );
+
+        $mas = [];
+
+        foreach($requestUsers as $item)
+            if($item != auth()->user()->id)
+                $mas[] = $item;
+
+        TelegramNotice::run($subAction)->executor()->send($mas);
 
         $subAction->load('executors');
     }
@@ -156,6 +179,8 @@ Class SubActionRepository
             throw new \Exception('Вы не являетесь участником задачи');
 
         $subAction->reporters()->attach($reporterId->id);
+
+        TelegramNotice::run($subAction)->report()->send([$subAction->author_id]);
 
         $this->removeExecutor($subAction, $reporterId->id);
     }

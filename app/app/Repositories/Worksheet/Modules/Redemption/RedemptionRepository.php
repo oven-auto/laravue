@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Worksheet\Modules\Redemption;
 
+use App\Classes\Telegram\Notice\TelegramNotice;
 use App\Http\Filters\WSMRedemptionCarFilter;
 use App\Models\RedemptionStatus;
 use App\Models\UsedCar;
@@ -146,13 +147,26 @@ Class RedemptionRepository
     {
         $obj = (object) $data;
 
+        $expectation            = $obj->expectation         == $redemption->expectation;
+        $car_sale_sign_id       = $obj->car_sale_sign_id    == $redemption->car_sale_sign_id;
+        $redemption_type_id     = $obj->redemption_type_id  == $redemption->redemption_type_id;
+
+        if($expectation && $car_sale_sign_id && $redemption_type_id)
+            return $redemption;
+
+        $old[] = $redemption->type->name;
+        $old[] = '('.$redemption->car_sale_sign->name.'),';
+        $old[] = $redemption->expectation.'р.';
+        $old = implode(' ', $old);
+
         $redemption->fill([
-            'expectation' => $obj->expectation ?? $redemption->expectation,
-            'car_sale_sign_id' => $obj->car_sale_sign_id ?? $redemption->car_sale_sign_id,
-            'redemption_type_id' => $obj->redemption_type_id ?? $redemption->redemption_type_id,
+            'expectation'           => $obj->expectation ?? $redemption->expectation,
+            'car_sale_sign_id'      => $obj->car_sale_sign_id ?? $redemption->car_sale_sign_id,
+            'redemption_type_id'    => $obj->redemption_type_id ?? $redemption->redemption_type_id,
         ])->save();
 
-        //$this->save($redemption, $data);
+        if($redemption->author_id != auth()->user()->id)
+            TelegramNotice::run($redemption)->update($old)->send([$redemption->author_id]);
 
         return $redemption;
     }
@@ -187,6 +201,13 @@ Class RedemptionRepository
         UsedCar::create(Arr::except($carData, ['created_at','updated_at','client_id','actual','editor_id']));
 
         Comment::add($redemption, 'buy');
+
+        $mas = [];
+        foreach($redemption->worksheet->executors->pluck('id') as $item)
+            if($item != auth()->user()->id)
+                $mas[] = $item;
+
+        TelegramNotice::run($redemption)->buy()->send($mas);
     }
 
 
@@ -207,7 +228,9 @@ Class RedemptionRepository
                 'price' => $data['offer'],
             ]);
 
-            //Comment::add($redemption, 'offer');
+            $val = 'Оценка после диагностики '.$data['offer'].'р.';
+            if($redemption->author_id != auth()->user()->id)
+                TelegramNotice::run($redemption)->calculate($val)->send([$redemption->author_id]);
         }
 
         if(isset($data['price_begin']) || isset($data['price_end']))
@@ -219,7 +242,9 @@ Class RedemptionRepository
                 'price_end' => $data['price_end'] ?? 0,
             ]);
 
-            //Comment::add($redemption, 'calculation');
+            $val = 'Предварительная оценка '.$data['price_begin'].'-'.$data['price_end'].'р.';
+            if($redemption->author_id != auth()->user()->id)
+                TelegramNotice::run($redemption)->calculate($val)->send([$redemption->author_id]);
         }
 
         if(isset($data['purchase']))
@@ -230,7 +255,9 @@ Class RedemptionRepository
                 'price' => $data['purchase'],
             ]);
 
-            //Comment::add($redemption, 'purchase');
+            $val = 'Согласовано с клиентом '.$data['purchase'].'р.';
+            if($redemption->author_id != auth()->user()->id)
+                TelegramNotice::run($redemption)->calculate($val)->send([$redemption->author_id]);
         }
     }
 
@@ -290,6 +317,14 @@ Class RedemptionRepository
             $redemption->final_author()->create(['author_id' => auth()->user()->id]);
 
             Comment::add($redemption, 'close');
+
+            $mas = [];
+            foreach($redemption->worksheet->executors->pluck('id') as $item)
+                if($item != auth()->user()->id)
+                    $mas[] = $item;
+
+            if($redemption->worksheet->isWork())
+                TelegramNotice::run($redemption)->close()->send($mas);
         }
 
         else
