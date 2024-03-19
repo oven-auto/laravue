@@ -57,7 +57,7 @@ Class WorksheetNotice extends AbstractNotice
         {
             $task[] = $this->model->last_action->task->name;
             $task[] = $this->model->last_action->begin_at->format('d.m.Y');
-            $task[] = '('.$this->model->last_action->begin_at->format('H:i').'-'.$this->model->last_action->end_at->format('H:i').')';
+            $task[] = '('.$this->model->last_action->begin_at->format('H:i').')';
             $task = implode(' ', $task);
 
             $arr[] = self::boldStr('Рабочий лист №'.$this->model->id).'.';
@@ -84,7 +84,7 @@ Class WorksheetNotice extends AbstractNotice
         $arr[] = self::boldStr('Рабочий лист №'.$this->model->id).'.';
         $arr[] = 'Клиент: '.$this->model->client->full_name;
         $arr[] = $user.': Я больше не работаю с этим клиентом.';
-        $arr[] = 'Отчитываюсь: '.date('d.m.Y (H:i)');
+        $arr[] = 'Отчитываюсь '.date('d.m.Y (H:i)');
         $arr[] = self::italicStr('Вы можете отменить отчет сотрудника по работе с этим клиентом.');
 
         $resultStr = implode("\n", $arr);

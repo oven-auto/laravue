@@ -17,7 +17,8 @@ Class ClientEventStatusNotice extends AbstractNotice
         $arr[] = $user.': Добавляю Вас в качестве участника.';
         $arr[] = 'Тема: '.$this->model->event->title.'.';
         $arr[] = 'Категория: '.$this->model->event->group->name;
-        $arr[] = 'Запланировано: '.$this->model->date_at->format('d.m.Y').'('.$this->model->begin.'-'.$this->model->end.')';
+        $arr[] = 'Начало '.$this->model->date_at->format('d.m.Y').' ('.$this->model->begin.')';
+        $arr[] = self::italicStr('Теперь Вы отслеживаете это событие.');
 
         $resultStr = implode("\n", $arr);
 

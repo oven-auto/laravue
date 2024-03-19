@@ -32,7 +32,7 @@ Class ResultWorksheetAnalytic implements TraficAnalyticInterface
             ->leftJoinSub($subQuery, 'subQuery', function($join){
                 $join->on('subQuery.task_id','=','tasks.id');
             })->whereIn('tasks.id', [6,7]);
-
+        //$query->dd();
         $k = 0;
         return $query->get()->map(fn($item, $k) => [
             'count' => $item->count ?? 0,

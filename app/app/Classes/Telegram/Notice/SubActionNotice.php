@@ -38,7 +38,7 @@ Class SubActionNotice extends AbstractNotice
         $arr[] = self::boldStr('Задача №'.$this->model->id.' (РЛ №'.$this->model->worksheet_id).').';
         $arr[] = $this->model->title.'.';
         $arr[] = $user.': Я больше не работаю над этой задачей.';
-        $arr[] = 'Отчитываюсь: '.date('d.m.Y (H:i)');
+        $arr[] = 'Отчитываюсь '.date('d.m.Y (H:i)');
         $arr[] = self::italicStr('Вы можете отменить отчет сотрудника по работе с этой задачей.');
 
         $resultStr = implode("\n", $arr);
@@ -59,7 +59,7 @@ Class SubActionNotice extends AbstractNotice
         $arr[] = $this->model->title.'.';
         $arr[] = $user.': Задача не актуальна.';
         $arr[] = 'Отчитываюсь: '.date('d.m.Y (H:i)');
-        $arr[] = self::italicStr('Вы больше не отслеживаете эту задачу.');
+        $arr[] = self::italicStr('Вы больше не можете отслеживать эту задачу.');
 
         $resultStr = implode("\n", $arr);
 

@@ -57,6 +57,7 @@ Class TraficNotice extends AbstractNotice
 
         $arr[] = self::boldStr('Обращение №'.$this->model->id).'.';
         $arr[] = 'Клиент: '.$this->model->client_name;
+        $arr[] = auth()->user()->cut_name.': Обращение обработано.';
         $arr[] = $this->model->status->description.' '.date('d.m.Y (H:i)');
         $arr[] = self::italicStr('Теперь Вы можете назначить новое обращение на сотрудника.');
 

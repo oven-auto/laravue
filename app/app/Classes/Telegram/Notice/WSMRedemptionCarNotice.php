@@ -8,6 +8,11 @@ Class WSMRedemptionCarNotice extends AbstractNotice
 {
     public $message = '';
 
+
+
+    /**
+     * CHANGE
+     */
     public function update($old)
     {
         $user = auth()->user() ? auth()->user()->cut_name : 'Система';
@@ -24,6 +29,11 @@ Class WSMRedemptionCarNotice extends AbstractNotice
         $this->message = $resultStr;
     }
 
+
+
+    /**
+     * CALCULATE
+     */
     public function calculate($old)
     {
         $user = auth()->user() ? auth()->user()->cut_name : 'Система';
@@ -38,6 +48,12 @@ Class WSMRedemptionCarNotice extends AbstractNotice
         $this->message = $resultStr;
     }
 
+
+
+
+    /**
+     * CAR TO STOCK
+     */
     public function buy()
     {
         $user = auth()->user() ? auth()->user()->cut_name : 'Система';
@@ -52,6 +68,11 @@ Class WSMRedemptionCarNotice extends AbstractNotice
         $this->message = $resultStr;
     }
 
+
+
+    /**
+     * CLOSE
+     */
     public function close()
     {
         $user = auth()->user() ? auth()->user()->cut_name : 'Система';

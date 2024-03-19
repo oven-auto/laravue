@@ -14,6 +14,10 @@ Class WSMRedemptionCarFilter extends AbstractFilter
     private const INPUT = 'input';
     private const WORKSHEET_ID = 'worksheet_id';
     private const EXECUTOR_ID = 'executor_id';
+    private const PETITION_BEGIN = 'petition_begin';
+    private const PETITION_END = 'petition_end';
+    private const APPRAISAL_BEGIN = 'appraisal_begin';
+    private const APPRAISAL_END = 'appraisal_end';
 
     public function __construct(array $queryParams)
     {
@@ -32,6 +36,10 @@ Class WSMRedemptionCarFilter extends AbstractFilter
             self::INPUT              => [$this, 'input'],
             self::WORKSHEET_ID       => [$this, 'worksheetId'],
             self::EXECUTOR_ID        => [$this, 'executorId'],
+            self::PETITION_BEGIN     => [$this, 'petitionBegin'],
+            self::PETITION_END       => [$this, 'petitionEnd'],
+            self::APPRAISAL_BEGIN    => [$this, 'appraisalBegin'],
+            self::APPRAISAL_END      => [$this, 'appraisalEnd'],
         ];
     }
 
@@ -46,6 +54,40 @@ Class WSMRedemptionCarFilter extends AbstractFilter
 
         $builder->groupBy('wsm_redemption_cars.id');
     }
+
+
+
+    public function petitionBegin(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $builder->whereDate('wsm_redemption_cars.created_at', '>=', $date);
+    }
+
+
+
+    public function petitionEnd(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $builder->whereDate('wsm_redemption_cars.created_at', '<=', $date);
+    }
+
+
+
+    public function appraisalBegin(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $builder->whereDate('wsm_redemption_appraisals.created_at', '<=', $date);
+    }
+
+
+
+    public function appraisalEnd(Builder $builder, $value)
+    {
+        $date = $this->formatDate($value);
+        $builder->whereDate('wsm_redemption_appraisals.created_at', '<=', $date);
+    }
+
+
 
     public function worksheetId(Builder $builder, $value)
     {
