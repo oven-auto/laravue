@@ -24,8 +24,8 @@ class TraficCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            'company_id'            => 'required',
-            'company_structure_id'  => 'required',
+            'trafic_brand_id'            => 'required',
+            'trafic_section_id'  => 'required',
             'trafic_appeal_id'      => 'required',
         ];
     }
@@ -33,8 +33,8 @@ class TraficCreateRequest extends FormRequest
     public function messages()
     {
         return [
-            'company_id.required' => 'Поле салон обязательно для заполнения',
-            'company_structure_id.required' => 'Поле подразделение обязательно для заполнения',
+            'trafic_brand_id.required' => 'Поле салон обязательно для заполнения',
+            'trafic_section_id.required' => 'Поле подразделение обязательно для заполнения',
             'trafic_appeal_id.required' => 'Поле цель обращения обязательно для заполнения',
         ];
     }
