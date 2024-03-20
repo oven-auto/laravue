@@ -11,11 +11,15 @@ Class Scenario
         $this->telegram = Telegram::init();
     }
 
+
+
     private static function getNameSpace()
     {
         $reflection = new \ReflectionClass(self::class);
         return $reflection->getNamespaceName();
     }
+
+
 
     public function handler()
     {
@@ -47,6 +51,8 @@ Class Scenario
                 $scene->sendCommand();
         }
     }
+
+
 
     private function sceneFactory(string $string, $params)
     {
@@ -92,10 +98,14 @@ Class Scenario
         return self::errorScene($params);
     }
 
+
+
     private static function errorScene($params)
     {
         return new \App\Classes\Telegram\Scenes\ErrorScene($params);
     }
+
+
 
     public function saveCommand($params, $command)
     {
