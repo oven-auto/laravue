@@ -383,9 +383,14 @@ class Trafic extends Model implements CommentInterface
         $traficStructure = $trafic->structure;
         $traficAppeal = $trafic->appeal;
 
-        $isSalon = $userSalons->contains('id', $traficCompany->id);
-        $isStructure = $userStructures->contains('id', $traficStructure->id);
-        $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
+        if($traficCompany->id)
+            $isSalon = $userSalons->contains('id', $traficCompany->id);
+
+        if($traficStructure->id)
+            $isStructure = $userStructures->contains('id', $traficStructure->id);
+
+        if($traficAppeal->id)
+            $isAppeal = $userAppeals->contains('id', $traficAppeal->id);
 
         if($isSalon && $isStructure && $isAppeal)
             return true;
