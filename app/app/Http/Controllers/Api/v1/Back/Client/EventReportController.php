@@ -27,6 +27,8 @@ class EventReportController extends Controller
 
         EventComment::reportlUser($eventStatus, auth()->user());
 
+        \App\Classes\Telegram\Notice\TelegramNotice::run($eventStatus)->report()->send([auth()->user()->id]);
+
         return (new ClientEventReporterResource(auth()->user()))
             ->additional(['message' => 'Вы успешно отчитались', 'success' => 1]);
     }

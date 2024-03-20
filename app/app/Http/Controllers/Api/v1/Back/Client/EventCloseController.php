@@ -23,6 +23,13 @@ class EventCloseController extends Controller
 
         $eventStatus = $this->eventClose->close($request->get('event_status_id'));
 
+        $arrUser = [];
+        $users = $eventStatus->event->executors;
+        foreach($users as $item)
+            $arrUser[] = $item->id;
+
+        \App\Classes\Telegram\Notice\TelegramNotice::run($eventStatus)->close()->send($arrUser);
+
         return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
             ->additional([
                 'message' => $eventStatus->lastComment->text
