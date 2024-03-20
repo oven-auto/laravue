@@ -29,7 +29,7 @@ Class RegisterScene extends AbstractScene implements SceneInterface
 
     public  $rules = [
         'phone' => 'length:11|numeric|exist:users.phone',
-        'code' => 'length:4|numeric|exist:users.tg_token',
+        'code' => 'length:4|numeric',
     ];
 
     private  $stateCount = 2;
