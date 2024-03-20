@@ -13,7 +13,7 @@ class TraficCreateRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,7 +24,18 @@ class TraficCreateRequest extends FormRequest
     public function rules()
     {
         return [
-            //
+            'company_id'            => 'required',
+            'company_structure_id'  => 'required',
+            'trafic_appeal_id'      => 'required',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'company_id.required' => 'Поле салон обязательно для заполнения',
+            'company_structure_id.required' => 'Поле подразделение обязательно для заполнения',
+            'trafic_appeal_id.required' => 'Поле цель обращения обязательно для заполнения',
         ];
     }
 }

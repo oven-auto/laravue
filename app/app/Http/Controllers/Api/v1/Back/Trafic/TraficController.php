@@ -42,7 +42,7 @@ class TraficController extends Controller
 
 
 
-    public function store(Trafic $trafic, Request $request)
+    public function store(Trafic $trafic, \App\Http\Requests\Trafic\TraficCreateRequest $request)
     {
         $this->service->save($trafic, $request->all());
 
@@ -71,7 +71,7 @@ class TraficController extends Controller
 
 
 
-    public function update($trafic, Request $request)
+    public function update($trafic,  \App\Http\Requests\Trafic\TraficCreateRequest $request)
     {
         $trafic = Trafic::linksCount()->filesCount()->find($trafic);
 
