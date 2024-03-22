@@ -69,7 +69,11 @@ Class ClientEventListFilter extends AbstractFilter
 
     public function executorIds(Builder $builder, Array $value)
     {
-        $builder->whereIn('client_event_status_executors.user_id', $value);
+        $builder->where(function($query) use ($value){
+            $query->whereIn('client_event_status_executors.user_id', $value);
+            $query->orWhereIn('client_events.id', $value);
+        });
+
 
         $builder->groupBy('client_event_status_executors.user_id');
     }
