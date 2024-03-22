@@ -115,7 +115,7 @@ class ClientEventRepository
         //$this->closingOrWorking($data, $query);
 
         $query->leftJoin('client_events', 'client_events.id','client_event_statuses.event_id')
-            ->leftJoin('client_event_executors','client_event_executors.event_id','client_events.id')
+            ->leftJoin('client_event_status_executors','client_event_status_executors.client_event_status_id','client_event_statuses.id')
             ->where('client_events.personal',0);
 
         $filter = app()->make(\App\Http\Filters\ClientEventFilter::class, ['queryParams' => array_filter($data)]);
@@ -161,7 +161,7 @@ class ClientEventRepository
 
         $query->leftJoin('client_events', 'client_events.id','client_event_statuses.event_id');
 
-        $query->leftJoin('client_event_executors','client_event_executors.event_id','client_events.id');
+        $query->leftJoin('client_event_status_executors','client_event_status_executors.client_event_status_id','client_event_statuses.id');
 
         $filter = app()->make(\App\Http\Filters\ClientEventFilter::class, ['queryParams' => array_filter($data)]);
 
@@ -197,7 +197,7 @@ class ClientEventRepository
         {
             $query->where(function($query){
                 $query->where('client_events.personal', 1)
-                    ->where('client_event_executors.executor_id', auth()->user()->id)
+                    //->where('client_event_executors.executor_id', auth()->user()->id)
                     ->where('client_event_statuses.confirm', 'waiting');
             });
 
