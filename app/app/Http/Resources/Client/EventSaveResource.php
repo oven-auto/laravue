@@ -59,7 +59,7 @@ class EventSaveResource extends JsonResource
                         'writer' => $item->author->cut_name,
                     ];
                 }),
-                'executors' => $this->event->executors->map(function($item){
+                'executors' => $this->executors->map(function($item){
                     return $item->id;
                 }),
                 'personal' => $this->event->personal,

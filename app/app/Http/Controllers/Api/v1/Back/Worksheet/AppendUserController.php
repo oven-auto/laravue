@@ -5,23 +5,25 @@ namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Worksheet\WorksheetAppendExecutorRequest;
 use App\Http\Requests\Worksheet\WorksheetDeleteExecutorRequest;
-use App\Models\Worksheet;
-use App\Models\User;
-use App\Services\Worksheet\WorksheetUser;
-use Illuminate\Http\Request;
+use App\Services\Worksheet\WorksheetExecutorReportService;
 
 class AppendUserController extends Controller
 {
+    protected $service;
+
+    public function __construct(WorksheetExecutorReportService $service)
+    {
+        $this->service = $service;
+    }
+
+
+
     /**
      * ДОБАВИТЬ ПОЛЬЗОВАТЕЛЯ В ИСПОЛНИТЕЛИ
      */
     public function append(WorksheetAppendExecutorRequest $request)
     {
-        $worksheet = Worksheet::findOrfail($request->worksheet_id);
-
-        $users = User::whereIn('id', $request->user_ids)->get();
-
-        WorksheetUser::attach($worksheet, $users);
+        $this->service->attach($request->worksheet_id, $request->user_ids);
 
         return response()->json([
             'success' => 1,
@@ -36,10 +38,7 @@ class AppendUserController extends Controller
      */
     public function destroy(WorksheetDeleteExecutorRequest $request)
     {
-        WorksheetUser::detach(
-            Worksheet::findOrfail($request->worksheet_id),
-            User::findOrFail($request->user_id)
-        );
+        $this->service->detach($request->worksheet_id, $request->user_id);
 
         return response()->json([
             'success' => 1,

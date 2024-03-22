@@ -26,8 +26,7 @@ class TraficEditResource extends JsonResource
         ) ? 1 : 0;
 
         $showSuperBykovSecurity = (
-            $request->get('author_id') == auth()->user()->id
-            || $request->has('manager_id') == auth()->user()->id
+            $request->has('author_id') || $request->has('manager_id')
         );
 
         return [

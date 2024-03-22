@@ -424,7 +424,6 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     //CRUD Исполнителей в коммуникации
     Route::prefix('event/executors')->group(function() {
-        Route::get('/{clientEventStatus}', 'EventExecutorController@index');
         Route::post('/{clientEventStatus}', 'EventExecutorController@store');
         Route::delete('/{clientEventStatus}', 'EventExecutorController@delete');
     });
@@ -442,29 +441,40 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
     Route::get('events/count', 'ClientEventCountController');
 
-
-
-    Route::get('events/close', 'EventCloseController@close'); //Закрыть событие клиента без трафика
-    Route::get('events/resume', 'EventCloseController@resume'); //Закрыть событие клиента без трафика
-
-    Route::patch('events/change/client', 'EventChangeClientController@client'); //Замена клиента
-    Route::patch('events/change/author', 'EventChangeClientController@author'); //Замена автора
-
     Route::delete('events/file/{client_event_file}', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventFileDeleteController');
 
-    Route::patch('events/report', 'EventReportController@report');
-    Route::delete('events/report', 'EventReportController@deport');
+    Route::prefix('events')->group(function(){
+        //Замена клиента события
+        Route::patch('change/client', 'EventChangeClientController@client');
 
-    Route::post('events/trafic', '\App\Http\Controllers\Api\v1\Back\Client\CreateEventTrafic');//Создать трафик из обращения
+        //Замена автора события
+        Route::patch('change/author', 'EventChangeClientController@author');
 
-    //Показать комментарии события
-    Route::get('events/comments/{clientEvent}', '\App\Http\Controllers\Api\v1\Back\Client\EventCommentController');
+        //Маршруты для отчитаться/снять отчет
+        Route::prefix('report')->group(function(){
+            Route::patch('report', 'EventReportController@report');
+            Route::delete('report', 'EventReportController@deport');
+        });
 
-    //Получить список трафиков
-    Route::get('events/trafics/{eventstatus}', '\App\Http\Controllers\Api\v1\Back\Client\EventTraficListController');
+        //Закрыть событие клиента
+        Route::get('close', 'EventCloseController@close');
 
-    Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')
-        ->except(['create','edit']);
+        //Вернуть в работу событие клиента
+        Route::get('resume', 'EventCloseController@resume');
+
+        //Создать трафик из события
+        Route::post('trafic', '\App\Http\Controllers\Api\v1\Back\Client\CreateEventTrafic');
+
+        //Показать комментарии события
+        Route::get('comments/{clientEvent}', '\App\Http\Controllers\Api\v1\Back\Client\EventCommentController');
+
+        //Получить список трафиков
+        Route::get('trafics/{eventstatus}', '\App\Http\Controllers\Api\v1\Back\Client\EventTraficListController');
+    });
+    //РЕСУРС НА CRUD
+    Route::resource('events', '\App\Http\Controllers\Api\v1\Back\Client\ClientEventController')->except(['create','edit']);
+
+
 
     Route::get('marketing','ClientMarketing');
 
@@ -668,7 +678,9 @@ Route::prefix('worksheet')->middleware(['corsing','userfromtoken'])->namespace('
     });
 
 
-
+    /**
+     * WORKSHEET SUBACTION
+     */
     //->middleware('permission.worksheet.action:ws_action_executor,ws_action_any')
     Route::prefix('subactions')->group(function() {
         Route::get('{worksheetId}', 'SubAction\SubActionController@index')->middleware('permission.subaction:show');

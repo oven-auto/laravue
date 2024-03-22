@@ -5,53 +5,40 @@ namespace App\Http\Controllers\Api\v1\Back\Client;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Client\Event\Executor\ClientEventExecutorCollection;
 use App\Models\ClientEventStatus;
-use App\Models\User;
-use App\Services\Comment\EventComment;
 use Illuminate\Http\Request;
-use \App\Classes\Telegram\Notice\TelegramNotice;
 
 class EventExecutorController extends Controller
 {
-    public function index(ClientEventStatus $clientEventStatus, Request $request)
-    {
-        $executors = $clientEventStatus->event->executors;
+    protected $service;
 
-        return new ClientEventExecutorCollection($executors->except(['id' => $clientEventStatus->event->author_id]));
+    public function __construct(\App\Services\Client\EventExecutorReporterService $serv)
+    {
+        $this->service = $serv;
     }
 
-    public function store(ClientEventStatus $clientEventStatus, Request $request, TelegramNotice $notice)
+
+
+    /**
+     * attach executors to event
+     */
+    public function store(ClientEventStatus $clientEventStatus, Request $request)
     {
-        $neededUserId = [];
-
-        if($request->has('executor_ids') && is_array($request->executor_ids))
-        {
-            foreach($request->executor_ids as $item)
-                if(!$clientEventStatus->event->executors->contains('id', $item))
-                    $neededUserId[] = $item;
-
-            $clientEventStatus->attachInEvent('executors', $neededUserId);
-
-            TelegramNotice::run($clientEventStatus)->executor()->send($neededUserId);
-        }
-
-        $executors = User::whereIn('id', $neededUserId)->get();
-
-        EventComment::addUsers($clientEventStatus, $executors);
+        $executors = $this->service->append($clientEventStatus, $request->executor_ids);
 
         return (new ClientEventExecutorCollection($executors))
             ->additional(['message' => 'Данные добавлены',]);
     }
 
+
+
+    /**
+     * dettach executor from event
+     */
     public function delete(ClientEventStatus $clientEventStatus, Request $request)
     {
-        $clientEventStatus->event->executors()->detach($request->executor_id);
+        $deletedUsers = $this->service->detach($clientEventStatus, $request->executor_id);
 
-        EventComment::delUser($clientEventStatus, User::findOrFail($request->executor_id));
-
-        return response()->json([
-            'message' => 'Исполнитель удален',
-            'success' => 1,
-            'executor' => $request->all()
-        ]);
+        return (new ClientEventExecutorCollection($deletedUsers))
+            ->additional(['message' => 'Исполнитель удален',]);
     }
 }

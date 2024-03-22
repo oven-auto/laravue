@@ -21,7 +21,7 @@ class EventIndexResource extends JsonResource
         $canIChange = (
             (
                 auth()->user()->role->permissions->contains('slug', 'cevent_show')
-                && $this->event->executors->contains('id', auth()->user()->id)
+                && $this->executors->contains('id', auth()->user()->id)
             )
             || auth()->user()->role->permissions->contains('slug', 'cevent_show_alien')
             || auth()->user()->id == $this->event->author_id
@@ -29,7 +29,7 @@ class EventIndexResource extends JsonResource
 
         $event = $this->event;
 
-        $executors = $this->event->executors->filter(function($item) use ($event){
+        $executors = $this->executors->filter(function($item) use ($event){
             return ($event->author_id != $item->id);
         });
         $executors->prepend($event->author);

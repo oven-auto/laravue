@@ -241,6 +241,7 @@ return [
         'WebUrl' => App\Helpers\Url\WebUrl::class,
         'StrHelp' => App\Helpers\String\StringHelper::class,
         'DateHelp' => App\Helpers\Date\DateHelper::class,
+        'ArrayHelp' => App\Helpers\Array\ArrayHelper::class,
     ],
 
 ];

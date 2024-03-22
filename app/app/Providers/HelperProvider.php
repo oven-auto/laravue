@@ -16,6 +16,7 @@ class HelperProvider extends ServiceProvider
         require_once app_path() . '/Helpers/Url/WebUrl.php';
         require_once app_path() . '/Helpers/String/StringHelper.php';
         require_once app_path() . '/Helpers/Date/DateHelper.php';
+        require_once app_path() . '/Helpers/Array/ArrayHelper.php';
     }
 
     /**

@@ -43,6 +43,18 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+        if(
+            $exception instanceof \App\Exceptions\Client\EventExcecutorAppendException ||
+            $exception instanceof \App\Exceptions\Client\EventExcecutorDetachException ||
+            $exception instanceof \App\Exceptions\Client\EventReporterAttachException ||
+            $exception instanceof \App\Exceptions\Client\EventReporterIsAuthorException ||
+            $exception instanceof \App\Exceptions\Client\EventReporterNotException ||
+            $exception instanceof \App\Exceptions\Client\EventCloseIsWorking ||
+            $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew
+        )
+            return $exception->render();
+
+
         if($exception instanceof ValidationException) {
             $errors = [];
 
@@ -58,6 +70,8 @@ class Handler extends ExceptionHandler
                 ])
             ], 415);
         }
+
+
 
         return response()->json([
             'message' => $exception->getMessage(),

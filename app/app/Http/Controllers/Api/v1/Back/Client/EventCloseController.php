@@ -3,46 +3,44 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
-use App\Models\ClientEventStatus;
-use App\Services\Client\EventTrafic;
 use Illuminate\Http\Request;
+use App\Services\Client\EventCloseService;
+use \App\Http\Resources\Client\EventSaveResource;
 
 class EventCloseController extends Controller
 {
-    private $eventClose;
-    private $traficRepo;
+    private $service;
 
-    public function __construct(\App\Services\Client\EventClose $eventClose, \App\Repositories\Trafic\TraficRepository $traficRepository)
+    public function __construct(EventCloseService $service)
     {
-        $this->eventClose = $eventClose;
-        $this->traficRepo = $traficRepository;
+        $this->service = $service;
     }
 
-    public function close(Request $request)
+
+
+    /**
+     * Закрыть коммуникацию
+     * @param Request $request [event_status_id]
+     * @return EventSaveResource
+     */
+    public function close(Request $request) : EventSaveResource
     {
+        $eventStatus = $this->service->close($request->event_status_id);
 
-        $eventStatus = $this->eventClose->close($request->get('event_status_id'));
-
-        $arrUser = [];
-        $users = $eventStatus->event->executors;
-        foreach($users as $item)
-            $arrUser[] = $item->id;
-
-        \App\Classes\Telegram\Notice\TelegramNotice::run($eventStatus)->close()->send($arrUser);
-
-        return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
-            ->additional([
-                'message' => $eventStatus->lastComment->text
-            ]);
+        return (new EventSaveResource($eventStatus))
+            ->additional(['message' => $eventStatus->lastComment->text]);
     }
 
+
+
+    /**
+     * Вернуть событие в работу
+     */
     public function resume(Request $request)
     {
-        $eventStatus = $this->eventClose->resume($request->get('event_status_id'));
+        $eventStatus = $this->service->resume($request->get('event_status_id'));
 
-        return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
-            ->additional([
-                'message' => $eventStatus->lastComment->text
-            ]);
+        return (new EventSaveResource($eventStatus))
+            ->additional(['message' => $eventStatus->lastComment->text]);
     }
 }

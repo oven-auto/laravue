@@ -14,10 +14,7 @@ use \App\Services\Comment\Comment;
  * 1 - ПОЛУЧИТЬ ВСЕ ПОДЗАДАЧИ ИЗ ВЫБРАННОГО РЛ
  * 2 - СОХРАНИТЬ ПОДЗАДАЧУ
  * 3 - ЗАКРЫТЬ ПОДЗАДАЧУ
- * 4 - ДОБАВИТЬ ИСПОЛНИТЕЛЕЙ В ПОДЗАДАЧУ
- * 5 - УДАЛИТЬ ИСПОЛНИТЕЛЯ ИЗ ПОДЗАДАЧИ
- * 6 - ОТЧИТАТЬСЯ ЗА ПОДЗАДАЧУ
- * 7 - СНЯТЬ ОТМЕТКУ ОБ ОТЧЕТЕ
+
  * 8 - ЗАПИСАТЬ КОММЕНТАРИЙ В ПОДЗАДАЧУ
  * 9 - ПОЛУЧИТЬ ВСЕ КОММЕНТАРИИ ПОДЗАДАЧИ В ВИДЕ МАССИВА
  *
@@ -26,10 +23,11 @@ use \App\Services\Comment\Comment;
  */
 Class SubActionRepository
 {
+    private $serviceExecutors;
 
-    public function __construct()
+    public function __construct(\App\Services\Worksheet\WorksheetSubActionExecutorReporterService $service)
     {
-
+        $this->serviceExecutors = $service;
     }
 
 
@@ -69,11 +67,8 @@ Class SubActionRepository
         if($subAction->title && $subAction->title != $oldTitle && $oldTitle)
             Comment::add($subAction, 'update');
 
-        if(!isset($data['executors']))
-            $data['executors'] = [auth()->user()->id];
-
-        if(isset($data['executors']))
-            $this->setExecutors($subAction, $data['executors']);
+        if($subAction->wasRecentlyCreated)
+            $this->serviceExecutors->setExecutors($subAction, auth()->user()->id);
 
         if(isset($data['comment']))
             $this->writeComment($subAction, $data['comment']);
@@ -104,100 +99,7 @@ Class SubActionRepository
 
 
 
-    /**
-     * 4 - ДОБАВИТЬ ИСПОЛНИТЕЛЕЙ В ПОДЗАДАЧУ
-     * @param SubAction $subAction
-     * @param array $executors [executors => array(int, ..., int)]
-     * @return void
-     */
-    public function setExecutors(SubAction $subAction, array $executorsArray) : void
-    {
-        $upUser = [];
 
-        $requestUsers = $executorsArray;
-
-        foreach($executorsArray as $key => $item)
-            if(!$subAction->worksheet->executors->contains('id', $item))
-                $upUser[] = $item;
-
-        $originalExecutorsArray = $subAction->executors->pluck('id')->toArray();
-
-        $executorsArray[] = auth()->user()->id;
-
-        $executorsArray = array_merge($executorsArray, $originalExecutorsArray);
-
-        $subAction->executors()->sync($executorsArray);
-
-        if($upUser)
-            WorksheetUser::attach(
-                \App\Models\Worksheet::findOrFail($subAction->worksheet_id),
-                \App\Models\User::whereIn('id', $upUser)->get()
-            );
-
-        $mas = [];
-
-        foreach($requestUsers as $item)
-            if($item != auth()->user()->id)
-                $mas[] = $item;
-
-        TelegramNotice::run($subAction)->executor()->send($mas);
-
-        $subAction->load('executors');
-    }
-
-
-
-    /**
-     * 5 - УДАЛИТЬ ИСПОЛНИТЕЛЯ ИЗ ПОДЗАДАЧИ
-     * @param SubAction $subAction
-     * @param int $executorId executor => int]
-     * @return void
-     */
-    public function removeExecutor(SubAction $subAction, int $executorId) : void
-    {
-        if($subAction->author_id != $executorId)
-            $subAction->executors()->detach($executorId);
-    }
-
-
-
-    /**
-     * 6 - ОТЧИТАТЬСЯ ЗА ПОДЗАДАЧУ
-     * @param SubAction $subAction
-     * @param int $reporterId
-     * @return void
-     */
-    public function report(SubAction|int $subAction, int|User $reporterId) : void
-    {
-        if(is_numeric($subAction))
-            $subAction = SubAction::findOrFail($subAction);
-
-        if(is_numeric($reporterId))
-            $reporterId = User::findOrFail($reporterId);
-
-        if(!$subAction->executors->contains('id', $reporterId->id))
-            throw new \Exception('Вы не являетесь участником задачи');
-
-        $subAction->reporters()->attach($reporterId->id);
-
-        TelegramNotice::run($subAction)->report()->send([$subAction->author_id]);
-
-        $this->removeExecutor($subAction, $reporterId->id);
-    }
-
-
-
-    /**
-     * 7 - СНЯТЬ ОТМЕТКУ ОБ ОТЧЕТЕ
-     * @param SubAction $subAction
-     * @param int $reporterId
-     * @return void
-     */
-    public function deport(SubAction $subAction, int $reporterId) : void
-    {
-        $subAction->reporters()->detach($reporterId);
-        $this->setExecutors($subAction, [$reporterId]);
-    }
 
 
 

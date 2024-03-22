@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 
 class MarkCarController extends Controller
 {
@@ -12,6 +11,7 @@ class MarkCarController extends Controller
         $marks = \App\Models\Mark::select(['id', \DB::raw('CONCAT (IFNULL(CONCAT(prefix," "), ""), name) as name')])
             ->where('brand_id',$brand->id)
             ->get();
+
         return response()->json([
             'data' => $marks,
             'success' => 1

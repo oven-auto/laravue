@@ -3,14 +3,14 @@
 namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 
 use App\Http\Controllers\Controller;
-use App\Services\Worksheet\WorksheetUser;
+use App\Services\Worksheet\WorksheetExecutorReportService;
 use Illuminate\Http\Request;
 
 class WorksheetReportController extends Controller
 {
     public $service;
 
-    public function __construct(WorksheetUser $service)
+    public function __construct(WorksheetExecutorReportService $service)
     {
         $this->service = $service;
     }
@@ -23,9 +23,7 @@ class WorksheetReportController extends Controller
      */
     public function report(Request $request)
     {
-        $worksheetId = $request->get('worksheet_id');
-
-        $this->service->report($worksheetId);
+        $this->service->report($request->worksheet_id);
 
         return response()->json([
             'message' => 'Вы отчитались',
@@ -41,10 +39,7 @@ class WorksheetReportController extends Controller
      */
     public function deport(Request $request)
     {
-        $worksheetId = $request->get('worksheet_id');
-        $userId = $request->get('user_id');
-
-        $this->service->deport($worksheetId, $userId);
+        $this->service->deport($request->worksheet_id, $request->user_id);
 
         return response()->json([
             'message' => 'Отчет пользователя отменен',

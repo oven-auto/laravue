@@ -160,7 +160,7 @@ class ClientEventFilter extends AbstractFilter
         $this->delWhere($builder,'client_events.personal');
 
         $builder->where(function($query) use ($value){
-            $query->where('client_events.personal', 1)->where('client_event_executors.executor_id', auth()->user()->id);
+            $query->where('client_events.personal', 1)->where('client_event_status_executors.user_id', auth()->user()->id);
         });
         // foreach($builder->getQuery()->wheres as $key => &$itemWhere)
         //     if(isset($itemWhere['query']) )
@@ -224,10 +224,15 @@ class ClientEventFilter extends AbstractFilter
 
     public function executorIds(Builder $builder, Array $value)
     {
-        if(!$this->checkJoin($builder, 'client_event_executors'))
-            $builder->leftJoin('client_event_executors', 'client_event_executors.event_id','client_event_statuses.event_id');
-        $builder->whereIn('client_event_executors.executor_id', $value);
-        $builder->groupBy('client_event_executors.executor_id');
+        if(!$this->checkJoin($builder, 'client_event_status_executors'))
+            $builder->leftJoin(
+                'client_event_status_executors',
+                'client_event_status_executors.client_event_status_id',
+                'client_event_statuses.id'
+            );
+
+        $builder->whereIn('client_event_status_executors.user_id', $value);
+        $builder->groupBy('client_event_status_executors.user_id');
     }
 
     public function status(Builder $builder, $value)

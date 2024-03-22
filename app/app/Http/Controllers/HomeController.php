@@ -96,6 +96,11 @@ class HomeController extends Controller
     public function index()
     {
 
+        $arr = collect(1,2,3,4,5);
+        dd($arr);
+        $need = 3;
+        $res = \ArrayHelp::except($arr, 3);
+        dd($res);
     }
 
 

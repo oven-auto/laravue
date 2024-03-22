@@ -120,7 +120,7 @@ class ClientEventStatus extends Model implements CommentInterface
     public function event()
     {
         return $this->hasOne(\App\Models\ClientEvent::class, 'id', 'event_id')->withDefault()->with([
-            'group', 'type', 'client', 'author', 'executors',
+            'group', 'type', 'client', 'author',
         ]);
     }
 
@@ -177,5 +177,10 @@ class ClientEventStatus extends Model implements CommentInterface
     public function files()
     {
         return $this->hasMany(\App\Models\ClientEventFile::class, 'event_id', 'event_id');
+    }
+
+    public function executors()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'client_event_status_executors', 'client_event_status_id', 'user_id', 'id');
     }
 }

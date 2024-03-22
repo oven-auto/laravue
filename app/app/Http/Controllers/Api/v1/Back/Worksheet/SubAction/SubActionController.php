@@ -10,14 +10,17 @@ use App\Models\SubAction;
 use App\Repositories\Worksheet\SubAction\SubActionRepository;
 use Illuminate\Http\Request;
 use \App\Services\Comment\Comment;
+use App\Services\Worksheet\WorksheetSubActionExecutorReporterService;
 
 class SubActionController extends Controller
 {
     protected $repo;
+    protected $service;
 
-    public function __construct(SubActionRepository $repo)
+    public function __construct(SubActionRepository $repo, WorksheetSubActionExecutorReporterService $service)
     {
         $this->repo = $repo;
+        $this->service = $service;
     }
 
 
@@ -104,9 +107,7 @@ class SubActionController extends Controller
      */
     public function append(SubAction $subAction, Request $request)
     {
-        $this->repo->setExecutors(subAction: $subAction, executorsArray: $request->executors);
-
-        Comment::add($subAction, 'append_executors', ['executors' => $request->executors]);
+        $this->service->setExecutors(subAction: $subAction, executorsArray: $request->executors);
 
         return (new SubActionUserCollection($subAction->executors))->additional(['message' => 'Исполнители добавлены']);
     }
@@ -121,9 +122,7 @@ class SubActionController extends Controller
      */
     public function remove(SubAction $subAction, Request $request)
     {
-        $this->repo->removeExecutor(subAction: $subAction, executorId: $request->executor);
-
-        //Comment::add($subAction, 'detach_executor', ['executor' => $request->executor]);
+        $this->service->removeExecutor(subAction: $subAction, executorId: $request->executor);
 
         return (new SubActionUserCollection($subAction->executors))->additional(['message' => 'Исполнитель удален']);
     }
@@ -138,9 +137,7 @@ class SubActionController extends Controller
      */
     public function report(SubAction $subAction, Request $request)
     {
-        $this->repo->report(subAction: $subAction, reporterId: $request->reporter);
-
-        Comment::add($subAction, 'append_report', ['reporter' => $request->reporter]);
+        $this->service->report(subAction: $subAction, reporterId: $request->reporter);
 
         return (new SubActionUserCollection($subAction->reporters))->additional(['message' => 'Исполнитель отчитался']);
     }
@@ -155,9 +152,7 @@ class SubActionController extends Controller
      */
     public function deport(SubAction $subAction, Request $request)
     {
-        $this->repo->deport(subAction: $subAction, reporterId: $request->reporter);
-
-        Comment::add($subAction, 'append_report', ['reporter' => $request->reporter]);
+        $this->service->deport(subAction: $subAction, reporterId: $request->reporter);
 
         return (new SubActionUserCollection($subAction->reporters))->additional(['message' => 'Отчет исполнителя отменен']);
     }

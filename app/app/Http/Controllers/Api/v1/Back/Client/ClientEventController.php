@@ -64,15 +64,17 @@ class ClientEventController extends Controller
 
     /**
      * Изменить коммуникацию
-     * @param ClientEvent $event ClientEvent
+     * @param int $clientEventStatusId
      * @param ClientEventRequest $request ClientEventRequest
      * @return \Illuminate\Http\Resources\Json\JsonResource
      */
-    public function update($event, Request $request)
+    public function update(int $clientEventStatusId, Request $request)
     {
-        $clientEventStatus = ClientEventStatus::with('event')->find($event);
+        $clientEventStatus = ClientEventStatus::with('event')->find($clientEventStatusId);
+
         $this->repo->save($clientEventStatus->event, $request->input());
-        $clientEventStatus = $clientEventStatus->event->lastStatus;
+
+        $clientEventStatus->load('event');
 
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus))
             ->additional([
@@ -83,9 +85,6 @@ class ClientEventController extends Controller
 
     public function destroy(ClientEvent $event)
     {
-        // $tmp = clone $event;
-        // $event->delete();
-        // return (new \App\Http\Resources\Client\EventSaveResource($tmp))
-        //     ->additional(['message' => 'Событие клиента удалено']);
+
     }
 }

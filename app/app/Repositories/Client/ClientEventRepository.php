@@ -15,13 +15,17 @@ class ClientEventRepository
     public function save(ClientEvent $event, Array $data, $files = [])
     {
         $this->event = $event;
+
         $this->data = $data;
-        //$this->files = $files;
+
         $this->authId = auth()->user()->id;
+
         $this->saveFasade();
+
         $this->event->fresh();
-        //$this->saveFile();
+
         $this->event = null;
+
         $this->data = null;
     }
 
