@@ -31,7 +31,7 @@ class ClientEvent
                     return $next($request);
 
                 $isOwner = $eventStatus->event->author_id == $user->id
-                    || $eventStatus->event->executors->contains('id', $user->id)
+                    || $eventStatus->executors->contains('id', $user->id)
                     || $eventStatus->reporters->contains('id', $user->id);
 
                 if($userPermissons->contains('slug', 'cevent_show') && $isOwner )
@@ -52,7 +52,7 @@ class ClientEvent
                     throw new \Exception('Нет такого события');
                 if($userPermissons->contains('slug', 'cevent_edit_alien'))
                     return $next($request);
-                $isOwner = $eventStatus->event->author_id == $user->id || $eventStatus->event->executors->contains('id', $user->id);
+                $isOwner = $eventStatus->event->author_id == $user->id || $eventStatus->executors->contains('id', $user->id);
                 if($userPermissons->contains('slug', 'cevent_edit') && $isOwner )
                     return $next($request);
                 throw new \Exception('Доступ ограничен! Вы не можете отслеживать работу с этим клиентом. Запросите расширение прав у участников коммуникации.');
