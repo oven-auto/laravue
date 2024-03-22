@@ -14,8 +14,8 @@ class EventListResource extends JsonResource
      */
     public function toArray($request)
     {
-        $executors = $this->event->executors->filter(function($item) {
-            if($this->event->author_id != $item->id)
+        $executors = $this->executors->filter(function($item) {
+            if($this->author_id != $item->id)
                 return $item->cut_name;
         });
 
