@@ -71,7 +71,7 @@ Class ClientEventListFilter extends AbstractFilter
     {
         $builder->where(function($query) use ($value){
             $query->whereIn('client_event_status_executors.user_id', $value);
-            $query->orWhereIn('client_events.id', $value);
+            $query->orWhereIn('client_events.author_id', $value);
         });
 
 
