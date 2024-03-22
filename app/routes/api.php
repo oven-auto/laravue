@@ -452,8 +452,8 @@ Route::prefix('client')->middleware(['corsing','userfromtoken'])->namespace('\Ap
 
         //Маршруты для отчитаться/снять отчет
         Route::prefix('report')->group(function(){
-            Route::patch('report', 'EventReportController@report');
-            Route::delete('report', 'EventReportController@deport');
+            Route::patch('', 'EventReportController@report');
+            Route::delete('', 'EventReportController@deport');
         });
 
         //Закрыть событие клиента
