@@ -10,7 +10,12 @@ class ClientEventRepository
     private $authId;
     private $event;
     private $data;
-    private $files;
+    private $service;
+
+    public function __construct(\App\Services\Client\EventExecutorReporterService $service)
+    {
+        $this->service = $service;
+    }
 
     public function save(ClientEvent $event, Array $data, $files = [])
     {
@@ -52,6 +57,11 @@ class ClientEventRepository
             $this->event->statuses()->create($arr);
         else
             $this->event->lastStatus->fill($arr)->save();
+
+        $this->event->load('lastStatus');
+
+        $this->service->append($this->event->lastStatus, auth()->user()->id);
+
         $this->createComments();
     }
 
@@ -73,8 +83,8 @@ class ClientEventRepository
 
             $this->event->fill($arr)->save();
 
-            if(!$this->event->executors->contains('id', $this->event->author_id))
-                $this->event->executors()->attach($this->event->author_id);
+            //if(!$this->event->lastStatus->executors->contains('id', $this->event->author_id))
+                //$this->event->lastStatus->executors()->attach($this->event->author_id);
         }
     }
 

@@ -27,7 +27,7 @@ class SubActionResource extends JsonResource
                 'duration'          => $this->duration,
                 'title'             => $this->title,
                 'status'            => $this->getStatus(),
-                'executors'         => $this->executors->map(function($itemUser) {
+                'executors'         => $this->executors->except('id', $this->author_id)->map(function($itemUser) {
                     return [
                         'id' => $itemUser->id,
                         'name' => $itemUser->cut_name,
