@@ -39,6 +39,8 @@ Class ClientEventListFilter extends AbstractFilter
         $builder->leftJoin('client_events', 'client_events.id','client_event_statuses.event_id');
 
         $builder->leftJoin('client_event_status_executors','client_event_status_executors.client_event_status_id','client_event_statuses.id');
+
+        $builder->groupBy('client_event_statuses.id');
     }
 
     public function dateForClosing(Builder $builder, $value)
@@ -75,6 +77,6 @@ Class ClientEventListFilter extends AbstractFilter
         });
 
 
-        $builder->groupBy('client_event_status_executors.user_id');
+        //$builder->groupBy('client_event_status_executors.user_id');
     }
 }

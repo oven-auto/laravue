@@ -95,12 +95,11 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $events = \App\Models\ClientEvent::with(['lastStatus', 'executors'])->get();
 
-        $arr = collect(1,2,3,4,5);
-        dd($arr);
-        $need = 3;
-        $res = \ArrayHelp::except($arr, 3);
-        dd($res);
+        $events->each(function($item){
+            $item->lastStatus->executors()->attach($item->executors->pluck('id')->toArray());
+        });
     }
 
 
