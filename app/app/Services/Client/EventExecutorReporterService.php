@@ -32,7 +32,7 @@ Class EventExecutorReporterService
         //append users to event
         $event->executors()->attach($neededUserId);
         //send telegram notice
-        TelegramNotice::run($event)->executor()->send($neededUserId);
+        TelegramNotice::run($event)->executor()->send(ArrayHelper::except($neededUserId, $event->event->author_id));
         //collect executors
         $executors = User::whereIn('id', $neededUserId)->get();
         //make comment
