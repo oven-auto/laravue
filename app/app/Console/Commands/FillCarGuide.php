@@ -38,6 +38,12 @@ class FillCarGuide extends Command
     public function handle()
     {
         $logisticState = [
+            ['system_name' => 'off_date',       'state' => 0,   'name' => 'Списание'],
+            ['system_name' => 'ransom_date',    'state' => 0,   'name' => 'Оплата поставщику'],
+            ['system_name' => 'presale_date',   'state' => 0,   'name' => 'Предпродажка'],
+
+
+
             ['system_name' => 'order_date',     'state' => 1,   'name' => 'Заказ'],
             ['system_name' => 'plan_date',      'state' => 2,   'name' => 'Сборка планируемая'],
             ['system_name' => 'build_date',     'state' => 3,   'name' => 'Сборка фактическая'],
@@ -45,14 +51,12 @@ class FillCarGuide extends Command
             ['system_name' => 'request_date',   'state' => 5,   'name' => 'Заявка на перевозку'],
             ['system_name' => 'shipment_date',  'state' => 6,   'name' => 'Отгрузка'],
             ['system_name' => 'stock_date',     'state' => 7,   'name' => 'Приемка на склад'],
-            ['system_name' => 'presale_date',   'state' => 0,   'name' => 'Предпродажка'],
+
             ['system_name' => 'invoice_date',   'state' => 8,   'name' => 'Приходная накладная'],
-            ['system_name' => 'ransom_date',    'state' => 0,   'name' => 'Оплата поставщику'],
-            ['system_name' => 'sale_date',      'state' => -1,  'name' => 'Продажа'],
-            ['system_name' => 'off_date',       'state' => 9,   'name' => 'Списание'],   
+
         ];
 
-        foreach($logisticState as $item){
+        foreach ($logisticState as $item) {
             \App\Models\LogisticState::updateOrCreate(
                 ['system_name' => $item['system_name']],
                 $item
@@ -69,7 +73,7 @@ class FillCarGuide extends Command
             ['name' => 'Акредитив',     'sort' => 5],
         ];
 
-        foreach($terms as $item)
+        foreach ($terms as $item)
             \App\Models\DeliveryTerm::updateOrCreate(
                 ['name' => $item['name']],
                 $item
@@ -85,7 +89,7 @@ class FillCarGuide extends Command
             ['name' => 'Возврат'],
         ];
 
-        foreach($orderTypes as $item)
+        foreach ($orderTypes as $item)
             \App\Models\OrderType::updateOrCreate(
                 ['name' => $item['name']],
                 $item
@@ -100,7 +104,7 @@ class FillCarGuide extends Command
             ['name' => 'Возврат'],
         ];
 
-        foreach($tradeMarks as $item)
+        foreach ($tradeMarks as $item)
             \App\Models\TradeMarker::updateOrCreate(
                 ['name' => $item['name']],
                 $item
@@ -112,11 +116,30 @@ class FillCarGuide extends Command
             ['name' => 'Доставка'],
         ];
 
-        foreach($detailingCosts as $item)
+        foreach ($detailingCosts as $item)
             \App\Models\DetailingCost::updateOrCreate(
                 ['name' => $item['name']],
                 $item
             );
+
+        $carStates = [
+            ['order_date', 'В заявке', 'in_order'],
+            ['plan_date', 'Сборка', 'in_plan'],
+            ['build_date', 'Собран', 'in_build'],
+            ['ready_date', 'Готов к отгрузке', 'in_ready'],
+            ['request_date', 'Заявлен в отгрузку', 'in_request'],
+            ['shipment_date', 'Отгружен', 'in_shipment'],
+            ['stock_date', 'Разгружен', 'in_stock'],
+            ['invoice_date', 'На складе', 'in_invoice'],
+            ['off_date', 'Списан', 'in_off'],
+            ['presale_date', 'Прошёл предпродажку', 'in_presale'],
+            ['ransom_date', 'Выкуплен у поставщика', 'in_ransom'],
+        ];
+
+        foreach ($carStates as $item)
+            \App\Models\CarState::updateOrCreate(
+                ['name' => $item[0]],
+                $item
+            );
     }
 }
-
