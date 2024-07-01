@@ -14,7 +14,7 @@ class UpdateClientEventFileAddEventStatusId extends Migration
     public function up()
     {
         Schema::table('client_event_files', function (Blueprint $table) {
-            $table->foreignId('client_event_status_id')->references('id')->on('client_event_statuses')->onDelete('cascade');;
+            $table->foreignId('client_event_status_id')->nullable()->references('id')->on('client_event_statuses')->onDelete('cascade');;
         });
     }
 
