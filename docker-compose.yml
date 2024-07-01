@@ -38,12 +38,14 @@ services:
       database:
     volumes:
       - ./app/:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/uploads.ini
     environment:
       - "UPLOAD_LIMIT=20M"
       - "DB_PORT=3306"
       - "DB_HOST=mysql"
       - "REDIS_PORT=6379"
       - "REDIS_HOST=redis"
+      - "POST_MAX_SIZE = 20M"
     tty: true
 
   php-cli:
