@@ -73,11 +73,13 @@ class FillCarGuide extends Command
             ['name' => 'Акредитив',     'sort' => 5],
         ];
 
-        foreach ($terms as $item)
+        foreach ($terms as $item) {
+            $item['text_color'] = '#000';
             \App\Models\DeliveryTerm::updateOrCreate(
                 ['name' => $item['name']],
                 $item
             );
+        }
 
         /////////////////////////////////////////////
 
