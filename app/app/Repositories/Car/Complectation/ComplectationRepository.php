@@ -75,7 +75,7 @@ class ComplectationRepository
         $data['motor_id'] = $motor->id;
 
         $complectation = new Complectation();
-
+        $data['author_id'] = auth()->user()->id;
         $this->save($complectation, $data);
 
         $this->saveHistory($complectation, 'create');

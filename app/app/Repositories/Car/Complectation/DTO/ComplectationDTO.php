@@ -6,7 +6,7 @@ use App\Classes\DTO\AbstractDTO;
 
 class ComplectationDTO extends AbstractDTO
 {
-    private const FIELDS = ['code', 'name', 'mark_id', 'vehicle_type_id', 'body_work_id', 'factory_id', 'motor_id'];
+    private const FIELDS = ['code', 'name', 'mark_id', 'vehicle_type_id', 'body_work_id', 'factory_id', 'motor_id', 'author_id'];
 
     public function __construct(array $data)
     {
