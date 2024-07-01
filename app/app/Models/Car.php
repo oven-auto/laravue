@@ -998,7 +998,7 @@ class Car extends Model
         $obj = new stdClass();
         $obj->title = $state_status->description ?? 'В заявке';
         $obj->date = $state->date_at ?? $this->created_at;
-        $obj->id = $state_status->id ?? 0;
+        $obj->id = ($state_status->id + 1) ?? 0;
 
         if ($this->reserve && $this->reserve->issue->date_at) {
             $obj->title = $state_status->description ?? 'Выдан';
@@ -1034,8 +1034,8 @@ class Car extends Model
         };
 
         return match ($obj->id) {
-            0 => $getWithCountDay($obj),
-            1 => $getWithCountDay($obj),
+            0 => $getWithCountDay($obj, 1),
+            1 => $getWithCountDay($obj, 1),
             2 => $getWithCountDayOrDate($obj),
             3 => $getWithDate($obj),
             4 => $getOnlyStatus($obj),
