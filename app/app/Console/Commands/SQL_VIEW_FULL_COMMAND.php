@@ -37,11 +37,12 @@ class SQL_VIEW_FULL_COMMAND extends Command
      */
     public function handle()
     {
-        $this->call('sql:traficprod');
+
         $this->call('sql:optionprice');
         $this->call('sql:optioncurrentprice');
         $this->call('sql:carfullprice');
         $this->call('sql:comprice');
         $this->call('sql:contractprice');
+        $this->call('sql:traficprod');
     }
 }
