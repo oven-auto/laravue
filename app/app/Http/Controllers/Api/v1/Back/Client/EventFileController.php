@@ -26,11 +26,12 @@ class EventFileController extends Controller
 
         $arr = collect();
 
-        foreach(collect($request->allFiles())->collapse() as $file)
+        foreach (collect($request->allFiles())->collapse() as $file)
             $arr->push($eventStatus->files()->create([
                 'event_id' => $eventStatus->event_id,
                 'author_id' => auth()->user()->id,
-                'file' => \App\Services\Download\ClientEventFileLoad::download($eventStatus->event_id, $file)
+                'file' => \App\Services\Download\ClientEventFileLoad::download($eventStatus->event_id, $file),
+                'client_event_status_id' => $eventStatus->id,
             ]));
 
         EventComment::appendFile($eventStatus);

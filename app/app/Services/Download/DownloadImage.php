@@ -7,10 +7,17 @@ use Illuminate\Http\UploadedFile;
 Class DownloadImage
 {
     protected $file;
-    protected $prefix = 'ovenauto';
+    protected $prefix = '';
     protected $catalog;
     protected $pathName;
     protected $root = '/public';
+
+    public static function isFile($file)
+    {
+        if($file instanceof UploadedFile)
+            return true;
+        return false;
+    }
 
     public function setFile(UploadedFile $file)
     {
@@ -57,7 +64,7 @@ Class DownloadImage
         if($timeSufix == true)
             $sufix = date('dmyhms');
 
-        $fileName = $this->prefix.''.$sufix.'_'.$this->file->getClientOriginalName();
+        $fileName = $this->prefix.''.$sufix.''.$this->file->getClientOriginalName();
 
 
         $path = $this->storagePath($this->root);

@@ -18,21 +18,23 @@ class CounterController extends Controller
     public function __invoke(Request $request)
     {
         $nonIntervalArray = $request->except([
-                'interval_begin', 'interval_end',
-                'second_interval_begin', 'second_interval_end',
-                'third_interval_begin', 'third_interval_end',
+            'interval_begin', 'interval_end',
+            'second_interval_begin', 'second_interval_end',
+            'third_interval_begin', 'third_interval_end',
         ]);
 
         $queryParams = ['queryParams' => array_filter($nonIntervalArray)];
 
         $filterTrafic       = app()->make(TraficAnalyticFilter::class, $queryParams);
         $filterWorkSheet    = app()->make(WorksheetAnalyticFilter::class, $queryParams);
-        $filterRedemption   = app()->make(WSMRedemptionCarFilter::class, ['queryParams' => ['status' => 'control']]);
+        $filterRedemptionControl   = app()->make(WSMRedemptionCarFilter::class, ['queryParams' => ['status' => 'control']]);
+        $filterRedemptionWait   = app()->make(WSMRedemptionCarFilter::class, ['queryParams' => ['status' => 'wait']]);
 
-        $trafic = Trafic::select('trafics.id')->whereIn('trafics.trafic_status_id', [1,2])->filter($filterTrafic)->pluck('id');
+        $trafic = Trafic::select('trafics.id')->whereIn('trafics.trafic_status_id', [1, 2])->filter($filterTrafic)->pluck('id');
         $worksheetOverdue = Worksheet::select('worksheets.id')->overdue()->filter($filterWorkSheet)->pluck('id');
         $worksheetCheck = Worksheet::select(['worksheets.id'])->check()->filter($filterWorkSheet)->pluck('id');
-        $redemption = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemption)->pluck('id');
+        $redemptionControl = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemptionControl)->pluck('id');
+        $redemptionWait = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemptionWait)->pluck('id');
 
         $counter = [
             '0' => [
@@ -58,8 +60,15 @@ class CounterController extends Controller
 
             '3' => [
                 'name' => 'Оценки на контроле',
-                'count' => $redemption->count(),
-                'ids' => $redemption,
+                'count' => $redemptionControl->count(),
+                'ids' => $redemptionControl,
+                'type' => 'appraisals'
+            ],
+
+            '4' => [
+                'name' => 'Оценки ожидающие',
+                'count' => $redemptionWait->count(),
+                'ids' => $redemptionWait,
                 'type' => 'appraisals'
             ],
         ];

@@ -66,6 +66,7 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'userfromtoken' => \App\Http\Middleware\UserWithTokenMiddleware::class,
         'corsing' => \App\Http\Middleware\CorsMiddleware::class,
+        'robot' => \App\Http\Middleware\RobotMiddleware::class,
 
         'worksheet.create.base' => \App\Http\Middleware\Permissions\Worksheet\WorksheetBasePerm::class,
 
@@ -82,6 +83,7 @@ class Kernel extends HttpKernel
         'permission.worksheet.list'  => \App\Http\Middleware\Permissions\Worksheet\WorksheetList::class,
         'permission.worksheet.revert'  => \App\Http\Middleware\Permissions\Worksheet\WorksheetRevert::class,
         'permission.worksheet.action' => \App\Http\Middleware\Permissions\Worksheet\WorksheetActionMiddleware::class,
+        'permission.worksheet.complete' => \App\Http\Middleware\Permissions\Worksheet\Action\ActionCompleteMiddleware::class,
 
         'permission.developer' => \App\Http\Middleware\Permissions\Developer\UserActionPerm::class,
         'permission.clientevent' => \App\Http\Middleware\Permissions\Client\ClientEvent::class,
@@ -94,6 +96,19 @@ class Kernel extends HttpKernel
         'director.request' => \App\Http\Middleware\DirectorRequestMiddleware::class,
 
         'subaction.iswork' => \App\Http\Middleware\Worksheet\SubAction\SubActionChangeMiddlewar::class,
+
+        'permission.newstock.list' => \App\Http\Middleware\Permissions\Car\Car\CarAccessListMiddleware::class,
+        'permission.newstock.store' => \App\Http\Middleware\Permissions\Car\Car\CarAccessStoreMiddleware::class,
+        'permission.newstock.show' => \App\Http\Middleware\Permissions\Car\Car\CarAccessShowMiddleware::class,
+        'permission.newstock.edit' => \App\Http\Middleware\Permissions\Car\Car\CarAccessEditMiddleware::class,
+
+        'permission.complectation.list'      => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessListMiddleware::class,
+        'permission.complectation.store'     => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessStoreMiddleware::class,
+        'permission.complectation.show'      => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessShowMiddleware::class,
+        'permission.complectation.edit'      => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessEditMiddleware::class,
+        'permission.complectation.delete'    => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessDeleteMiddleware::class,
+        'permission.complectation.restore'   => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessRestoreMiddleware::class,
+
 
     ];
 }

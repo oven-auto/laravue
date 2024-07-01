@@ -22,13 +22,27 @@ class WorksheetActionController extends Controller
     {
         $worksheet = \App\Models\Worksheet::findOrFail($request->worksheet_id);
 
-        $old = implode(' ',[
+        if ($request->has('status')) {
+            $status = $request->status;
+            switch ($status) {
+                case 'confirm':
+                    Comment::add($worksheet->last_action, 'confirm_action');
+                    break;
+                case 'abort':
+                    Comment::add($worksheet->last_action, 'abort_action');
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        $old = implode(' ', [
             $worksheet->last_action->task->name,
             $worksheet->last_action->begin_at->format('d.m.Y'),
-            '('.$worksheet->last_action->begin_at->format('H:i').'-'.$worksheet->last_action->end_at->format('H:i').')'
+            '(' . $worksheet->last_action->begin_at->format('H:i') . '-' . $worksheet->last_action->end_at->format('H:i') . ')'
         ]);
 
-        $task = \App\Models\Task::findOrFail( $request->task_id );
+        $task = \App\Models\Task::findOrFail($request->task_id);
 
         $worksheet->last_action->fill([
             'begin_at' => $request->begin_at,
@@ -38,6 +52,8 @@ class WorksheetActionController extends Controller
             'worksheet_id' => $worksheet->id,
             'author_id' => auth()->user()->id,
         ])->save();
+
+        $worksheet->load('last_action');
 
         $worksheet->fill(['status_id' => $task->worksheet_label])->save();
 
@@ -73,11 +89,12 @@ class WorksheetActionController extends Controller
         $action->fill(['status' => 'work'])->save();
 
         $status = $request->status;
+
         switch ($status) {
-            case 'confirm' :
+            case 'confirm':
                 Comment::add($action, 'confirm_action');
                 break;
-            case 'abort' :
+            case 'abort':
                 Comment::add($action, 'abort_action');
                 break;
         }

@@ -16,10 +16,16 @@ class LoginController extends Controller
         $this->service = $service;
     }
 
+
+
     public function index(LoginRequest $request)
     {
-        return $this->service->login($request->all());
+        $result = $this->service->login($request->all());
+
+        return response()->json($result);
     }
+
+
 
     public function check(Request $request)
     {

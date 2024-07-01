@@ -4,73 +4,156 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Traits\Filterable;
-use App\Models\Traits\PriceChangeable;
-use App\Models\Traits\Createable;
-use App\Models\Interfaces\SortInterface;
-use App\Models\Interfaces\HasPriceInterface;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Complectation extends Model implements SortInterface, HasPriceInterface
+class Complectation extends Model
 {
-    use HasFactory;
-    use Filterable;
-    use PriceChangeable;
-    use Createable;
+    use HasFactory, SoftDeletes;
 
     protected $guarded = [];
 
-    public function devices()
+    /* СВЯЗИ */
+
+    /**
+     * АВТОР
+     */
+    public function author()
     {
-        return $this->belongsToMany(\App\Models\Device::class, 'complectation_devices', 'complectation_id');
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
     }
 
-    public function packs()
-    {
-        return $this->belongsToMany(\App\Models\Pack::class, 'complectation_packs', 'complectation_id');
-    }
 
-    public function colors()
-    {
-        return $this->belongsToMany(\App\Models\MarkColor::class, 'complectation_colors', 'complectation_id')->with('color');
-    }
 
-    public function colorPacks()
-    {
-        return $this->belongsToMany(\App\Models\MarkColor::class, 'complectation_color_packs', 'complectation_id')->withPivot('pack_id')->with('color');
-    }
-
-    public function markColor()
-    {
-        return $this->hasMany(\App\Models\MarkColor::class, 'mark_id', 'mark_id')->with('color');
-    }
-
-    public function motor()
-    {
-        return $this->hasOne(\App\Models\Motor::class, 'id', 'motor_id')->withDefault()->with(['transmission', 'driver', 'type']);
-    }
-
-    public function brand()
-    {
-        return $this->hasOne(\App\Models\Brand::class,'id','brand_id')->withDefault();
-    }
-
+    /**
+     * МОДЕЛЬ И ИЗ НЕЕ ЖЕ БРЕНД
+     */
     public function mark()
     {
-        return $this->hasOne(\App\Models\Mark::class,'id','mark_id')->withDefault();
+        return $this->hasOne(\App\Models\Mark::class, 'id', 'mark_id')->with('brand');
     }
 
-    public function cars()
+
+
+    /**
+     * ТИП ТС
+     */
+    public function vehicle()
     {
-        return $this->hasMany(\App\Models\Car::class, 'complectation_id', 'id');
+        return $this->hasOne(\App\Models\VehicleType::class, 'id', 'vehicle_type_id');
     }
 
-    public function moderator()
+
+
+    /**
+     * ТИП КУЗОВА
+     */
+    public function bodywork()
     {
-        return $this->hasMany(\App\Models\ComplectationModerator::class);
+        return $this->hasOne(\App\Models\BodyWork::class, 'id', 'body_work_id');
     }
 
-    public function lastModerator()
+
+
+    /**
+     * МОТОР
+     */
+    public function motor()
     {
-        return $this->hasOne(\App\Models\ComplectationModerator::class)->orderBy('id','DESC')->withDefault();
+        return $this->hasOne(\App\Models\Motor::class, 'id', 'motor_id')
+            ->with(['transmission', 'driver', 'type']);
+    }
+
+
+
+    /**
+     * СТРАНА ПРОИЗВОДСТВА
+     */
+    public function factory()
+    {
+        return $this->hasOne(\App\Models\Factory::class, 'id', 'factory_id');
+    }
+
+
+
+    /**
+     * ФАИЛЫ
+     */
+    public function file()
+    {
+        return $this->hasOne(\App\Models\ComplectationFile::class, 'complectation_id', 'id');
+    }
+
+
+
+    /**
+     * ИСТОРИЯ
+     */
+    public function history()
+    {
+        return $this->hasMany(\App\Models\ComplectationHistory::class, 'complectation_id', 'id');
+    }
+
+
+
+    /**
+     * LAST HISTORY
+     */
+    public function last_history()
+    {
+        return $this->hasOne(\App\Models\ComplectationHistory::class, 'complectation_id', 'id')->orderBy('id', 'DESC');
+    }
+
+
+
+    /**
+     * GET FILE URL
+     */
+    public function getUrlFile()
+    {
+        if ($this->file)
+            return \WebUrl::make_link($this->file->file, false);
+        return '';
+    }
+
+
+
+    public function current_price()
+    {
+        return $this->hasOne(\App\Models\ComplectationCurrentPrice::class, 'complectation_id', 'id')->withDefault();
+    }
+
+
+
+    public function prices()
+    {
+        return $this->hasMany(\App\Models\ComplectationPrice::class, 'complectation_id', 'id');
+    }
+
+
+
+    public function alias()
+    {
+        return $this->hasOne(\App\Models\ComplectationMarkAlias::class, 'complectation_id', 'id');
+    }
+
+
+
+    /**
+     * ACCESSORS
+     */
+
+    public function getPriceAttribute()
+    {
+        return $this->current_price->price ?? 0;
+    }
+
+
+
+    public function saveAlias($aliasId)
+    {
+        $this->alias()->updateOrCreate([
+            'complectation_id' => $this->id,
+            'mark_alias_id' => $aliasId
+        ]);
     }
 }

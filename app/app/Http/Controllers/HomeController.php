@@ -4,8 +4,15 @@ namespace App\Http\Controllers;
 
 //use Illuminate\Http\Request;
 
+use App\Classes\LadaDNM\DNM;
+use App\Classes\LadaDNM\DNMFactory;
 use App\Classes\Vin\Vin;
+use App\Helpers\String\StringHelper;
+use App\Models\Client as ModelsClient;
 use App\Models\ClientUnion;
+use App\Models\MarkAlias;
+use App\Models\Trafic;
+use App\Models\Worksheet;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
@@ -24,7 +31,6 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-
     }
 
 
@@ -54,7 +60,7 @@ class HomeController extends Controller
 
         $url = 'https://62.182.31.140/telegram/bot';
 
-        $command = 'curl -k -F "url='.$url.'" -F "certificate=@cert/cert2.pem" "https://api.telegram.org/bot'.$token.'/setWebhook"';
+        $command = 'curl -k -F "url=' . $url . '" -F "certificate=@cert/cert2.pem" "https://api.telegram.org/bot' . $token . '/setWebhook"';
 
         exec($command, $out, $res);
 
@@ -68,11 +74,11 @@ class HomeController extends Controller
      */
     public function del()
     {
-        $token = env('TELEGRAM_KEY');
+        // $token = env('TELEGRAM_KEY');
 
-        $telegram = new Api($token);
+        // $telegram = new Api($token);
 
-        $res = $telegram->removeWebhook();
+        // $res = $telegram->removeWebhook();
     }
 
 
@@ -80,10 +86,8 @@ class HomeController extends Controller
     /**
      * БОТ ТЕЛЕГРАМ
      */
-    public function bot(\App\Classes\Telegram\Scenario $scenario)
+    public function bot(Request $request)
     {
-        //SELECT FLOOR(1000 + (1999-1000)*RAND())
-        $scenario->handler();
     }
 
 
@@ -97,17 +101,20 @@ class HomeController extends Controller
     {
         $events = \App\Models\ClientEvent::with(['lastStatus', 'executors'])->get();
 
-        $events->each(function($item){
+        $events->each(function ($item) {
             $item->lastStatus->executors()->attach($item->executors->pluck('id')->toArray());
         });
     }
 
 
 
-    public function test(\App\Classes\Telegram\Notice\TelegramNotice $notice)
+    public function test()
     {
-        $worksheet = \App\Models\Worksheet::first();
-        dd($worksheet->executors->keyBy('id')->forget(47)->pluck('id')->toArray());
+        // $worksheet = Worksheet::first();
+
+        // DNMFactory::factory($worksheet)->create();
+        $day = 26;
+        dd($day . ' ' . StringHelper::dayWord($day));
     }
 
 

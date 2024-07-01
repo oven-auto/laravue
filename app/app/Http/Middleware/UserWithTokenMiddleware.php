@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Auth;
+use Exception;
 
 class UserWithTokenMiddleware
 {
@@ -21,11 +22,11 @@ class UserWithTokenMiddleware
         //$request->merge(['test' => $request->all()]);
 
         $headers = getallheaders();
-        if(isset($headers['Authorization'])) {
+        if (isset($headers['Authorization'])) {
             $data = $headers['Authorization'];
             $data = \explode(' ', $data);
 
-            if(count($data)<2)
+            if (count($data) < 2)
                 return \response()->json([
                     'success' => 0,
                     'message' => 'Вы не авторизованы или авторизованы не правильно',
@@ -34,11 +35,14 @@ class UserWithTokenMiddleware
 
             $token = \Laravel\Sanctum\PersonalAccessToken::findToken($data[1]);
 
-            if($token) {
+            if ($token) {
                 $user = $token->tokenable;
                 //$request->merge(['user' => $user]);
                 Auth::login($user);
-                return $next($request);
+                if ($user->role->permissions->contains('slug', 'user_system'))
+                    return $next($request);
+                else
+                    throw new Exception('Не могу впустить, тк нет у Вас нет доступа "Пользователь системы"');
             } else {
                 return \response()->json([
                     'success' => 0,

@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Repositories\Client;
+
+use App\Classes\Telegram\Notice\TelegramNotice;
 use App\Models\ClientEvent;
 use App\Models\ClientEventExecutor;
 use App\Models\ClientEventStatus;
@@ -33,11 +35,8 @@ class ClientEventRepository
 
         $this->data = null;
     }
+    
 
-    private function checkOnOwner()
-    {
-
-    }
 
     public function saveFasade()
     {
@@ -68,9 +67,6 @@ class ClientEventRepository
     public function saveMain()
     {
         if(!$this->event->id || $this->event->author_id === $this->authId) {
-
-            $date_at = (string)$this->data['date_at'];
-
             $arr = [
                 'client_id'     => $this->event->client_id ? $this->event->client_id : $this->data['client_id'],
                 'author_id'     => $this->event->auth_id ? $this->event->auth_id : $this->authId,
@@ -82,9 +78,6 @@ class ClientEventRepository
             ];
 
             $this->event->fill($arr)->save();
-
-            //if(!$this->event->lastStatus->executors->contains('id', $this->event->author_id))
-                //$this->event->lastStatus->executors()->attach($this->event->author_id);
         }
     }
 
@@ -96,6 +89,15 @@ class ClientEventRepository
                 'author_id' => $this->authId,
                 'client_event_status_id' => $this->event->lastStatus->id
             ]);
+
+        if(isset($this->data['notice']))
+        {
+            $this->event->load('lastComment');
+
+            TelegramNotice::run($this->event->lastStatus)->comment()->send(
+                $this->event->lastStatus->executors->pluck('id')->toArray()
+            );
+        }
     }
 
     public function getAllInGroupByClientId(Int $clientId)
@@ -112,8 +114,6 @@ class ClientEventRepository
 
     public function filter($query, Array $data)
     {
-        //$this->closingOrWorking($data, $query);
-
         $query->leftJoin('client_events', 'client_events.id','client_event_statuses.event_id')
             ->leftJoin('client_event_status_executors','client_event_status_executors.client_event_status_id','client_event_statuses.id')
             ->where('client_events.personal',0);
@@ -122,6 +122,8 @@ class ClientEventRepository
 
         $query->filter($filter);
     }
+
+
 
     public function counter(Array $data) : int
     {
@@ -142,6 +144,8 @@ class ClientEventRepository
         return $result;
     }
 
+
+
     public function paginate(Array $data, $paginate = 15)
     {
         $query = ClientEventStatus::query();
@@ -154,6 +158,8 @@ class ClientEventRepository
 
         return $result;
     }
+
+
 
     public function get(Array $data)
     {
@@ -174,36 +180,7 @@ class ClientEventRepository
         return $result;
     }
 
-    private function closingOrWorking(&$data, $query)
-    {
-        $val = isset($data['processed_begin']) || isset($data['processed_end']);
-        $isControlDates = isset($data['control_begin']) || isset($data['control_end']);
 
-        if($isControlDates && isset($data['interval']))
-            throw new \Exception('Невозможно поставить условие (сегодня, завтра, завершено сегодня) на интервал период контроля.');
-
-        if($val)
-        {
-            //$data['processed_control'] = [ $data['processed_begin'], $data['processed_end'] ];
-            //unset($data['processed_begin'], $data['processed_end']);
-            if(isset($data['interval']))
-                throw new \Exception('Невозможно поставить условие (сегодня, завтра, завершено сегодня) на интервал период завершения.');
-        }
-        elseif(isset($data['interval']) && $data['interval'] == 'finish_today')
-        {
-
-        }
-        else
-        {
-            $query->where(function($query){
-                $query->where('client_events.personal', 1)
-                    //->where('client_event_executors.executor_id', auth()->user()->id)
-                    ->where('client_event_statuses.confirm', 'waiting');
-            });
-
-            $query->orWhere('client_event_statuses.confirm', 'waiting');
-        }
-    }
 
     public function getEventsForTaskList(array $data)
     {
@@ -219,5 +196,40 @@ class ClientEventRepository
 
         return $result;
     }
+
+
+
+    // private function closingOrWorking(&$data, $query)
+    // {
+    //     $val = isset($data['processed_begin']) || isset($data['processed_end']);
+    //     $isControlDates = isset($data['control_begin']) || isset($data['control_end']);
+
+    //     if($isControlDates && isset($data['interval']))
+    //         throw new \Exception('Невозможно поставить условие (сегодня, завтра, завершено сегодня) на интервал период контроля.');
+
+    //     if($val)
+    //     {
+    //         //$data['processed_control'] = [ $data['processed_begin'], $data['processed_end'] ];
+    //         //unset($data['processed_begin'], $data['processed_end']);
+    //         if(isset($data['interval']))
+    //             throw new \Exception('Невозможно поставить условие (сегодня, завтра, завершено сегодня) на интервал период завершения.');
+    //     }
+    //     elseif(isset($data['interval']) && $data['interval'] == 'finish_today')
+    //     {
+
+    //     }
+    //     else
+    //     {
+    //         $query->where(function($query){
+    //             $query->where('client_events.personal', 1)
+    //                 //->where('client_event_executors.executor_id', auth()->user()->id)
+    //                 ->where('client_event_statuses.confirm', 'waiting');
+    //         });
+
+    //         $query->orWhere('client_event_statuses.confirm', 'waiting');
+    //     }
+    // }
+
+    
 }
 

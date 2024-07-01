@@ -60,4 +60,22 @@ Class ClientEventStatusNotice extends AbstractNotice
 
         $this->message = $resultStr;
     }
+
+
+
+    public function comment()
+    {
+        $user = auth()->user() ? auth()->user()->cut_name : 'Система';
+
+        $arr[] = self::boldStr('Коммуникация №'.$this->model->id).'.';
+        $arr[] = 'Клиент: '.$this->model->event->client->full_name;
+        $arr[] = 'Тема: '.$this->model->event->title.'.';
+        $arr[] = $user.': Добавил комментарий';
+        $arr[] = $this->model->lastComment->text;
+        $arr[] = self::italicStr('Вы больше не можете отслеживать работу с этим событием.');
+
+        $resultStr = implode("\n", $arr);
+
+        $this->message = $resultStr;
+    }
 }

@@ -1,10 +1,11 @@
 <?php
 
 namespace App\Http\Filters;
+
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
-Class WSMRedemptionCarFilter extends AbstractFilter
+class WSMRedemptionCarFilter extends AbstractFilter
 {
     private const AUTHOR_ID = 'author_id';
     private const IDS = 'ids';
@@ -18,6 +19,8 @@ Class WSMRedemptionCarFilter extends AbstractFilter
     private const PETITION_END = 'petition_end';
     private const APPRAISAL_BEGIN = 'appraisal_begin';
     private const APPRAISAL_END = 'appraisal_end';
+    private const BRAND_ID = 'brand_ids';
+    private const MARK_ID = 'mark_ids';
 
     public function __construct(array $queryParams)
     {
@@ -40,6 +43,8 @@ Class WSMRedemptionCarFilter extends AbstractFilter
             self::PETITION_END       => [$this, 'petitionEnd'],
             self::APPRAISAL_BEGIN    => [$this, 'appraisalBegin'],
             self::APPRAISAL_END      => [$this, 'appraisalEnd'],
+            self::BRAND_ID           => [$this, 'brandId'],
+            self::MARK_ID            => [$this, 'markId'],
         ];
     }
 
@@ -51,8 +56,32 @@ Class WSMRedemptionCarFilter extends AbstractFilter
         $builder->leftJoin('wsm_redemption_offers',     'wsm_redemption_offers.wsm_redemption_car_id', 'wsm_redemption_cars.id');
         $builder->leftJoin('wsm_redemption_purchases', 'wsm_redemption_purchases.wsm_redemption_car_id', 'wsm_redemption_cars.id');
         $builder->leftJoin('wsm_redemption_appraisals', 'wsm_redemption_appraisals.redemption_id', 'wsm_redemption_cars.id');
+        $builder->leftJoin('client_cars', 'client_cars.id', 'wsm_redemption_cars.client_car_id');
+        $builder->leftJoin('clients', 'clients.id', 'wsm_redemption_cars.client_id');
+        $builder->leftJoin('client_phones', 'client_phones.client_id', 'clients.id');
+        //$builder->leftJoin('worksheets', 'worksheets.id', 'wsm_redemption_cars.worksheet_id');
 
         $builder->groupBy('wsm_redemption_cars.id');
+    }
+
+
+
+    public function brandId(Builder $builder, $value)
+    {
+        if (is_array($value))
+            $builder->whereIn('client_cars.brand_id', $value);
+        elseif (is_numeric($value))
+            $builder->where('client_cars.brand_id', $value);
+    }
+
+
+
+    public function markId(Builder $builder, $value)
+    {
+        if (is_array($value))
+            $builder->whereIn('client_cars.mark_id', $value);
+        elseif (is_numeric($value))
+            $builder->where('client_cars.mark_id', $value);
     }
 
 
@@ -76,7 +105,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
     public function appraisalBegin(Builder $builder, $value)
     {
         $date = $this->formatDate($value);
-        $builder->whereDate('wsm_redemption_appraisals.created_at', '<=', $date);
+        $builder->whereDate('wsm_redemption_appraisals.created_at', '>=', $date);
     }
 
 
@@ -94,25 +123,31 @@ Class WSMRedemptionCarFilter extends AbstractFilter
         $builder->where('wsm_redemption_cars.worksheet_id', $value);
     }
 
+
+
     public function authorIds(Builder $builder, $value)
     {
-        if(is_array($value))
+        if (is_array($value))
             $builder->whereIn('wsm_redemption_cars.author_id', $value);
-        elseif(is_numeric($value))
+        elseif (is_numeric($value))
             $builder->where('wsm_redemption_cars.author_id', $value);
     }
 
+
+
     public function ids(Builder $builder, $value)
     {
-        if(is_array($value))
+        if (is_array($value))
             $builder->whereIn('wsm_redemption_cars.id', $value);
-        elseif(is_numeric($value))
+        elseif (is_numeric($value))
             $builder->where('wsm_redemption_cars.id', $value);
     }
 
+
+
     public function interval(Builder $builder, $value)
     {
-        switch($value){
+        switch ($value) {
             case 'today':
                 $builder->whereDate('wsm_redemption_cars.created_at', now());
                 break;
@@ -122,7 +157,7 @@ Class WSMRedemptionCarFilter extends AbstractFilter
                 ]);
                 break;
             case 'month':
-                $builder->where(function($query)  {
+                $builder->where(function ($query) {
                     $query
                         ->whereYear('wsm_redemption_cars.created_at', '=', now()->year)
                         ->whereMonth('wsm_redemption_cars.created_at', '=', now()->month);
@@ -130,6 +165,8 @@ Class WSMRedemptionCarFilter extends AbstractFilter
                 break;
         }
     }
+
+
 
     public function status(Builder $builder, $value)
     {
@@ -156,24 +193,34 @@ Class WSMRedemptionCarFilter extends AbstractFilter
                 break;
             case 'control':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 1)
-                    ->whereIn('worksheets.status_id', ['confirm','check']);
+                    ->whereIn('worksheets.status_id', ['confirm', 'check']);
                 break;
         }
     }
 
+
+
     public function input(Builder $builder, $value)
     {
-        $builder->leftJoin('client_cars', 'client_cars.id', 'wsm_redemption_cars.client_car_id');
-        $builder->leftJoin('clients', 'clients.id', 'wsm_redemption_cars.client_id');
-        $builder->leftJoin('client_phones', 'client_phones.client_id', 'clients.id');
-        $builder->where(function($query) use ($value) {
-            $query->where('wsm_redemption_cars.id', 'LIKE', '%'.$value.'%');
-            $query->orWhere('client_cars.vin', 'LIKE', '%'.$value.'%');
-            $query->orWhere('client_cars.register_plate', 'LIKE', '%'.$value.'%');
-            $query->orWhere('client_phones.phone', 'LIKE', '%'.$value.'%');
-            $query->orWhere('clients.lastname', 'LIKE', '%'.$value.'%');
-        });
+        $isCommand = strpos($value, '/');
+
+        if ($isCommand === 0) {
+            $builder->where('wsm_redemption_cars.id', 'LIKE', '%' . trim($value, '/') . '%');
+            return;
+        } else {
+            $builder->where(function ($query) use ($value) {
+
+                $query->orWhere('client_cars.vin', 'LIKE', '%' . $value . '%');
+                $query->orWhere('client_cars.register_plate', 'LIKE', '%' . $value . '%');
+                $query->orWhere('client_phones.phone', 'LIKE', '%' . $value . '%');
+                $query->orWhere('clients.lastname', 'LIKE', '%' . $value . '%');
+                $query->orWhere('wsm_redemption_cars.worksheet_id', 'LIKE', '%' . $value . '%');
+                $query->where('wsm_redemption_cars.id', 'LIKE', '%' . trim($value, '/') . '%');
+            });
+        }
     }
+
+
 
     public function executorId(Builder $builder, $value)
     {

@@ -34,7 +34,14 @@ class RedemptionController extends Controller
     public function list(Request $request ) : \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $redemptions = $this->repo->paginate($request->all());
-        return (RedemptionListResource::collection($redemptions))->additional(['success' => 1]);
+        
+        if($redemptions)
+            return (RedemptionListResource::collection($redemptions))->additional(['success' => 1]);
+
+        return response()->json([
+            'data' => [],
+            'success' => 1
+        ]);
     }
 
 

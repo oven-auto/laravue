@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Validator;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,12 +26,13 @@ class AppServiceProvider extends ServiceProvider
     {
         \App\Models\Brand::observe(\App\Observers\BrandObserver::class);
         \App\Models\Mark::observe(\App\Observers\MarkObserver::class);
-        \App\Models\CarFixedPrice::observe(\App\Observers\FixedCarPrice::class);
-        \App\Models\Complectation::observe(\App\Observers\ComplectationChangePriceObserver::class);
-        \App\Models\CarMarker::observe(\App\Observers\CarMarkerObserver::class);
         \App\Models\Trafic::observe(\App\Observers\TraficObserver::class);
         \App\Models\Worksheet::observe(\App\Observers\WorksheetObserver::class);
         \App\Models\Role::observe(\App\Observers\RoleObserver::class);
         \App\Models\ClientEvent::observe(\App\Observers\ClientEventObserver::class);
+        \App\Models\Car::observe(\App\Observers\CarObserver::class);
+        \App\Models\User::observe(\App\Observers\UserObserver::class);
+
+        Validator::excludeUnvalidatedArrayKeys();
     }
 }

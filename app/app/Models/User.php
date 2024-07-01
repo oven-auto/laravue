@@ -133,8 +133,20 @@ class User extends Authenticatable implements PersonInterface, GiveDataForCommen
         return $this->belongsToMany(\App\Models\Appeal::class, 'appeal_users', 'user_id', 'appeal_id','id');
     }
 
+
+
     public function trafic_appeals()
     {
         return $this->belongsToMany(\App\Models\Appeal::class, 'trafic_user_appeals', 'user_id', 'appeal_id','id');
+    }
+
+
+
+    public function forAuthor()
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->cut_name,
+        ];
     }
 }

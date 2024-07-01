@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 
+use App\Classes\LadaDNM\DNMFactory;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Worksheet\WorksheetStoreRequest;
 use App\Http\Resources\Worksheet\WorksheetListCollection;
@@ -71,7 +72,7 @@ class WorksheetController extends Controller
 
         return response()->json([
             'success' => 1,
-            'message' => 'Рабочий лист '.$worksheet->status->name,
+            'message' => 'Рабочий лист ' . $worksheet->status->name,
             'status' => $worksheet->status->name,
             'status_id' => $worksheet->status->id,
         ]);
@@ -88,7 +89,7 @@ class WorksheetController extends Controller
 
         return response()->json([
             'success' => 1,
-            'message' => 'Рабочий лист '.$worksheet->status->name,
+            'message' => 'Рабочий лист ' . $worksheet->status->name,
         ]);
     }
 }

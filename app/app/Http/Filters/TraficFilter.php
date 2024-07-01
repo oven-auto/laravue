@@ -361,7 +361,13 @@ class TraficFilter extends AbstractFilter
     //Поиск в текстовом поле по совпадению телефона/имени/Фамилии/айди трафика
     public function input(Builder $builder, $value)
     {
-        //$value = explode('input=',$_SERVER['REQUEST_URI'])[1];
+        $isCommand = strpos($value, '/');
+
+        if($isCommand === 0)
+        {
+            $builder->where('trafics.id', 'LIKE', '%'.trim($value, '/').'%');
+            return;
+        }
 
         if(strpos($value,'+')===0){
             $value = trim($value, '+');

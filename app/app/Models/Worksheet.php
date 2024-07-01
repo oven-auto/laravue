@@ -23,22 +23,30 @@ class Worksheet extends Model
         'work', 'check'
     ];
 
+
+
     /**BEGIN SCOPES */
     public function scopeOverdue($query)
     {
-        return $query->where('worksheets.status_id','work')
-            ->where('worksheet_actions.end_at','<', now());
+        return $query->where('worksheets.status_id', 'work')
+            ->where('worksheet_actions.end_at', '<', now());
     }
+
+
 
     public function scopeCheck($query)
     {
-        return $query->where('worksheets.status_id','check');
+        return $query->where('worksheets.status_id', 'check');
     }
+
+
 
     public function scopeLinksCount($query)
     {
         return $query->withCount('links');
     }
+
+
 
     public function scopeFilesCount($query)
     {
@@ -46,12 +54,16 @@ class Worksheet extends Model
     }
     /**END SCOPES */
 
+
+
     public function isClosing()
     {
-        if($this->status_id == 'confirm')
+        if ($this->status_id == 'confirm')
             return true;
         return false;
     }
+
+
 
     public function canIChange()
     {
@@ -60,79 +72,109 @@ class Worksheet extends Model
         $appeal = $user->appeals->contains('id', $this->appeal_id);
     }
 
+
+
     public function getCreatedDateAttribute()
     {
         return $this->created_at ? $this->created_at->format('d.m.Y') : '';
     }
+
+
 
     public function client()
     {
         return $this->hasOne(\App\Models\Client::class, 'id', 'client_id')->withDefault();
     }
 
+
+
     public function trafic()
     {
         return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id')->withDefault();
     }
+
+
 
     public function company()
     {
         return $this->hasOne(\App\Models\Company::class, 'id', 'company_id')->withDefault();
     }
 
+
+
     public function structure()
     {
         return $this->hasOne(\App\Models\Structure::class, 'id', 'structure_id')->withDefault();
     }
+
+
 
     public function appeal()
     {
         return $this->hasOne(\App\Models\Appeal::class, 'id', 'appeal_id')->withDefault();
     }
 
+
+
     public function author()
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
     }
+
+
 
     public function executors()
     {
         return $this->belongsToMany(\App\Models\User::class, 'worksheet_executors', 'worksheet_id');
     }
 
+
+
     public function subclients()
     {
         return $this->belongsToMany(\App\Models\Client::class, 'worksheet_sub_clients', 'worksheet_id');
     }
 
+
+
     public function last_action()
     {
-        return $this->hasOne(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->orderBy('id', 'DESC')->withDefault();
+        return $this->hasOne(\App\Models\WorksheetAction::class, 'worksheet_id', 'id')->orderBy('id', 'DESC')->withDefault();
     }
+
+
 
     public function actions()
     {
-        return $this->hasMany(\App\Models\WorksheetAction::class,'worksheet_id', 'id')->with(['comments','author','task']);
+        return $this->hasMany(\App\Models\WorksheetAction::class, 'worksheet_id', 'id')->with(['comments', 'author', 'task']);
     }
+
+
 
     public function links()
     {
         return $this->hasMany(WorksheetLink::class, 'worksheet_id', 'id');
     }
 
+
+
     public function status()
     {
         return $this->hasOne(\App\Models\WorksheetStatus::class, 'slug', 'status_id')->withDefault();
     }
+
+
 
     public function inspector()
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'inspector_id')->withDefault();
     }
 
+
+
     public function isWork()
     {
-        if(in_array($this->status_id, self::WORKING_STATUSES))
+        if (in_array($this->status_id, self::WORKING_STATUSES))
             return 1;
         return 0;
     }
@@ -144,6 +186,22 @@ class Worksheet extends Model
         return $this->hasMany(\App\Models\WorksheetFile::class, 'worksheet_id', 'id');
     }
 
+
+
+    public function redemptions()
+    {
+        return $this->hasMany(\App\Models\WSMRedemptionCar::class, 'worksheet_id', 'id');
+    }
+
+
+
+    public function reporters()
+    {
+        return $this->belongsToMany(\App\Models\User::class, 'worksheet_reporters', 'worksheet_id');
+    }
+
+
+
     public function modul_list()
     {
         $modules = \App\Models\Modul::select('moduls.*')
@@ -151,16 +209,14 @@ class Worksheet extends Model
             ->where('modul_appeals.appeal_id', $this->appeal_id)
             ->get();
 
+        $modules = $modules->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'count' => $item->wsm ? \DB::table($item->wsm)->where('worksheet_id', $this->id)->count() : 0,
+            ];
+        });
+
         return $modules;
-    }
-
-    public function redemptions()
-    {
-        return $this->hasMany(\App\Models\WSMRedemptionCar::class, 'worksheet_id', 'id');
-    }
-
-    public function reporters()
-    {
-        return $this->belongsToMany(\App\Models\User::class, 'worksheet_reporters', 'worksheet_id');
     }
 }

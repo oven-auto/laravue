@@ -4,8 +4,9 @@ namespace App\Classes\Telegram;
 
 use Telegram\Bot\Api;
 use App\Models\TelegramLongpollingOffset;
+use Illuminate\Support\Facades\Http;
 
-Class Telegram
+class Telegram
 {
     public static $instance;
 
@@ -13,16 +14,18 @@ Class Telegram
 
     public $offset;
 
-    private function __construct(){}
+    private function __construct()
+    {
+    }
 
 
 
     /**
      * ИНИЦИАЛИЗАЦИЯ КЛАССА
      */
-    public static function init() : self
+    public static function init(): self
     {
-        if(self::$instance !== null)
+        if (self::$instance !== null)
             return self::$instance;
 
         $me = new self;
@@ -39,7 +42,7 @@ Class Telegram
     /**
      * ПОЛУЧИТЬ ОФФСЕТ ДЛЯ ЛОНГПУЛИНГА
      */
-    private function getOffsetValue() : int|bool
+    private function getOffsetValue(): int|bool
     {
         return $this->offset->value;
     }
@@ -49,10 +52,9 @@ Class Telegram
     /**
      * ПОСТАВИТЬ НОВЫЙ ОФФСЕТ
      */
-    private function setOffset(\Telegram\Bot\Objects\Update|bool $last) : void
+    private function setOffset(\Telegram\Bot\Objects\Update|bool $last): void
     {
-        if($last)
-        {
+        if ($last) {
             $this->offset->value = $last->update_id + 1;
 
             $this->offset->save();
@@ -85,6 +87,7 @@ Class Telegram
         $options['chat_id'] = $chatId;
         $options['text'] = $message;
         //dump($options);
-        $this->service->sendMessage($options);
+        // $this->service->sendMessage($options);
+        $response = Http::post('https://telegram.oven-auto.ru/send', $options);
     }
 }

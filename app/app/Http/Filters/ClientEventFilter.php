@@ -290,6 +290,14 @@ class ClientEventFilter extends AbstractFilter
 
     public function input(Builder $builder, $value)
     {
+        $isCommand = strpos($value, '/');
+
+        if($isCommand === 0)
+        {
+            $builder->where('client_event_statuses.id', 'LIKE', '%'.trim($value, '/').'%');
+            return;
+        }
+
         if(!$this->checkJoin($builder, 'client_events'))
             $builder->leftJoin('client_events', 'client_event_statuses.event_id','client_events.id');
 

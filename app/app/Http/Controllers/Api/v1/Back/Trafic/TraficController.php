@@ -62,7 +62,7 @@ class TraficController extends Controller
     {
         $trafic = Trafic::withTrashed()->linksCount()->filesCount()->find($trafic);
 
-        if(!$trafic->isMy())
+        if (!$trafic->isMy())
             Comment::add($trafic, 'show');
 
         return (new TraficSaveResource($trafic))
@@ -84,7 +84,7 @@ class TraficController extends Controller
         return (new TraficSaveResource($trafic))
             ->additional([
                 'message' => Trafic::NOTICES['update'],
-        ]);
+            ]);
     }
 
 

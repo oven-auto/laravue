@@ -21,6 +21,8 @@ class ClientEventController extends Controller
         $this->middleware('permission.clientevent:store' )->only('store');
     }
 
+    
+
     /**
      * Cписок-пагинация всех коммуникаций
      * @param Request $request Request
@@ -33,6 +35,8 @@ class ClientEventController extends Controller
         return (new \App\Http\Resources\Client\EventIndexCollection($data));
     }
 
+
+
     /**
      * Открыть коммуникацию
      * @param ClientEvent $event ClientEvent
@@ -44,6 +48,8 @@ class ClientEventController extends Controller
 
         return (new \App\Http\Resources\Client\EventSaveResource($clientEventStatus));
     }
+
+
 
     /**
      * Создать коммуникацию
@@ -61,6 +67,8 @@ class ClientEventController extends Controller
                 'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus->event->lastStatus)
             ]);
     }
+
+
 
     /**
      * Изменить коммуникацию
@@ -82,6 +90,8 @@ class ClientEventController extends Controller
                 'event' => new \App\Http\Resources\Client\EventIndexResource($clientEventStatus),
             ]);
     }
+
+
 
     public function destroy(ClientEvent $event)
     {

@@ -2,6 +2,8 @@
 
 namespace App\Classes\Telegram;
 
+use Telegram\Bot\Objects\Update;
+
 Class Scenario
 {
     public $telegram;
@@ -50,6 +52,36 @@ Class Scenario
             if($scene)
                 $scene->sendCommand();
         }
+    }
+
+
+
+    public function read(array $message)
+    {
+        $item = new Update($message);
+
+        $callback   = @($item->callbackQuery->data);
+        $text       = @($item->message->text);
+
+        if(isset($text))
+            $params = [
+                'text' => $text,
+                'chatId' => $item->message->chat->id,
+                'userId' => $item->message->from->id,
+            ];
+        elseif(isset($callback))
+            $params = [
+                'text' => $text,
+                'chatId' => $item->callbackQuery->message->chat->id,
+                'userId' => $item->callbackQuery->from->id,
+            ];
+
+        $text = $callback ? $callback : $text;
+
+        $scene = $this->sceneFactory($text, $params);
+
+        if($scene)
+            $scene->sendCommand();
     }
 
 

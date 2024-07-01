@@ -2,14 +2,20 @@
 
 namespace App\Repositories\Worksheet;
 
+use App\Classes\LadaDNM\DNMFactory;
 use App\Models\SubAction;
-use App\Models\Task;
 use App\Models\Worksheet;
 use App\Models\Trafic;
 use App\Repositories\Client\ClientRepository;
+use App\Repositories\Worksheet\DTO\TaskListSubActionDTO;
 use App\Services\Comment\Comment;
-use App\Services\Worksheet\ActionSave;
-use stdClass;
+use App\Repositories\Worksheet\DTO\WorksheetCreateDTO;
+use App\Repositories\Worksheet\DTO\WorksheetActionCreateDTO;
+use DB;
+use App\Repositories\Worksheet\DTO\TaskListWorksheetDTO;
+use App\Http\Filters\WorksheetListFilter;
+use App\Http\Filters\WorksheetSubActionFilter;
+use App\Http\Filters\WorksheetFilter;
 
 /**
  * РЕПОЗИТОРИЙ РАБОЧЕГО ЛИСТА
@@ -33,33 +39,30 @@ class WorksheetRepository
      * @param int $trafic_id
      * @return Worksheet
      */
-    public function createFromTrafic(int $trafic_id) : Worksheet
+    public function createFromTrafic(int $trafic_id): Worksheet
     {
-        $trafic = Trafic::with('status')->find($trafic_id);
+        try {
+            $result = DB::transaction(function () use ($trafic_id) {
+                $trafic = Trafic::with('status')->find($trafic_id);
 
-        $client = ClientRepository::getClientFromTrafic($trafic);
+                if (!$trafic->begin_at)
+                    throw new \Exception('Не назначена дата контроля');
 
-        $worksheet = Worksheet::create([
-            'client_id'         => $client->id,
-            'trafic_id'         => $trafic->id,
-            'company_id'        => $trafic->salon->id,
-            'structure_id'      => $trafic->structure->id,
-            'appeal_id'         => $trafic->appeal->id,
-            'author_id'         => $trafic->manager_id,
-            'status_id'         => 'work',
-        ]);
+                $client = ClientRepository::getClientFromTrafic($trafic);
 
-        $worksheet->last_action()->create([
-            'task_id' => Task::where('slug','control')->first()->id,
-            'worksheet_id' => $worksheet->id,
-            'begin_at' => $trafic->begin_at,
-            'end_at' => $trafic->end_at,
-            'author_id' => auth()->user()->id,
-        ]);
+                $worksheet = Worksheet::create((new WorksheetCreateDTO($trafic, $client))->get());
 
-        $worksheet->trafic->status;
+                $worksheet->last_action()->create((new WorksheetActionCreateDTO($trafic, $worksheet))->get());
 
-        return $worksheet;
+                $worksheet->trafic->status;
+
+                return $worksheet;
+            }, 3);
+        } catch (\Exception $exception) {
+            throw new \Exception($exception->getMessage());
+        }
+
+        return $result;
     }
 
 
@@ -70,17 +73,13 @@ class WorksheetRepository
      * @param array $data
      * @return \Illuminate\Database\Eloquent\Builder
      */
-    private function filter($query, $data = []) :  \Illuminate\Database\Eloquent\Builder
+    private function filter($query, $data = []): \Illuminate\Database\Eloquent\Builder
     {
-        $query->leftJoin('worksheet_actions', function($join) {
-                $join->on('worksheet_actions.worksheet_id','worksheets.id');
-            });
-            // ->where(
-            //     'worksheet_actions.id',
-            //     \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
-            // );
+        $query->leftJoin('worksheet_actions', function ($join) {
+            $join->on('worksheet_actions.worksheet_id', 'worksheets.id');
+        });
 
-        $filter = app()->make(\App\Http\Filters\WorksheetFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(WorksheetFilter::class, ['queryParams' => array_filter($data)]);
 
         return $query->filter($filter);
     }
@@ -93,15 +92,13 @@ class WorksheetRepository
      * @param int $paginate
      * @return \Illuminate\Contracts\Pagination\Paginator
      */
-    public function paginate(array $data, $paginate = 20) : \Illuminate\Contracts\Pagination\Paginator
+    public function paginate(array $data, $paginate = 20): \Illuminate\Contracts\Pagination\Paginator
     {
-        $this->setDefaultStatus($data);
-
         $query = Worksheet::query()->select('worksheets.*');
 
-        $query->with(['last_action.task','author', 'executors','company','structure', 'appeal','client.type']);
+        $query->with(['last_action.task', 'author', 'executors', 'company', 'structure', 'appeal', 'client.type']);
 
-        $this->filter($query,$data);
+        $this->filter($query, $data);
 
         $query->orderBy('worksheet_actions.end_at', 'ASC');
 
@@ -119,13 +116,13 @@ class WorksheetRepository
      * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get(array $data) : \Illuminate\Database\Eloquent\Collection
+    public function get(array $data): \Illuminate\Database\Eloquent\Collection
     {
         $query = Worksheet::query()->select('worksheets.*');
 
-        $query->with(['last_action.task','author', 'executors','company','structure', 'appeal','client.type']);
+        $query->with(['last_action.task', 'author', 'executors', 'company', 'structure', 'appeal', 'client.type']);
 
-        $this->filter($query,$data);
+        $this->filter($query, $data);
 
         $query->groupBy('worksheets.id')->groupBy('worksheet_actions.begin_at');
 
@@ -141,22 +138,19 @@ class WorksheetRepository
      * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
      * @return int
      */
-    public function counter(array $data) : int
+    public function counter(array $data): int
     {
         $query = Worksheet::query();
 
         $subQuery = Worksheet::query()->select('worksheets.*');
 
-        $this->filter($subQuery,$data);
+        $this->filter($subQuery, $data);
 
-        //dd($subQuery->dd());
+        $query->rightJoinSub($subQuery, 'subQuery', function ($join) {
 
-        $query->rightJoinSub($subQuery, 'subQuery', function($join){
-
-            $join->on('subQuery.id','=','worksheets.id');
-
+            $join->on('subQuery.id', '=', 'worksheets.id');
         });
-        //dd($data);
+
         $result = $query->count();
 
         return $result;
@@ -169,10 +163,12 @@ class WorksheetRepository
      * @param $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
      * @return int
      */
-    public function workingCount($data) : int
+    public function workingCount($data): int
     {
         $data['status_ids'] = ['work'];
+
         $count = $this->counter($data);
+
         return $count;
     }
 
@@ -181,70 +177,45 @@ class WorksheetRepository
     /**
      * ПОЛУЧИТЬ СПИСОК РЛ ДЛЯ ЖУРНАЛА ЗАДАЧ
      * @param array $data ПАРАМЕТРЫ ДЛЯ ФИЛЬТРАЦИИ
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return array
      */
-    public function getWorksheetsForTaskList(array $data) //: \Illuminate\Database\Eloquent\Collection
+    public function getWorksheetsForTaskList(array $data): array
     {
-        $filter = app()->make(\App\Http\Filters\WorksheetListFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(WorksheetListFilter::class, [
+            'queryParams' => array_filter($data)
+        ]);
 
         $query = Worksheet::query()
-            ->with(['last_action.task','author', 'executors','company','structure', 'appeal','client.type'])
+            ->with(['last_action.task', 'author', 'executors', 'company', 'structure', 'appeal', 'client.type'])
             ->filter($filter);
 
-        $result = $query->get()->map(fn($item) => (object)[
-            'id'                => $item->id,
-            'type'              => $item->last_action->task->name,
-            'status'            => $item->last_action->statusMsg(),
-            'client'            => $item->client->fullNameOrType,
-            'begin_at'          => $item->last_action->begin_at->format('d.m.Y (H:i)'),
-            'end_at'            => $item->last_action->end_at->format('d.m.Y (H:i)'),
-            'appeal'            => $item->appeal->name,
-            'comment'           => $item->last_action->last_user_comment->text,
-            'author'            => $item->author->cut_name,
-            'managers'          => $item->executors->map(fn($executor) => $executor->cut_name)->toArray(),
-            'worksheet_status'  => $item->status->name,
-            'salon'             => $item->company->name,
-            'structure'         => isset($item->structure) ? $item->structure->name : '',
-            'sub_action_id'     => '',
-            'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray(),
-            'closed_at'         => $item->close_at ? $item->close_at->format('d.m.Y (H:i)') : '',
-            'sort'              => $item->last_action->begin_at->format('YmdHi'),
-        ])->toArray();
+        $result = $query->get()->map(fn ($item) => (object)(new TaskListWorksheetDTO($item))->get())->toArray();
 
         return $result;
     }
 
-    public function getSubActionForTaskList(array $data)
+
+
+    /**
+     * ПОЛУЧИТЬ СПИСОК ПОДЗАДАЧ ДЛЯ ЖУРНАЛА ЗАДАЧ
+     * @param array $data FILTER PARAM
+     * @return array
+     */
+    public function getSubActionForTaskList(array $data): array
     {
-        $filterSubAction = app()->make(\App\Http\Filters\WorksheetSubActionFilter::class, ['queryParams' => array_filter($data)]);
-        $querySubAction = SubAction::query()
-            ->with(['worksheet', 'executors','reporters'])
-            ->filter($filterSubAction);
+        $filter = app()->make(WorksheetSubActionFilter::class, [
+            'queryParams' => array_filter($data)
+        ]);
 
-        $resultSubAction = $querySubAction->get();
+        $query = SubAction::query()
+            ->with(['worksheet', 'executors', 'reporters'])
+            ->filter($filter);
 
-        $resultSubAction = $querySubAction->get()->map(fn($item) => (object)[
-            'id'                => $item->worksheet_id,
-            'type'              => '',
-            'status'            => SubAction::STATUSES[$item->status],
-            'client'            => $item->title,
-            'begin_at'          => $item->created_at->format('d.m.Y (H:i)'),
-            'end_at'            => $item->created_at->addMinutes($item->duration)->format('d.m.Y (H:i)'),
-            'appeal'            => '',
-            'comment'           => '',
-            'author'            => $item->author->cut_name,
-            'managers'          => $item->executors->map(fn($executor) => $executor->cut_name)->toArray(),
-            'worksheet_status'  => '',
-            'salon'             => '',
-            'structure'         => '',
-            'sub_action_id'     => $item->id,
-            'reporters'         => $item->reporters->map(fn($reporter) => $reporter->cut_name)->toArray(),
-            'closed_at'         => $item->closed_at ? $item->closed_at->format('d.m.Y (H:i)') : '',
-            'sort'              => $item->created_at->format('YmdHi'),
-        ])->toArray();
+        $result = $query->get()->map(fn ($item) => (object)(new TaskListSubActionDTO($item))->get())->toArray();
 
-        return $resultSubAction;
+        return $result;
     }
+
 
 
     public function getAmountList(array $data)
@@ -266,17 +237,20 @@ class WorksheetRepository
      * @param Worksheet $worksheet
      * @return void
      */
-    public function close(Worksheet $worksheet) : void
+    public function close(Worksheet $worksheet): void
     {
-        if($worksheet->status_id != 'check')
+        if ($worksheet->status_id != 'check')
             throw new \Exception('Команда не может быть выполнена. Закрыть можно только рабочий лист, находящийся на проверке');
 
-        if(!in_array($worksheet->last_action->task->slug, ['confirm','abort']))
+        if (!in_array($worksheet->last_action->task->slug, ['confirm', 'abort']))
             throw new \Exception('Последнее действие в рабочем листе не подразумевает его закрытие. Создайте закрывающее действие.');
 
         $worksheet->status_id = $worksheet->last_action->task->slug;
+
         $worksheet->close_at = now();
+
         $worksheet->inspector_id = auth()->user()->id;
+
         $worksheet->save();
 
         Comment::add($worksheet->last_action, 'close');
@@ -289,9 +263,9 @@ class WorksheetRepository
      * @param Worksheet $worksheet
      * @return void
      */
-    public function revert(Worksheet $worksheet) : void
+    public function revert(Worksheet $worksheet): void
     {
-        if(in_array($worksheet->status_id, ['work']))
+        if (in_array($worksheet->status_id, ['work']))
             throw new \Exception('Рабочий лист в работе, незачем его возвращать в работу.');
 
         $worksheet->status_id = 'work';
@@ -300,7 +274,7 @@ class WorksheetRepository
         $worksheet->save();
 
         $worksheet->last_action->fill([
-            'task_id' => \App\Models\Task::where('slug','control')->first()->id,
+            'task_id' => \App\Models\Task::where('slug', 'control')->first()->id,
             'worksheet_id' => $worksheet->id,
             'begin_at' => now(),
             'end_at' => now()->addMinutes(30),
@@ -309,10 +283,5 @@ class WorksheetRepository
         ])->save();
 
         Comment::add($worksheet->last_action, 'revert');
-    }
-
-    public function setDefaultStatus(&$data)
-    {
-
     }
 }

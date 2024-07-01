@@ -21,15 +21,21 @@ class Client extends Model implements PersonInterface, CommentInterface
         return 'Неизвестно';
     }
 
+
+
     public function abbreviated_name()
     {
         return $this->full_name;
     }
 
+
+
     public function writeComment(array $data)
     {
         ClientComment::create($data);
     }
+
+
 
     public function getFullNameAttribute()
     {
@@ -37,16 +43,20 @@ class Client extends Model implements PersonInterface, CommentInterface
         $mas[] = $this->firstname;
         $mas[] = $this->fathername;
         $mas[] = $this->company_name;
-        $result = trim(implode(' ',$mas));
+        $result = trim(implode(' ', $mas));
         return $result;
     }
 
+
+
     public function getFullNameOrTypeAttribute()
     {
-        if($this->full_name)
+        if ($this->full_name)
             return $this->full_name;
         return $this->type->name;
     }
+
+
 
     public static function getColumnsName()
     {
@@ -54,10 +64,14 @@ class Client extends Model implements PersonInterface, CommentInterface
         return $client->getConnection()->getSchemaBuilder()->getColumnListing($client->getTable());
     }
 
+
+
     public function critical()
     {
         return '';
     }
+
+
 
     public static function getOwner()
     {
@@ -68,13 +82,17 @@ class Client extends Model implements PersonInterface, CommentInterface
             ->first();
     }
 
+
+
     public function initials()
     {
-        if(isset($this->company_name) && !empty($this->company_name))
-            return  mb_substr($this->company_name,0,1);
+        if (isset($this->company_name) && !empty($this->company_name))
+            return  mb_substr($this->company_name, 0, 1);
 
-        return mb_substr($this->lastname,0,1).mb_substr($this->firstname,0,1);
+        return mb_substr($this->lastname, 0, 1) . mb_substr($this->firstname, 0, 1);
     }
+
+
 
     public static function findByPhone($phone_number)
     {
@@ -86,97 +104,136 @@ class Client extends Model implements PersonInterface, CommentInterface
         return $result ?? new Client();
     }
 
+
+
     public function phones()
     {
         return $this->hasMany(\App\Models\ClientPhone::class, 'client_id', 'id');
     }
+
+
 
     public function emails()
     {
         return $this->hasMany(\App\Models\ClientEmail::class, 'client_id', 'id');
     }
 
+
+
     public function type()
     {
-        return $this->hasOne(\App\Models\ClientType::class,'id','client_type_id')->withDefault();
+        return $this->hasOne(\App\Models\ClientType::class, 'id', 'client_type_id')->withDefault();
     }
+
+
 
     public function sex()
     {
-        return $this->hasOne(\App\Models\TraficSex::class,'id','trafic_sex_id')->withDefault();
+        return $this->hasOne(\App\Models\TraficSex::class, 'id', 'trafic_sex_id')->withDefault();
     }
+
+
 
     public function zone()
     {
-        return $this->hasOne(\App\Models\TraficZone::class,'id','trafic_zone_id')->withDefault();
+        return $this->hasOne(\App\Models\TraficZone::class, 'id', 'trafic_zone_id')->withDefault();
     }
+
+
 
     public function passport()
     {
         return $this->hasOne(\App\Models\ClientPassport::class, 'client_id', 'id')->withDefault();
     }
 
+
+
     public function cars()
     {
         return $this->hasMany(\App\Models\ClientCar::class, 'client_id', 'id')->where('actual', 1);
     }
 
+
+
     public function latest_worksheet()
     {
-        return $this->hasOne(\App\Models\Worksheet::class,'client_id', 'id')->orderBy('id','DESC')->withDefault();
+        return $this->hasOne(\App\Models\Worksheet::class, 'client_id', 'id')->orderBy('id', 'DESC')->withDefault();
     }
+
+
 
     public function worksheets()
     {
         return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id');
     }
 
+
+
     public function open_worksheets()
     {
         return $this->hasMany(\App\Models\Worksheet::class, 'client_id', 'id')->where('status_id', 'work');
     }
+
+
 
     public function inn()
     {
         return $this->hasOne(\App\Models\ClientInn::class, 'client_id', 'id')->withDefault();
     }
 
+
+
     public function events()
     {
         return $this->hasMany(\App\Models\ClientEvent::class, 'client_id', 'id');
     }
 
+
+
     public function unionsChildren()
     {
-        return $this->belongsToMany(Client::class, 'client_unions', 'parent', 'client_id')->with(['phones','inn']);
+        return $this->belongsToMany(Client::class, 'client_unions', 'parent', 'client_id')->with(['phones', 'inn']);
     }
+
+
 
     public function unionsParent()
     {
-        return $this->belongsToMany(Client::class, 'client_unions', 'client_id', 'parent')->with(['phones','inn']);
+        return $this->belongsToMany(Client::class, 'client_unions', 'client_id', 'parent')->with(['phones', 'inn']);
     }
+
+
 
     public function isCompany()
     {
-        if($this->client_type_id == 2)
+        if ($this->client_type_id == 2)
             return true;
         return false;
     }
+
+
 
     public function scopeLinksCount($query)
     {
         return $query->withCount('links');
     }
 
+
+
     public function scopeFilesCount($query)
     {
         return $query->withCount('files');
     }
 
+
+
     public function files()
     {
         return $this->hasMany(\App\Models\ClientFile::class, 'client_id', 'id');
     }
+
+
+
     public function links()
     {
         return $this->hasMany(\App\Models\ClientLink::class, 'client_id', 'id');

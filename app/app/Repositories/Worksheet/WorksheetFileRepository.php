@@ -3,9 +3,10 @@
 namespace App\Repositories\Worksheet;
 
 use App\Models\WorksheetFile as WorksheetFileModel;
+use App\Models\Worksheet;
 
 
-Class WorksheetFileRepository
+class WorksheetFileRepository
 {
     private $service;
 
@@ -18,20 +19,21 @@ Class WorksheetFileRepository
 
     /**
      * СОХРАНИТЬ ФАИЛ В РЛ
-     * @param \App\Models\Worksheet $worksheet
+     * @param Worksheet $worksheet
      * @param array $files
      * @return array
      */
-    public function saveFiles(\App\Models\Worksheet $worksheet, $files = []) : array
+    public function saveFiles(Worksheet $worksheet, $files = []): array
     {
         $res = [];
 
         $files = collect($files)->collapse();
 
-        foreach($files as $itemFile)
-        {
+        foreach ($files as $itemFile) {
             $arr['file'] = $this->service->download($worksheet->id, $itemFile);
+
             $arr['worksheet_id'] = $worksheet->id;
+
             $arr['author_id'] = auth()->user()->id;
 
             $res[] = WorksheetFileModel::create($arr);

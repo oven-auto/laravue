@@ -11,25 +11,24 @@ class CarMarker extends Model
 
     protected $guarded = [];
 
-    protected $dates = ['changed_at'];
-
-    protected $dateFormat = 'Y-m-d H:i:s';
-
     public $timestamps = false;
 
-    public function name()
+
+
+    public function marker()
     {
         return $this->hasOne(\App\Models\Marker::class, 'id', 'marker_id')->withDefault();
     }
 
-    public function moderator()
-    {
-        return $this->hasOne(\App\Models\User::class,'id','user_id')->withDefault();
-    }
 
-    public function getChangeDateAttribute()
+
+    public function getMarkerArray()
     {
-        if($this->changed_at)
-            return $this->changed_at->format('d.m.Y');
+        return [
+            'name' => $this->marker->name,
+            'description' => $this->marker->description,
+            'text_color' => $this->marker->text_color,
+            'body_color' => $this->marker->body_color,
+        ];
     }
 }

@@ -12,7 +12,7 @@ use \App\Services\Comment\Comment;
  * КЛАСС ДЛЯ ДОБАВЛЕНИЯ В ПОДЗАДАЧУ
  * ИСПОЛНИТЕЛЕЙ И ОТЧИТАВШИХСЯ
  */
-Class WorksheetSubActionExecutorReporterService
+class WorksheetSubActionExecutorReporterService
 {
     protected $worksheetExecutorService;
 
@@ -29,11 +29,11 @@ Class WorksheetSubActionExecutorReporterService
      * @param array $executors [executors => array(int, ..., int)]
      * @return void
      */
-    public function setExecutors(SubAction $subAction, array|int $executorsArray) : void
+    public function setExecutors(SubAction $subAction, array|int $executorsArray): void
     {
         $executorsArray = is_numeric($executorsArray) ? [$executorsArray] : $executorsArray;
         //Добавляем в участников автора по умолчанию
-        $executorsArray[] = $subAction->author_id;
+        //$executorsArray[] = $subAction->author_id;
         //Определяем уникальных
         $subActionUser = ArrayHelper::except($executorsArray, $subAction->executors->pluck('id')->toArray());
         //Добавляем новых учстников в подзадачу
@@ -58,10 +58,10 @@ Class WorksheetSubActionExecutorReporterService
      * @param int $executorId executor => int]
      * @return void
      */
-    public function removeExecutor(SubAction $subAction, int $executorId) : void
+    public function removeExecutor(SubAction $subAction, int $executorId): void
     {
         //если не автор
-        if($subAction->author_id != $executorId)
+        if ($subAction->author_id != $executorId)
             //то удаляем из исполнителей
             $subAction->executors()->detach($executorId);
     }
@@ -74,16 +74,16 @@ Class WorksheetSubActionExecutorReporterService
      * @param int $reporterId
      * @return void
      */
-    public function report(SubAction|int $subAction, int|User $reporterId) : void
+    public function report(SubAction|int $subAction, int|User $reporterId): void
     {
         //если передан id то находим сущность подзадачи
-        if(is_numeric($subAction))
+        if (is_numeric($subAction))
             $subAction = SubAction::findOrFail($subAction);
         //если передан id пользователя то находим его сущность
-        if(is_numeric($reporterId))
+        if (is_numeric($reporterId))
             $reporterId = User::findOrFail($reporterId);
         //Ошибка если пользователь не является участником
-        if(!$subAction->executors->contains('id', $reporterId->id))
+        if (!$subAction->executors->contains('id', $reporterId->id))
             throw new \Exception('Вы не являетесь участником задачи');
         //добавляем в список отчитавшихся
         $subAction->reporters()->attach($reporterId->id);
@@ -103,10 +103,10 @@ Class WorksheetSubActionExecutorReporterService
      * @param int $reporterId
      * @return void
      */
-    public function deport(SubAction|int $subAction, int $reporterId) : void
+    public function deport(SubAction|int $subAction, int $reporterId): void
     {
         //если передан id то находим сущность подзадачи
-        if(is_numeric($subAction))
+        if (is_numeric($subAction))
             $subAction = SubAction::findOrFail($subAction);
         //убираем из списка отчитавшихся
         $subAction->reporters()->detach($reporterId);

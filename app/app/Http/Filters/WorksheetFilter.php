@@ -318,6 +318,14 @@ Class WorksheetFilter extends AbstractFilter
 
     public function input(Builder $builder, $value)
     {
+        $isCommand = strpos($value, '/');
+
+        if($isCommand === 0)
+        {
+            $builder->where('worksheets.id', 'LIKE', '%'.trim($value, '/').'%');
+            return;
+        }
+
         if(!$this->checkJoin($builder, 'clients'))
             $builder->leftJoin('clients', 'clients.id','worksheets.client_id');
 

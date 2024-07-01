@@ -9,10 +9,10 @@ use App\Models\UsedCar;
 use App\Models\Worksheet;
 use App\Models\WSMRedemptionCar;
 use App\Models\WSMRedemptionLink;
+use App\Repositories\Worksheet\DTO\RedemptionCreateDTO;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Support\Arr;
 use \App\Services\Comment\Comment;
-use Illuminate\Support\Facades\Http;
 
 /**
  * РЕПОЗИТОРИЙ ОЦЕНОК
@@ -33,14 +33,14 @@ use Illuminate\Support\Facades\Http;
  * - ДОБАВИТЬ КОММЕНТАРИЙ
  * - ВЕРНУТЬ ОЦЕНКУ ЗАКРЫТУЮ (НЕ ВЫКУПЛЕННУЮ) В РАБОТУ
  */
-Class RedemptionRepository
+class RedemptionRepository
 {
     /**
      * ПОЛУЧИТЬ ВСЕ ОЦЕНКИ ИЗ РАБОЧЕГО ЛИСТА
      * @param int $worksheet
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get(int $worksheet = 0) : \Illuminate\Database\Eloquent\Collection
+    public function get(int $worksheet = 0): \Illuminate\Database\Eloquent\Collection
     {
         $query = WSMRedemptionCar::select('wsm_redemption_cars.*');
 
@@ -49,7 +49,7 @@ Class RedemptionRepository
             'client_car', 'car_sale_sign', 'links', 'status'
         ]);
 
-        if($worksheet)
+        if ($worksheet)
             $query->where('worksheet_id', $worksheet);
 
         $redemptions = $query->get();
@@ -65,7 +65,7 @@ Class RedemptionRepository
      * @param int $paginate
      * @return \Illuminate\Contracts\Pagination\Paginator
      */
-    public function paginate(array $data, $paginate = 20) : \Illuminate\Contracts\Pagination\Paginator
+    public function paginate(array $data, $paginate = 20): \Illuminate\Contracts\Pagination\Paginator
     {
         $query = WSMRedemptionCar::select('wsm_redemption_cars.*');
 
@@ -74,7 +74,7 @@ Class RedemptionRepository
         $query->filter($filter);
 
         $query->with([
-            'final_author','worksheet', 'last_offer', 'last_calculation', 'last_purchase',
+            'final_author', 'worksheet', 'last_offer', 'last_calculation', 'last_purchase',
             'status', 'author', 'client_car', 'car_sale_sign', 'links', 'status', 'client'
         ]);
 
@@ -90,7 +90,7 @@ Class RedemptionRepository
      * @param array $data
      * @return int
      */
-    public function count(array $data) : int
+    public function count(array $data): int
     {
         $subQuery = WSMRedemptionCar::select('wsm_redemption_cars.id');
 
@@ -111,22 +111,11 @@ Class RedemptionRepository
      * @param array $data
      * @return WSMRedemptionCar
      */
-    public function store(Worksheet $worksheet, array $data) : WSMRedemptionCar
+    public function store(Worksheet $worksheet, array $data): WSMRedemptionCar
     {
-        $obj = (object) $data;
+        $this->check_car($worksheet, $data['client_car_id']);
 
-        $this->check_car($worksheet, $obj->client_car_id);
-
-        $redemption = $worksheet->redemptions()->create([
-            'client_car_id' => $obj->client_car_id,
-            'worksheet_id' => $worksheet->id,
-            'car_sale_sign_id' => $obj->car_sale_sign_id,
-            'author_id' => auth()->user()->id,
-            'client_id' => $worksheet->client_id,
-            'redemption_status_id' => 1,
-            'expectation' => $obj->expectation ?? 0,
-            'redemption_type_id' => $obj->redemption_type_id,
-        ]);
+        $redemption = WSMRedemptionCar::create((new RedemptionCreateDTO($worksheet, $data))->get());
 
         $this->save($redemption, $data);
 
@@ -143,7 +132,7 @@ Class RedemptionRepository
      * @param array $data
      * @return WSMRedemptionCar
      */
-    public function update(WSMRedemptionCar $redemption, array $data) : WSMRedemptionCar
+    public function update(WSMRedemptionCar $redemption, array $data): WSMRedemptionCar
     {
         $obj = (object) $data;
 
@@ -151,12 +140,12 @@ Class RedemptionRepository
         $car_sale_sign_id       = $obj->car_sale_sign_id    == $redemption->car_sale_sign_id;
         $redemption_type_id     = $obj->redemption_type_id  == $redemption->redemption_type_id;
 
-        if($expectation && $car_sale_sign_id && $redemption_type_id)
+        if ($expectation && $car_sale_sign_id && $redemption_type_id)
             return $redemption;
 
         $old[] = $redemption->type->name;
-        $old[] = '('.$redemption->car_sale_sign->name.'),';
-        $old[] = $redemption->expectation.'р.';
+        $old[] = '(' . $redemption->car_sale_sign->name . '),';
+        $old[] = $redemption->expectation . 'р.';
         $old = implode(' ', $old);
 
         $redemption->fill([
@@ -165,7 +154,7 @@ Class RedemptionRepository
             'redemption_type_id'    => $obj->redemption_type_id ?? $redemption->redemption_type_id,
         ])->save();
 
-        if($redemption->author_id != auth()->user()->id)
+        if ($redemption->author_id != auth()->user()->id)
             TelegramNotice::run($redemption)->update($old)->send([$redemption->author_id]);
 
         return $redemption;
@@ -178,13 +167,13 @@ Class RedemptionRepository
      * @param WSMRedemptionCar $redemption
      * @return void
      */
-    public function buyCar(WSMRedemptionCar $redemption) : void
+    public function buyCar(WSMRedemptionCar $redemption): void
     {
-        if(!$redemption->last_purchase->price)
+        if (!$redemption->last_purchase->price)
             throw new \Exception('Фактический закуп не заполнен, не могу перенести такой автомобиль на склад');
-        if($redemption->redemption_status_id != 1)
+        if ($redemption->redemption_status_id != 1)
             throw new \Exception('Эта оценка не является рабочей');
-        if(!$redemption->client_car->vin)
+        if (!$redemption->client_car->vin)
             throw new \Exception('Нельзя создать на складе автомобиль без VIN-номера');
 
         $redemption->redemption_status_id = RedemptionStatus::where('slug', 'stock')->first()->id;
@@ -198,13 +187,13 @@ Class RedemptionRepository
         $carData['author_id'] = auth()->user()->id;
         $carData['wsm_redemption_car_id'] = $redemption->id;
         $carData['purchase_price'] = $redemption->last_purchase->price;
-        UsedCar::create(Arr::except($carData, ['created_at','updated_at','client_id','actual','editor_id']));
+        UsedCar::create(Arr::except($carData, ['created_at', 'updated_at', 'client_id', 'actual', 'editor_id']));
 
         Comment::add($redemption, 'buy');
 
         $mas = [];
-        foreach($redemption->worksheet->executors->pluck('id') as $item)
-            if($item != auth()->user()->id)
+        foreach ($redemption->worksheet->executors->pluck('id') as $item)
+            if ($item != auth()->user()->id)
                 $mas[] = $item;
 
         TelegramNotice::run($redemption)->buy()->send($mas);
@@ -218,23 +207,21 @@ Class RedemptionRepository
      * @param array $data
      * @return void
      */
-    public function save(WSMRedemptionCar $redemption, array $data) : void
+    public function save(WSMRedemptionCar $redemption, array $data): void
     {
-        if(isset($data['offer']))
-        {
+        if (isset($data['offer'])) {
             $redemption->offers()->create([
                 'author_id' => auth()->user()->id,
                 'wsm_redemption_car_id' => $redemption->id,
                 'price' => $data['offer'],
             ]);
 
-            $val = 'Оценка после диагностики '.$data['offer'].'р.';
-            if($redemption->author_id != auth()->user()->id)
+            $val = 'Оценка после диагностики ' . $data['offer'] . 'р.';
+            if ($redemption->author_id != auth()->user()->id)
                 TelegramNotice::run($redemption)->calculate($val)->send([$redemption->author_id]);
         }
 
-        if(isset($data['price_begin']) || isset($data['price_end']))
-        {
+        if (isset($data['price_begin']) || isset($data['price_end'])) {
             $redemption->calculations()->create([
                 'author_id' => auth()->user()->id,
                 'wsm_redemption_car_id' => $redemption->id,
@@ -242,21 +229,20 @@ Class RedemptionRepository
                 'price_end' => $data['price_end'] ?? 0,
             ]);
 
-            $val = 'Предварительная оценка '.$data['price_begin'].'-'.$data['price_end'].'р.';
-            if($redemption->author_id != auth()->user()->id)
+            $val = 'Предварительная оценка ' . $data['price_begin'] . '-' . $data['price_end'] . 'р.';
+            if ($redemption->author_id != auth()->user()->id)
                 TelegramNotice::run($redemption)->calculate($val)->send([$redemption->author_id]);
         }
 
-        if(isset($data['purchase']))
-        {
+        if (isset($data['purchase'])) {
             $redemption->purchases()->create([
                 'author_id' => auth()->user()->id,
                 'wsm_redemption_car_id' => $redemption->id,
                 'price' => $data['purchase'],
             ]);
 
-            $val = 'Согласовано с клиентом '.$data['purchase'].'р.';
-            if($redemption->author_id != auth()->user()->id)
+            $val = 'Согласовано с клиентом ' . $data['purchase'] . 'р.';
+            if ($redemption->author_id != auth()->user()->id)
                 TelegramNotice::run($redemption)->calculate($val)->send([$redemption->author_id]);
         }
     }
@@ -269,13 +255,13 @@ Class RedemptionRepository
      * @param int $car_id ID машины клиента
      * @return void
      */
-    private function check_car(Worksheet $worksheet, int $car_id) : void
+    private function check_car(Worksheet $worksheet, int $car_id): void
     {
         $check = WSMRedemptionCar::where('worksheet_id', $worksheet->id)
             ->where('client_car_id', $car_id)
             ->first();
 
-        if($check)
+        if ($check)
             throw new \Exception('Оценка этого автомобиля уже проводится в рамках данного рабочего листа');
     }
 
@@ -287,7 +273,7 @@ Class RedemptionRepository
      * @param array $data
      * @return WSMRedemptionLink
      */
-    public function saveLink(WSMRedemptionCar $redemption, array $data) : WSMRedemptionLink
+    public function saveLink(WSMRedemptionCar $redemption, array $data): WSMRedemptionLink
     {
         $link = WSMRedemptionLink::create([
             'author_id' => auth()->user()->id,
@@ -306,10 +292,9 @@ Class RedemptionRepository
      * @param WSMRedemptionCar $redemption
      * @return void
      */
-    public function close(WSMRedemptionCar $redemption) : void
+    public function close(WSMRedemptionCar $redemption): void
     {
-        if($redemption->redemption_status_id == 1)
-        {
+        if ($redemption->redemption_status_id == 1) {
             $redemption->fill([
                 'redemption_status_id' => 3,
             ])->save();
@@ -319,15 +304,13 @@ Class RedemptionRepository
             Comment::add($redemption, 'close');
 
             $mas = [];
-            foreach($redemption->worksheet->executors->pluck('id') as $item)
-                if($item != auth()->user()->id)
+            foreach ($redemption->worksheet->executors->pluck('id') as $item)
+                if ($item != auth()->user()->id)
                     $mas[] = $item;
 
-            if($redemption->worksheet->isWork())
+            if ($redemption->worksheet->isWork())
                 TelegramNotice::run($redemption)->close()->send($mas);
-        }
-
-        else
+        } else
             throw new \Exception('Эта оценка не является рабочей');
     }
 
@@ -338,7 +321,7 @@ Class RedemptionRepository
      */
     public function getComments(WSMRedemptionCar $redemption)
     {
-        return $redemption->comments->map(fn($item) => [
+        return $redemption->comments->map(fn ($item) => [
             'text' => $item->text,
             'id' => $item->id,
             'author' => $item->author->cut_name,
@@ -366,7 +349,7 @@ Class RedemptionRepository
      */
     public function revert(WSMRedemptionCar $redemption)
     {
-        if($redemption->status->slug !== 'closed')
+        if ($redemption->status->slug !== 'closed')
             throw new \Exception('Оценка не завершена');
 
         $redemption->redemption_status_id = 1;

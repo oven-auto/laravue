@@ -16,7 +16,7 @@
                     </a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
 
-                        <router-link :to="'/brands/list'" class="dropdown-item">Бренды</router-link>
+                        <router-link :to="'/brands/list'" class="dropdown-item">БрендыSSSddd999</router-link>
 
                         <div class="dropdown-divider"></div>
 

@@ -6,6 +6,8 @@ use App\Models\Trafic;
 use Carbon\Carbon;
 use DB;
 use App\Http\Filters\TraficFilter;
+use App\Services\Comment\Comment;
+use App\Services\GetShortCutFromURL\GetShortCutFromURL;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -22,19 +24,19 @@ use Illuminate\Database\Eloquent\Builder;
  *
  * 05-02-2023
  */
-Class TraficRepository
+class TraficRepository
 {
     /**
      * ПОДСТАВИТЬ ПРИ СОЗДАНИИ ТРАФИКА СВОЮ ДАТУ СОЗДАНИЯ В created_at
      * @param string
      * @return string
      */
-    private function createDate($string) : string
+    private function createDate($string): string
     {
-        if(date('Y',\strtotime($string)) != now()->year)
+        if (date('Y', \strtotime($string)) != now()->year)
             return now();
         else
-            return date('Y-m-d H:i',\strtotime($string));
+            return date('Y-m-d H:i', \strtotime($string));
     }
 
 
@@ -45,9 +47,9 @@ Class TraficRepository
      * @param array $data данные полученные с фронта, для в заполнения модели трафика
      * @return Trafic $trafic
      */
-    public function save(Trafic $trafic, $data) : Trafic
+    public function save(Trafic $trafic, $data): Trafic
     {
-        if(!$trafic->created_at)
+        if (!$trafic->created_at)
             $trafic->created_at = isset($data['time']) ? $this->createDate($data['time']) : now();
 
         $trafic->fill([
@@ -64,24 +66,24 @@ Class TraficRepository
             'company_id'            => $data['trafic_brand_id'] ?? $trafic->company_id,
             'company_structure_id'  => $data['trafic_section_id'] ?? $trafic->company_structure_id,
             'trafic_appeal_id'      => $data['trafic_appeal_id'] ?? $trafic->trafic_appeal_id,
-            'begin_at'              => isset($data['begin_at']) ? date('Y-m-d H:i',\strtotime($data['begin_at'])) : $trafic->begin_at,
-            'end_at'                => isset($data['end_at']) ? date('Y-m-d H:i',\strtotime($data['end_at'])) : $trafic->end_at,
+            'begin_at'              => isset($data['begin_at']) ? date('Y-m-d H:i', \strtotime($data['begin_at'])) : $trafic->begin_at,
+            'end_at'                => isset($data['end_at']) ? date('Y-m-d H:i', \strtotime($data['end_at'])) : $trafic->end_at,
             'manager_id'            => $data['manager_id'] ?? $trafic->manager_id,
             'interval'              => $data['trafic_interval'] ?? $trafic->interval,
             'client_type_id'        => isset($data['person_type_id'])
-                                        ? $data['person_type_id']
-                                        : (isset($data['client_type_id'])
-                                            ? $data['client_type_id']
-                                            : $trafic->client_type_id),
+                ? $data['person_type_id']
+                : (isset($data['client_type_id'])
+                    ? $data['client_type_id']
+                    : $trafic->client_type_id),
             'inn'                   => isset($data['inn']) ? $data['inn'] : NULL,
             'company_name'          => isset($data['company_name']) ? $data['company_name'] : NULL,
         ]);
 
         $trafic->save();
 
-        if(isset($data['trafic_need_id'])) {
+        if (isset($data['trafic_need_id'])) {
             $trafic->saveNeeds()->delete();
-            foreach($data['trafic_need_id'] as $item)
+            foreach ($data['trafic_need_id'] as $item)
                 $trafic->saveNeeds()->create(['trafic_product_number' => $item['id']]);
         }
         return $trafic;
@@ -94,7 +96,7 @@ Class TraficRepository
      * @param array $data данные для фильтра
      * @return Builder $query Builder
      */
-    private function filter($data = []) : Builder
+    private function filter($data = []): Builder
     {
         $query = Trafic::select('trafics.*')->withTrashed();
 
@@ -102,8 +104,8 @@ Class TraficRepository
 
         return $query
             ->filter($filter)
-            ->orderBy(DB::raw('trafics.manager_id IS NULL'),'DESC')
-            ->orderBy('trafics.created_at','DESC')
+            ->orderBy(DB::raw('trafics.manager_id IS NULL'), 'DESC')
+            ->orderBy('trafics.created_at', 'DESC')
             ->groupBy('trafics.id');
     }
 
@@ -114,7 +116,7 @@ Class TraficRepository
      * @param array $data данные для фильтра
      * @return int $result int
      */
-    public function counter($data = []) : int
+    public function counter($data = []): int
     {
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
 
@@ -137,7 +139,7 @@ Class TraficRepository
      * @param integer $paginate не обязательное поле, по умолчанию 10
      * @return \Illuminate\Contracts\Pagination\Paginator $result
      */
-    public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
+    public function paginate($data = [], $paginate = 10): \Illuminate\Contracts\Pagination\Paginator
     {
         $query = $this->filter($data)
             ->with([
@@ -160,7 +162,7 @@ Class TraficRepository
      * @param array $data данные для фильтра
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get($data = []) : \Illuminate\Database\Eloquent\Collection
+    public function get($data = []): \Illuminate\Database\Eloquent\Collection
     {
         $query = $this->filter($data)
             ->with([
@@ -182,7 +184,7 @@ Class TraficRepository
      * @param array $data данные для фильтра
      * @return \Illuminate\Database\Eloquent\Collection $result
      */
-    public function export($data = []) : \Illuminate\Database\Eloquent\Collection
+    public function export($data = []): \Illuminate\Database\Eloquent\Collection
     {
         $query = $this->filter($data);
 
@@ -198,7 +200,7 @@ Class TraficRepository
      * @param int $id id-трафика
      * @return Trafic $result Trafic
      */
-    public function find($id) : Trafic
+    public function find($id): Trafic
     {
         $result = Trafic::fullest()->find($id);
 
@@ -212,7 +214,7 @@ Class TraficRepository
      * @param $data данные для фильтрации
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function getTraficsForTaskList(array $data) : \Illuminate\Database\Eloquent\Collection
+    public function getTraficsForTaskList(array $data): \Illuminate\Database\Eloquent\Collection
     {
         $query = Trafic::select('trafics.*')->withTrashed();
 
@@ -239,5 +241,16 @@ Class TraficRepository
         $trafics = $query->get();
 
         return $trafics;
+    }
+
+
+
+    public function saveLink(Trafic $trafic, string $data)
+    {
+        $trafic->links()->create([
+            'author_id' => auth()->user()->id,
+            'text' => $data,
+            'icon' => GetShortCutFromURL::get($data),
+        ]);
     }
 }

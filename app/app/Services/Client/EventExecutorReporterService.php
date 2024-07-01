@@ -13,7 +13,7 @@ use App\Exceptions\Client\EventReporterAttachException;
 use App\Exceptions\Client\EventReporterIsAuthorException;
 use App\Exceptions\Client\EventReporterNotException;
 
-Class EventExecutorReporterService
+class EventExecutorReporterService
 {
     /**
      * ДОБАВИТЬ ИСПОЛНИТЕЛЕЙ В СОБЫТИЕ
@@ -21,7 +21,7 @@ Class EventExecutorReporterService
      * @param array|int $users
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function append(ClientEventStatus $event, array|int $users = null) : \Illuminate\Database\Eloquent\Collection
+    public function append(ClientEventStatus $event, array|int $users = null): \Illuminate\Database\Eloquent\Collection
     {
         //Check request users on empty
         $users ?? throw new EventExcecutorAppendException();
@@ -49,7 +49,7 @@ Class EventExecutorReporterService
      * @param int $user
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function detach(ClientEventStatus $event, int $user) : \Illuminate\Database\Eloquent\Collection
+    public function detach(ClientEventStatus $event, int $user): \Illuminate\Database\Eloquent\Collection
     {
         //Ошибка если пользователь автор
         $event->event->author_id != $user ?: throw new EventExcecutorDetachException();
@@ -58,7 +58,7 @@ Class EventExecutorReporterService
         //Получить пользователя
         $users = User::where('id', $user)->get();
         //Отправить коммент
-        $users->each(function($item) use ($event) {
+        $users->each(function ($item) use ($event) {
             EventComment::delUser($event, $item);
         });
 
@@ -73,20 +73,20 @@ Class EventExecutorReporterService
      * @param int $user
      * @return User
      */
-    public function report(ClientEventStatus $event, int $user) : User
+    public function report(ClientEventStatus $event, int $userId): User
     {
         //Ошибка если уже отчитан
-        !$event->reporters->contains('id', $user) ?: throw new EventReporterAttachException();
+        !$event->reporters->contains('id', $userId) ?: throw new EventReporterAttachException();
         //Ошибка если автор
-        $event->event->author_id != $user ?: throw new EventReporterIsAuthorException();
+        $event->event->author_id != $userId ?: throw new EventReporterIsAuthorException();
         //Цепляем к отчитавшимся за событие
-        $event->reporters()->attach($user);
-        //отцепляем от списка исполнителей
-        $this->detach($event, $user);
+        $event->reporters()->attach($userId);
         //Получаем модель пользователя
-        $user = User::find($user);
+        $user = User::find($userId);
         //Отправляем коммент
         EventComment::reportlUser($event, $user);
+        //отцепляем от списка исполнителей
+        $this->detach($event, $userId);
         //Отправляем уведомление автору события
         TelegramNotice::run($event)->report()->send([$event->event->author_id]);
 
@@ -101,18 +101,18 @@ Class EventExecutorReporterService
      * @param int $user
      * @return User
      */
-    public function deport(ClientEventStatus $event, int $user) : User
+    public function deport(ClientEventStatus $event, int $userId): User
     {
         //Ошибка если нет в списке отчитавшихся
-        $event->reporters->contains('id', $user) ?: throw new EventReporterNotException();
+        $event->reporters->contains('id', $userId) ?: throw new EventReporterNotException();
         //Отцепляем от списка отчитавшихся
-        $event->reporters()->detach($user);
-        //Переносим в список  исполнителей
-        $this->append($event, $user);
+        $event->reporters()->detach($userId);
         //Получаем модель пользователя
-        $user = User::findOrFail($user);
+        $user = User::findOrFail($userId);
         //Отправляем коммент
         EventComment::deportUser($event, $user);
+        //Переносим в список  исполнителей
+        $this->append($event, $userId);
 
         return $user;
     }

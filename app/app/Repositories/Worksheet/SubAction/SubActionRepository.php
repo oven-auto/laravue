@@ -21,7 +21,7 @@ use \App\Services\Comment\Comment;
  * 16-01-2024
  *
  */
-Class SubActionRepository
+class SubActionRepository
 {
     private $serviceExecutors;
 
@@ -37,9 +37,9 @@ Class SubActionRepository
      * @param int $worksheetId
      * @return Collection
      */
-    public function getAllByWorksheetId(int $worksheetId) : Collection
+    public function getAllByWorksheetId(int $worksheetId): Collection
     {
-        $result = SubAction::where('worksheet_id', $worksheetId)->orderBy('id','DESC')->get();
+        $result = SubAction::where('worksheet_id', $worksheetId)->orderBy('id', 'DESC')->get();
 
         return $result;
     }
@@ -52,9 +52,9 @@ Class SubActionRepository
      * @param array $data [title => string, worksheet_id => int, ?executors => array, comment => string]
      * @return void
      */
-    public function save(SubAction $subAction, array $data) : void
+    public function save(SubAction $subAction, array $data): void
     {
-        if(!$subAction->author_id)
+        if (!$subAction->author_id)
             $subAction->author_id = auth()->user()->id;
 
         $oldTitle = $subAction->title;
@@ -64,13 +64,13 @@ Class SubActionRepository
             'title' => $data['title'],
         ])->save();
 
-        if($subAction->title && $subAction->title != $oldTitle && $oldTitle)
+        if ($subAction->title && $subAction->title != $oldTitle && $oldTitle)
             Comment::add($subAction, 'update');
 
-        if($subAction->wasRecentlyCreated)
+        if ($subAction->wasRecentlyCreated)
             $this->serviceExecutors->setExecutors($subAction, auth()->user()->id);
 
-        if(isset($data['comment']))
+        if (isset($data['comment']))
             $this->writeComment($subAction, $data['comment']);
 
         $subAction->refresh();
@@ -85,10 +85,9 @@ Class SubActionRepository
      * @param SubAction $subAction
      * @return void
      */
-    public function closeAction(SubAction $subAction) : void
+    public function closeAction(SubAction $subAction): void
     {
-        if($subAction->author_id == auth()->user()->id)
-        {
+        if ($subAction->author_id == auth()->user()->id) {
             $subAction->close();
 
             $users = $subAction->executors->keyBy('id')->forget(auth()->user()->id)->pluck('id')->toArray();
@@ -99,17 +98,13 @@ Class SubActionRepository
 
 
 
-
-
-
-
     /**
      * 8 - ЗАПИСАТЬ КОММЕНТАРИЙ В ПОДЗАДАЧУ
      * @param SubAction $subAction
      * @param string $text
      * @return void
      */
-    public function writeComment(SubAction $subAction, string $text) : void
+    public function writeComment(SubAction $subAction, string $text): void
     {
         $subAction->comments()->create([
             'text' => $text,
@@ -124,9 +119,9 @@ Class SubActionRepository
      * @param SubAction $subAction
      * @return  \Illuminate\Support\Collection
      */
-    public function getSubActionComments(SubAction $subAction) : \Illuminate\Support\Collection
+    public function getSubActionComments(SubAction $subAction): \Illuminate\Support\Collection
     {
-        return $subAction->comments->map(fn($item) => [
+        return $subAction->comments->map(fn ($item) => [
             'text' => $item->text,
             'id' => $item->id,
             'author' => $item->author->cut_name,

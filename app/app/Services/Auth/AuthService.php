@@ -6,11 +6,11 @@ use App\Models\CompanyStructure;
 use App\Models\User;
 use Hash;
 
-Class AuthService
+class AuthService
 {
     public function login($data)
     {
-        if(!auth()->attempt($data))
+        if (!auth()->attempt($data))
             return \response()->json([
                 'success' => 0,
                 'message' => 'Пароль или Email не верный',
@@ -22,31 +22,41 @@ Class AuthService
         $data = [
             'id' => $user->id,
             'name' => $user->name,
-            'role_id' => auth()->user()->role->permissions->contains('slug','user_add') ? 1 : 0,
+            'role_id' => auth()->user()->role->permissions->contains('slug', 'user_add') ? 1 : 0,
             'lastname' => $user->lastname,
             'role' => $user->role->slug,
             'role_name' => $user->role->name,
-            'super' => in_array($user->role->id, [1,8]),
+            'super' => in_array($user->role->id, [1, 8]),
             'tg_token' => $user->tg_token,
         ];
 
-        return \response()->json([
+        $token = auth()->user()->createToken('API Token')->plainTextToken;
+
+        $isRobot = $user->role->permissions->contains('slug', 'robot');
+
+        if ($isRobot)
+            return [
+                'token' => explode('|', $token)[1],
+            ];
+
+        return [
             'laravel_session' => session()->getId(),
             'xsrf-token' => csrf_token(),
             'success' => true,
             'data' => $data,
-            'token' => auth()->user()->createToken('API Token')->plainTextToken
-        ]);
+            'token' => explode('|', $token)[1],
+        ];
     }
 
     public function logout($data)
     {
         $headers = getallheaders();
-        if(isset($headers['Authorization'])) {
+
+        if (isset($headers['Authorization'])) {
             $data = $headers['Authorization'];
             $data = \explode(' ', $data)[1];
             $token = \Laravel\Sanctum\PersonalAccessToken::findToken($data);
-            if($token) {
+            if ($token) {
                 $user = $token->tokenable;
                 $user->tokens()->delete();
             }
@@ -54,6 +64,7 @@ Class AuthService
                 'status' => true,
                 'success' => 1,
                 'message' => 'Вы вышли из системы',
+                'dd' => $headers['Authorization'],
             ]);
         }
     }
@@ -69,10 +80,10 @@ Class AuthService
             'phone' => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
         ]);
 
-        if(isset($data['appeals']))
+        if (isset($data['appeals']))
             $user->appeals()->sync($data['appeals']);
 
-        if(isset($data['trafic_appeals']))
+        if (isset($data['trafic_appeals']))
             $user->trafic_appeals()->sync($data['trafic_appeals']);
 
         $this->saveStructures($user, $data['structures']);
@@ -87,18 +98,18 @@ Class AuthService
             'lastname' => $data['lastname'],
             'email' => $data['email'],
             'role_id' => $data['role_id'],
-            'phone' => $data['phone'],//isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
+            'phone' => $data['phone'], //isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : ''
         ];
 
-        if(isset($data['password']) && $data['password'] != '')
+        if (isset($data['password']) && $data['password'] != '')
             $arr['password'] = Hash::make($data['password']);
 
         $user->fill($arr)->save();
 
-        if(isset($data['appeals']))
+        if (isset($data['appeals']))
             $user->appeals()->sync($data['appeals']);
 
-        if(isset($data['trafic_appeals']))
+        if (isset($data['trafic_appeals']))
             $user->trafic_appeals()->sync($data['trafic_appeals']);
 
         $this->saveStructures($user, $data['structures']);
@@ -116,11 +127,9 @@ Class AuthService
 
     private function saveStructures(User $user, array $structures)
     {
-        if($structures)
-        {
+        if ($structures) {
             \App\Models\UserCompanyStructure::where('user_id', $user->id)->delete();
-            foreach($structures as $item)
-            {
+            foreach ($structures as $item) {
                 $companyStructures = CompanyStructure::find($item);
                 \App\Models\UserCompanyStructure::create([
                     'user_id' => $user->id,
@@ -130,6 +139,4 @@ Class AuthService
             }
         }
     }
-
-
 }
