@@ -1,7 +1,0 @@
-{
-    "require": {
-        "laravel/passport": "^10.4",
-        "laravel/sanctum": "^2.15",
-        "telegram-bot/api": "^2.5"
-    }
-}

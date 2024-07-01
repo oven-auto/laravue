@@ -1,4 +1,5 @@
 /docker/images
+/docker/nginx/logs
 /backup
 /nbproject/private/
-/vendor
+/app/vendor

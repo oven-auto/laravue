@@ -1,100 +1,73 @@
-version: '2'
-services:
+version: "3.8"
 
-  ####################
-  # SERVER
-  ###################
-  server-sshop:
-    container_name: server-sshop
-    build: 
-      context: ./
-      dockerfile: docker/nginx.docker
-    volumes: 
-      - ./app/:/var/www
-      - ./docker/nginx/ssl:/etc/nginx/ssl
-    ports: 
-      - "8280:80"
-      - "443:443"
-    links: 
-      - php-f-sshop
-      - php-c-sshop
-  
-  ###################
-  # PHP-FPM
-  ###################
-  php-f-sshop:
-    container_name: php-f-sshop
+networks:
+  general:
+    ipam:
+      driver: default
+      config:
+        - subnet: "172.16.238.0/24"
+  database:
+
+services:  
+  nginx:
+    container_name: nginx
+    build:
+      context: ./docker
+      dockerfile: nginx.docker
+    networks: 
+      general:
+        ipv4_address: 172.16.238.10
+    volumes:
+    - ./docker/nginx:/etc/nginx/conf.d
+    - ./docker/nginx/logs:/var/log/nginx/
+    - ./app/:/var/www
+    ports:
+    - "8280:80"
+    - "443:443"
+    tty: true
+    
+
+  php-fpm:
+    container_name: php-fpm
     build:
       context: ./
       dockerfile: docker/php-fpm.docker
+    networks: 
+      general:
+        ipv4_address: 172.16.238.11
+      database:
     volumes:
       - ./app/:/var/www
-      - ./docker/docker.ini:/usr/local/etc/php/conf.d/docker.ini
-      - ./docker/nginx/ssl:/etc/nginx/ssl
-    links: 
-      - mysql-sshop
-      - redis-sshop
     environment:
       - "UPLOAD_LIMIT=20M"
       - "DB_PORT=3306"
-      - "DB_HOST=mysql-sshop"
+      - "DB_HOST=mysql"
       - "REDIS_PORT=6379"
-      - "REDIS_HOST=redis-sshop"
+      - "REDIS_HOST=redis"
+    tty: true
 
-  ###################
-  # PHP-CLI
-  ###################
-  php-c-sshop:
-    container_name: php-c-sshop
+  php-cli:
+    container_name: php-cli
     build:
       context: ./
       dockerfile: docker/php-cli.docker
+    networks: 
+      general:
+        ipv4_address: 172.16.238.12
+      database:
     volumes:
       - ./app/:/var/www
-    links: 
-      - mysql-sshop
-      - redis-sshop
     environment:
+      - "UPLOAD_LIMIT=20M"
       - "DB_PORT=3306"
-      - "DB_HOST=mysql-sshop"
-      - "REDIS_PORT=6379"
-      - "REDIS_HOST=redis-sshop"
+      - "DB_HOST=mysql"
     tty: true
-  
-  ###################
-  # MYSQL
-  ###################
-  mysql-sshop:
-    container_name: mysql-sshop
-    image: mysql:5.7
-    command: --sql_mode="ONLY_FULL_GROUP_BY"
-    volumes: 
-      - ./docker/images/mysql:/var/lib/mysql
-      - ./backup:/mnt/mysql/backup
-    environment:
-      - MYSQL_ROOT_PASSWORD=secret
-      - MYSQL_DATABASE=app
-      - MYSQL_HOST= mysql-sshop
-      - MYSQL_USER=app
-      - MYSQL_PASSWORD=secret
-      - MYSQL_PORT=3306
-    ports:
-      - "33061:3306"
 
-  ###################
-  # REDIS
-  ###################
-  redis-sshop:
-    container_name: redis-sshop
-    image: redis:3.0
-    ports:
-      - "63791:6379"
-
-  ###################
-  # NODE
-  ###################
-  node-sshop:
-    container_name: node-sshop
+  node:
+    container_name: node
+    networks: 
+      general:
+        ipv4_address: 172.16.238.14
     build:
       context: ./
       dockerfile: docker/node.docker
@@ -102,30 +75,44 @@ services:
       - ./app/:/var/www
     tty: true
 
-  ###################
-  # PHPMYADMIN
-  ###################
-  phpmyadmin-sshop:
-    container_name: phpmyadmin-sshop
+  mysql:
+    container_name: mysql
+    image: mysql:5.7
+    command: --sql_mode="ONLY_FULL_GROUP_BY"
+    #command: --sql_mode=""
+    networks: 
+      - database
+    volumes: 
+      - ./docker/images/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_DATABASE=app
+      - MYSQL_HOST= mysql
+      - MYSQL_USER=app
+      - MYSQL_PASSWORD=secret
+      - MYSQL_PORT=3306
+    ports:
+      - "33061:3306"
+    tty: true
+
+  phpmyadmin:
+    container_name: phpmyadmin
     image: corbinu/docker-phpmyadmin
+    networks: 
+      - database
     ports:
         - 8281:80
     environment:
         MYSQL_USERNAME: app
         MYSQL_ROOT_PASSWORD: secret
-        MYSQL_PORT_3306_TCP_ADDR: mysql-sshop
-
-  #################
-  # TELEGRAM BOT 
-  #################
-  telegram-bot:
-    container_name: telegram-bot
-    command: sh -c 'watch -x -n 1 curl --request GET "http://192.168.1.131:8280/telegram/bot"'
-    build:
-      context: ./
-      dockerfile: docker/telegram-bot.docker
+        MYSQL_PORT_3306_TCP_ADDR: mysql
     tty: true
-    
 
-
-      
+  redis:
+    container_name: redis
+    image: redis:latest
+    ports:
+      - "63798:6379"
+    networks: 
+      general:
+        ipv4_address: 172.16.238.15

@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:latest
 
 RUN apt-get update && apt-get install -y apt-utils \
     nano
@@ -6,9 +6,3 @@ RUN apt-get update && apt-get install -y apt-utils \
 RUN rm -rf /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 RUN echo "Europe/Moscow" > /etc/timezone
-    
-ADD ./docker/nginx/default.conf /etc/nginx/conf.d/default.conf
-
-
-
-WORKDIR /var/www
