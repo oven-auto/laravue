@@ -99,18 +99,18 @@ class FillCarGuide extends Command
 
         ////////////////////////////////////////////////////
 
-        // $tradeMarks = [
-        //     ['name' => 'Товарный автомобиль'],
-        //     ['name' => 'Подменный автомобиль'],
-        //     ['name' => 'Демо автомобиль'],
-        //     ['name' => 'Возврат'],
-        // ];
+        $tradeMarks = [
+            ['name' => 'Товарный автомобиль'],
+            ['name' => 'Подменный автомобиль'],
+            ['name' => 'Демо автомобиль'],
+            ['name' => 'Возврат'],
+        ];
 
-        // foreach ($tradeMarks as $item)
-        //     \App\Models\TradeMarker::updateOrCreate(
-        //         ['name' => $item['name']],
-        //         $item
-        //     );
+        foreach ($tradeMarks as $item)
+            \App\Models\TradeMarker::updateOrCreate(
+                ['name' => $item['name']],
+                $item
+            );
 
         //////////////////////////////////////////////////
 
