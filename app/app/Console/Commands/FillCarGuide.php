@@ -138,10 +138,14 @@ class FillCarGuide extends Command
             ['ransom_date', 'Выкуплен у поставщика', 'in_ransom'],
         ];
 
-        foreach ($carStates as $item)
+        foreach ($carStates as $item) {
             \App\Models\CarState::updateOrCreate(
                 ['logistic_system_name' => $item[0]],
-                $item
+                [
+                    'description' => $item[1],
+                    'status' => $item[2]
+                ]
             );
+        }
     }
 }
