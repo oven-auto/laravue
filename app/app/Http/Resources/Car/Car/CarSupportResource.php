@@ -20,7 +20,7 @@ class CarSupportResource extends JsonResource
 
             'option_price' => $this->option_price->price ?? 0,
 
-            'status' => $this->statusAll,
+            'status' => $this->currentCarState(),
 
             'full_price' => $this->full_price->price ?? 0,
 
