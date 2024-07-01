@@ -21,14 +21,14 @@ class TraficAuditController extends Controller
 
     public function load(Trafic $trafic, TPRequest $request)
     {
-        $audit = $this->repository->saveTraficAudit($trafic, $request->input(),$request->allFiles());
+        $audit = $this->repository->saveTraficAudit($trafic, $request->input(), $request->allFiles());
 
         $trafic = $trafic->fresh();
 
         Comment::add($audit, 'create');
 
         return response()->json([
-            'data' => $trafic->processing->map(function($item){
+            'data' => $trafic->processing->map(function ($item) {
                 return [
                     'scenario' => $item->standart->name,
                     'user' => $item->user->cut_name,
@@ -47,14 +47,14 @@ class TraficAuditController extends Controller
 
     public function update(TraficProcessing $trafic_processing, TraficProcessingUpdate $request)
     {
-        $this->repository->updateTraficAudit($trafic_processing, $request->input(),$request->allFiles());
+        $this->repository->updateTraficAudit($trafic_processing, $request->input(), $request->allFiles());
 
         $trafic = $trafic_processing->trafic;
 
         Comment::add($trafic_processing, 'update');
 
         return response()->json([
-            'data' => $trafic->processing->map(function($item){
+            'data' => $trafic->processing->map(function ($item) {
                 return [
                     'scenario' => $item->standart->name,
                     'user' => $item->user->cut_name,
@@ -71,7 +71,7 @@ class TraficAuditController extends Controller
         ]);
     }
 
-    public function show( TraficProcessing $trafic_processing)
+    public function show(TraficProcessing $trafic_processing)
     {
         Comment::add($trafic_processing, 'show');
 
@@ -80,8 +80,7 @@ class TraficAuditController extends Controller
                 'record' => $trafic_processing->getFile('record'),
                 'audit' => $trafic_processing->getFile('audit'),
                 'result' => $trafic_processing->result
-            ]
-,            'success' => 1,
+            ],            'success' => 1,
         ]);
     }
 }

@@ -113,8 +113,9 @@ class HomeController extends Controller
         // $worksheet = Worksheet::first();
 
         // DNMFactory::factory($worksheet)->create();
-        $day = 26;
-        dd($day . ' ' . StringHelper::dayWord($day));
+        // $day = 26;
+        // dd($day . ' ' . StringHelper::dayWord($day));
+        echo phpinfo();
     }
 
 
