@@ -17,7 +17,7 @@ class UpdateOrderType extends Migration
             $table->string('text_color');
             //$table->string('body_color');
             $table->text('description');
-            $table->foreignId('author_id')->nullable()->references('id')->on('users');
+            $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');;
             $table->timestamps();
             $table->softDeletes();
         });

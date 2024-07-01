@@ -16,7 +16,7 @@ class CarAddStatus extends Migration
         Schema::table('cars', function (Blueprint $table) {
             $table->string('status')->nullable();
 
-            $table->foreign('status')->references('status')->on('car_states');
+            $table->foreign('status')->references('status')->on('car_states')->onDelete('cascade');;
         });
     }
 

@@ -14,8 +14,8 @@ class CreateComplectationMarkAliasesTable extends Migration
     public function up()
     {
         Schema::create('complectation_mark_aliases', function (Blueprint $table) {
-            $table->foreignId('complectation_id')->references('id')->on('complectations');
-            $table->foreignId('mark_alias_id')->references('id')->on('mark_aliases');
+            $table->foreignId('complectation_id')->references('id')->on('complectations')->onDelete('cascade');
+            $table->foreignId('mark_alias_id')->references('id')->on('mark_aliases')->onDelete('cascade');
         });
     }
 

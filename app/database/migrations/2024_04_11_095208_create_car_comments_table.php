@@ -17,7 +17,7 @@ class CreateCarCommentsTable extends Migration
             $table->id();
             $table->foreignId('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->text('comment');
-            $table->foreignId('author_id')->references('id')->on('users');
+            $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');;
             $table->timestamps();
         });
     }

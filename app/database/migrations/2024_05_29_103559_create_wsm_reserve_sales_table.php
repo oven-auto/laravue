@@ -15,9 +15,9 @@ class CreateWsmReserveSalesTable extends Migration
     {
         Schema::create('wsm_reserve_sales', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('reserve_id')->references('id')->on('wsm_reserve_new_cars');
-            $table->foreignId('author_id')->references('id')->on('users');
-            $table->foreignId('decorator_id')->references('id')->on('users');
+            $table->foreignId('reserve_id')->references('id')->on('wsm_reserve_new_cars')->onDelete('cascade');;
+            $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');;
+            $table->foreignId('decorator_id')->references('id')->on('users')->onDelete('cascade');;
             $table->dateTime('date_at');
             $table->timestamps();
         });

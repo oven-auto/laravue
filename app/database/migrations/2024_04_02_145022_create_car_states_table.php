@@ -19,7 +19,7 @@ class CreateCarStatesTable extends Migration
             $table->string('description')->unique();
             $table->string('status')->unique()->index();
 
-            $table->foreign('logistic_system_name')->references('system_name')->on('logistic_states');
+            $table->foreign('logistic_system_name')->references('system_name')->on('logistic_states')->onDelete('cascade');;
         });
     }
 

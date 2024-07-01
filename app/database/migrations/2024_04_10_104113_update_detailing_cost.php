@@ -14,7 +14,7 @@ class UpdateDetailingCost extends Migration
     public function up()
     {
         Schema::table('detailing_costs', function (Blueprint $table) {
-            $table->foreignId('author_id')->nullable()->references('id')->on('users');
+            $table->foreignId('author_id')->nullable()->references('id')->on('users')->onDelete('cascade');;
             $table->timestamps();
             $table->softDeletes();
         });

@@ -14,7 +14,7 @@ class UpdateCarOverPriceAddAuthorId extends Migration
     public function up()
     {
         Schema::table('car_over_prices', function (Blueprint $table) {
-            $table->foreignId('author_id')->references('id')->on('users');
+            $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');;
         });
     }
 
