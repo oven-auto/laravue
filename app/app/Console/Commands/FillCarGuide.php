@@ -140,7 +140,7 @@ class FillCarGuide extends Command
 
         foreach ($carStates as $item)
             \App\Models\CarState::updateOrCreate(
-                ['name' => $item[0]],
+                ['logistic_system_name' => $item[0]],
                 $item
             );
     }
