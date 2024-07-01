@@ -65,64 +65,64 @@ class FillCarGuide extends Command
 
         ///////////////////////////////////////////////
 
-        $terms = [
-            ['name' => 'Предоплата',    'sort' => 1],
-            ['name' => 'Факторинг',     'sort' => 2],
-            ['name' => 'Консигнация',   'sort' => 3],
-            ['name' => 'Гарантия',      'sort' => 4],
-            ['name' => 'Акредитив',     'sort' => 5],
-        ];
+        // $terms = [
+        //     ['name' => 'Предоплата',    'sort' => 1],
+        //     ['name' => 'Факторинг',     'sort' => 2],
+        //     ['name' => 'Консигнация',   'sort' => 3],
+        //     ['name' => 'Гарантия',      'sort' => 4],
+        //     ['name' => 'Акредитив',     'sort' => 5],
+        // ];
 
-        foreach ($terms as $item) {
-            $item['text_color'] = '#000';
-            \App\Models\DeliveryTerm::updateOrCreate(
-                ['name' => $item['name']],
-                $item
-            );
-        }
+        // foreach ($terms as $item) {
+        //     $item['text_color'] = '#000';
+        //     \App\Models\DeliveryTerm::updateOrCreate(
+        //         ['name' => $item['name']],
+        //         $item
+        //     );
+        // }
 
         /////////////////////////////////////////////
 
-        $orderTypes = [
-            ['name' => 'Квота'],
-            ['name' => 'Перевод'],
-            ['name' => 'Обмен'],
-            ['name' => 'Поиск'],
-            ['name' => 'Возврат'],
-        ];
+        // $orderTypes = [
+        //     ['name' => 'Квота'],
+        //     ['name' => 'Перевод'],
+        //     ['name' => 'Обмен'],
+        //     ['name' => 'Поиск'],
+        //     ['name' => 'Возврат'],
+        // ];
 
-        foreach ($orderTypes as $item)
-            \App\Models\OrderType::updateOrCreate(
-                ['name' => $item['name']],
-                $item
-            );
+        // foreach ($orderTypes as $item)
+        //     \App\Models\OrderType::updateOrCreate(
+        //         ['name' => $item['name']],
+        //         $item
+        //     );
 
         ////////////////////////////////////////////////////
 
-        $tradeMarks = [
-            ['name' => 'Товарный автомобиль'],
-            ['name' => 'Подменный автомобиль'],
-            ['name' => 'Демо автомобиль'],
-            ['name' => 'Возврат'],
-        ];
+        // $tradeMarks = [
+        //     ['name' => 'Товарный автомобиль'],
+        //     ['name' => 'Подменный автомобиль'],
+        //     ['name' => 'Демо автомобиль'],
+        //     ['name' => 'Возврат'],
+        // ];
 
-        foreach ($tradeMarks as $item)
-            \App\Models\TradeMarker::updateOrCreate(
-                ['name' => $item['name']],
-                $item
-            );
+        // foreach ($tradeMarks as $item)
+        //     \App\Models\TradeMarker::updateOrCreate(
+        //         ['name' => $item['name']],
+        //         $item
+        //     );
 
         //////////////////////////////////////////////////
 
-        $detailingCosts = [
-            ['name' => 'Доставка'],
-        ];
+        // $detailingCosts = [
+        //     ['name' => 'Доставка'],
+        // ];
 
-        foreach ($detailingCosts as $item)
-            \App\Models\DetailingCost::updateOrCreate(
-                ['name' => $item['name']],
-                $item
-            );
+        // foreach ($detailingCosts as $item)
+        //     \App\Models\DetailingCost::updateOrCreate(
+        //         ['name' => $item['name']],
+        //         $item
+        //     );
 
         $carStates = [
             ['order_date', 'В заявке', 'in_order'],
