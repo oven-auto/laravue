@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class ComplectationCurrentPrice extends Model
 {
     use HasFactory;
+
+    public $dates = ['begin_at'];
 }
