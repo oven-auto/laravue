@@ -1069,6 +1069,6 @@ class Car extends Model
         if ($this->reserve && $this->reserve->contract)
             return $this->reserve->contract->dkp_offer_date;
 
-        return $this->complectation->current_price->begin_at->format('d.m.Y');
+        return $this->complectation->current_price->begin_at ? $this->complectation->current_price->begin_at->format('d.m.Y') : '';
     }
 }
