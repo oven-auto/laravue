@@ -1000,6 +1000,12 @@ class Car extends Model
         $obj->date = $state->date_at ?? $this->created_at;
         $obj->id = $state_status->id ?? 0;
 
+        if (isset($state->state)) {
+            $obj->title = $state->state->carstate->description;
+            $obj->date = $state->date_at ?? $this->created_at;
+            $obj->id = $state->state->carstate->id;
+        }
+
         if ($this->reserve && $this->reserve->issue->date_at) {
             $obj->title = $state_status->description ?? 'Выдан';
             $obj->date = $state->date_at ?? $this->created_at;

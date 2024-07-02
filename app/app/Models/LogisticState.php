@@ -12,4 +12,15 @@ class LogisticState extends Model
     public $timestamps = false;
 
     protected $guarded = [];
+
+
+
+    /**
+     * RELATIONS
+     */
+
+    public function carstate()
+    {
+        return $this->hasOne(\App\Models\CarState::class, 'logistic_system_name', 'system_name')->withDefault();
+    }
 }
