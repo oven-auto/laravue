@@ -69,7 +69,9 @@ class CarListResource extends JsonResource
 
             'price' => [
                 'status'          => $this->isFixedPrice() ? 'Зафиксировано договором' : '',
-                'base'      => 'Кузов ' . StringHelper::moneyMask($this->complectationPrice()),
+                'base'      => 'Кузов '
+                    . StringHelper::moneyMask($this->complectationPrice())
+                    . '(' . $this->getBodyDatePrice() . ')',
                 'option'    => 'Опции ' . StringHelper::moneyMask($this->optionPrice()),
                 'over'      => 'Переоценка ' . StringHelper::moneyMask($this->overPrice()),
                 'tuning'    => 'Тюнинг ' . StringHelper::moneyMask($this->tuningPrice()),

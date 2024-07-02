@@ -1061,4 +1061,13 @@ class Car extends Model
             10 => $getWithDate($obj),
         };
     }
+
+
+
+    public function getBodyDatePrice()
+    {
+        if ($this->reserve && $this->reserve->contract)
+            return $this->reserve->contract->dkp_offer_date;
+        return $this->complectation->current_price->begin_at;
+    }
 }

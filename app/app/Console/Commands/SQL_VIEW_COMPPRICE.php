@@ -39,7 +39,7 @@ class SQL_VIEW_COMPPRICE extends Command
     public function handle()
     {
         $query = "CREATE OR REPLACE VIEW complectation_current_prices AS
-            SELECT cp.id, cp.price, cp.complectation_id
+            SELECT cp.id, cp.price, cp.complectation_id, cp.begin_at
             FROM complectation_prices as cp
             WHERE cp.id = (
                 SELECT max(c.id)
