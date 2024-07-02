@@ -1014,6 +1014,12 @@ class Car extends Model
 
         $now = now();
 
+        $cutTimeFromDate = function ($obj) {
+            $date = $obj->date;
+            $date->setHour(0)->setMinutes(0)->setSeconds(0);
+            $obj->date = $date;
+        };
+
         $getWithCountDay = function ($obj, $plusDay = 0) use ($now) {
             $days = $now->diffInDays($obj->date) + $plusDay;
             return $obj->title . ' ' . $days . ' ' . StringHelper::dayWord($days);
@@ -1032,6 +1038,8 @@ class Car extends Model
         $getOnlyStatus = function ($obj) {
             return $obj->title;
         };
+
+        $cutTimeFromDate($obj);
 
         return match ($obj->id) {
             0 => $getWithCountDay($obj, 1),

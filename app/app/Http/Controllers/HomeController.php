@@ -115,7 +115,8 @@ class HomeController extends Controller
         // DNMFactory::factory($worksheet)->create();
         // $day = 26;
         // dd($day . ' ' . StringHelper::dayWord($day));
-        echo phpinfo();
+        //echo phpinfo();
+        dd(now()->setHour(0)->setMinutes(0)->setSeconds(0));
     }
 
 
