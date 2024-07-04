@@ -40,7 +40,7 @@ Route::get('test', [HomeController::class, 'test']);
  * POTOKBIT
  **/
 Route::prefix('integrations')->group(function () {
-    Route::prefix('potokbit')->middleware('robot')->group(function () {
+    Route::prefix('potokbit')->middleware(['robot', 'potokbit'])->group(function () {
         Route::post('', [PotokBitController::class, 'index']);
     });
 });

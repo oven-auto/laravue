@@ -21,6 +21,7 @@ class CreateDnmLadasTable extends Migration
 
             $table->integer('dnm_client_id')->nullable();
             $table->integer('dnm_worksheet_id')->nullable();
+            $table->integer('dnm_appeal_id')->nullable();
 
             $table->timestamps();
         });

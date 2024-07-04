@@ -6,7 +6,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\PotokBitCreateRequest;
 use App\Models\Company;
 use App\Models\Trafic;
-use App\Models\TraficAppeal;
 use App\Repositories\Trafic\TraficRepository;
 
 class PotokBitController extends Controller
@@ -18,18 +17,28 @@ class PotokBitController extends Controller
         $this->repo = $repo;
     }
 
+
+
     public function index(Trafic $trafic, PotokBitCreateRequest $request)
     {
+        $validated = $request->validate([
+            'firstname' => 'sometimes|string',
+            'lastname' => 'sometimes|string',
+            'phone' => 'required|digits:11',
+            'link' => 'required',
+            'comment' => 'required|string',
+        ]);
+
         $company = Company::find(2);
 
         $structureId = $company->structures->where('id', 1)->first()->pivot->id;
 
         $data = [
             'author_id' => auth()->user()->id,
-            'firstname' => $request->firstname ?? '',
-            'lastname' => $request->lastname ?? '',
-            'phone' => $request->phone,
-            'comment' => $request->comment,
+            'firstname' => $validated['firstname'] ?? '',
+            'lastname' => $validated['lastname'] ?? '',
+            'phone' => $validated['phone'],
+            'comment' => $validated['comment'],
             'company_id' => $company->id,
             'company_structure_id' => $structureId,
             'client_type_id' => 1,

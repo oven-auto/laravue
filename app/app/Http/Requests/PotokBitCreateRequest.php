@@ -28,7 +28,7 @@ class PotokBitCreateRequest extends FormRequest
             'lastname' => 'sometimes|string',
             'phone' => 'required|digits:11',
             'link' => 'required',
-            'comment' => 'sometimes|string',
+            'comment' => 'required|string',
             //'appeal' => 'required|in:sale,ransom',
         ];
     }

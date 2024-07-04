@@ -109,6 +109,6 @@ class Kernel extends HttpKernel
         'permission.complectation.delete'    => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessDeleteMiddleware::class,
         'permission.complectation.restore'   => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessRestoreMiddleware::class,
 
-
+        'potokbit'                          => \App\Http\Middleware\PotokBitMiddlewareLog::class,
     ];
 }

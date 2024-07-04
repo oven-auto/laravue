@@ -100,6 +100,11 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+
+        'potok' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/potok.log'),
+        ]
     ],
 
 ];

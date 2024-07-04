@@ -20,6 +20,7 @@ use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Api;
 use Telegram\Bot\FileUpload\InputFile;
 
@@ -112,13 +113,14 @@ class HomeController extends Controller
 
     public function test($id = 3632)
     {
-        $client = \App\Models\Client::find($id);
-        $dnm = new DNMClient($client);
-        $dnm->save();
+        // $client = \App\Models\Client::find($id);
+        // $dnm = new DNMClient($client);
+        // $dnm->save();
 
-        $worksheet = Worksheet::find(7);
-        $worksheetDnm = new DNMWorksheet($worksheet);
-        $worksheetDnm->save();
+        // $worksheet = Worksheet::find(7);
+        // $worksheetDnm = new DNMWorksheet($worksheet);
+        // $worksheetDnm->save();
+        // Log::channel('potok')->error('test');
     }
 
 

@@ -3,15 +3,18 @@
 namespace App\Classes\LadaDNM;
 
 use App\Models\DnmLada;
+use App\Models\MarkAlias;
 use App\Models\Worksheet;
 
 class DNMWorksheet
 {
     private $dnmService;
 
-    private $obj;
+    public $obj;
 
-    private $dnmWorksheet;
+    public $dnmWorksheet;
+
+    private $event;
 
     public function __construct(Worksheet $obj)
     {
@@ -20,6 +23,15 @@ class DNMWorksheet
         $this->obj = $obj;
 
         $this->dnmWorksheet = DnmLada::where('worksheet_id', $obj->id)->first();
+
+        $this->event = new DNMEvent();
+    }
+
+
+
+    public function getDnmWorksheetId()
+    {
+        return $this->dnmWorksheet->dnm_worksheet_id;
     }
 
 
@@ -31,7 +43,10 @@ class DNMWorksheet
     {
         $this->dnmWorksheet = DnmLada::updateOrCreate(
             ['worksheet_id' => $this->obj->id],
-            ['dnm_worksheet_id' => $data['id']]
+            [
+                'dnm_worksheet_id' => $data['id'],
+                'trafic_id' => $this->obj->trafic_id,
+            ]
         );
     }
 
@@ -48,12 +63,40 @@ class DNMWorksheet
 
 
 
+    public function appeal()
+    {
+        $alias = new MarkAlias();
+        $traficNeed = $this->obj->trafic->needs;
+        foreach ($traficNeed as $item)
+            if ($item->model == 'AppModelsMarkAliases') {
+                $alias = MarkAlias::find($item->uid);
+                break;
+            }
+
+        if ($alias && $alias->id) {
+            $response = $this->dnmService->sendPost('/api/need', [
+                'code' => (string)$this->obj->trafic_id,
+                'brand_id' => $alias->dnm_brand_id,
+                'model_id' => $alias->dnm_model_id,
+            ]);
+
+            if ($response->getStatusCode() == 201)
+                $this->dnmWorksheet->fill(['dnm_appeal_id' => $response->json()['id']])->save();
+            else
+                throw new \Exception($response->body());
+        }
+    }
+
+
+
     private function create()
     {
         $response = $this->dnmService->sendPost('/api/worksheet', $this->fill());
 
         if ($response->getStatusCode() == 201) {
             $this->write($response->json());
+            $this->appeal();
+            $this->event->visit($this);
             return 1;
         }
 
@@ -68,6 +111,8 @@ class DNMWorksheet
 
         if ($response->getStatusCode() == 200) {
             $this->write($response->json());
+            $this->appeal();
+            $this->event->visit($this);
             return 1;
         }
 
