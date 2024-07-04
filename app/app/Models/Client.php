@@ -213,6 +213,32 @@ class Client extends Model implements PersonInterface, CommentInterface
 
 
 
+    public function isPerson()
+    {
+        if ($this->client_type_id == 1)
+            return true;
+        return false;
+    }
+
+
+
+    public function isOurCompany()
+    {
+        return $this->client_type_id == 3 ? 1 : 0;
+    }
+
+
+
+    public function getDnmTypeClient()
+    {
+        return match ($this->client_type_id) {
+            1 => 0,
+            2 => 1,
+        };
+    }
+
+
+
     public function scopeLinksCount($query)
     {
         return $query->withCount('links');

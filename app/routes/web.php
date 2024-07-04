@@ -37,16 +37,16 @@ use Illuminate\Http\Request;
 // })->middleware('auth');
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('phpinfo', function() {
+Route::get('phpinfo', function () {
     phpinfo();
 });
 
-Route::get('/doc', function(){
+Route::get('/doc', function () {
     $data = \App\Models\ApiDescription::get()->groupBy('title');
     return view('admin.doc', ['data' => $data]);
 });
 
-Route::get('hash', function(Request $request){
+Route::get('hash', function (Request $request) {
     echo Hash::make($request->get('string'));
 });
 
@@ -65,7 +65,7 @@ Route::prefix('pdf')->group(function () {
 //     return view('layouts.admin');
 // })->where('any', '.*');
 
-Route::get('test', '\App\Http\Controllers\HomeController@test');
+Route::get('test/{id?}', '\App\Http\Controllers\HomeController@test');
 Route::post('test', '\App\Http\Controllers\HomeController@test');
 Route::patch('test', '\App\Http\Controllers\HomeController@test');
 Route::put('test', '\App\Http\Controllers\HomeController@test');

@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 //use Illuminate\Http\Request;
 
 use App\Classes\LadaDNM\DNM;
+use App\Classes\LadaDNM\DNMClient;
 use App\Classes\LadaDNM\DNMFactory;
+use App\Classes\LadaDNM\DNMWorksheet;
 use App\Classes\Vin\Vin;
 use App\Helpers\String\StringHelper;
 use App\Models\Client as ModelsClient;
@@ -108,15 +110,15 @@ class HomeController extends Controller
 
 
 
-    public function test()
+    public function test($id = 3632)
     {
-        // $worksheet = Worksheet::first();
+        $client = \App\Models\Client::find($id);
+        $dnm = new DNMClient($client);
+        $dnm->save();
 
-        // DNMFactory::factory($worksheet)->create();
-        // $day = 26;
-        // dd($day . ' ' . StringHelper::dayWord($day));
-        //echo phpinfo();
-        dd(now()->setHour(0)->setMinutes(0)->setSeconds(0));
+        $worksheet = Worksheet::find(7);
+        $worksheetDnm = new DNMWorksheet($worksheet);
+        $worksheetDnm->save();
     }
 
 
