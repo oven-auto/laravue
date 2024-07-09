@@ -7,6 +7,7 @@ use App\Http\Requests\PotokBitCreateRequest;
 use App\Models\Company;
 use App\Models\Trafic;
 use App\Repositories\Trafic\TraficRepository;
+use Illuminate\Http\Request;
 
 class PotokBitController extends Controller
 {
@@ -19,7 +20,7 @@ class PotokBitController extends Controller
 
 
 
-    public function index(Trafic $trafic, PotokBitCreateRequest $request)
+    public function index(Trafic $trafic, Request $request)
     {
         $validated = $request->validate([
             'firstname' => 'nullable|sometimes|string',
