@@ -22,7 +22,7 @@ class DNMWorksheet
 
         $this->obj = $obj;
 
-        $this->dnmWorksheet = DnmLada::where('worksheet_id', $obj->id)->first();
+        $this->dnmWorksheet = DnmLada::where('worksheet_id', $obj->id)->first() ?? new DnmLada();
 
         $this->event = new DNMEvent();
     }
@@ -77,13 +77,11 @@ class DNMWorksheet
             $response = $this->dnmService->sendPost('/api/need', [
                 'code' => (string)$this->obj->trafic_id,
                 'brand_id' => $alias->dnm_brand_id,
-                'model_id' => $alias->dnm_model_id,
+                'model_alias_id' => $alias->dnm_id,
             ]);
 
             if ($response->getStatusCode() == 201)
                 $this->dnmWorksheet->fill(['dnm_appeal_id' => $response->json()['id']])->save();
-            else
-                throw new \Exception($response->body());
         }
     }
 
@@ -112,7 +110,7 @@ class DNMWorksheet
         if ($response->getStatusCode() == 200) {
             $this->write($response->json());
             $this->appeal();
-            $this->event->visit($this);
+            $this->event->reject($this);
             return 1;
         }
 

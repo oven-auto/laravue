@@ -113,14 +113,13 @@ class HomeController extends Controller
 
     public function test($id = 3632)
     {
-        // $client = \App\Models\Client::find($id);
-        // $dnm = new DNMClient($client);
-        // $dnm->save();
+        $client = \App\Models\Client::find(3634);
+        $dnm = new DNMClient($client);
+        $dnm->save();
 
-        // $worksheet = Worksheet::find(7);
-        // $worksheetDnm = new DNMWorksheet($worksheet);
-        // $worksheetDnm->save();
-        // Log::channel('potok')->error('test');
+        $worksheet = Worksheet::find(9);
+        $worksheetDnm = new DNMWorksheet($worksheet);
+        $worksheetDnm->save();
     }
 
 

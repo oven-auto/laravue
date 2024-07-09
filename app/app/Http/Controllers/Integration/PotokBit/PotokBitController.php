@@ -22,8 +22,8 @@ class PotokBitController extends Controller
     public function index(Trafic $trafic, PotokBitCreateRequest $request)
     {
         $validated = $request->validate([
-            'firstname' => 'sometimes|string',
-            'lastname' => 'sometimes|string',
+            'firstname' => 'nullable|sometimes|string',
+            'lastname' => 'nullable|sometimes|string',
             'phone' => 'required|digits:11',
             'link' => 'required',
             'comment' => 'required|string',
