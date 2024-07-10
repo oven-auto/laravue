@@ -95,6 +95,9 @@ class TraficController extends Controller
 
         $result = $trafic->close();
 
+        if (isset($trafic->worksheet->id))
+            throw new \Exception("Не могу закрыть трафик, из которого назначен рабочий лист");
+
         Comment::add($trafic, 'close');
 
         //\App\Events\TraficEvent::dispatch($trafic, Trafic::NOTICES['close']);
@@ -109,6 +112,9 @@ class TraficController extends Controller
     public function delete($trafic, Request $request)
     {
         $trafic = Trafic::find($trafic);
+
+        if (isset($trafic->worksheet->id))
+            throw new \Exception("Не могу удалить трафик, из которого назначен рабочий лист");
 
         Comment::add($trafic, 'delete');
 
