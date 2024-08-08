@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Back\Bodywork\BodyworkController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\Back\Car\Complectation\ComplectationController;
 use App\Http\Controllers\Api\v1\Back\Car\Color\ColorController;
@@ -7,6 +8,7 @@ use App\Http\Controllers\Api\v1\Back\Car\Marker\MarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Option\OptionController;
 use App\Http\Controllers\Api\v1\Back\Car\CarController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCountController;
+use App\Http\Controllers\Api\v1\Back\Car\CarOwnerController;
 use App\Http\Controllers\Api\v1\Back\Car\Collector\CollectorController;
 use App\Http\Controllers\Api\v1\Back\Car\Complectation\PriceComplectationController;
 use App\Http\Controllers\Api\v1\Back\Car\OrderType\OrderTypeController;
@@ -19,8 +21,10 @@ use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveNewCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\RedemptionController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ContractController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ContractListController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\PaymentReserveController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveCommentController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveListController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\SaleController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\TradeInReserveController;
 use App\Http\Controllers\HomeController;
@@ -116,6 +120,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('motortypes',         [App\Http\Controllers\Api\v1\Services\Select\MotorTypeSelectController::class, 'index']); //типы моторов (бензин дизель и тд)
                 Route::get('toxic',              [App\Http\Controllers\Api\v1\Services\Select\MotorToxicController::class, 'index']); //токсичность моторов (евро 2 евро 3 и тд)
                 Route::get('bodyworks',          [App\Http\Controllers\Api\v1\Services\Select\BodyWorkSelectController::class, 'index']); //кузова
+                Route::get('bodyacronyms',          [App\Http\Controllers\Api\v1\Services\Select\BodyWorkSelectController::class, 'acronym']); //кузова
                 Route::get('factories',          [App\Http\Controllers\Api\v1\Services\Select\CountryFactorySelectController::class, 'index']); //места производства
                 Route::get('colors',             [App\Http\Controllers\Api\v1\Services\Select\ColorController::class, 'index']); //базовые цвета
                 Route::get('markcolors',         [App\Http\Controllers\Api\v1\Services\Select\ColorController::class, 'mark']); //дилерские цвета
@@ -131,6 +136,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('collectors',         [App\Http\Controllers\Api\v1\Services\Select\CollectorController::class, 'index']);
                 Route::get('payments',           [App\Http\Controllers\Api\v1\Services\Select\PaymentController::class, 'index']);
                 Route::get('markaliases',        [App\Http\Controllers\Api\v1\Services\Select\MarkSelectController::class, 'getaliases']);
+                Route::get('reasons',           [App\Http\Controllers\Api\v1\Services\Select\ReasonRefusalController::class, 'index']);
             });
         });
     });
@@ -513,6 +519,13 @@ Route::middleware(['userfromtoken'])->group(function () {
 
 
         Route::get('count', [CarCountController::class, 'count']);
+
+
+
+        Route::prefix('owners')->group(function () {
+            Route::post('/{car}', [CarOwnerController::class, 'store']);
+            Route::delete('/{car}', [CarOwnerController::class, 'destroy']);
+        });
 
 
 
@@ -969,4 +982,26 @@ Route::middleware(['userfromtoken'])->group(function () {
             Route::get('counter',       'CounterController');
             Route::get('options',       'OptionsController');
         });
+
+
+
+
+    /**RESERVE LIST */
+    Route::prefix('reserves')->group(function () {
+        Route::get('/', [ReserveListController::class, 'index']);
+        Route::get('count', [ReserveListController::class, 'count']);
+    });
+
+
+
+    /**CONTRACTS LIST */
+    Route::prefix('contracts')->group(function () {
+        Route::get('/', [ContractListController::class, 'index']);
+        Route::get('count', [ContractListController::class, 'count']);
+    });
+
+
+
+
+    Route::resource('bodyworks', BodyworkController::class);
 });

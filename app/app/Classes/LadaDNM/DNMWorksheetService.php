@@ -2,11 +2,10 @@
 
 namespace App\Classes\LadaDNM;
 
-use App\Models\DnmLada;
-use App\Models\MarkAlias;
+use App\Models\DnmWorksheet;
 use App\Models\Worksheet;
 
-class DNMWorksheet
+class DNMWorksheetService
 {
     private $dnmService;
 
@@ -14,7 +13,7 @@ class DNMWorksheet
 
     public $dnmWorksheet;
 
-    private $event;
+    public $event;
 
     public function __construct(Worksheet $obj)
     {
@@ -22,16 +21,16 @@ class DNMWorksheet
 
         $this->obj = $obj;
 
-        $this->dnmWorksheet = DnmLada::where('worksheet_id', $obj->id)->first() ?? new DnmLada();
+        $this->dnmWorksheet = DnmWorksheet::where('worksheet_id', $obj->id)->first() ?? new DnmWorksheet();
 
-        $this->event = new DNMEvent();
+        $this->event = new DNMEvent($this);
     }
 
 
 
     public function getDnmWorksheetId()
     {
-        return $this->dnmWorksheet->dnm_worksheet_id;
+        return $this->dnmWorksheet->dnm_id;
     }
 
 
@@ -41,12 +40,9 @@ class DNMWorksheet
      */
     private function write(array $data)
     {
-        $this->dnmWorksheet = DnmLada::updateOrCreate(
+        $this->dnmWorksheet = DnmWorksheet::updateOrCreate(
             ['worksheet_id' => $this->obj->id],
-            [
-                'dnm_worksheet_id' => $data['id'],
-                'trafic_id' => $this->obj->trafic_id,
-            ]
+            ['dnm_id' => $data['id']]
         );
     }
 
@@ -54,35 +50,20 @@ class DNMWorksheet
 
     private function fill()
     {
+        $clientService = DNMClientService::saveClient($this->obj->client);
+
         return [
             'code' => (string) $this->obj->id,
-            'client_id' => DnmLada::where('client_id', $this->obj->client_id)->first()->dnm_client_id,
+            'client_id' => $clientService->getDnmId(),
             'source_id' => "13"
         ];
     }
 
 
 
-    public function appeal()
+    public function setAppeal()
     {
-        $alias = new MarkAlias();
-        $traficNeed = $this->obj->trafic->needs;
-        foreach ($traficNeed as $item)
-            if ($item->model == 'AppModelsMarkAliases') {
-                $alias = MarkAlias::find($item->uid);
-                break;
-            }
-
-        if ($alias && $alias->id) {
-            $response = $this->dnmService->sendPost('/api/need', [
-                'code' => (string)$this->obj->trafic_id,
-                'brand_id' => $alias->dnm_brand_id,
-                'model_alias_id' => $alias->dnm_id,
-            ]);
-
-            if ($response->getStatusCode() == 201)
-                $this->dnmWorksheet->fill(['dnm_appeal_id' => $response->json()['id']])->save();
-        }
+        DNMAppealService::appeal($this);
     }
 
 
@@ -93,8 +74,7 @@ class DNMWorksheet
 
         if ($response->getStatusCode() == 201) {
             $this->write($response->json());
-            $this->appeal();
-            $this->event->visit($this);
+
             return 1;
         }
 
@@ -105,12 +85,11 @@ class DNMWorksheet
 
     private function update()
     {
-        $response = $this->dnmService->sendPut('/api/worksheet/' . $this->dnmWorksheet->dnm_worksheet_id, $this->fill());
+        $response = $this->dnmService->sendPut('/api/worksheet/' . $this->dnmWorksheet->dnm_id, $this->fill());
 
         if ($response->getStatusCode() == 200) {
             $this->write($response->json());
-            $this->appeal();
-            $this->event->reject($this);
+
             return 1;
         }
 
@@ -138,5 +117,15 @@ class DNMWorksheet
             $this->update();
         else
             $this->create();
+    }
+
+
+
+    public static function setWorksheet(Worksheet $worksheet)
+    {
+        $me = new self($worksheet);
+        $me->save();
+        $me->event = new DNMEvent($me);
+        return $me;
     }
 }

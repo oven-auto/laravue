@@ -2,17 +2,18 @@
 
 namespace App\Repositories\Car\Option;
 
+use App\Http\Filters\OptionFilter;
 use App\Models\Option;
 use App\Repositories\Car\Option\DTO\OptionDTO;
 
-Class OptionRepository
+class OptionRepository
 {
     /**
      * CREATE
      * @param array $data ['name', 'code', 'price', 'brand_id', 'mark_id']
      * @return Option
      */
-    public function store(array $data) : Option
+    public function store(array $data): Option
     {
         $option = Option::create(array_merge((new OptionDTO($data))->get(), ['author_id' => auth()->user()->id]));
 
@@ -27,7 +28,7 @@ Class OptionRepository
      * @param array $data ['name', 'code', 'price', 'brand_id', 'mark_id']
      * @return void
      */
-    public function update(Option $option, array $data) : void
+    public function update(Option $option, array $data): void
     {
         $option->fill(array_merge((new OptionDTO($data))->get(), ['author_id' => auth()->user()->id]))->save();
     }
@@ -39,7 +40,7 @@ Class OptionRepository
      * @param Option $option
      * @return void
      */
-    public function delete(Option $option) : void
+    public function delete(Option $option): void
     {
         $option->delete();
     }
@@ -51,7 +52,7 @@ Class OptionRepository
      * @param Option $option
      * @return void
      */
-    public function restore(Option $option) : void
+    public function restore(Option $option): void
     {
         $option->restore();
     }
@@ -63,21 +64,13 @@ Class OptionRepository
      * @param array $data ['trash', 'mark_id', 'name', 'code']
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get(array $data) : \Illuminate\Database\Eloquent\Collection
+    public function get(array $data): \Illuminate\Database\Eloquent\Collection
     {
-        $query = Option::select('options.*')->with(['mark','brand','author']);
+        $query = Option::select('options.*')->with(['mark', 'brand', 'author', 'current_price']);
 
-        if(isset($data['mark_id']))
-            $query->where('options.mark_id', $data['mark_id']);
+        $filter = app()->make(OptionFilter::class, ['queryParams' => array_filter($data)]);
 
-        if(isset($data['trash']) && $data['trash'])
-            $query->onlyTrashed();
-
-        if(isset($data['code']))
-            $query->where('options.code', $data['code']);
-
-        if(isset($data['name']))
-            $query->where('options.name', 'LIKE', '%'.$data['mark_id'].'%');
+        $query->filter($filter);
 
         $options = $query->get();
 

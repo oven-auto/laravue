@@ -10,4 +10,11 @@ class ComplectationCurrentPrice extends Model
     use HasFactory;
 
     public $dates = ['begin_at'];
+
+    protected $with = ['curprice'];
+
+    public function curprice()
+    {
+        return $this->hasOne(\App\Models\ComplectationPrice::class, 'id', 'id');
+    }
 }

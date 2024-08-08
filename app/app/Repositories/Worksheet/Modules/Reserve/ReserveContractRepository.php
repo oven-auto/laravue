@@ -2,46 +2,75 @@
 
 namespace App\Repositories\Worksheet\Modules\Reserve;
 
+use App\Http\Filters\ContractFilter;
+use App\Models\WsmReserveNewCar;
 use App\Models\WsmReserveNewCarContract;
 
 class ReserveContractRepository
 {
-    public function paginate()
+    public function fixCarPrice(WsmReserveNewCarContract $contract)
     {
+        $this->fixComplectationPrice($contract);
+        $this->fixOptionPrices($contract);
     }
 
 
 
-    private function save(WsmReserveNewCarContract $contract, array $data): void
+    private function fixComplectationPrice(WsmReserveNewCarContract $contract)
     {
-        $oldPdkpDate = $contract->pdkp_offer_at;
+        $complectation = $contract->reserve->car->complectation;
 
-        $contract->fill(array_merge(
-            $data,
-            ['author_id' => auth()->user()->id]
-        ))->save();
+        $complectationPrice = $complectation->prices
+            ->sortBy('begin_at', SORT_NATURAL)->where('begin_at', '<=', $contract->dkp_offer_at)
+            ->last();
 
-        if ($oldPdkpDate->format('d.m.Y') != $data['dkp_offer_at']) {
-            $complectation = $contract->reserve->car->complectation;
-            $options = $contract->reserve->car->options;
+        if (!$complectationPrice)
+            throw new \Exception('Под данную дату ДКП не могу выбрать подходящую цену комплектации');
 
-            $complectationPrice = $complectation->prices
-                ->sortBy('begin_at', SORT_NATURAL)->where('begin_at', '<=', $contract->dkp_offer_at)
-                ->last()->price ?? 0;
+        $contract->complectation_price()->sync(['complectation_price_id' => $complectationPrice->id]);
+    }
 
-            $optionsPrice = 0;
-            $options->each(function ($item) use (&$optionsPrice, $contract) {
-                $optionsPrice += $item->prices->sortBy('begin_at', SORT_NATURAL)->where('begin_at', '<=', $contract->dkp_offer_at)->last()->price ?? 0;
+
+
+
+    private function fixOptionPrices(WsmReserveNewCarContract $contract)
+    {
+        $ids = null;
+
+        $options = $contract->reserve->car->options;
+
+        $options->each(function ($item) use ($contract, &$ids) {
+            $optionsPrice = $item->prices->sortBy('begin_at', SORT_NATURAL)->where('begin_at', '<=', $contract->dkp_offer_at)->last();
+
+            if (!$optionsPrice)
+                throw new \Exception('Под данную дату ДКП не могу выбрать подходящую цену опции');
+
+            $ids[] = $optionsPrice->id;
+        });
+
+        if ($ids)
+            $contract->option_price()->sync($ids);
+    }
+
+
+
+    private function save(WsmReserveNewCarContract $contract, array $data)
+    {
+        try {
+            \DB::transaction(function () use ($contract, $data) {
+                $oldDkpDate = $contract->dkp_offer_at;
+
+                $contract->fill(array_merge(
+                    $data,
+                    ['author_id' => auth()->user()->id]
+                ))->save();
+
+                if ($oldDkpDate->format('d.m.Y') != $data['dkp_offer_at']) {
+                    $this->fixCarPrice($contract);
+                }
             });
-
-            $contract->contract_cost()->updateOrCreate(
-                ['contract_id' => $contract->id],
-                [
-                    'author_id' => auth()->user()->id,
-                    'complectation' => $complectationPrice,
-                    'option' => $optionsPrice
-                ]
-            );
+        } catch (\Throwable $e) {
+            throw new \Exception($e->getMessage());
         }
     }
 
@@ -49,7 +78,15 @@ class ReserveContractRepository
 
     public function create(WsmReserveNewCarContract $contract, array $data): void
     {
-        if (WsmReserveNewCarContract::where('reserve_id', $data['reserve_id'])->first())
+        $contract = WsmReserveNewCarContract::where('reserve_id', $data['reserve_id'])->first();
+        $reserve = WsmReserveNewCar::findOrFail($data['reserve_id']);
+        $client = $reserve->worksheet->client;
+
+        if (!$client->checkContractFields())
+            throw new \Exception('В Вашей сделке, Вы дошли до заключения договора, однако у Вашего клиента не заполнены важные поля (ФИО/Компания, Зона контакта, Пол). Перейдите во вкладку клиент и дополните данные.');
+
+
+        if ($contract)
             throw new \Exception('У резерва не может быть более одного контракта');
 
         $this->save($contract, $data);
@@ -60,5 +97,47 @@ class ReserveContractRepository
     public function update(WsmReserveNewCarContract $contract, array $data): void
     {
         $this->save($contract, $data);
+    }
+
+
+
+    /**
+     * Paginator
+     */
+    public function paginate(array $data, $paginate = 20)
+    {
+        $query = WsmReserveNewCarContract::select('wsm_reserve_new_car_contracts.*');
+
+        $filter = app()->make(ContractFilter::class, ['queryParams' => array_filter($data)]);
+
+        $query->filter($filter);
+
+        $contracts = $query->simplePaginate($paginate);
+
+        return $contracts;
+    }
+
+
+
+    /**
+     * Counter
+     */
+    public function counter(array $data)
+    {
+        $query = WsmReserveNewCarContract::query()->select('wsm_reserve_new_car_contracts.id');
+
+        $subQuery = WsmReserveNewCarContract::query()->select('wsm_reserve_new_car_contracts.id');
+
+        $filter = app()->make(ContractFilter::class, ['queryParams' => array_filter($data)]);
+
+        $subQuery->filter($filter);
+
+        $query->rightJoinSub($subQuery, 'subQuery', function ($join) {
+            $join->on('subQuery.id', '=', 'wsm_reserve_new_car_contracts.id');
+        });
+
+        $result = $query->count();
+
+        return $result;
     }
 }

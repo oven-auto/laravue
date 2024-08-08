@@ -67,7 +67,7 @@ class DNM
 
 
 
-    public function sendGet(string $url, array $data)
+    public function sendGet(string $url, array $data = [])
     {
         return $this->service->get($this->concatUrl($url), $data);
     }
@@ -128,5 +128,12 @@ class DNM
     public function getEvents()
     {
         return $this->service->get($this->concatUrl('api/event-type'))->json();
+    }
+
+
+
+    public function getResults()
+    {
+        return $this->service->get($this->concatUrl('/api/lms/result'))->json();
     }
 }

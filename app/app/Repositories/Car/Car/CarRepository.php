@@ -4,9 +4,11 @@ namespace App\Repositories\Car\Car;
 
 use App\Models\Car;
 use App\Http\Filters\CarFilter;
+use App\Models\CarState;
 use App\Repositories\Car\Car\DTO\CarDTO;
 use App\Repositories\Car\Car\DTO\CarTuningDTO;
 use App\Repositories\Car\Car\DTO\LogisticDateDTO;
+use App\Services\Car\CarLogisticStateService;
 use DB;
 
 class CarRepository
@@ -74,6 +76,23 @@ class CarRepository
 
 
 
+    public function setCarStatus(Car $car)
+    {
+        $stateService = new CarLogisticStateService($car);
+
+        $lastState = $stateService->getLastLogisticState();
+
+        if (!$lastState)
+            return;
+
+        $carState = CarState::query()->where('logistic_system_name', $lastState->logistic_system_name)->first();
+
+        if ($carState)
+            $car->saveCarStatus($carState);
+    }
+
+
+
     /**
      * CREATE
      */
@@ -85,8 +104,12 @@ class CarRepository
 
                 $this->saveRelationFasade($car, $data);
 
-                $car->refresh();
                 $car->load('logistic_dates');
+
+                $this->setCarStatus($car);
+
+                $car->refresh();
+
                 return $car;
             }, 3);
         } catch (\Exception $exception) {
@@ -104,17 +127,20 @@ class CarRepository
     public function update(Car $car, array $data)
     {
         try {
-            DB::transaction(function () use ($car, $data) {
+            \DB::transaction(function () use ($car, $data) {
                 $car->fill((new CarDTO($data))->get())->save();
 
                 $this->saveRelationFasade($car, $data);
+
+                $car->load('logistic_dates');
+
+                $this->setCarStatus($car);
+
+                $car->refresh();
             }, 3);
         } catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
         }
-        $car->load('logistic_dates');
-
-        $car->refresh();
     }
 
 
@@ -127,10 +153,19 @@ class CarRepository
         $query = Car::query()->select('cars.*');
 
         $query->with([
+
             'brand', 'mark', 'complectation.motor', 'color', 'order', 'provider', 'author',
             'marker', 'trade_marker', 'order_type', 'logistic_dates', 'technic', 'purchase',
-            'delivery_terms', 'detailing_costs', 'option_price', 'tuning_price', 'over_price',
-            'full_price', 'state_status'
+            'delivery_terms', 'detailing_costs', 'tuning_price', 'over_price', 'state_status',
+            'complectation' => function ($builderComplectation) {
+                $builderComplectation->with(['motor' => function ($builderMotor) {
+                    $builderMotor->with(['transmission', 'driver']);
+                }]);
+            },
+
+            'reserve' => function ($builderReserve) {
+                $builderReserve->with(['contract', 'worksheet']);
+            },
         ]);
 
         $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);

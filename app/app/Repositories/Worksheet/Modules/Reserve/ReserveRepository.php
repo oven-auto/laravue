@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Worksheet\Modules\Reserve;
 
+use App\Http\Filters\ReserveNewCarFilter;
 use App\Models\WsmReserveNewCar;
 use Exception;
 
@@ -106,5 +107,65 @@ class ReserveRepository
     public function attachTradeIn(WsmReserveNewCar $reserve, array $data)
     {
         $reserve->tradeins()->sync($data);
+    }
+
+
+
+    public function paginate(array $data, $paginate = 20)
+    {
+        $query = WsmReserveNewCar::select('wsm_reserve_new_cars.*');
+
+        $query->with([
+            'author', 'contract', 'sales', 'payments', 'issue', 'sale',
+            'worksheet' => function ($builderWorksheet) {
+                $builderWorksheet->with(['executors', 'client.phones', 'redemptions.client_car' => function ($builderRedemption) {
+                    $builderRedemption->with('mark', 'brand');
+                }]);
+            },
+            'car' => function ($builderCar) {
+                $builderCar->with([
+                    'brand', 'mark', 'complectation.motor', 'color', 'order', 'provider', 'author',
+                    'marker', 'trade_marker', 'order_type', 'logistic_dates', 'technic', 'purchase',
+                    'delivery_terms', 'detailing_costs', 'tuning_price', 'over_price', 'state_status',
+                    'complectation' => function ($builderComplectation) {
+                        $builderComplectation->with(['motor' => function ($builderMotor) {
+                            $builderMotor->with(['transmission', 'driver']);
+                        }]);
+                    }
+                ]);
+            },
+            'tradeins' => function ($builderUsedCar) {
+                $builderUsedCar->with(['brand', 'mark']);
+            },
+        ]);
+
+        $filter = app()->make(ReserveNewCarFilter::class, ['queryParams' => array_filter($data)]);
+
+        $query->filter($filter);
+
+        $reserves = $query->groupBy('wsm_reserve_new_cars.id')->simplePaginate($paginate);
+
+        return $reserves;
+    }
+
+
+
+    public function counter(array $data): int
+    {
+        $query = WsmReserveNewCar::query();
+
+        $subQuery = WsmReserveNewCar::query()->select('wsm_reserve_new_cars.*');
+
+        $filter = app()->make(ReserveNewCarFilter::class, ['queryParams' => array_filter($data)]);
+
+        $subQuery->filter($filter);
+
+        $query->rightJoinSub($subQuery, 'subQuery', function ($join) {
+            $join->on('subQuery.id', '=', 'wsm_reserve_new_cars.id');
+        });
+
+        $result = $query->count();
+
+        return $result;
     }
 }

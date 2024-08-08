@@ -2,7 +2,9 @@
 
 namespace App\Helpers\Date;
 
-Class DateHelper
+use Carbon\Carbon;
+
+class DateHelper
 {
     public static function addYear($date, $year = 1)
     {
@@ -33,5 +35,18 @@ Class DateHelper
     {
         $arr = ['янв', 'февр', 'март', 'апр.', 'май', 'июнь', 'июль', 'авг', 'сент', 'окт', 'нояб', 'дек'];
         return $arr[$index];
+    }
+
+
+
+    /**
+     * СОЗДАТЬ ОБЪЕКТ КАРБОН ИЗ СТРОКИ НЕОБХОДИМОГО ФОРМАТА
+     * @param $string
+     * @param $format
+     * @return Carbon
+     */
+    public static function createFromString($string, $format = 'd.m.Y'): Carbon
+    {
+        return Carbon::createFromFormat($format, $string);
     }
 }

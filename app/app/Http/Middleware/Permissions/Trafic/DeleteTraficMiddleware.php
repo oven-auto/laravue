@@ -21,16 +21,15 @@ class DeleteTraficMiddleware
 
         $trafic = Trafic::withoutTrashed()->findOrFail($request->trafic);
 
-        if($userPermission->contains('slug', $permission_all))
+        if ($userPermission->contains('slug', $permission_all))
             return $next($request);
 
-        if(Trafic::checkTrafic('all', $trafic, $permission_appeals))
+        if (Trafic::checkTrafic('all', $trafic, $permission_appeals))
             return $next($request);
 
-        if($userPermission->contains('slug', $permission_author) && $trafic->author_id == auth()->user()->id)
+        if ($userPermission->contains('slug', $permission_author) && $trafic->author_id == auth()->user()->id)
             return $next($request);
 
-        //throw new \Exception('Недостаточно прав для удаления трафика №'.$trafic->id);
         throw new \Exception('Доступ ограничен! Вы не можете удалять работу с этим клиентом.');
     }
 }

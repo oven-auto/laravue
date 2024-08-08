@@ -264,4 +264,22 @@ class Client extends Model implements PersonInterface, CommentInterface
     {
         return $this->hasMany(\App\Models\ClientLink::class, 'client_id', 'id');
     }
+
+
+
+    public function checkContractFields()
+    {
+        if ($this->isPerson())
+            if ($this->firstname && $this->lastname && $this->fathername && $this->trafic_zone_id && $this->trafic_sex_id)
+                return 1;
+
+        if ($this->isCompany())
+            if ($this->company_name && $this->trafic_zone_id)
+                return 1;
+
+        if ($this->isOurCompany())
+            return 1;
+
+        return 0;
+    }
 }

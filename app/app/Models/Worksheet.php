@@ -219,4 +219,30 @@ class Worksheet extends Model
 
         return $modules;
     }
+
+
+
+    /**
+     * Проверка пользователь участником РЛ
+     */
+    public function isExecutor($userId = null)
+    {
+        if (!$userId)
+            $userId = auth()->user()->id;
+
+        return $this->executors->contains('id', $userId) ? 1 : 0;
+    }
+
+
+
+    /**
+     * Проверка на автора
+     */
+    public function isAuthor($userId = null)
+    {
+        if (!$userId)
+            $userId = auth()->user()->id;
+
+        return $this->author_id == $userId ? 1 : 0;
+    }
 }

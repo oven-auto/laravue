@@ -37,40 +37,37 @@ class SQL_VIEW_CONTRACT_PRICE extends Command
      */
     public function handle()
     {
-        $query = "CREATE OR REPLACE VIEW contract_prices AS
+        $query = "CREATE OR REPLACE VIEW contract_complectation_prices AS
             SELECT
 	            contract.id as contract_id,
-	            if(
-                    (complectation_prices.price is null), fullp.complectationprice, complectation_prices.price
-                ) as complectationprice
+                complectation_prices.id as complectation_price_id
 
             FROM wsm_reserve_new_car_contracts as contract
-                        LEFT JOIN (
-                            SELECT
-                                contract.id as reserve_contract_id,
-                                max(comprice.id) as complectation_price_id
+            LEFT JOIN (
+                SELECT
+                    contract.id as reserve_contract_id,
+                    max(comprice.id) as complectation_price_id
 
-                            FROM wsm_reserve_new_car_contracts as contract
+                FROM wsm_reserve_new_car_contracts as contract
 
-                            LEFT JOIN wsm_reserve_new_cars as rnc
-                                on contract.reserve_id = rnc.id
+                LEFT JOIN wsm_reserve_new_cars as rnc
+                    on contract.reserve_id = rnc.id
 
-                            LEFT JOIN cars
-                                on cars.id = rnc.car_id
+                LEFT JOIN cars
+                    on cars.id = rnc.car_id
 
-                            left JOIN car_full_prices
-                                on car_full_prices.car_id = cars.id
+                left JOIN car_full_prices
+                    on car_full_prices.car_id = cars.id
 
-                            LEFT JOIN complectation_prices as comprice
-                                on comprice.complectation_id = cars.complectation_id
+                LEFT JOIN complectation_prices as comprice
+                    on comprice.complectation_id = cars.complectation_id
 
-                            WHERE contract.dkp_offer_at >= comprice.begin_at
+                WHERE contract.dkp_offer_at >= comprice.begin_at
 
-                            GROUP by contract.id
-                        ) as cc
-                        on cc.reserve_contract_id = contract.id
-                        LEFT JOIN complectation_prices on complectation_prices.id = cc.complectation_price_id
+                GROUP by contract.id
+            ) as cc on cc.reserve_contract_id = contract.id
 
+            LEFT JOIN complectation_prices on complectation_prices.id = cc.complectation_price_id
             LEFT JOIN wsm_reserve_new_cars as reservecar on reservecar.id = contract.reserve_id
             LEFT JOIN car_full_prices as fullp on fullp.car_id = reservecar.car_id
 

@@ -16,7 +16,7 @@ class ReserveSaveResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'                            => $this->id,
+            'id'                        => $this->id,
             'created_at'                => $this->created_at->format('d.m.Y'),
             'worksheet_id'              => $this->worksheet_id,
             'author' => [
@@ -32,9 +32,10 @@ class ReserveSaveResource extends JsonResource
                 'author'                => $this->last_comment->author->cut_name,
                 'created_at'            => $this->last_comment->created_at ? $this->last_comment->created_at->format('d.m.Y (H:i)') : '',
             ] : [],
+            'price'                     => $this->getDebt(),
             'payments' => PaymentSaveResource::collection($this->payments),
             'tradeins' => UsedCarItemResource::collection($this->tradeins),
-            'coast' => $this->coast(),
+            //'coast' => '***', //$this->coast(),
             'issue_date' => $this->issue()->exists() ? [
                 'author' => [
                     'name'                  => $this->issue->author->cut_name,

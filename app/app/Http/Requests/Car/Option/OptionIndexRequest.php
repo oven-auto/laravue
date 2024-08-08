@@ -24,6 +24,7 @@ class OptionIndexRequest extends FormRequest
     public function rules()
     {
         return [
+            'car_id' => 'sometimes',
             'name' => 'sometimes|numeric',
             'code' => 'sometimes|string',
             'mark_id' => 'sometimes|string',

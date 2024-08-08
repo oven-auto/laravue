@@ -42,7 +42,7 @@ class ReserveCommentController extends Controller
         ));
 
         return response()->json([
-            'message' => 'Comment Appended',
+            'message' => 'Комментарий добавлен',
             'success' => 1,
         ]);
     }

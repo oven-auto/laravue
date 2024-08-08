@@ -26,6 +26,7 @@ class PaymentReserveController extends Controller
         return response()->json([
             'data' => new PaymentSaveResource($pay),
             'success' => 1,
+            'message' => 'Оплата зафиксирована.'
         ]);
     }
 
@@ -36,7 +37,7 @@ class PaymentReserveController extends Controller
         $this->repo->delete($pay);
 
         return response()->json([
-            'message' => 'Payment destroy',
+            'message' => 'Оплата отменена.',
             'success' => 1,
         ]);
     }

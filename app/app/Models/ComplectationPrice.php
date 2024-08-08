@@ -27,4 +27,11 @@ class ComplectationPrice extends Model
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
     }
+
+
+
+    public function current()
+    {
+        return $this->hasOne(\App\Models\ComplectationCurrentPrice::class, 'id', 'id');
+    }
 }

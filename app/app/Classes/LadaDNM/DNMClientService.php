@@ -3,9 +3,9 @@
 namespace App\Classes\LadaDNM;
 
 use App\Models\Client;
-use App\Models\DnmLada;
+use App\Models\DnmClient;
 
-class DNMClient
+class DNMClientService
 {
     private $dnmService;
 
@@ -19,7 +19,7 @@ class DNMClient
 
         $this->obj = $obj;
 
-        $this->dnmClient = \App\Models\DnmLada::where('client_id', $obj->id)->first();
+        $this->dnmClient = \App\Models\DnmClient::where('client_id', $obj->id)->first() ?? new DnmClient();
     }
 
 
@@ -31,9 +31,9 @@ class DNMClient
      */
     private function write(array $data)
     {
-        $this->dnmClient = DnmLada::updateOrCreate(
+        $this->dnmClient = DnmClient::updateOrCreate(
             ['client_id' => $this->obj->id],
-            ['dnm_client_id' => $data['id']]
+            ['dnm_id' => $data['id']]
         );
     }
 
@@ -90,7 +90,7 @@ class DNMClient
     {
         $data = $this->fill();
 
-        $response = $this->dnmService->sendPut('/api/client/' . $this->dnmClient->dnm_client_id, $data);
+        $response = $this->dnmService->sendPut('/api/client/' . $this->dnmClient->dnm_id, $data);
 
         if ($response->getStatusCode() == 200) {
             $this->write($response->json());
@@ -124,5 +124,21 @@ class DNMClient
             $this->update();
         else
             $this->create();
+    }
+
+
+
+    public function getDnmId()
+    {
+        return $this->dnmClient->dnm_id;
+    }
+
+
+
+    public static function saveClient(Client $client)
+    {
+        $me = new self($client);
+        $me->save();
+        return $me;
     }
 }

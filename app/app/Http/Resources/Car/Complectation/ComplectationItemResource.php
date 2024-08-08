@@ -31,7 +31,10 @@ class ComplectationItemResource extends JsonResource
                 'motor_type_id' => $this->motor->motor_type_id,
                 'body_work_id' => $this->body_work_id,
                 'author' => $this->author->cut_name,
-                'price' => $this->price,
+                'price' => $this->current_price->price ? [
+                    'price' => $this->current_price->price,
+                    'begin_at' => $this->current_price->begin_at->format('d.m.Y')
+                ] : '',
                 'last_editor' => [
                     'author' => $this->last_history->author->cut_name,
                     'date' => $this->last_history->created_at->format('d.m.Y (H:i)'),

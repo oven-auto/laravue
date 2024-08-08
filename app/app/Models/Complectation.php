@@ -149,6 +149,13 @@ class Complectation extends Model
 
 
 
+    public function getPriceDateAttribute()
+    {
+        return $this->current_price->begin_at ? $this->current_price->begin_at->format('d.m.Y') : '';
+    }
+
+
+
     public function saveAlias($aliasId)
     {
         $this->alias()->updateOrCreate([

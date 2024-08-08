@@ -30,6 +30,7 @@ class TradeInReserveController extends Controller
         return response()->json([
             'data' => UsedCarItemResource::collection($reserve->tradeins),
             'success' => 1,
+            'message' => 'Скидка за автомобиль клиента учтена.'
         ]);
     }
 

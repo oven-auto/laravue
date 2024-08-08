@@ -37,7 +37,9 @@ class SaleController extends Controller
     {
         $this->repo->save($sale, $request->validated());
 
-        return new SaleReserveResource($sale);
+        return (new SaleReserveResource($sale))->additional([
+            'message' => 'Скидка добавлена.',
+        ]);
     }
 
 
@@ -53,7 +55,9 @@ class SaleController extends Controller
     {
         $this->repo->save($sale, $request->validated());
 
-        return new SaleReserveResource($sale);
+        return (new SaleReserveResource($sale))->additional([
+            'message' => 'Скидка изменена.',
+        ]);
     }
 
 
@@ -63,7 +67,7 @@ class SaleController extends Controller
         $this->repo->delete($sale);
 
         return response()->json([
-            'message' => 'Delete',
+            'message' => 'Скидка отменена',
             'success' => 1,
         ]);
     }

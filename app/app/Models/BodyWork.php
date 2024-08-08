@@ -10,7 +10,25 @@ class BodyWork extends Model
 {
     use HasFactory, Createable;
 
-    protected $fillable = ['name', 'sort'];
+    protected $fillable = ['name', 'sort', 'acronym'];
 
     public $timestamps = false;
+
+    public function vehiclebodies()
+    {
+        return $this->belongsToMany(
+            \App\Models\VehicleType::class,
+            'vehicle_bodies',
+
+            'bodywork_id',
+            'vehicle_id',
+        );
+    }
+
+
+
+    public function getVehicleAttribute()
+    {
+        return $this->vehiclebodies->first() ?? new VehicleType();
+    }
 }

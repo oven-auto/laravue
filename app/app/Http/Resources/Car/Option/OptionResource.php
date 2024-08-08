@@ -19,9 +19,12 @@ class OptionResource extends JsonResource
             'name' => $this->name,
             'code' => $this->code,
             'price' => $this->price,
+            'begin_at' => '',
             'mark' => $this->mark->name,
             'brand' => $this->brand->name,
-            'trash' => (int)$this->trashed()
+            'trash' => (int)$this->trashed(),
+            'author' => $this->author->cut_name,
+            'created_at' => $this->created_at->format('d.m.Y',)
         ];
     }
 }

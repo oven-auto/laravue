@@ -23,7 +23,9 @@ class ContractController extends Controller
     {
         $this->repo->create($contract, $request->validated());
 
-        return new ContractResource($contract);
+        return (new ContractResource($contract))->additional([
+            'message' => 'Договор создан.'
+        ]);
     }
 
 
@@ -32,7 +34,9 @@ class ContractController extends Controller
     {
         $this->repo->update($contract, $request->validated());
 
-        return new ContractResource($contract);
+        return (new ContractResource($contract))->additional([
+            'message' => 'Договор изменен.'
+        ]);
     }
 
 

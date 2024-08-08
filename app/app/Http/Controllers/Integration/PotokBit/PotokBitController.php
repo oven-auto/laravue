@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Integration\PotokBit;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\PotokBitCreateRequest;
 use App\Models\Company;
 use App\Models\Trafic;
 use App\Repositories\Trafic\TraficRepository;
@@ -28,11 +27,19 @@ class PotokBitController extends Controller
             'phone' => 'required|digits:11',
             'link' => 'required',
             'comment' => 'required|string',
+            'appeal' => 'sometimes'
         ]);
 
         $company = Company::find(2);
 
         $structureId = $company->structures->where('id', 1)->first()->pivot->id;
+
+        $appeal = NULL;
+        if ($request->has('appeal'))
+            $appeal = match ($request->appeal) {
+                'sale' => 36,
+                'ransom' => 37,
+            };
 
         $data = [
             'author_id' => auth()->user()->id,
@@ -47,6 +54,7 @@ class PotokBitController extends Controller
             'interval' => 15,
             'begin_at' => now(),
             'end_at' => now()->addMinutes(15),
+            'trafic_appeal_id' => $appeal,
         ];
 
         $trafic = Trafic::create($data);

@@ -40,7 +40,8 @@ class ReserveNewCarController extends Controller
 
         return response()->json([
             'data' =>  new ReserveSaveResource($reserve),
-            'success' => 1
+            'success' => 1,
+            'message' => 'Резерв создан',
         ]);
     }
 
@@ -52,7 +53,8 @@ class ReserveNewCarController extends Controller
 
         return response()->json([
             'data' =>  new ReserveSaveResource($reserve),
-            'success' => 1
+            'success' => 1,
+            'message' => 'Резерв изменен',
         ]);
     }
 

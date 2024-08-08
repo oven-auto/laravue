@@ -19,6 +19,7 @@ class CarFilter extends AbstractFilter
     public const ORDER_NUMBER = 'order_number';
     public const STATE_STATUS = 'status';
     public const SEARCH = 'search';
+    public const IDS = 'ids';
     public const INIT = 'init';
 
 
@@ -40,6 +41,7 @@ class CarFilter extends AbstractFilter
             self::ORDER_NUMBER          => [$this, 'orderNumber'],
             self::STATE_STATUS          => [$this, 'stateStatus'],
             self::SEARCH                => [$this, 'search'],
+            self::IDS                   => [$this, 'ids'],
         ];
     }
 
@@ -56,13 +58,13 @@ class CarFilter extends AbstractFilter
     public function init(Builder $builder)
     {
         $builder
-            ->leftJoin('brands', 'brands.id', 'cars.brand_id')
-            ->leftJoin('marks', 'marks.id', 'cars.mark_id')
-            ->leftJoin('complectations', 'complectations.id', 'cars.complectation_id')
-            ->leftJoin('motors', 'motors.id', 'complectations.motor_id')
-            ->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id')
-            ->leftJoin('car_markers', 'car_markers.car_id', 'cars.id')
-            ->leftJoin('car_orders', 'car_orders.car_id', 'cars.id')
+            ->leftJoin('brands', 'brands.id', 'cars.brand_id') //Бренд
+            ->leftJoin('marks', 'marks.id', 'cars.mark_id') //Модель
+            ->leftJoin('complectations', 'complectations.id', 'cars.complectation_id') //Комплектация
+            ->leftJoin('motors', 'motors.id', 'complectations.motor_id') //Мотор
+            ->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id') //Товарный признак
+            ->leftJoin('car_markers', 'car_markers.car_id', 'cars.id') //Контрмарка
+            ->leftJoin('car_orders', 'car_orders.car_id', 'cars.id') //Заказ
             ->groupBy('cars.id')
             ->groupBy('car_trade_markers.id')
             ->groupBy('car_markers.id')
@@ -71,6 +73,19 @@ class CarFilter extends AbstractFilter
 
 
 
+    /**
+     * Выбранные ИД
+     */
+    public function ids(Builder $builder, array $value)
+    {
+        $builder->whereIn('cars.id', $value);
+    }
+
+
+
+    /**
+     * Поиск по Вин, ИД, НомерЗаказа
+     */
     public function search(Builder $builder, $value)
     {
         $builder->where(function ($query) use ($value) {
@@ -83,7 +98,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * STATE STATUS
+     * Логистический статус
      */
     public function stateStatus(Builder $builder, $value)
     {
@@ -93,7 +108,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * ORDER NUMBER
+     * НомерЗаказа
      */
     public function orderNumber(Builder $builder, $value)
     {
@@ -103,7 +118,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * TRADE MARKER
+     * Товарный признак
      */
     public function tradeMarkerId(Builder $builder, $value)
     {
@@ -113,7 +128,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * LOGIST MARKER
+     * КонтрМарка
      */
     public function markerId(Builder $builder, $value)
     {
@@ -123,7 +138,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * BRAND
+     * Бренд
      */
     public function brandId(Builder $builder, $value)
     {
@@ -133,7 +148,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * MARK
+     * Модель
      */
     public function markId(Builder $builder, $value)
     {
@@ -143,7 +158,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * YEAR
+     * Год выпуска
      */
     public function year(Builder $builder, $value)
     {
@@ -153,7 +168,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * VIN
+     * ВИН
      */
     public function vin(Builder $builder, $value)
     {
@@ -163,7 +178,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * COMPLECTATION CODE
+     * Код комплектации
      */
     public function complectationCode(Builder $builder, $value)
     {
@@ -173,7 +188,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * COMPLECTATION ID
+     * ИД Комплектации
      */
     public function complectationId(Builder $builder, $value)
     {
@@ -183,7 +198,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * BODYWORK
+     * Тип кузова
      */
     public function bodyWork(Builder $builder, $value)
     {
@@ -193,7 +208,7 @@ class CarFilter extends AbstractFilter
 
 
     /**
-     * TRANSMISSION
+     * Трансмиссия
      */
     public function transmission(Builder $builder, $value)
     {

@@ -45,7 +45,8 @@ class SQL_VIEW_CAR_FULL_PRICE extends Command
                 IFNULL((ccp.price),0) as complectationprice,
                 IFNULL((ctp.price),0) as tuningprice,
                 (IFNULL(over.price,0) + IFNULL(cop.price,0) +  IFNULL((ccp.price),0) + IFNULL((ctp.price),0)) as price,
-                c.id as car_id
+                c.id as car_id,
+                ifnull((ccp.id),0) as complectation_price_id
 
             FROM cars as c
 

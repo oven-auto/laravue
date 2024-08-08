@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Car\Car;
 
-use App\Helpers\String\StringHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CarSupportResource extends JsonResource
@@ -16,15 +15,9 @@ class CarSupportResource extends JsonResource
     public function toArray($request)
     {
         $support = [
-            'complectation'             => new CarComplectationResource($this),
-
-            'option_price' => $this->option_price->price ?? 0,
+            'complectation' => new CarComplectationResource($this),
 
             'status' => $this->currentCarState(),
-
-            'full_price' => $this->full_price->price ?? 0,
-
-            'over_price'                => $this->over_price->price ?? 0,
 
             'brand' => $this->brand->name,
 
@@ -61,13 +54,25 @@ class CarSupportResource extends JsonResource
             ],
 
             'coast' => [
-                'base'      => $this->complectationPrice(),
-                'option'    => $this->optionPrice(),
-                'over'      => $this->overPrice(),
-                'tuning'    => $this->tuningPrice(),
-                'full'      => $this->fullPrice(),
-                'sale'      => $this->sale(),
+                'base'      => $this->getComplectationPrice(),
+                'option'    => $this->getOptionPrice(),
+                'over'      => $this->getOverPrice(),
+                'tuning'    => $this->getTuningPrice(),
+                'full'      => $this->getFullPrice(),
+                'sale'      => $this->getReserveSale(),
             ],
+
+            'owner' => $this->owner ? [
+                'client' => [
+                    'name' => $this->owner->client->full_name,
+                    'phone' => $this->owner->client->phones->first()->phone,
+                    'id' => $this->owner->client_id
+                ],
+                'author' => [
+                    'name' => $this->owner->author->cut_name,
+                    'created_at' => $this->owner->created_at->format('d.m.y (H:i)')
+                ]
+            ] : [],
         ];
 
         $support = array_merge($support, $this->getLogisticAuthors()->collapse()->toArray());

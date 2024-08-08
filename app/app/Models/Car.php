@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Helpers\String\StringHelper;
 use App\Repositories\Car\Car\DTO\CarTuningDTO;
 use App\Repositories\Car\Car\DTO\LogisticDateDTO;
 use DateTime;
@@ -10,7 +9,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\Filterable;
-use stdClass;
+use App\Services\Car\CarLogisticStateService;
+
 
 /**
  * CAR MODEL
@@ -40,7 +40,8 @@ use stdClass;
  * @method state_status         relation hasOne
  * @method comment              relation hasOne
  * @method collector            relation hasOne
- * @method reserve               relation hasOne
+ * @method reserve              relation hasOne
+ * @method owner                relation hasOne
  *
  * SAVE
  *
@@ -90,11 +91,11 @@ class Car extends Model
     }
 
     /**
-     * FULL PRICE
+     * OWNER
      */
-    public function full_price()
+    public function owner()
     {
-        return $this->hasOne(\App\Models\CarFullPrice::class, 'car_id', 'id');
+        return $this->hasOne(\App\Models\CarOwner::class, 'car_id', 'id');
     }
 
 
@@ -132,10 +133,10 @@ class Car extends Model
     /**
      *
      */
-    public function option_price()
-    {
-        return $this->hasOne(\App\Models\CarOptionPrice::class, 'car_id', 'id')->withDefault();
-    }
+    // public function option_price()
+    // {
+    //     return $this->hasOne(\App\Models\CarOptionPrice::class, 'car_id', 'id')->withDefault();
+    // }
 
 
 
@@ -479,65 +480,6 @@ class Car extends Model
 
 
 
-    /**
-     * SAVE LOGISTIC DATES
-     */
-    // public function saveLogisticDates(LogisticDateDTO $dto)
-    // {
-    //     $states = LogisticState::get(); //Возможные шаги
-
-    //     $arr = $dto->get(); //Превращаем объект дат в масив
-
-    //     $dates = $this->logistic_dates; //существующие даты на машине
-
-    //     $countDates = count($dates); //количество всех установленых дат
-
-    //     $currentState = $countDates ? $dates->max('state.state') : 0; //текущий шаг на машине
-
-    //     $dateTime = new DateTime(); //объект для форматирования даты
-
-    //     $updateOrCreate = function ($key, $date) use ($dateTime) {
-    //         $this->logistic_dates()->updateOrCreate(
-    //             ['car_id' => $this->id, 'logistic_system_name' => $key,],
-    //             ['author_id' => auth()->user()->id, 'date_at' => $dateTime->createFromFormat('d.m.Y', $date), 'logistic_system_name' => $key,]
-    //         );
-    //     };
-
-    //     $maxState = 0;
-
-    //     foreach ($arr as $key => $item) //бежим по массиву полученых дат полученых от клиента
-    //     {
-    //         if ($currentState == 0) //если на машине не было ни одной даты
-    //             $updateOrCreate($key, $item); //сохраняем все что пришло с клиента
-
-    //         else //иначе если хотя бы одна дата заполнена
-    //         {
-    //             $state = $states->where('system_name', $key)->first(); //узнаем цену шага
-
-    //             $maxState = $state->state > $maxState ? $state->state : $maxState;
-
-    //             $carLogisticState = $dates->where('logistic_system_name', $key)->first(); //получаем если есть дату из машины по текущему ключу
-
-    //             if ($state->state > $currentState && $state->state > 0) //если цена шага больше либо равна цене текущего шага и больше 0
-    //                 $updateOrCreate($key, $item); //то обновляем либо создаем
-
-    //             elseif ($state->state == $currentState && $state->state != 0) {
-    //                 //dump($carLogisticState->date_at->format('d.m.Y'));
-    //                 //dump($item);
-    //                 if ($carLogisticState == null || $carLogisticState && $carLogisticState->date_at->format('d.m.Y') != $item)
-    //                     //dd(1);
-    //                     $updateOrCreate($key, $item);
-    //             } elseif ($state->state == 0) //если шаг логистики = 0, (те те которые всегда редактируемые)
-    //             {
-    //                 if ($carLogisticState == null || ($carLogisticState && $carLogisticState->date_at->format('d.m.Y') != $item)) //если логистики небыло или дата текущая != переданой с клиента
-    //                     $updateOrCreate($key, $item); //то обновляем либо создаем
-    //             }
-    //         }
-    //     }
-
-    //     //$this->logistic_dates()->where('state.state', '>', $maxState)->delete();
-    // }
-
     public function saveLogisticDates(LogisticDateDTO $dto)
     {
         $updateOrCreate = function ($key, $date) {
@@ -721,6 +663,38 @@ class Car extends Model
 
 
 
+    /**
+     * Сохранить владельца, того на кого списывается автомобиль
+     */
+    public function saveOwner(int|\App\Models\Client $client = null)
+    {
+        if (!$client)
+            return;
+
+        $authorId = auth()->user()->id;
+
+        if ($client instanceof Client)
+            $client = $client->id;
+
+        $this->owner()->updateOrCreate(
+            ['car_id' => $this->id],
+            ['client_id' => $client, 'author_id' => $authorId]
+        );
+    }
+
+
+
+    /**
+     * Сохранить логистический статус машины, который зависит от текущего ллогистического шага
+     */
+    public function saveCarStatus(CarState $carState)
+    {
+        $this->status = $carState->status;
+        $this->save();
+    }
+
+
+
     /**********************************************
     /******************************************* */
     /***GET METHOD////////////////////////////// */
@@ -779,296 +753,296 @@ class Car extends Model
 
 
     /**
-     * СУММА ДЕТАЛИЗАЦИИ ЦЕНЫ
+     * Сумма детализации цены
      */
     public function getDetailingFullCostAttribute()
     {
         $price = $this->detailing_costs->sum('price');
+
         return $price;
     }
 
 
 
     /**
-     * IS FIXED PRICE
+     * Получить данные указанного логистического статуса
      */
-    public function isFixedPrice(): bool
+    public function getStateByName($key)
     {
-        if ($this->reserve && $this->reserve->contract && $this->reserve->contract->dkp_offer_at)
-            return 1;
-        return 0;
+        $date = $this->logistic_dates->where('logistic_system_name', $key)->first();
+
+        if (!$date)
+            return [];
+
+        return [
+            'author' => $date->author->cut_name,
+            'date_at' => $date->date_at->format('d.m.Y'),
+        ];
     }
 
 
 
-    public function getReserveCoast()
-    {
-        return $this->reserve ? $this->reserve->getCarCoast() : 0;
-    }
-
-
-
-    public function getReserveSale()
-    {
-        return $this->reserve ? $this->reserve->getCarSale() : 0;
-    }
-
-
-
-    public function getReserveBalance()
-    {
-        if (!$this->reserve)
-            return 0;
-        return $this->reserve->getBalance();
-    }
-
-
-
-    public function getReserveFullCoast()
-    {
-        return $this->reserve ? $this->reserve->getCarFullCoast() : 0;
-    }
-
-
-
-    public function reserveClient()
-    {
-        if (!$this->reserve)
-            return new Client();
-
-        $client = $this->reserve->worksheet->client;
-
-        return $client;
-    }
-
-
-
-    public function reserveLastPayment()
-    {
-        if (!$this->reserve)
-            return 0;
-        return $this->reserve->payments->last();
-    }
-
-
-
-    public function getDKPOfferDate()
-    {
-        if (!$this->reserve || !$this->reserve->contract)
-            return '';
-
-        return $this->reserve->contract->DkpOfferDate;
-    }
-
-
-
-    public function getDKPAuthor()
-    {
-        if (!$this->reserve || !$this->reserve->contract)
-            return '';
-
-        return $this->reserve->contract->dkp_decorator->cut_name;
-    }
-
-
-
-    public function getReserveTradeins()
-    {
-        if (!$this->reserve)
-            return collect([]);
-
-        return $this->reserve->tradeins;
-    }
-
-
-
-    public function getWorksheetTradeins()
-    {
-        if (!$this->reserve || !$this->reserve->worksheet)
-            return collect([]);
-
-        return $this->reserve->worksheet->redemptions;
-    }
-
-
-
-    public function getCurrentState()
-    {
-        if (!$this->reserve)
-            return 'Свободный';
-
-        if ($this->reserve->contract)
-            return 'Клиентский';
-
-        $currentDate = now();
-        $reserveDate = $this->reserve->created_at;
-        $diffDate = $reserveDate->diffInDays($currentDate);
-
-        return 'Резерв ' . $diffDate;
-    }
-
-
-
-    public function getCurrentStateColor()
-    {
-        if (!$this->reserve)
-            return 'green';
-
-        if ($this->reserve->contract)
-            return 'orange';
-
-        return 'red';
-    }
-
-
-
-    public function hasPTS()
-    {
-        return $this->getLogisticDates('ransom_date') ? 1 : 0;
-    }
-
-
-
-    public function complectationPrice()
-    {
-        if ($this->reserve)
-            return $this->reserve->complectationPrice();
-
-        return $this->full_price->complectationprice;
-    }
-
-
-
-    public function optionPrice()
-    {
-        if ($this->reserve)
-            return $this->reserve->optionPrice();
-
-        return $this->full_price->optionprice;
-    }
-
-
-
-    public function overPrice()
-    {
-        if ($this->reserve)
-            return $this->reserve->overPrice();
-
-        return $this->full_price->overprice;
-    }
-
-
-
-    public function tuningPrice()
-    {
-        if ($this->reserve)
-            return $this->reserve->tuningPrice();
-
-        return $this->full_price->tuningprice;
-    }
-
-
-
-    public function sale()
-    {
-        if ($this->reserve)
-            return $this->reserve->getCarSale();
-        return 0;
-    }
-
-
-
-    public function fullPrice()
-    {
-        return
-            $this->complectationPrice() +
-            $this->optionPrice() +
-            $this->overPrice() +
-            $this->tuningPrice();
-    }
-
-
-
+    /**
+     * Получить текущий статус логистики
+     */
     public function currentCarState()
     {
-        $state = $this->logistic_dates->where('state.state', $this->logistic_dates->max('state.state'))->first();
+        $stateService = new CarLogisticStateService($this);
 
-        $state_status = $this->state_status;
+        return $stateService->getStatusString();
+    }
 
-        $obj = new stdClass();
-        $obj->title = $state_status->description ?? 'В заявке';
-        $obj->date = $state->date_at ?? $this->created_at;
-        $obj->id = $state_status->id ?? 0;
 
-        if (isset($state->state)) {
-            $obj->title = $state->state->carstate->description;
-            $obj->date = $state->date_at ?? $this->created_at;
-            $obj->id = $state->state->carstate->id;
-        }
 
-        if ($this->reserve && $this->reserve->issue->date_at) {
-            $obj->title = $state_status->description ?? 'Выдан';
-            $obj->date = $state->date_at ?? $this->created_at;
-            $obj->id = 9;
-        }
+    /**
+     * Получить статус резерва авто
+     */
+    public function getReserveStatus()
+    {
+        if ($this->isFixed())
+            return 'Клиентский';
+        if ($this->isReserved())
+            return 'Резерв ' . $this->reserve->created_at->diffInDays(now());
+        return 'Свободный';
+    }
 
-        if ($this->reserve && $this->reserve->sale->date_at) {
-            $obj->title = $state_status->description ?? 'Продан';
-            $obj->date = $state->date_at ?? $this->created_at;
-            $obj->id = 10;
-        }
 
-        $now = now();
 
-        $cutTimeFromDate = function ($obj) {
-            $date = $obj->date;
-            $date->setHour(0)->setMinutes(0)->setSeconds(0);
-            $obj->date = $date;
-        };
+    /**
+     * Получить код цвета статуса резерва
+     */
+    public function getReserveStatusColor()
+    {
+        $status = explode(' ', $this->getReserveStatus())[0];
 
-        $getWithCountDay = function ($obj, $plusDay = 0) use ($now) {
-            $days = $now->diffInDays($obj->date) + $plusDay;
-            return $obj->title . ' ' . $days . ' ' . StringHelper::dayWord($days);
-        };
-
-        $getWithDate = function ($obj) {
-            return $obj->title . ' ' . $obj->date->format('d.m.Y');
-        };
-
-        $getWithCountDayOrDate = function ($obj) use ($now, $getWithCountDay, $getWithDate) {
-            if ($now > $obj->date)
-                return $getWithCountDay($obj);
-            return $getWithDate($obj);
-        };
-
-        $getOnlyStatus = function ($obj) {
-            return $obj->title;
-        };
-
-        $cutTimeFromDate($obj);
-
-        return match ($obj->id) {
-            0 => $getWithCountDay($obj, 1),
-            1 => $getWithCountDay($obj, 1),
-            2 => $getWithCountDayOrDate($obj),
-            3 => $getWithDate($obj),
-            4 => $getOnlyStatus($obj),
-            5 => $getOnlyStatus($obj),
-            6 => $getWithDate($obj),
-            7 => $getWithDate($obj),
-            8 => $getWithCountDay($obj, 1),
-            9 => $getWithDate($obj),
-            10 => $getWithDate($obj),
+        return match ($status) {
+            'Свободный' => 1,
+            'Клиентский' => 2,
+            'Резерв' => 3,
         };
     }
 
 
 
-    public function getBodyDatePrice()
+    /**
+     * Проверка есть ли ПТС
+     */
+    public function hasPTS()
     {
-        if ($this->reserve && $this->reserve->contract)
-            return $this->reserve->contract->dkp_offer_date;
+        return $this->getRansomDate() ? 1 : 0;
+    }
 
-        return $this->complectation->current_price->begin_at ? $this->complectation->current_price->begin_at->format('d.m.Y') : '';
+
+
+    /**
+     * Проверить есть ли резерв
+     */
+    public function isReserved(): bool
+    {
+        return $this->reserve ? 1 : 0;
+    }
+
+
+
+    /**
+     * Проверка зафиксирована ли цена
+     */
+    public function isFixed(): bool
+    {
+        if ($this->isReserved())
+            return $this->reserve->isFixedCost();
+        return 0;
+    }
+
+
+
+    /**
+     * Получить стоимость комплектации
+     */
+    public function getComplectationPrice(): int
+    {
+        return $this->isReserved() ? $this->reserve->getComplectationCost() : $this->complectation->price;
+    }
+
+
+
+    /**
+     * Получить стоимость опций
+     */
+    public function getOptionPrice(): int
+    {
+        return $this->isReserved() ? $this->reserve->getOptionCost() : $this->options->sum('price');
+    }
+
+
+
+    /**
+     * Получить стоимость переоценки
+     */
+    public function getOverPrice(): int
+    {
+        return $this->over_price->price ?? 0;
+    }
+
+
+
+    /**
+     * Получить стоимость тюнинга
+     */
+    public function getTuningPrice(): int
+    {
+        return $this->tuning_price->price ?? 0;
+    }
+
+
+
+    /**
+     * Получить полную стоимость автомобиля
+     */
+    public function getFullPrice(): int
+    {
+        return array_sum([
+            $this->getComplectationPrice(),
+            $this->getOptionPrice(),
+            $this->getOverPrice(),
+            $this->getTuningPrice(),
+        ]);
+    }
+
+
+
+    /**
+     * Получить скидку из резерва
+     */
+    public function getReserveSale(): int
+    {
+        return $this->isReserved() ? $this->reserve->getSaleSum() : 0;
+    }
+
+
+
+    /**
+     * Итоговая стоимость автомобиля
+     */
+    public function getTotalPrice()
+    {
+        return $this->isReserved() ? $this->reserve->getTotalCost() : 0;
+    }
+
+
+
+    /**
+     * Проверка выдана ли машина
+     */
+    public function isIssued(): bool
+    {
+        return $this->isReserved() ? $this->reserve->isIssued() : 0;
+    }
+
+
+
+    /**
+     * Проверка продана ли машина
+     */
+    public function isSaled(): bool
+    {
+        return $this->isReserved() ? $this->reserve->isSaled() : 0;
+    }
+
+
+
+    /**
+     * Получить дату выкупа у поставщика
+     */
+    public function getRansomDate(): string
+    {
+        return $this->getLogisticDates('ransom_date') ?? '';
+    }
+
+
+
+    /**
+     * Получить дату списания у поставщика
+     */
+    public function getOffDate(): string
+    {
+        return $this->getLogisticDates('off_date') ?? '';
+    }
+
+
+
+    /**
+     * Получить объект цены по которой комплектация машины будет продана
+     */
+    public function getComplectationCurrentPrice(): ComplectationPrice
+    {
+        if ($this->isFixed())
+            return $this->reserve->contract->complectation_price->first();
+        elseif ($this->complectation->current_price)
+            return $this->complectation->current_price->curprice;
+
+        throw new \Exception('Для этой комплектации, не найдена цена.');
+    }
+
+
+
+    /**
+     * Получить массив цен опций установленных на авто
+     */
+    public function getOptionCurrentPrices()
+    {
+        if ($this->isFixed())
+            return $this->reserve->contract->option_price;
+        return collect($this->options->map(function ($item) {
+            return $item->current_price;
+        }));
+    }
+
+
+
+    /**
+     * Получить дату оформления ДКП
+     */
+    public function getDKPDate(): string
+    {
+        if ($this->isFixed())
+            return $this->reserve->getDKPDate();
+        return '';
+    }
+
+
+
+    /**
+     * Получить ID РЛ
+     */
+    public function getWorksheetId(): int
+    {
+        if ($this->isReserved())
+            return $this->reserve->worksheet->id;
+        return 0;
+    }
+
+
+
+    /**
+     * Получить тип списания из резерва (желтый/зеленый)
+     */
+    public function getReportTypeStatus(): int
+    {
+        if ($this->isReserved())
+            return $this->reserve->getReserveReportStatus();
+        return 0;
+    }
+
+
+
+    /**
+     * Получить название типа списания (желтый/зеленый)
+     */
+    public function getReportTypeString(): string
+    {
+        if ($this->isReserved())
+            return $this->reserve->getReserveReportString();
+        return '';
     }
 }

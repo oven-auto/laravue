@@ -2,57 +2,90 @@
 
 namespace App\Classes\LadaDNM;
 
-use App\Models\MarkAlias;
-
 class DNMEvent
 {
-    private $service;
+    private $dnm;
 
-    public function __construct()
+    private $dNMWorksheet;
+
+    public function __construct(DNMWorksheetService $dNMWorksheet)
     {
-        $this->service = DNM::init();
+        $this->dnm = DNM::init();
+
+        $this->dNMWorksheet = $dNMWorksheet;
     }
 
 
 
+    public function save(array $data)
+    {
+        $this->dNMWorksheet->dnmWorksheet->events()->create([
+            'dnm_event_id' => $data['id'],
+            'dnm_worksheet_id' => $data['dnm_worksheet_id'],
+            'dnm_appeal_id' => $data['dnm_appeal_id']
+        ]);
+    }
 
 
 
-
-    public function visit(DNMWorksheet $dNMWorksheet)
+    public function visit()
     {
         $data = [
             'event_type' => 'visit',
-            'worksheet_id' => $dNMWorksheet->getDnmWorksheetId(),
-            'code' => (string)$dNMWorksheet->obj->trafic_id,
+            'worksheet_id' => $this->dNMWorksheet->getDnmWorksheetId(),
+            'code' => (string)$this->dNMWorksheet->obj->trafic_id,
             'occurred' => now()->format('d.m.Y H:i:s'),
             'manager_id' => 1764,
-            'car_id' => $dNMWorksheet->dnmWorksheet->dnm_appeal_id,
+            'car_id' => $this->dNMWorksheet->dnmWorksheet->appeals->first()->dnm_appeal_id,
         ];
 
-        $response = $this->service->sendPost('/api/event', $data);
+        $response = $this->dnm->sendPost('/api/event', $data);
 
         if ($response->getStatusCode() == 201) {
+            $this->save($response->json());
             return;
         }
     }
 
 
 
-    public function reject(DNMWorksheet $dNMWorksheet)
+    public function reject()
     {
         $data = [
             'event_type' => 'reject',
-            'worksheet_id' => $dNMWorksheet->getDnmWorksheetId(),
+            'worksheet_id' => $this->dNMWorksheet->getDnmWorksheetId(),
             'code' => (string)rand(1, 255),
             'occurred' => now()->format('d.m.Y H:i:s'),
             'manager_id' => 1764,
-            'car_id' => $dNMWorksheet->dnmWorksheet->dnm_appeal_id,
+            'car_id' => $this->dNMWorksheet->dnmWorksheet->appeals->first()->dnm_appeal_id,
+            'result' => 12,
         ];
 
-        $response = $this->service->sendPost('/api/event', $data);
+        $response = $this->dnm->sendPost('/api/event', $data);
 
         if ($response->getStatusCode() == 201) {
+            $this->save($response->json());
+            return;
+        }
+    }
+
+
+
+    public function call()
+    {
+        $data = [
+            'event_type' => 'call',
+            'worksheet_id' => $this->dNMWorksheet->getDnmWorksheetId(),
+            'code' => (string)rand(1, 255),
+            'occurred' => now()->format('d.m.Y H:i:s'),
+            'manager_id' => 1764,
+            'car_id' => $this->dNMWorksheet->dnmWorksheet->appeals->first()->dnm_appeal_id,
+        ];
+
+        $response = $this->dnm->sendPost('/api/event', $data);
+
+        if ($response->getStatusCode() == 201) {
+            $this->save($response->json());
             return;
         }
     }

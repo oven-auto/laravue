@@ -31,7 +31,7 @@ class CarComplectationResource extends JsonResource
             ],
             'type' => $this->complectation->motor->type->name,
             'bodywork' => $this->complectation->bodywork->name,
-            'price' => $this->reserve ? $this->reserve->getCarCoast() :  $this->complectation->price,
+            'price' => $this->complectation->price,
             'file' => $this->complectation->getUrlFile(),
         ];
     }

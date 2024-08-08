@@ -13,7 +13,7 @@ class TraficFilter extends AbstractFilter
     public const INTERVAL = 'interval';
     public const IDS = 'ids';
     public const SEX_ID = 'sex_id';
-    public const ZONE_ID= 'zones_id';
+    public const ZONE_ID = 'zones_id';
     public const CHANEL_ID = 'chanel_id';
     public const COMPANY_IDS = 'brand_ids';
     public const STRUCTURE_IDS = 'section_ids';
@@ -53,9 +53,9 @@ class TraficFilter extends AbstractFilter
             self::CHANEL_ID           => [$this, 'chanelId'], //array
             self::COMPANY_IDS         => [$this, 'companyIds'], //val
             self::STRUCTURE_IDS       => [$this, 'companyStructureIds'], //val
-            self::APPEAL_IDS          => [$this, 'appealIds'],//val
+            self::APPEAL_IDS          => [$this, 'appealIds'], //val
             self::TASK_ID             => [$this, 'taskId'], //val
-            self::INPUT               => [$this, 'input'],//val
+            self::INPUT               => [$this, 'input'], //val
             self::AUTHOR_ID           => [$this, 'authorId'],
             self::CREATE_START        => [$this, 'createStart'],
             self::CREATE_END          => [$this, 'createEnd'],
@@ -63,7 +63,7 @@ class TraficFilter extends AbstractFilter
             self::PROCESSING_END      => [$this, 'processingEnd'],
             self::STATUS_ID           => [$this, 'statusId'],
             self::NEED_IDS            => [$this, 'needIds'],
-            self::SUPER_DIAMOND_SEARCH=> [$this, 'superDiamondSearch'],
+            self::SUPER_DIAMOND_SEARCH => [$this, 'superDiamondSearch'],
             self::AUDIT_AUTHOR_ID     => [$this, 'auditAuthorId'],
             self::AUDIT_SCENARIO_ID   => [$this, 'auditScenarioId'],
             self::AUDIT_STATUS_ID     => [$this, 'auditStatusId'],
@@ -89,7 +89,7 @@ class TraficFilter extends AbstractFilter
         $date = $this->formatDate($value);
         $carbon =  Carbon::createFromFormat('Y-m-d', $date);
 
-        $builder->where(function($query) use ($carbon) {
+        $builder->where(function ($query) use ($carbon) {
             $query
                 ->whereYear('trafics.created_at', '=', $carbon->year)
                 ->whereMonth('trafics.created_at', '=', $carbon->month);
@@ -98,10 +98,10 @@ class TraficFilter extends AbstractFilter
 
     public function show(Builder $builder, $value)
     {
-        if($value == 'closing')
-            $builder->whereNotIn('trafics.trafic_status_id', [1,2,6]);
-        else if($value == 'opening')
-           $builder->whereIn('trafics.trafic_status_id', [1,2,6]);
+        if ($value == 'closing')
+            $builder->whereNotIn('trafics.trafic_status_id', [1, 2, 6]);
+        else if ($value == 'opening')
+            $builder->whereIn('trafics.trafic_status_id', [1, 2, 6]);
     }
 
     public function dateForClosing(Builder $builder, $value)
@@ -115,7 +115,7 @@ class TraficFilter extends AbstractFilter
     {
         $date = $this->formatDate($value);
 
-        if(now()>=$date)
+        if (now() >= $date)
             //Условие что за текющую дату либо ранее, если сегодня меньше либо равно указанной даты
             $builder->whereDate('trafics.begin_at', '<=', $date);
         else
@@ -136,62 +136,62 @@ class TraficFilter extends AbstractFilter
 
     public function modelIds(Builder $builder, $value)
     {
-        if(!$this->checkJoin($builder, 'trafic_needs'))
+        if (!$this->checkJoin($builder, 'trafic_needs'))
             $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id');
         $builder->whereIn('trafic_needs.trafic_product_number', $value);
     }
 
     public function isProduct(Builder $builder, $value)
     {
-        if(!$this->checkJoin($builder, 'trafic_needs'))
+        if (!$this->checkJoin($builder, 'trafic_needs'))
             $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', '=', 'trafics.id');
-        if($value == 2)
+        if ($value == 2)
             $builder->havingRaw('count(trafic_needs.trafic_id) > 0');
-        elseif($value == 1)
+        elseif ($value == 1)
             $builder->havingRaw('count(trafic_needs.trafic_id) = 0');
     }
 
     public function personTypeId(Builder $builder, $value)
     {
-        if(is_array($value))
-            $builder->whereIn('trafics.client_type_id',$value);
+        if (is_array($value))
+            $builder->whereIn('trafics.client_type_id', $value);
         else
             $builder->where('trafics.client_type_id', $value);
     }
 
     public function auditAuthorId(Builder $builder, $value)
     {
-        if(!$this->checkJoin($builder, 'trafic_processings'))
-            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
+        if (!$this->checkJoin($builder, 'trafic_processings'))
+            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id', 'trafics.id');
         $builder->where('trafic_processings.user_id', $value);
     }
 
     public function auditScenarioId(Builder $builder, $value)
     {
-        if(!$this->checkJoin($builder, 'trafic_processings'))
-            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
+        if (!$this->checkJoin($builder, 'trafic_processings'))
+            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id', 'trafics.id');
 
         $builder->where('trafic_processings.audit_standart_id', $value);
     }
 
     public function auditStatusId(Builder $builder, $value)
     {
-        if(!$this->checkJoin($builder, 'trafic_processings'))
-            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id','trafics.id');
-        if($value == 1)
-            $builder->where('trafic_processings.status',1);
-        if($value == 2)
-            $builder->where('trafic_processings.status',0);
-        if($value == 3)
-            $builder->where('trafic_processings.status',NULL);
+        if (!$this->checkJoin($builder, 'trafic_processings'))
+            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id', 'trafics.id');
+        if ($value == 1)
+            $builder->where('trafic_processings.status', 1);
+        if ($value == 2)
+            $builder->where('trafic_processings.status', 0);
+        if ($value == 3)
+            $builder->where('trafic_processings.status', NULL);
     }
 
     private function setCountElements($data)
     {
-        if(\is_array($data) || \is_object($data))
-            $this->countElements+=count($data);
-        if(\is_string($data) || \is_integer($data) || \is_numeric($data))
-            $this->countElements+=($data);
+        if (\is_array($data) || \is_object($data))
+            $this->countElements += count($data);
+        if (\is_string($data) || \is_integer($data) || \is_numeric($data))
+            $this->countElements += ($data);
     }
 
     public function getCountElements()
@@ -201,7 +201,7 @@ class TraficFilter extends AbstractFilter
 
     public function superDiamondSearch(Builder $builder, $value)
     {
-        if($value)
+        if ($value)
             $builder->havingRaw('count(*) >= ?', [$this->getCountElements()]);
         else
             $builder->havingRaw('count(*) >= ?', [0]);
@@ -219,34 +219,34 @@ class TraficFilter extends AbstractFilter
     //Заданные статусы трафика [trafic_status_id, ... , trafic_status_id]
     public function statusId(Builder $builder, $value)
     {
-        if(is_array($value))
+        if (is_array($value))
             $builder->whereIn('trafics.trafic_status_id', $value);
-        if(is_string($value))
+        if (is_string($value))
             $builder->where('trafics.trafic_status_id', $value);
     }
 
     //Начало обработки [dd.mm.yyyy]
     public function processingStart(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.processing_at','>=', $this->formatDate($value));
+        $builder->whereDate('trafics.processing_at', '>=', $this->formatDate($value));
     }
 
     //Конец обработки [dd.mm.yyyy]
     public function processingEnd(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.processing_at','<=', $this->formatDate($value));
+        $builder->whereDate('trafics.processing_at', '<=', $this->formatDate($value));
     }
 
     //Начало создания [dd.mm.yyyy]
     public function createStart(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.created_at','>=', $this->formatDate($value));
+        $builder->whereDate('trafics.created_at', '>=', $this->formatDate($value));
     }
 
     //Конец создания [dd.mm.yyyy]
     public function createEnd(Builder $builder, $value)
     {
-        $builder->whereDate('trafics.created_at','<=', $this->formatDate($value));
+        $builder->whereDate('trafics.created_at', '<=', $this->formatDate($value));
     }
 
     //Авторы [user_id, ... , user_id]
@@ -258,11 +258,11 @@ class TraficFilter extends AbstractFilter
     //Менеджеры [user_id, ... , user_id]
     public function managerId(Builder $builder, $value)
     {
-        if(is_array($value))
-            $builder->where(function($query) use ($value) {
+        if (is_array($value))
+            $builder->where(function ($query) use ($value) {
                 $query
                     ->whereIn('trafics.manager_id', $value);
-                    //->orWhere('trafics.manager_id', NULL);
+                //->orWhere('trafics.manager_id', NULL);
             });
         else
             $builder->where('trafics.manager_id', $value);
@@ -273,7 +273,7 @@ class TraficFilter extends AbstractFilter
     {
         switch ($value) {
             case 'month':
-                $builder->where(function($query)  {
+                $builder->where(function ($query) {
                     $query
                         ->whereYear('trafics.created_at', '=', now()->year)
                         ->whereMonth('trafics.created_at', '=', now()->month);
@@ -298,10 +298,10 @@ class TraficFilter extends AbstractFilter
     //Заданные айдишники трафиков [id, ... , id] / id
     public function ids(Builder $builder, $value)
     {
-        if(\is_array($value))
+        if (\is_array($value))
             $builder->whereIn('trafics.id', $value);
-        if(\is_string($value))
-            $builder->whereIn('trafics.id', explode(',',$value));
+        if (\is_string($value))
+            $builder->whereIn('trafics.id', explode(',', $value));
     }
 
     //Заданный пол клиента трафика id
@@ -329,9 +329,9 @@ class TraficFilter extends AbstractFilter
     //Заданная компания company_id
     public function companyIds(Builder $builder, $value)
     {
-        if(is_array($value))
+        if (is_array($value))
             $builder->whereIn('trafics.company_id', $value);
-        elseif(is_numeric($value) || is_string($value))
+        elseif (is_numeric($value) || is_string($value))
             $builder->where('trafics.company_id', $value);
     }
 
@@ -345,8 +345,7 @@ class TraficFilter extends AbstractFilter
     //Заданная цель обращения appeal_id
     public function appealIds(Builder $builder, $value)
     {
-        if(is_array($value))
-        {
+        if (is_array($value)) {
             $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');
             $builder->whereIn('trafic_appeals.appeal_id', $value);
         }
@@ -363,20 +362,19 @@ class TraficFilter extends AbstractFilter
     {
         $isCommand = strpos($value, '/');
 
-        if($isCommand === 0)
-        {
-            $builder->where('trafics.id', 'LIKE', '%'.trim($value, '/').'%');
+        if ($isCommand === 0) {
+            $builder->where('trafics.id', 'LIKE', '%' . trim($value, '/') . '%');
             return;
         }
 
-        if(strpos($value,'+')===0){
+        if (strpos($value, '+') === 0) {
             $value = trim($value, '+');
             $phone = "$value%";
-            $builder->where(  'trafics.phone',      'LIKE', "$phone");
+            $builder->where('trafics.phone',      'LIKE', "$phone");
         } else
-            $builder->where(function($query) use ($value) {
+            $builder->where(function ($query) use ($value) {
                 $query
-                    ->where(  'trafics.phone',      'LIKE', "%$value%")
+                    ->where('trafics.phone',      'LIKE', "%$value%")
                     ->orWhere('trafics.firstname',  'LIKE', "%$value%")
                     ->orWhere('trafics.lastname',   'LIKE', "%$value%")
                     ->orWhere('trafics.id',         'LIKE', "%$value%");

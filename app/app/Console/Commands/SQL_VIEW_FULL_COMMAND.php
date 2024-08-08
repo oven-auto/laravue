@@ -44,7 +44,10 @@ class SQL_VIEW_FULL_COMMAND extends Command
 
         $this->call('sql:comprice');
         $this->call('sql:carfullprice');
+
         $this->call('sql:contractprice');
+        $this->call('sql:contractoptionprice');
+
         $this->call('sql:traficprod');
     }
 }

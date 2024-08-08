@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class WsmReserveNewCarContract extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     public $dates = [
         'pdkp_offer_at', 'pdkp_delivery_at', 'pdkp_closed_at', 'dkp_offer_at', 'dkp_closed_at'
@@ -23,6 +24,14 @@ class WsmReserveNewCarContract extends Model
     ];
 
     protected $guarded = [];
+
+    private const PDKP_STATUSES = [
+        0 => '',
+        1 => 'Действует',
+        2 => 'Просрочен',
+        3 => 'Исполнен',
+        4 => 'Расторгнут'
+    ];
 
 
 
@@ -75,9 +84,27 @@ class WsmReserveNewCarContract extends Model
     /**
      * RELATIONS
      */
-    public function price()
+
+
+
+    public function complectation_price()
     {
-        return $this->hasOne(\App\Models\ContractPrice::class, 'contract_id', 'id');
+        return $this->belongsToMany(
+            \App\Models\ComplectationPrice::class,
+            'wsm_reserve_complectation_prices',
+            'contract_id'
+        );
+    }
+
+
+
+    public function option_price()
+    {
+        return $this->belongsToMany(
+            \App\Models\OptionPrice::class,
+            'wsm_reserve_option_prices',
+            'contract_id'
+        );
     }
 
 
@@ -110,11 +137,6 @@ class WsmReserveNewCarContract extends Model
 
 
 
-    public function contract_cost()
-    {
-        return $this->hasOne(\App\Models\WsmReserveContractCost::class, 'contract_id', 'id');
-    }
-
     /**
      * METHODS
      */
@@ -141,10 +163,98 @@ class WsmReserveNewCarContract extends Model
 
 
 
+    /**
+     * Кол-во дней просрока ПДКП
+     */
     public function pdkdDays()
     {
         if ($this->pdkp_offer_at && $this->pdkp_delivery_at)
             return abs($this->pdkp_delivery_at->diff($this->pdkp_offer_at)->days);
         return 0;
+    }
+
+
+
+    /**
+     * Получить статус ПДКП
+     */
+    public function getPdkpStatus()
+    {
+        if ($this->pdkpCloseDate)
+            return 4;
+
+        if ($this->dkpOfferDate)
+            return 3;
+
+        if ($this->pdkp_delivery_date_at < now())
+            return 2;
+
+        else
+            return 1;
+
+        return 0;
+    }
+
+
+
+    /**
+     * Получить статус ДКП
+     */
+    public function getDKPStatus(): string
+    {
+        if ($this->dkpCloseDate)
+            return 4;
+
+        if ($this->reserve->isSaled())
+            return 3;
+
+        else
+            return 1;
+
+        return 0;
+    }
+
+
+
+    /**
+     * Получить строку статуса ПДКП
+     */
+    public function getPDKPStatusString(): string
+    {
+        return self::PDKP_STATUSES[$this->getPdkpStatus()];
+    }
+
+
+
+    /**
+     * Получить строку статуса ДКП
+     */
+    public function getDKPStatusString(): string
+    {
+        return self::PDKP_STATUSES[$this->getDkpStatus()];
+    }
+
+
+
+    /**
+     * Получить дебиторскую задолженность
+     */
+    public function getDebtorArrears()
+    {
+        if ($this->dkpCloseDate || $this->pdkpCloseDate)
+            return 0;
+        return $this->reserve->getDebt();
+    }
+
+
+
+    /**
+     * Получить кредиторскую задолженность
+     */
+    public function getCreditorArrears()
+    {
+        if ($this->reserve->isSaled())
+            return 0;
+        return $this->reserve->getPaymentSum();
     }
 }

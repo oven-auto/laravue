@@ -11,14 +11,14 @@ use App\Models\ClientPassport;
 /**
  * Репазиторий модели Client
  */
-Class ClientRepository
+class ClientRepository
 {
     /**
      * Метод задает запрос на получение списка клиентов удовлетворяющих заданным свойствам фильтра
      * @param array $data данные для фильтра
      * @return \Illuminate\Database\Eloquent\Builder $query \Illuminate\Database\Eloquent\Builder
      */
-    private function filter($data = []) :  \Illuminate\Database\Eloquent\Builder
+    private function filter($data = []): \Illuminate\Database\Eloquent\Builder
     {
         $query = Client::select('clients.*');
         $filter = app()->make(ClientFilter::class, ['queryParams' => array_filter($data)]);
@@ -32,21 +32,40 @@ Class ClientRepository
      * @param integer $paginate не обязательное поле, по умолчанию 10
      * @return \Illuminate\Contracts\Pagination\Paginator $result \Illuminate\Contracts\Pagination\Paginator
      */
-    public function paginate($data = [], $paginate = 10) : \Illuminate\Contracts\Pagination\Paginator
+    public function paginate($data = [], $paginate = 10): \Illuminate\Contracts\Pagination\Paginator
     {
         $query = $this->filter($data);
-        $query->with(['latest_worksheet','phones','emails','cars','inn','zone','sex',]);
+        $query->with(['latest_worksheet', 'phones', 'emails', 'cars', 'inn', 'zone', 'sex',]);
         $query->groupBy('clients.id');
         $result = $query->simplePaginate($paginate);
         return $result;
     }
+
+
+
+    /**
+     * Метод возращает постраничную коллекию клиентов, прошедших фильтрацию
+     * @param array $data данные для фильтра
+     * @param integer $paginate не обязательное поле, по умолчанию 10
+     * @return \Illuminate\Contracts\Pagination\Paginator $result \Illuminate\Contracts\Pagination\Paginator
+     */
+    public function get($data = [], $length = 10)
+    {
+        $query = $this->filter($data);
+        $query->with(['latest_worksheet', 'phones', 'emails', 'cars', 'inn', 'zone', 'sex',]);
+        $query->groupBy('clients.id');
+        $result = $query->limit($length)->get();
+        return $result;
+    }
+
+
 
     /**
      * Метод возращает коллекию клиентов (нет постраничного вывода!!!), прошедших фильтрацию
      * @param array $data данные для фильтра
      * @return \Illuminate\Database\Eloquent\Collection $result \Illuminate\Database\Eloquent\Collection
      */
-    public function export($data = []) : \Illuminate\Database\Eloquent\Collection
+    public function export($data = []): \Illuminate\Database\Eloquent\Collection
     {
         $query = $this->filter($data);
         $result = $query->get();
@@ -59,7 +78,7 @@ Class ClientRepository
      * @param array $data данные полученые с фронта для заполнения модели клиента
      * @return Client $client
      */
-    public function save(Client $client, $data = []) : Client
+    public function save(Client $client, $data = []): Client
     {
         $columns = Arr::except(Client::getColumnsName(), ['id']);
 
@@ -72,23 +91,23 @@ Class ClientRepository
         $client->phones()->delete();
         $client->emails()->delete();
 
-        if(isset($data['inn']))
+        if (isset($data['inn']))
             $client->inn->fill([
                 'number' => $data['inn']
             ])->save();
 
-        foreach($data['contacts'] as $itemRowContact) {
-            if(isset($itemRowContact['phone']) && $itemRowContact['phone'])
-                $client->phones()->create(['client_id' => $client->id, 'phone' => preg_replace("/[^,.0-9]/", '', $itemRowContact['phone']) ]);
-            if(isset($itemRowContact['email']))
+        foreach ($data['contacts'] as $itemRowContact) {
+            if (isset($itemRowContact['phone']) && $itemRowContact['phone'])
+                $client->phones()->create(['client_id' => $client->id, 'phone' => preg_replace("/[^,.0-9]/", '', $itemRowContact['phone'])]);
+            if (isset($itemRowContact['email']))
                 $client->emails()->create(['client_id' => $client->id, 'email' => $itemRowContact['email']]);
         }
 
-        if($client->client_type_id == 1) {
+        if ($client->client_type_id == 1) {
             $passportData = Arr::only($data, ClientPassport::getColumnsName());
-            $passportData['birthday_at'] =              isset($passportData['birthday_at']) ? date('Y-m-d',\strtotime($passportData['birthday_at'])) : NULL;
-            $passportData['driver_license_issue_at'] =  isset($passportData['driver_license_issue_at']) ? date('Y-m-d',\strtotime($passportData['driver_license_issue_at'])) : NULL;
-            $passportData['passport_issue_at'] =        isset($passportData['passport_issue_at']) ? date('Y-m-d',\strtotime($passportData['passport_issue_at'] )) : NULL;
+            $passportData['birthday_at'] =              isset($passportData['birthday_at']) ? date('Y-m-d', \strtotime($passportData['birthday_at'])) : NULL;
+            $passportData['driver_license_issue_at'] =  isset($passportData['driver_license_issue_at']) ? date('Y-m-d', \strtotime($passportData['driver_license_issue_at'])) : NULL;
+            $passportData['passport_issue_at'] =        isset($passportData['passport_issue_at']) ? date('Y-m-d', \strtotime($passportData['passport_issue_at'])) : NULL;
             $passportData['client_id'] = $client->id;
             $client->passport->fill($passportData)->save();
         }
@@ -101,21 +120,21 @@ Class ClientRepository
      * @param Trafic $trafic содержит модель клиента, может быть пустой в случае создания
      * @return Client $client
      */
-    public function findOrCreate(Trafic $trafic) :Client
+    public function findOrCreate(Trafic $trafic): Client
     {
         $query = Client::select('clients.*')->with('phones');
 
-        if($trafic->client_type_id == 1)
-            $query->leftJoin('client_phones','client_phones.client_id','clients.id')
+        if ($trafic->client_type_id == 1)
+            $query->leftJoin('client_phones', 'client_phones.client_id', 'clients.id')
                 ->where('client_phones.phone', $trafic->phone);
 
-        elseif($trafic->client_type_id == 2 || $trafic->client_type_id == 3)
-            $query->leftJoin('client_inns','client_inns.client_id','clients.id')
+        elseif ($trafic->client_type_id == 2 || $trafic->client_type_id == 3)
+            $query->leftJoin('client_inns', 'client_inns.client_id', 'clients.id')
                 ->where('client_inns.number', $trafic->inn);
 
         $client = $query->first();
 
-        if(!$client)
+        if (!$client)
             $client = Client::create([
                 'lastname'      => $trafic->lastname,
                 'firstname'     => $trafic->firstname,
@@ -126,8 +145,8 @@ Class ClientRepository
                 'company_name'  => $trafic->company_name,
             ]);
 
-        if($client->wasRecentlyCreated) {
-            if($trafic->client_type_id == 1) {
+        if ($client->wasRecentlyCreated) {
+            if ($trafic->client_type_id == 1) {
                 $client->phones()->create([
                     'phone' => $trafic->phone
                 ]);
@@ -135,8 +154,7 @@ Class ClientRepository
                     'email' => $trafic->email
                 ]);
             }
-            if($trafic->client_type_id == 2)
-            {
+            if ($trafic->client_type_id == 2) {
                 $client->inn()->create([
                     'number' => $trafic->inn
                 ]);
@@ -157,9 +175,9 @@ Class ClientRepository
      * @param Client $client Client
      * @return void
      */
-    public function delete(Client $client) :void
+    public function delete(Client $client): void
     {
-        if($client->client_type_id == 2)
+        if ($client->client_type_id == 2)
             throw new \Exception('Нельзя удалять юр.лицо');
 
         $client->phones()->delete();
@@ -171,7 +189,7 @@ Class ClientRepository
      * @param array $data данные для фильтра
      * @return int $result int
      */
-    public function counter($data = []) : int
+    public function counter($data = []): int
     {
         $query = Client::select(\DB::raw('count(clients.id)'));
         $filter = app()->make(ClientFilter::class, ['queryParams' => array_filter($data)]);

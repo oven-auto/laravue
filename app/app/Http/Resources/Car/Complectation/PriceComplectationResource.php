@@ -18,9 +18,11 @@ class PriceComplectationResource extends JsonResource
         return [
             'id' => $this->id,
             'complectation_id' => $this->complectation_id,
-            'price' => StringHelper::moneyMask($this->price),
-            'begin_at' => $this->begin_at->format('d.m.Y'),
-            'author' => $this->author->cut_name,
+            'price' => $this->price,
+            'begin_at' => $this->begin_at,
+            'author' => $this->author,
+            'current' => $this->current,
+            'created_at' => $this->created_at
         ];
     }
 }

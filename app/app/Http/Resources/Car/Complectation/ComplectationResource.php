@@ -28,6 +28,10 @@ class ComplectationResource extends JsonResource
             'transmission' => $this->motor->transmission->acronym,
             'trash' => (int)$this->trashed(),
             'body' => $this->bodywork->name,
+            'price' => $this->current_price->price ? [
+                'price' => $this->current_price->price,
+                'begin_at' => $this->current_price->begin_at->format('d.m.Y')
+            ] : '',
         ];
     }
 }

@@ -2,13 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class WsmReserveNewCar extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Filterable;
 
     protected $guarded = [];
 
@@ -79,142 +80,236 @@ class WsmReserveNewCar extends Model
 
     public function issue()
     {
-        return $this->hasOne(\App\Models\WsmReserveIssue::class, 'reserve_id', 'id')->withDefault();
+        return $this->hasOne(\App\Models\WsmReserveIssue::class, 'reserve_id', 'id');
     }
 
 
 
     public function sale()
     {
-        return $this->hasOne(\App\Models\WsmReserveSale::class, 'reserve_id', 'id')->withDefault();
+        return $this->hasOne(\App\Models\WsmReserveSale::class, 'reserve_id', 'id');
     }
 
 
 
-
+    /**NEW AFTER MODELS */
 
 
 
     /**
-     * METHODS
+     * Проверка зафиксирована ли цена контракта
      */
-    public function coast(): int
+    public function isFixedCost(): bool
     {
-        $carPrice = $this->car->full_price;
-
-        $arrayPrice['overprice']            = $carPrice->overprice ?? 0;
-        $arrayPrice['optionprice']          = $carPrice->optionprice ?? 0;
-        $arrayPrice['complectationprice']   = $carPrice->complectationprice ?? 0;
-        $arrayPrice['tuningprice']          = $carPrice->tuningprice ?? 0;
-
-        if ($this->contract)
-            $arrayPrice['complectationprice'] = $this->contract->price->complectationprice ?? 0;
-
-        $sum = array_sum($arrayPrice);
-
-        $sum -= $this->sales->sum('amount');
-
-        $sum -= $this->tradeins->sum('purchase_price');
-
-        return $sum;
-    }
-
-
-
-    //COMPLECTATION PRICE
-    public function complectationPrice()
-    {
-        if ($this->contract)
-            return $this->contract->price->complectationprice ?? 0;
-
-        $carPrice = $this->car->full_price;
-
-        return $carPrice->complectationprice ?? 0;
-    }
-
-
-
-    //OPTION PRICE
-    public function optionPrice()
-    {
-        $carPrice = $this->car->full_price;
-
-        return $carPrice->optionprice ?? 0;
-    }
-
-
-
-    //COMPLECTATION PRICE
-    public function overPrice()
-    {
-        $carPrice = $this->car->full_price;
-
-        return $carPrice->overprice ?? 0;
-    }
-
-
-
-    //COMPLECTATION PRICE
-    public function tuningPrice()
-    {
-        $carPrice = $this->car->full_price;
-
-        return $carPrice->tuningprice ?? 0;
+        if ($this->contract && $this->contract->dkp_offer_at)
+            return 1;
+        return 0;
     }
 
 
 
     /**
-     * CAR COAST WITHOUT SALE
+     * Получить дату на которую актуальна стоимость кузова
      */
-    public function getCarCoast()
+    public function getCostDate(): string
     {
-        $carPrice = $this->car->full_price;
-
-        $arrayPrice['overprice']            = $carPrice->overprice ?? 0;
-        $arrayPrice['optionprice']          = $carPrice->optionprice ?? 0;
-        $arrayPrice['complectationprice']   = $carPrice->complectationprice ?? 0;
-        $arrayPrice['tuningprice']          = $carPrice->tuningprice ?? 0;
-
-        if ($this->contract)
-            $arrayPrice['complectationprice'] = $this->contract->price->complectationprice ?? 0;
-
-        $sum = array_sum($arrayPrice);
-
-        return $sum ?? 0;
+        if ($this->isFixedCost())
+            return $this->contract->DkpOfferDate;
+        return $this->car->complectation->priceDate;
     }
 
 
 
-    public function getCarSale()
+    /**
+     * Получить стоимость кузова
+     */
+    public function getComplectationCost(): int
     {
-        $sum = $this->sales->sum('amount');
-
-        return $sum ?? 0;
+        if ($this->isFixedCost())
+            return $this->contract->complectation_price->sum('price');
+        return $this->car->complectation->price;
     }
 
 
 
-    public function getCarFullCoast()
+    /**
+     * Получить стоимость опций
+     */
+    public function getOptionCost(): int
     {
-        return $this->getCarCoast() - $this->getCarSale();
+        if ($this->isFixedCost())
+            return $this->contract->option_price->sum('price') ?? 0;
+        return $this->car->options->sum('price') ?? 0;
     }
 
 
 
-    public function getBalance()
+    /**
+     * Получить стоимость переоценки
+     */
+    public function getOverCost(): int
     {
-        $payments = $this->payments->sum('amount');
-        $tradeins = $this->tradeins->sum('purchase_price');
-        return $this->getCarFullCoast() - $payments - $tradeins;
+        return $this->car->over_price->price ?? 0;
     }
 
 
 
-    public function getTotalPayments()
+    /**
+     * Получить стоимость тюнинга
+     */
+    public function getTuningCost(): int
     {
-        $payments = $this->payments->sum('amount');
-        $tradeins = $this->tradeins->sum('purchase_price');
+        return $this->car->tuning_price->price ?? 0;
+    }
+
+
+
+    /**
+     * Получить стоимость контракта
+     */
+    public function getFullCost(): int
+    {
+        return $this->getComplectationCost() +
+            $this->getOptionCost() +
+            $this->getOverCost() +
+            $this->getTuningCost();
+    }
+
+
+
+    /**
+     * Получить статус резерва
+     */
+    public function getStatus()
+    {
+        if ($this->isFixedCost())
+            return  ['title' => 'Клиентский', 'color' => 1];
+
+        $currentDate = now();
+        $reserveDate = $this->created_at;
+        $diffDate = $reserveDate->diffInDays($currentDate) + 1;
+        return ['title' => 'Резерв ' . $diffDate, 'color' => 2];
+    }
+
+
+
+    /**
+     * Получить скидки контракта
+     * */
+    public function getSaleSum(): int
+    {
+        return $this->sales->sum('amount') ?? 0;
+    }
+
+
+
+    /**
+     * Получить сумму всех платежей
+     */
+    public function getPaymentSum(): int
+    {
+        $payments = $this->payments->sum('amount') ?? 0;
+        $tradeins = $this->tradeins->sum('purchase_price') ?? 0;
         return $payments + $tradeins;
+    }
+
+
+
+    /**
+     * Итоговая цена
+     */
+    public function getTotalCost(): int
+    {
+        return $this->getFullCost() - $this->getSaleSum();
+    }
+
+
+
+    /**
+     * Задолженость
+     */
+    public function getDebt(): int
+    {
+        return $this->getTotalCost() - $this->getPaymentSum();
+    }
+
+
+
+    /**
+     * Проверить была ли выдача
+     */
+    public function isIssued(): bool
+    {
+        return $this->issue ? 1 : 0;
+    }
+
+
+
+    /**
+     * Проверить была ли продажа
+     */
+    public function isSaled(): bool
+    {
+        return $this->sale ? 1 : 0;
+    }
+
+
+
+    /**
+     * Получить дату выдачи
+     */
+    public function getIssueDate(): string
+    {
+        return $this->isIssued() ? $this->issue->date_at->format('d.m.Y') : '';
+    }
+
+
+
+    /**
+     * Получить дату выдачи
+     */
+    public function getSaleDate(): string
+    {
+        return $this->isSaled() ? $this->sale->date_at->format('d.m.Y') : '';
+    }
+
+
+
+    /**
+     * Получить дату оформления ДКП
+     */
+    public function getDKPDate()
+    {
+        if ($this->isFixedCost())
+            return $this->contract->DkpOfferDate;
+        return '';
+    }
+
+
+
+    public function getReserveReportString()
+    {
+        return match ($this->getReserveReportStatus()) {
+            0 => '',
+            1 => 'Зеленый рапорт',
+            2 => 'Желтый рапорт',
+        };
+    }
+
+
+
+    public function getReserveReportStatus()
+    {
+        if (!$this->car->owner)
+            return 0;
+
+        $clientWorksheet = $this->worksheet->client_id;
+        $clientCar = $this->car->owner->client_id;
+
+        if ($clientCar == $clientWorksheet)
+            return 1;
+
+        else
+            return 2;
     }
 }

@@ -24,7 +24,8 @@ class ComplectationPriceListRequest extends FormRequest
     public function rules()
     {
         return [
-            'complectation_id' => 'required|numeric'
+            'complectation_id' => 'sometimes|numeric',
+            'car_id' => 'sometimes|numeric'
         ];
     }
 

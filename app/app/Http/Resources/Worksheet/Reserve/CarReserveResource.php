@@ -33,8 +33,8 @@ class CarReserveResource extends JsonResource
                     'driver'        => $this->complectation->motor->driver->acronym,
                 ],
             ],
-            'price'                 => $this->full_price->price,
-            'status'                => $this->StatusWithoutAuthor,
+
+            'status'                => $this->currentCarState(),
             //'sale_date'             => $this->getLogisticAuthors('sale_date'),
             //'off_date'              => $this->getLogisticAuthors('off_date'),
             'ransom_date'           => $this->getLogisticAuthors('ransom_date'),
