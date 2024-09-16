@@ -28,7 +28,7 @@ class CarOrderType extends Model
      */
     public function type()
     {
-        return $this->hasOne(\App\Models\OrderType::class, 'id', 'order_type_id');
+        return $this->hasOne(\App\Models\OrderType::class, 'id', 'order_type_id')->withDefault();
     }
 
 

@@ -65,7 +65,7 @@ class ReserveContractRepository
                     ['author_id' => auth()->user()->id]
                 ))->save();
 
-                if ($oldDkpDate->format('d.m.Y') != $data['dkp_offer_at']) {
+                if (isset($data['dkp_offer_at']) && $oldDkpDate && $oldDkpDate->format('d.m.Y') != $data['dkp_offer_at']) {
                     $this->fixCarPrice($contract);
                 }
             });
@@ -78,7 +78,7 @@ class ReserveContractRepository
 
     public function create(WsmReserveNewCarContract $contract, array $data): void
     {
-        $contract = WsmReserveNewCarContract::where('reserve_id', $data['reserve_id'])->first();
+        $contractOld = WsmReserveNewCarContract::where('reserve_id', $data['reserve_id'])->first();
         $reserve = WsmReserveNewCar::findOrFail($data['reserve_id']);
         $client = $reserve->worksheet->client;
 
@@ -86,7 +86,7 @@ class ReserveContractRepository
             throw new \Exception('В Вашей сделке, Вы дошли до заключения договора, однако у Вашего клиента не заполнены важные поля (ФИО/Компания, Зона контакта, Пол). Перейдите во вкладку клиент и дополните данные.');
 
 
-        if ($contract)
+        if ($contractOld)
             throw new \Exception('У резерва не может быть более одного контракта');
 
         $this->save($contract, $data);
@@ -106,7 +106,7 @@ class ReserveContractRepository
      */
     public function paginate(array $data, $paginate = 20)
     {
-        $query = WsmReserveNewCarContract::select('wsm_reserve_new_car_contracts.*');
+        $query = WsmReserveNewCarContract::select('wsm_reserve_new_car_contracts.*')->with('reserve');
 
         $filter = app()->make(ContractFilter::class, ['queryParams' => array_filter($data)]);
 

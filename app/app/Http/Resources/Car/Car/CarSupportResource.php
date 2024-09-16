@@ -30,7 +30,7 @@ class CarSupportResource extends JsonResource
 
             'purchase_author' => [
                 'author' => $this->purchase->author->cut_name ?? '',
-                'created_at' => $this->purchase ? $this->purchase->created_at->format('d.m.Y (H:i)') : '',
+                'created_at' => $this->purchase ? $this->purchase->updated_at->format('d.m.Y (H:i)') : '',
             ],
 
             'provider' => [
@@ -40,7 +40,7 @@ class CarSupportResource extends JsonResource
 
             'order_type' => [
                 'author' => $this->order_type->author->cut_name ?? '',
-                'created_at' => $this->order_type ? $this->order_type->created_at->format('d.m.Y (H:i)') : '',
+                'created_at' => $this->order_type ? $this->order_type->updated_at->format('d.m.Y (H:i)') : '',
             ],
 
             'collector' => [
@@ -70,9 +70,16 @@ class CarSupportResource extends JsonResource
                 ],
                 'author' => [
                     'name' => $this->owner->author->cut_name,
-                    'created_at' => $this->owner->created_at->format('d.m.y (H:i)')
+                    'created_at' => $this->owner->created_at->format('d.m.Y (H:i)')
                 ]
             ] : [],
+
+            'worksheet' => $this->getWorksheetId() ? [
+                'id' => $this->getWorksheetId(),
+                'status' => $this->reserve->worksheet->status->name,
+            ] : [],
+
+            'client_status' =>  $this->getReserveStatus(),
         ];
 
         $support = array_merge($support, $this->getLogisticAuthors()->collapse()->toArray());

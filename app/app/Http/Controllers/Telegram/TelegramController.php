@@ -10,6 +10,8 @@ class TelegramController extends Controller
 {
     private $service;
 
+
+
     public function __construct(Scenario $scenario)
     {
         $this->service = $scenario;
@@ -19,7 +21,7 @@ class TelegramController extends Controller
 
     public function get(Request $request)
     {
-        if(!$request->has('message'))
+        if (!$request->has('message'))
             return;
 
         $this->service->read($request->message);

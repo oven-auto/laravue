@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources\Car\Car;
 
-use App\Helpers\Url\WebUrl;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CarItemResource extends JsonResource

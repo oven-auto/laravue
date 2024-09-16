@@ -19,7 +19,7 @@ class CarReserveResource extends JsonResource
             'year'                  => $this->year,
             'brand'                 => $this->brand->name,
             'mark'                  => $this->mark->name,
-
+            'order_number'          => $this->order->order_number,
             'color'                 => $this->color->name,
             'vin'                   => $this->vin,
             'complectation' => [

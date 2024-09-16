@@ -118,7 +118,7 @@ class WsmReserveNewCarContract extends Model
 
     public function reserve()
     {
-        return $this->hasOne(\App\Models\WsmReserveNewCar::class, 'id', 'reserve_id');
+        return $this->hasOne(\App\Models\WsmReserveNewCar::class, 'id', 'reserve_id')->withTrashed();
     }
 
 
@@ -149,16 +149,16 @@ class WsmReserveNewCarContract extends Model
      */
     public function isWorking()
     {
-        $pdkpOffer = $this->pdkp_offer_at;
+        //$pdkpOffer = $this->pdkp_offer_at;
         $pdkpClose = $this->pdkp_closed_at;
 
-        $dkpOffer = $this->dkp_offer_at;
+        //$dkpOffer = $this->dkp_offer_at;
         $dkpClose = $this->dkp_closed_at;
 
-        if ($pdkpOffer || $dkpOffer)
-            if ($pdkpClose == null || $dkpClose == null)
-                return 1;
-        return 0;
+        //if ($pdkpOffer || $dkpOffer)
+        if ($pdkpClose || $dkpClose)
+            return 0;
+        return 1;
     }
 
 

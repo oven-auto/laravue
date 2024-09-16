@@ -215,7 +215,7 @@ class Car extends Model
      */
     public function marker()
     {
-        return $this->hasOne(\App\Models\CarMarker::class, 'car_id', 'id');
+        return $this->hasOne(\App\Models\CarMarker::class, 'car_id', 'id')->withDefault();
     }
 
 
@@ -397,19 +397,19 @@ class Car extends Model
 
     public function saveCollector(int $collector_id = null)
     {
-        if (!$collector_id)
-            return;
+        // if (!$collector_id)
+        //     return;
 
         $collectorCurrent = $this->collector->collector_id ?? null;
 
-        if ($collector_id && $collectorCurrent != $collector_id)
-            $this->collector()->updateOrCreate(
-                ['car_id' => $this->id],
-                [
-                    'collector_id' => $collector_id,
-                    'author_id' => auth()->user()->id
-                ]
-            );
+        //if ($collector_id && $collectorCurrent != $collector_id)
+        $this->collector()->updateOrCreate(
+            ['car_id' => $this->id],
+            [
+                'collector_id' => $collector_id,
+                'author_id' => auth()->user()->id
+            ]
+        );
     }
 
 
@@ -419,16 +419,16 @@ class Car extends Model
      */
     public function saveOrderType(int $orderTypeId = null)
     {
-        $currentId = $this->order_type->order_type_id ?? null;
+        //$currentId = $this->order_type->order_type_id ?? null;
 
-        if ($orderTypeId && $currentId != $orderTypeId)
-            $this->order_type()->updateOrCreate(
-                ['car_id'           => $this->id],
-                [
-                    'order_type_id'     => $orderTypeId,
-                    'author_id'         => auth()->user()->id
-                ],
-            );
+        //if ($orderTypeId && $currentId != $orderTypeId)
+        $this->order_type()->updateOrCreate(
+            ['car_id'           => $this->id],
+            [
+                'order_type_id'     => $orderTypeId,
+                'author_id'         => auth()->user()->id
+            ],
+        );
     }
 
 
@@ -438,11 +438,11 @@ class Car extends Model
      */
     public function saveOrderNumber(string $orderNumber = null)
     {
-        if ($orderNumber)
-            $this->order()->updateOrCreate(
-                ['car_id'       => $this->id],
-                ['order_number' => $orderNumber]
-            );
+        //if ($orderNumber)
+        $this->order()->updateOrCreate(
+            ['car_id'       => $this->id],
+            ['order_number' => $orderNumber]
+        );
     }
 
 
@@ -452,8 +452,8 @@ class Car extends Model
      */
     public function saveMarker(int $markerId = null)
     {
-        if ($markerId)
-            $this->marker()->updateOrCreate(['car_id' => $this->id], ['marker_id' => $markerId]);
+        //if ($markerId)
+        $this->marker()->updateOrCreate(['car_id' => $this->id], ['marker_id' => $markerId]);
     }
 
 
@@ -482,6 +482,7 @@ class Car extends Model
 
     public function saveLogisticDates(LogisticDateDTO $dto)
     {
+
         $updateOrCreate = function ($key, $date) {
             $dateTime = new DateTime();
 
@@ -517,8 +518,8 @@ class Car extends Model
      */
     public function saveTechnic(int $technicId = null)
     {
-        if ($technicId)
-            $this->technic()->updateOrCreate(['car_id' => $this->id], ['technic_id' => $technicId]);
+        //if ($technicId)
+        $this->technic()->updateOrCreate(['car_id' => $this->id], ['technic_id' => $technicId]);
     }
 
 
@@ -528,8 +529,9 @@ class Car extends Model
      */
     public function saveAudio(string $audioCode = null)
     {
-        if ($audioCode)
-            $this->audio()->updateOrCreate(['car_id' => $this->id], ['audio_code' => $audioCode]);
+        //if ($audioCode)
+        $audioCode == null ? $audioCode = '' : $audioCode;
+        $this->audio()->updateOrCreate(['car_id' => $this->id], ['audio_code' => $audioCode]);
     }
 
 
@@ -539,15 +541,18 @@ class Car extends Model
      */
     public function savePurchase(int $cost = null)
     {
-        $currentCost = $this->purchase->cost ?? null;
+        //$currentCost = $this->purchase->cost ?? null;
 
-        if ($cost && $cost != $currentCost)
-            $this->purchase()->updateOrCreate([
-                'car_id' => $this->id
-            ], [
-                'cost' => $cost,
-                'author_id' => auth()->user()->id
-            ]);
+        //if ($cost && $cost != $currentCost)
+
+        //$cost == null ? $cost = '' : $cost;
+
+        $this->purchase()->updateOrCreate([
+            'car_id' => $this->id
+        ], [
+            'cost' => $cost ?? 0,
+            'author_id' => auth()->user()->id
+        ]);
     }
 
 
@@ -557,10 +562,10 @@ class Car extends Model
      */
     public function saveDeliveryTerm(int $delivery_term_id = null)
     {
-        $currentDelivery = $this->delivery_terms->delivery_term_id ?? null;
+        // $currentDelivery = $this->delivery_terms->delivery_term_id ?? null;
 
-        if (!$delivery_term_id || $delivery_term_id == $currentDelivery)
-            return;
+        // if (!$delivery_term_id || $delivery_term_id == $currentDelivery)
+        //     return;
 
         $this->delivery_terms()->updateOrCreate(
             [
@@ -591,6 +596,9 @@ class Car extends Model
      */
     public function saveDetailingCosts(array $detailingArray = null)
     {
+        if (!$detailingArray)
+            $this->detailing_costs()->delete();
+
         if ($detailingArray) {
             $this->detailing_costs()->delete();
 
@@ -599,8 +607,8 @@ class Car extends Model
                     $this->detailing_costs()->create(
                         [
                             'detailing_cost_id' => $item['detailing_cost_id'],
-                            'price'             => $item['price'],
-                            'coefficient'       => $item['coefficient'],
+                            'price'             => $item['price'] ?? 0,
+                            'coefficient'       => $item['coefficient'] ?? 1,
                         ],
                     );
             };
@@ -651,14 +659,15 @@ class Car extends Model
      */
     public function saveComment(string $comment = null)
     {
-        $isComment = $this->comment;
+        //$isComment = $this->comment;
 
-        if (($comment && $isComment && $this->comment->comment != $comment) || ($comment && $isComment == null)) {
-            $this->comment()->updateOrCreate(['car_id' => $this->id], [
-                'author_id' => auth()->user()->id,
-                'comment' => $comment,
-            ]);
-        }
+        //if (($comment && $isComment && $this->comment->comment != $comment) || ($comment && $isComment == null)) {
+
+        $this->comment()->updateOrCreate(['car_id' => $this->id], [
+            'author_id' => auth()->user()->id,
+            'comment' => $comment ?? '',
+        ]);
+        //}
     }
 
 
@@ -687,9 +696,12 @@ class Car extends Model
     /**
      * Сохранить логистический статус машины, который зависит от текущего ллогистического шага
      */
-    public function saveCarStatus(CarState $carState)
+    public function saveCarStatus(CarState|null $carState)
     {
-        $this->status = $carState->status;
+        $val = $carState ? $carState->status : null;
+
+        $this->status = $val;
+
         $this->save();
     }
 
@@ -993,6 +1005,7 @@ class Car extends Model
     {
         if ($this->isFixed())
             return $this->reserve->contract->option_price;
+
         return collect($this->options->map(function ($item) {
             return $item->current_price;
         }));
@@ -1044,5 +1057,31 @@ class Car extends Model
         if ($this->isReserved())
             return $this->reserve->getReserveReportString();
         return '';
+    }
+
+
+
+    /**
+     *
+     */
+    public function getPurchase()
+    {
+        return $this->purchase->cost ?? 0;
+    }
+
+
+
+    /**
+     *
+     */
+    public function getPurchaseWithDelivery()
+    {
+        $res = $this->getPurchase();
+
+        $res += $this->detailing_costs->sum(function ($item) {
+            return $item->price * $item->coefficient;
+        });
+
+        return $res;
     }
 }

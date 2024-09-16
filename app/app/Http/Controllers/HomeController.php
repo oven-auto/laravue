@@ -12,11 +12,15 @@ use App\Classes\LadaDNM\DNMWorksheet;
 use App\Classes\LadaDNM\DNMWorksheetService;
 use App\Classes\Vin\Vin;
 use App\Helpers\String\StringHelper;
+use App\Models\Car;
 use App\Models\Client as ModelsClient;
 use App\Models\ClientUnion;
+use App\Models\DiscountModul;
 use App\Models\MarkAlias;
 use App\Models\Trafic;
 use App\Models\Worksheet;
+use App\Models\WsmReserveNewCar;
+use App\Repositories\Car\Car\CarRepository;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
@@ -34,9 +38,7 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
 
 
@@ -91,9 +93,7 @@ class HomeController extends Controller
     /**
      * БОТ ТЕЛЕГРАМ
      */
-    public function bot(Request $request)
-    {
-    }
+    public function bot(Request $request) {}
 
 
 
@@ -102,14 +102,7 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index()
-    {
-        $events = \App\Models\ClientEvent::with(['lastStatus', 'executors'])->get();
-
-        $events->each(function ($item) {
-            $item->lastStatus->executors()->attach($item->executors->pluck('id')->toArray());
-        });
-    }
+    public function index(CarRepository $repo) {}
 
 
 

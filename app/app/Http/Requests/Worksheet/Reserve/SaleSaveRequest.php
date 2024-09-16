@@ -24,8 +24,11 @@ class SaleSaveRequest extends FormRequest
     public function rules()
     {
         return [
-            'amount' => 'required',
-            'name' => 'required',
+            'discount_type_id' => 'required',
+            'sum' => 'required',
+            'reparation' => 'sometimes',
+            'reparation_date' => 'sometimes',
+            'base' => 'sometimes',
             'reserve_id' => 'required'
         ];
     }

@@ -2,12 +2,14 @@
 
 namespace App\Http\Filters;
 
+use App\Models\CarState;
+use App\Models\CarStatusType;
 use Illuminate\Database\Eloquent\Builder;
 
 class CarFilter extends AbstractFilter
 {
     public const BRAND_ID = 'brand_id';
-    public const MARK_ID = 'mark_id';
+    public const MARK_ID = 'mark_ids';
     public const YEAR = 'year';
     public const VIN = 'vin';
     public const COMPLECTATION_CODE = 'complectation_code';
@@ -17,10 +19,11 @@ class CarFilter extends AbstractFilter
     public const TRADE_MARKER_ID = 'trade_marker_id';
     public const MARKER_ID = 'marker_id';
     public const ORDER_NUMBER = 'order_number';
-    public const STATE_STATUS = 'status';
+    public const STATE_STATUS = 'statuses';
     public const SEARCH = 'search';
     public const IDS = 'ids';
     public const INIT = 'init';
+    public const TYPE_STATUS = 'type_status';
 
 
 
@@ -42,6 +45,7 @@ class CarFilter extends AbstractFilter
             self::STATE_STATUS          => [$this, 'stateStatus'],
             self::SEARCH                => [$this, 'search'],
             self::IDS                   => [$this, 'ids'],
+            self::TYPE_STATUS           => [$this, 'typeStatus'],
         ];
     }
 
@@ -65,10 +69,25 @@ class CarFilter extends AbstractFilter
             ->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id') //Товарный признак
             ->leftJoin('car_markers', 'car_markers.car_id', 'cars.id') //Контрмарка
             ->leftJoin('car_orders', 'car_orders.car_id', 'cars.id') //Заказ
+            ->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id') //car type status
             ->groupBy('cars.id')
             ->groupBy('car_trade_markers.id')
             ->groupBy('car_markers.id')
             ->groupBy('car_orders.id');
+    }
+
+
+
+    /**
+     * Тип статуса автомобиля (свободный, резерв, клиент, Продан)
+     */
+    public function typeStatus(Builder $builder, array $value)
+    {
+        $arr = array_unique($value);
+
+        $result = array_intersect($arr, CarStatusType::VALUES);
+
+        $builder->whereIn('car_status_types.status', $result);
     }
 
 
@@ -89,20 +108,24 @@ class CarFilter extends AbstractFilter
     public function search(Builder $builder, $value)
     {
         $builder->where(function ($query) use ($value) {
-            $query->where('cars.vin', $value)
-                ->orWhere('cars.id', $value)
-                ->orWhere('car_orders.order_number', $value);
+            $query->where('cars.vin', 'LIKE', '%' . $value . '%')
+                ->orWhere('cars.id', 'LIKE', '%' . $value . '%')
+                ->orWhere('car_orders.order_number',  'LIKE', '%' . $value . '%');
         });
     }
 
 
 
     /**
-     * Логистический статус
+     * Логистический статус (В заказе, в отгрузке и тд)
      */
-    public function stateStatus(Builder $builder, $value)
+    public function stateStatus(Builder $builder, array $value)
     {
-        $builder->where('cars.status', $value);
+        $baseState = CarState::pluck('status')->toArray();
+
+        $arr = array_intersect($baseState, $value);
+
+        $builder->whereIn('cars.status', $arr);
     }
 
 
@@ -150,9 +173,9 @@ class CarFilter extends AbstractFilter
     /**
      * Модель
      */
-    public function markId(Builder $builder, $value)
+    public function markId(Builder $builder, array $value)
     {
-        $builder->where('cars.mark_id',  $value);
+        $builder->whereIn('cars.mark_id',  $value);
     }
 
 

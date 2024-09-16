@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Car\Car;
 
+use App\Classes\Notice\Notice;
 use App\Models\Car;
 use App\Http\Filters\CarFilter;
 use App\Models\CarState;
@@ -58,7 +59,7 @@ class CarRepository
         $car->saveTuning((new CarTuningDTO($data['tuning'] ?? [])));
 
         //Save comment
-        $car->saveComment($data['comment'] ?? null);
+        $car->saveComment($data['comment'] ?? '');
 
         //Save collector
         $car->saveCollector($data['collector_id'] ?? null);
@@ -87,8 +88,19 @@ class CarRepository
 
         $carState = CarState::query()->where('logistic_system_name', $lastState->logistic_system_name)->first();
 
-        if ($carState)
-            $car->saveCarStatus($carState);
+        $car->saveCarStatus($carState);
+    }
+
+
+
+    public function saveApplication(Car $car)
+    {
+        $car->logistic_dates()->create([
+            'car_id' => $car->id,
+            'author_id' => auth()->user()->id,
+            'logistic_system_name' => 'application_date',
+            'date_at' => '2024-02-02',
+        ]);
     }
 
 
@@ -102,6 +114,8 @@ class CarRepository
             $result = DB::transaction(function () use ($data) {
                 $car = Car::create(array_merge((new CarDTO($data))->get(), ['author_id' => auth()->user()->id]));
 
+                $data['application_date'] = $car->created_at->format('d.m.Y');
+
                 $this->saveRelationFasade($car, $data);
 
                 $car->load('logistic_dates');
@@ -109,6 +123,8 @@ class CarRepository
                 $this->setCarStatus($car);
 
                 $car->refresh();
+
+                Notice::setMessage('Автомобиль добавлен.');
 
                 return $car;
             }, 3);
@@ -137,6 +153,8 @@ class CarRepository
                 $this->setCarStatus($car);
 
                 $car->refresh();
+
+                Notice::setMessage('Автомобиль изменен.');
             }, 3);
         } catch (\Exception $exception) {
             throw new \Exception($exception->getMessage());
@@ -153,10 +171,24 @@ class CarRepository
         $query = Car::query()->select('cars.*');
 
         $query->with([
-
-            'brand', 'mark', 'complectation.motor', 'color', 'order', 'provider', 'author',
-            'marker', 'trade_marker', 'order_type', 'logistic_dates', 'technic', 'purchase',
-            'delivery_terms', 'detailing_costs', 'tuning_price', 'over_price', 'state_status',
+            'brand',
+            'mark',
+            'complectation.motor',
+            'color',
+            'order',
+            'provider',
+            'author',
+            'marker',
+            'trade_marker',
+            'order_type',
+            'logistic_dates',
+            'technic',
+            'purchase',
+            'delivery_terms',
+            'detailing_costs',
+            'tuning_price',
+            'over_price',
+            'state_status',
             'complectation' => function ($builderComplectation) {
                 $builderComplectation->with(['motor' => function ($builderMotor) {
                     $builderMotor->with(['transmission', 'driver']);
@@ -170,7 +202,7 @@ class CarRepository
 
         $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
 
-        $query->filter($filter);
+        $query->filter($filter)->orderBy('id', 'DESC');
 
         $cars = $query->simplePaginate($paginate);
 

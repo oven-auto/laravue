@@ -27,7 +27,7 @@ class MarkerCreateRequest extends FormRequest
             'name' => 'required',
             'text_color' => 'required',
             'body_color' => 'required',
-            'description' => 'required'
+            'description' => 'sometimes'
         ];
     }
 }

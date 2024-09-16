@@ -16,14 +16,35 @@ class SaleReserveItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount' => $this->amount,
-            'name' => $this->name,
-            'reserve_id' => $this->reserve_id,
-            'author' => [
-                'name' => $this->author->cut_name,
-                'id' => $this->author->id
+            'type' => [
+                'id' => $this->type->id,
+                'name' => $this->type->name,
+                'returnable' => $this->type->returnable,
             ],
-
+            'author' => [
+                'id' => $this->author->id,
+                'name' => $this->author->cut_name,
+            ],
+            'sum' => $this->sum ? [
+                'amount' => $this->sum->amount,
+                'author' => $this->sum->author->cut_name,
+                'created' => $this->sum->updated_at->format('d.m.Y'),
+            ] : [],
+            'reparation' => $this->reparation ? [
+                'amount' => $this->reparation->amount,
+                'author' => $this->reparation->author->cut_name,
+                'created' => $this->reparation->updated_at->format('d.m.Y'),
+            ] : [],
+            'reparation_date' => $this->reparation_date ? [
+                'date' => $this->reparation_date->date_at->format('d.m.Y'),
+                'author' => $this->reparation_date->author->cut_name,
+                'created' => $this->reparation_date->updated_at->format('d.m.Y'),
+            ] : [],
+            'base' => $this->base ? [
+                'base' => $this->base->base,
+                'author' => $this->base->author->cut_name,
+                'created' => $this->base->updated_at->format('d.m.Y'),
+            ] : [],
         ];
     }
 }

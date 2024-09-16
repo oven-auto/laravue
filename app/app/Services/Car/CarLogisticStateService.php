@@ -80,6 +80,7 @@ class CarLogisticStateService
             8 => $this->getWithCountDay(1),
             9 => $this->getWithDate(),
             10 => $this->getWithDate(),
+            11 => $this->getWithCountDay(1),
         };
     }
 
@@ -98,14 +99,27 @@ class CarLogisticStateService
 
         $state_status = $this->car->state_status;
 
-        $this->setData(['title' => 'В заявке', 'date' => $this->car->created_at->format('d.m.Y'), 'weight' => 0]);
+        $this->setData([
+            'title' => 'В заявке',
+            'date' => $this->car->created_at->format('d.m.Y'),
+            'weight' => 0
+        ]);
 
-        if ($state_status)
-            $this->setData([
-                'title' => $state_status->description,
-                'date' => $state->date_at->format('d.m.Y'),
-                'weight' => $state_status->id
-            ]);
+        if ($state_status) {
+            if ($state)
+                $this->setData([
+                    'title' => $state_status->description,
+                    'date' => $state->date_at->format('d.m.Y'),
+                    'weight' => $state_status->id
+                ]);
+            else
+                $this->setData([
+                    'title' => 'В заявке',
+                    'date' => $this->car->created_at->format('d.m.Y'),
+                    'weight' => 0
+                ]);
+        }
+
 
         if ($this->car->isIssued())
             $this->setData([

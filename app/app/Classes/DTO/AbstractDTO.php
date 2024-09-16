@@ -10,7 +10,7 @@ abstract class AbstractDTO
 
     public function set($key, $val)
     {
-        if(in_array($key, $this->fields))
+        if (in_array($key, $this->fields))
             $this->data[$key] = $val;
     }
 
@@ -18,7 +18,7 @@ abstract class AbstractDTO
 
     public function get($key = null)
     {
-        if($key && isset($this->data[$key]))
+        if ($key && isset($this->data[$key]))
             return $this->data[$key];
 
         return $this->data ?? [];

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Worksheet\Reserve\ReserveList;
 
+use App\Helpers\Url\WebUrl;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CarResource extends JsonResource
@@ -37,6 +38,10 @@ class CarResource extends JsonResource
             'order_number'          => $this->order->order_number ?? '',
             'marker'                => $this->marker->marker ?? [],
             'pts'                   => $this->hasPTS(),
+            'file' => [
+                'url' => $this->complectation->file ? WebUrl::make_link($this->complectation->file->file) : '',
+                'author' => $this->complectation->file ? $this->complectation->file->author->cut_name : '',
+            ],
         ];
     }
 }

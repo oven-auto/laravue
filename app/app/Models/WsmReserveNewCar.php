@@ -16,6 +16,16 @@ class WsmReserveNewCar extends Model
     /**
      * RELATIONS
      */
+
+
+
+    public function discounts()
+    {
+        return $this->morphMany(Discount::class, 'modulable')->where('modulable_type', $this::class);
+    }
+
+
+
     public function tradeins()
     {
         return $this->belongsToMany(
@@ -198,7 +208,7 @@ class WsmReserveNewCar extends Model
      * */
     public function getSaleSum(): int
     {
-        return $this->sales->sum('amount') ?? 0;
+        return $this->discounts->sum('sum.amount') ?? 0;
     }
 
 

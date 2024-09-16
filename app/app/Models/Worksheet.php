@@ -20,7 +20,8 @@ class Worksheet extends Model
     ];
 
     private const WORKING_STATUSES = [
-        'work', 'check'
+        'work',
+        'check'
     ];
 
 
@@ -192,6 +193,10 @@ class Worksheet extends Model
     {
         return $this->hasMany(\App\Models\WSMRedemptionCar::class, 'worksheet_id', 'id');
     }
+
+
+
+
 
 
 

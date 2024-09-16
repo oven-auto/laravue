@@ -16,7 +16,10 @@ use App\Http\Controllers\Api\v1\Back\Car\DeliveryTerm\DeliveryTermController;
 use App\Http\Controllers\Api\v1\Back\Car\DetailingCost\DetailingCostController;
 use App\Http\Controllers\Api\v1\Back\Car\Factory\FactoryController;
 use App\Http\Controllers\Api\v1\Back\Car\Option\PriceOptionController;
+use App\Http\Controllers\Api\v1\Back\Car\TradeMarker\TradeMarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Tuning\TuningController;
+use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
+use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveNewCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\RedemptionController;
@@ -25,10 +28,11 @@ use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ContractListContr
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\PaymentReserveController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveCommentController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveListController;
-use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\SaleController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\DiscountReserveController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\TradeInReserveController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Integration\PotokBit\PotokBitController;
+use App\Models\Role;
 
 Route::get('test', [HomeController::class, 'test']);
 
@@ -120,7 +124,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('motortypes',         [App\Http\Controllers\Api\v1\Services\Select\MotorTypeSelectController::class, 'index']); //типы моторов (бензин дизель и тд)
                 Route::get('toxic',              [App\Http\Controllers\Api\v1\Services\Select\MotorToxicController::class, 'index']); //токсичность моторов (евро 2 евро 3 и тд)
                 Route::get('bodyworks',          [App\Http\Controllers\Api\v1\Services\Select\BodyWorkSelectController::class, 'index']); //кузова
-                Route::get('bodyacronyms',          [App\Http\Controllers\Api\v1\Services\Select\BodyWorkSelectController::class, 'acronym']); //кузова
+                Route::get('bodyacronyms',       [App\Http\Controllers\Api\v1\Services\Select\BodyWorkSelectController::class, 'acronym']); //кузова
                 Route::get('factories',          [App\Http\Controllers\Api\v1\Services\Select\CountryFactorySelectController::class, 'index']); //места производства
                 Route::get('colors',             [App\Http\Controllers\Api\v1\Services\Select\ColorController::class, 'index']); //базовые цвета
                 Route::get('markcolors',         [App\Http\Controllers\Api\v1\Services\Select\ColorController::class, 'mark']); //дилерские цвета
@@ -137,6 +141,18 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('payments',           [App\Http\Controllers\Api\v1\Services\Select\PaymentController::class, 'index']);
                 Route::get('markaliases',        [App\Http\Controllers\Api\v1\Services\Select\MarkSelectController::class, 'getaliases']);
                 Route::get('reasons',           [App\Http\Controllers\Api\v1\Services\Select\ReasonRefusalController::class, 'index']);
+
+                Route::get('modules', function () { //список модулей
+                    return \App\Models\Modul::get()->toArray();
+                });
+
+                Route::get('car_status_types', function () { //список типов статуса авто
+                    return \App\Models\CarStatusType::STATES;
+                });
+
+                Route::get('car_states', function () { //Получить спискок состояний авто по статусам логистики
+                    return \App\Models\CarState::pluck('status', 'description');
+                });
             });
         });
     });
@@ -443,6 +459,20 @@ Route::middleware(['userfromtoken'])->group(function () {
             Route::patch('{marker}',            [MarkerController::class, 'update'])->withTrashed();
             Route::delete('{marker}',           [MarkerController::class, 'delete']);
             Route::patch('{marker}/restore',    [MarkerController::class, 'restore'])->withTrashed();
+        });
+
+
+
+        /**
+         * МАРШРУТЫ ТОВАРНЫЙ ПРИЗНАК
+         */
+        Route::prefix('trademarkers')->group(function () {
+            Route::get('',                      [TradeMarkerController::class, 'index']);
+            Route::post('',                     [TradeMarkerController::class, 'store']);
+            Route::get('{marker}',              [TradeMarkerController::class, 'show'])->withTrashed();
+            Route::patch('{marker}',            [TradeMarkerController::class, 'update'])->withTrashed();
+            Route::delete('{marker}',           [TradeMarkerController::class, 'delete']);
+            Route::patch('{marker}/restore',    [TradeMarkerController::class, 'restore'])->withTrashed();
         });
 
 
@@ -883,12 +913,12 @@ Route::middleware(['userfromtoken'])->group(function () {
                     Route::patch('{contract}', [ContractController::class, 'update']);
                 });
 
-                Route::prefix('sales')->group(function () {
-                    Route::get('/', [SaleController::class, 'index']);
-                    Route::post('/', [SaleController::class, 'store']);
-                    Route::get('/{sale}', [SaleController::class, 'show']);
-                    Route::patch('/{sale}', [SaleController::class, 'update']);
-                    Route::delete('/{sale}', [SaleController::class, 'destroy']);
+                Route::prefix('discounts')->group(function () {
+                    Route::get('/', [DiscountReserveController::class, 'index']);
+                    Route::post('/', [DiscountReserveController::class, 'store']);
+                    Route::get('/{discount}', [DiscountReserveController::class, 'show']);
+                    Route::patch('/{discount}', [DiscountReserveController::class, 'update']);
+                    Route::delete('/{discount}', [DiscountReserveController::class, 'destroy']);
                 });
 
                 Route::prefix('comments')->group(function () {
@@ -1002,6 +1032,28 @@ Route::middleware(['userfromtoken'])->group(function () {
 
 
 
-
+    /**
+     * BODYWORKS
+     */
     Route::resource('bodyworks', BodyworkController::class);
+
+
+
+    /**
+     * DISCOUNT CAR LIST
+     */
+    Route::prefix('discounts')->group(function () {
+        Route::get('/',                 [DiscountCarController::class, 'index']);
+        Route::post('/',                [DiscountCarController::class, 'store']);
+        Route::patch('/{discounttype}',      [DiscountCarController::class, 'update'])->withTrashed();
+        Route::get('/{discounttype}',        [DiscountCarController::class, 'show'])->withTrashed();
+        Route::delete('/{discounttype}',     [DiscountCarController::class, 'destroy']);
+        Route::patch('{discounttype}/restore', [DiscountCarController::class, 'restore'])->withTrashed();
+    });
+
+
+
+    Route::prefix('discountlist')->group(function () {
+        Route::get('/', [DiscountListController::class, 'index']);
+    });
 });

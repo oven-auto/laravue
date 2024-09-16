@@ -54,7 +54,7 @@ class Option extends Model
 
     public function current_price()
     {
-        return $this->hasOne(\App\Models\OptionCurrentPrice::class, 'option_id', 'id');
+        return $this->hasOne(\App\Models\OptionCurrentPrice::class, 'option_id', 'id')->withDefault();
     }
 
 
@@ -66,5 +66,14 @@ class Option extends Model
     public function getPriceAttribute()
     {
         return $this->current_price->price ?? 0;
+    }
+
+
+
+    public function getCurrentBeginDateAttribute()
+    {
+        if ($this->current_price && $this->current_price->option_price)
+            return $this->current_price->option_price->begin_at->format('d.m.Y ');
+        return null;
     }
 }

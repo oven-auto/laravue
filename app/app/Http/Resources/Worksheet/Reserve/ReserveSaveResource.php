@@ -25,7 +25,7 @@ class ReserveSaveResource extends JsonResource
             ],
             'car'                       => new CarReserveResource($this->car),
             'contract'                  => $this->contract->id ? new ContractItemResource($this->contract) : [],
-            'sales'                     => SaleReserveItemResource::collection($this->sales),
+            'discounts'                 => SaleReserveItemResource::collection($this->discounts),
             'comments' => $this->last_comment->id ? [
                 'text'                  => $this->last_comment->text,
                 'id'                    => $this->last_comment->id,
@@ -35,7 +35,7 @@ class ReserveSaveResource extends JsonResource
             'price'                     => $this->getDebt(),
             'payments' => PaymentSaveResource::collection($this->payments),
             'tradeins' => UsedCarItemResource::collection($this->tradeins),
-            //'coast' => '***', //$this->coast(),
+
             'issue_date' => $this->issue()->exists() ? [
                 'author' => [
                     'name'                  => $this->issue->author->cut_name,

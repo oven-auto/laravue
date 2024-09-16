@@ -23,6 +23,7 @@ class ReserveResource extends JsonResource
             ],
 
             'car' => new CarResource($this->car),
+            'trade_marker' => $this->car->trade_marker->marker->name,
 
             'worksheet' => [
                 'id' => $this->worksheet->id,
@@ -102,17 +103,22 @@ class ReserveResource extends JsonResource
 
             'purchase' => [
                 'ransom_date'           => $this->car->getRansomDate(),
-                'purchase'              => $this->car->purchase->cost ?? 0,
-                'detailing_cost'       => ($this->car->purchase->cost ?? 0) + ($this->car->detailing_costs->sum('price') ?? 0),
+                'purchase'              => $this->car->getPurchase(),
+                'detailing_cost'        => $this->car->getPurchaseWithDelivery(),
             ],
 
             'delivery' => [
                 'provider'              => $this->car->provider->cut_name,
                 'delivery_term'         => [
                     'term_name' => $this->car->delivery_terms->term->name ?? '',
-                    'deposit_name' => $this->car->collector->collector->name ?? ''
+                    'deposit_name' => $this->car->collector->collector->name ?? '',
+                    'color'         => $this->car->delivery_terms->term->text_color,
                 ],
-                'order_type'            => $this->car->order_type ? $this->car->order_type->type->name : 'Тип заказа не указан',
+                'order_type'            => [
+                    'name'          => $this->car->order_type ? $this->car->order_type->type->name : 'Тип заказа не указан',
+                    'text_color'    => $this->car->order_type ? $this->car->order_type->type->text_color : '',
+                    'body_color'    => $this->car->order_type ? $this->car->order_type->type->body_color : '',
+                ],
             ],
 
             'report' => [

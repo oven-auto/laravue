@@ -2,8 +2,6 @@
 
 namespace App\Classes\Telegram\Notice;
 
-use \App\Models\ClientEventStatus;
-
 class TraficNotice extends AbstractNotice
 {
     public $message = '';

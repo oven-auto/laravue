@@ -14,9 +14,7 @@ class Telegram
 
     public $offset;
 
-    private function __construct()
-    {
-    }
+    private function __construct() {}
 
 
 
@@ -86,8 +84,6 @@ class Telegram
     {
         $options['chat_id'] = $chatId;
         $options['text'] = $message;
-        //dump($options);
-        // $this->service->sendMessage($options);
         $response = Http::post('https://telegram.oven-auto.ru/send', $options);
     }
 }

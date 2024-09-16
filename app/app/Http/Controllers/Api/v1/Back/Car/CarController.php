@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1\Back\Car;
 
+use App\Classes\Notice\Notice;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Car\OverPrice\OverPriceRequest;
 use App\Http\Requests\Car\CarCreateRequest;
@@ -40,9 +41,9 @@ class CarController extends Controller
     public function store(CarCreateRequest $request)
     {
         $car = $this->repo->store($request->validated());
-        //ЛОГИКА СОХРАНЕНИЯ ДАТЫ В ОБСЕРВЕРЕ
+
         return (new CarItemResource($car))
-            ->additional(['message' => 'Автомобиль создан']);
+            ->additional(['message' => Notice::getMessages()]);
     }
 
 
@@ -53,9 +54,9 @@ class CarController extends Controller
     public function update(Car $car, CarCreateRequest $request)
     {
         $this->repo->update($car, $request->validated());
-        //ЛОГИКА СОХРАНЕНИЯ ДАТЫ В ОБСЕРВЕРЕ
+
         return (new CarItemResource($car))
-            ->additional(['message' => 'Автомобиль изменен']);
+            ->additional(['message' => Notice::getMessages()]);
     }
 
 

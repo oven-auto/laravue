@@ -20,7 +20,9 @@ class MarkerResource extends JsonResource
             'body_color' => $this->body_color,
             'text_color' => $this->text_color,
             'description' => $this->description,
-            'trash' => (int)$this->trashed()
+            'trash' => (int)$this->trashed(),
+            'update' => $this->updated_at->format('d.m.Y (H:i)'),
+            'author' => $this->author->cut_name,
         ];
     }
 }
