@@ -1,0 +1,1797 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API",
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://192.168.1.98:8280/api",
+            "description": "Сервер"
+        },
+        {
+            "url": ""
+        }
+    ],
+    "paths": {
+        "/bodyworks": {
+            "get": {
+                "tags": [
+                    "Кузов"
+                ],
+                "summary": "Список кузовов",
+                "description": "Вернет список кузавов",
+                "operationId": "getBodyworkList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Кузов"
+                ],
+                "summary": "Создать кузов",
+                "description": "Создать новый кузов",
+                "operationId": "createBodywork",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BodyworkSaveRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/bodyworks/{id}": {
+            "get": {
+                "tags": [
+                    "Кузов"
+                ],
+                "summary": "Открыть выбранный кузов",
+                "description": "Вернет выбранный кузов",
+                "operationId": "getItemBodywork",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор кузова",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "Кузов"
+                ],
+                "summary": "Изменить выбранный кузов",
+                "description": "Изменить выбранный кузов",
+                "operationId": "updateBodywork",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор кузова",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/BodyworkSaveRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars": {
+            "post": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Список новых автомобилей",
+                "description": "Список новых автомобилейв",
+                "operationId": "carsList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CarFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/{id}": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Открыть карточку нового автомобиля",
+                "description": "Открыть карточку нового автомобиля",
+                "operationId": "getCar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Изменить новый автомобиль",
+                "description": "Изменить новый автомобиль",
+                "operationId": "updateCar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор кузова",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CarCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/overprice/{id}": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Получить стоимость переоценки автомобиля (воздух)",
+                "description": "Получить стоимость переоценки автомобиля (воздух)",
+                "operationId": "getCarOverPrice",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Добавить/Изменить стоимость переоценки автомобиля (воздух)",
+                "description": "Добавить/Изменить стоимость переоценки автомобиля (воздух)",
+                "operationId": "storeCarOverPrice",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "price",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "price"
+                                ],
+                                "properties": {
+                                    "price": {
+                                        "type": "integer",
+                                        "format": "integer",
+                                        "example": "10000"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/{id}/history": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Получить историю автомобиля",
+                "description": "Получить историю автомобиля",
+                "operationId": "getCarHistory",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/{id}/tuning": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Получить установленный тюнинг на автомобиле",
+                "description": "Получить установленный тюнинг на автомобиле",
+                "operationId": "getCarTuning",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/complectationlist": {
+            "get": {
+                "tags": [
+                    "Журнал комплектации"
+                ],
+                "summary": "Журнал комплектации",
+                "description": "Журнал комплектации",
+                "operationId": "getcomplectationlist",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "cars/deliveryterms": {
+            "get": {
+                "tags": [
+                    "CRUD Условия отгрузки"
+                ],
+                "summary": "Получить список условий отгрузки",
+                "description": "Получить список условий отгрузки",
+                "operationId": "getDeliveryTermLists",
+                "requestBody": {
+                    "description": "Описание параметров запроса",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "trash": {
+                                        "description": "Параметр отвечает за то, что бы выводить только удаленные",
+                                        "type": "string",
+                                        "format": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "CRUD Условия отгрузки"
+                ],
+                "summary": "Добавить условие отгрузки.",
+                "description": "Добавить условие отгрузки",
+                "operationId": "storeDeliveryTermLists",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeliveryTermRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "cars/deliveryterms/{id}": {
+            "get": {
+                "tags": [
+                    "CRUD Условия отгрузки"
+                ],
+                "summary": "Получить условие отгрузки.",
+                "description": "Получить условие отгрузки",
+                "operationId": "showDeliveryTermLists",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор условия",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "CRUD Условия отгрузки"
+                ],
+                "summary": "Удалить условие отгрузки.",
+                "description": "Удалить условие отгрузки",
+                "operationId": "deleteDeliveryTermLists",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор условия",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "CRUD Условия отгрузки"
+                ],
+                "summary": "Изменить условие отгрузки.",
+                "description": "Изменить условие отгрузки",
+                "operationId": "updateDeliveryTermLists",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор условия",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DeliveryTermRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "cars/deliveryterms/{id}/restore": {
+            "patch": {
+                "tags": [
+                    "CRUD Условия отгрузки"
+                ],
+                "summary": "Востановить условие отгрузки.",
+                "description": "Востановить условие отгрузки",
+                "operationId": "restoreDeliveryTermLists",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор условия",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/discountlist": {
+            "get": {
+                "tags": [
+                    "Журнал скидок"
+                ],
+                "summary": "Журнал скидок",
+                "description": "Журнал скидок",
+                "operationId": "getDiscountList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DiscountListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/discountlist/count": {
+            "get": {
+                "tags": [
+                    "Журнал скидок"
+                ],
+                "summary": "Количество скидок в журнале",
+                "description": "Количество скидок в журнале",
+                "operationId": "getDiscountCountList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DiscountListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/trafic/files/{traficId}}": {
+            "get": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Получить список файлов добавленых в трафик",
+                "description": "Получить список файлов добавленых в трафик",
+                "operationId": "getTraficFilesList",
+                "parameters": [
+                    {
+                        "name": "traficId",
+                        "in": "path",
+                        "description": "Идентификатор трафика",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/trafic/files/{traficId}": {
+            "post": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Добавить файлы в трафик",
+                "description": "Добавить файлы в трафик",
+                "operationId": "storeTraficFiles",
+                "parameters": [
+                    {
+                        "name": "traficId",
+                        "in": "path",
+                        "description": "Идентификатор трафика",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/trafic/files/{fileId}": {
+            "delete": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Удалить файл в трафике",
+                "description": "Удалить файл в трафик",
+                "operationId": "deleteTraficFiles",
+                "parameters": [
+                    {
+                        "name": "fileId",
+                        "in": "path",
+                        "description": "Идентификатор файла",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/trafic/links": {
+            "get": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Получить список ссылок добавленых в трафик",
+                "description": "Получить список ссылок добавленых в трафик",
+                "operationId": "getTraficLinksList",
+                "requestBody": {
+                    "description": "TraficId",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "trafic_id"
+                                ],
+                                "properties": {
+                                    "trafic_id": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/trafic/links/{traficId}": {
+            "post": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Добавить ссылку в трафик",
+                "description": "Добавить ссылку в трафик",
+                "operationId": "storeTraficLinks",
+                "parameters": [
+                    {
+                        "name": "traficId",
+                        "in": "path",
+                        "description": "Идентификатор трафика",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "TraficId",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "url"
+                                ],
+                                "properties": {
+                                    "url": {
+                                        "type": "string",
+                                        "format": "string",
+                                        "example": "http://example.com"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/trafic/links/{traficLink}": {
+            "delete": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Удалить ссылку в трафике",
+                "description": "Удалить ссылку в трафик",
+                "operationId": "deleteTraficLink",
+                "parameters": [
+                    {
+                        "name": "traficLink",
+                        "in": "path",
+                        "description": "Идентификатор ссылки",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/trafic/links/count": {
+            "get": {
+                "tags": [
+                    "Трафик"
+                ],
+                "summary": "Получить кол-во ссылок добавленых в трафик",
+                "description": "Получить кол-во ссылок добавленых в трафик",
+                "operationId": "getTraficLinksListCount",
+                "requestBody": {
+                    "description": "TraficId",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "trafic_id"
+                                ],
+                                "properties": {
+                                    "trafic_id": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "1"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/worksheet/modules/reserves/setdates/{id}": {
+            "delete": {
+                "tags": [
+                    "Резерв нового автомобиля"
+                ],
+                "summary": "Удалить дату сделки",
+                "description": "Удалить дату сделки",
+                "operationId": "deleteDealDate",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор резерва",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Request Body Description",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "type": {
+                                        "description": "Тип даты: sale|issue",
+                                        "type": "string",
+                                        "format": "string",
+                                        "enum": [
+                                            "sale",
+                                            "issue"
+                                        ]
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheets": {
+            "get": {
+                "tags": [
+                    "Рабочий лист"
+                ],
+                "summary": "Список рабочих листов",
+                "description": "Вернет список рабочих листов",
+                "operationId": "getListWorksheets",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Рабочий лист"
+                ],
+                "summary": "Создать РЛ",
+                "description": "Создать РЛ",
+                "operationId": "createWorksheet",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorksheetStoreRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/bodyworks": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов кузова",
+                "description": "Список типов кузова",
+                "operationId": "getBodyTypeSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/vehicletypes": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов ТС",
+                "description": "Список типов ТС",
+                "operationId": "getVehicleTypeSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/bodyacronyms": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список акронимов типа кузова",
+                "description": "Список акронимов типа кузова",
+                "operationId": "getAcronymTypeSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/brands": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список всех брендов",
+                "description": "Список всех брендов",
+                "operationId": "getbrandsSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/dealerbrands": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список дилерских брендов",
+                "description": "Список дилерских брендов",
+                "operationId": "getdealerbrandsSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/car_status_types": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов статуса нового авто",
+                "description": "Список типов статуса нового авто",
+                "operationId": "getCarStatusBuisnesTypes",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/report_types": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов рапорта",
+                "description": "Список типов рапорта",
+                "operationId": "getCarSReportTypes",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/car_states": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов этапов поставки нового авто",
+                "description": "Список типов поставки нового авто",
+                "operationId": "getCarStatusLogTypes",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/collectors": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список залогодателей (держатель залога)",
+                "description": "Список залогодателей (держатель залога)",
+                "operationId": "getCarCollectors",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/marks": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список моделей указаного бренда",
+                "description": "Список моделей указаного бренда",
+                "operationId": "getmarksSelect",
+                "requestBody": {
+                    "description": "Подставить бренд в запрос",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "brand_id": {
+                                        "description": "Выбранный бренд",
+                                        "type": "integer",
+                                        "format": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/markaliases": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список синонимов моделей(ДНМ Лада)",
+                "description": "Список синонимов моделей(ДНМ Лада)",
+                "operationId": "getAliasList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/markers": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список контр-марок (марка логиста)",
+                "description": "Список контр-марок (марка логиста)",
+                "operationId": "getmarkersSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/trademarkers": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список товарных признаков",
+                "description": "Список товарных признаков",
+                "operationId": "gettrademarkersSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/modules": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов бизнес модулей РЛ",
+                "description": "Список типов бизнес модулей РЛ",
+                "operationId": "getModuleList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/ordertypes": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов заказа",
+                "description": "Список типов заказа",
+                "operationId": "getordertypesSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/deliveryterms": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список условия доставки",
+                "description": "Список условия доставки",
+                "operationId": "getdeliverytermsSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/detailingcosts": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов детализации цены",
+                "description": "Список типов детализации цены",
+                "operationId": "getdetailingcostsSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/payments": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов оплаты",
+                "description": "Список типов оплаты",
+                "operationId": "getPaymentList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/reasons": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список причин отказа от РЛ (ДНМ Лада)",
+                "description": "Список причин отказа от РЛ (ДНМ Лада)",
+                "operationId": "getReasonList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/tunings": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список тюнинга",
+                "description": "Список тюнинга",
+                "operationId": "getTuningSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/users": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список пользователей системы",
+                "description": "Список пользователей системы",
+                "operationId": "getUsersSelect",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "CarFilter": {
+                "description": "Параметры фильтрации автосклада",
+                "properties": {
+                    "brands": {
+                        "description": "Массив содержащий идентификаторы бренда",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "brands"
+                        ]
+                    },
+                    "models": {
+                        "description": "Массив содержащий идентификаторы моделей",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "models"
+                        ]
+                    },
+                    "year": {
+                        "description": "Год выпуска",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "2024",
+                        "enum": [
+                            "year"
+                        ]
+                    },
+                    "vin": {
+                        "description": "VIN",
+                        "type": "string",
+                        "format": "string",
+                        "example": "XTAGFK350R0836729",
+                        "enum": [
+                            "vin"
+                        ]
+                    },
+                    "complectation_code": {
+                        "description": "Код комплектации",
+                        "type": "string",
+                        "format": "string",
+                        "example": "BGT04-000-61",
+                        "enum": [
+                            "complectation_code"
+                        ]
+                    },
+                    "complectation_id": {
+                        "description": "Идентификатор комплектации",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "1",
+                        "enum": [
+                            "complectation_id"
+                        ]
+                    },
+                    "bodyworks": {
+                        "description": "Массив содержащий идентификаторы типов кузова",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "bodyworks"
+                        ]
+                    },
+                    "transmissions": {
+                        "description": "Массив содержащий идентификаторы типов трансмиссий",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "transmissions"
+                        ]
+                    },
+                    "motortypes": {
+                        "description": "Массив содержащий идентификаторы типов двигателя",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "motortypes"
+                        ]
+                    },
+                    "trade_markers": {
+                        "description": "Массив содержащий идентификаторы типов товарных признаков ",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "trade_markers"
+                        ]
+                    },
+                    "markers": {
+                        "description": "Массив содержащий идентификаторы контрмарки",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "markers"
+                        ]
+                    },
+                    "order_number": {
+                        "description": "Номер заказа",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "order_number"
+                        ]
+                    },
+                    "logistic_statuses": {
+                        "description": "Массив содержащий идентификаторы текущих этапов поставки",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "logistic_statuses"
+                        ]
+                    },
+                    "search": {
+                        "description": "Полнотекстовый поиск, если перед строкой поиска подставить id@ будет искать по id машины. Возможны следующие уточнения:\n     * id@ - id машины (точный поиск), vin@ - вин машины, order@ - номер заказа, model@ - модель машины",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "search"
+                        ]
+                    },
+                    "ids": {
+                        "description": "Массив содержащий идентификаторы автомобилей",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "ids"
+                        ]
+                    },
+                    "type_statuses": {
+                        "description": "Массив содержащий идентификатор статуса автомобиля",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "type_statuses"
+                        ]
+                    },
+                    "drivers": {
+                        "description": "Массив содержащий идентификаторы типов привода",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "drivers"
+                        ]
+                    },
+                    "technics": {
+                        "description": "Массив содержащий идентификаторы техника-приемщика",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "technics"
+                        ]
+                    },
+                    "delivery_terms": {
+                        "description": "Массив содержащий идентификаторы условий поставки",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "delivery_terms"
+                        ]
+                    },
+                    "paid_dates": {
+                        "description": "Массив содержащий интервал дат начало платного периода от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "paid_dates"
+                        ]
+                    },
+                    "control_paid_dates": {
+                        "description": "Массив содержащий интервал дат контроля срока оплаты от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "control_paid_dates"
+                        ]
+                    },
+                    "collectors": {
+                        "description": "Массив содержащий идентификаторы держателей залога",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "collectors"
+                        ]
+                    },
+                    "prices": {
+                        "description": "Массив содержащий интервал цены от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[700000,1000000]",
+                        "enum": [
+                            "prices"
+                        ]
+                    },
+                    "application_date": {
+                        "description": "Массив содержащий интервал даты этапа заявка от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "application_date"
+                        ]
+                    },
+                    "order_date": {
+                        "description": "Массив содержащий интервал даты этапа в заказе от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "order_date"
+                        ]
+                    },
+                    "plan_date": {
+                        "description": "Массив содержащий интервал даты этапа сборка планируемая от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "plan_date"
+                        ]
+                    },
+                    "build_date": {
+                        "description": "Массив содержащий интервал даты этапа сборка фактическая от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "build_date"
+                        ]
+                    },
+                    "ready_date": {
+                        "description": "Массив содержащий интервал даты этапа готовность к отгрузке от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "ready_date"
+                        ]
+                    },
+                    "request_date": {
+                        "description": "Массив содержащий интервал даты этапа заявка на перевозку от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "request_date"
+                        ]
+                    },
+                    "shipment_date": {
+                        "description": "Массив содержащий интервал даты этапа отгрузка от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "shipment_date"
+                        ]
+                    },
+                    "stock_date": {
+                        "description": "Массив содержащий интервал даты этапа приемка на склад от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "stock_date"
+                        ]
+                    },
+                    "invoice_date": {
+                        "description": "Массив содержащий интервал даты этапа приходная накладная от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "invoice_date"
+                        ]
+                    },
+                    "ransom_date": {
+                        "description": "Массив содержащий интервал даты этапа оплата поставщику от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "ransom_date"
+                        ]
+                    },
+                    "off_date": {
+                        "description": "Массив содержащий интервал даты этапа списание от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "off_date"
+                        ]
+                    },
+                    "presale_date": {
+                        "description": "Массив содержащий интервал даты этапа предпродажная подготовка от - до, параметр ДО необязателен, \n     *      отсутствие второго параметра, будет означать, что используется не интервал, \n     *      соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "presale_date"
+                        ]
+                    },
+                    "has_overprice": {
+                        "description": "Наличие переоценки, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_overprice"
+                        ]
+                    },
+                    "has_tuning": {
+                        "description": "Наличие тюнинга, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_tuning"
+                        ]
+                    },
+                    "has_gift": {
+                        "description": "Наличие подарка, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_gift"
+                        ]
+                    },
+                    "has_discount": {
+                        "description": "Наличие скидки, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_discount"
+                        ]
+                    },
+                    "has_deposit": {
+                        "description": "Наличие залога, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_deposit"
+                        ]
+                    },
+                    "has_off": {
+                        "description": "Наличие списания, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_off"
+                        ]
+                    },
+                    "has_detailing_cost": {
+                        "description": "Наличие дополнительной себестоимости, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_detailing_cost"
+                        ]
+                    },
+                    "has_plan": {
+                        "description": "Наличие в плане поставщика, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_plan"
+                        ]
+                    },
+                    "report_type": {
+                        "description": "Массив содержащий тип рапотра",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "report_type"
+                        ]
+                    },
+                    "has_devices": {
+                        "description": "Наличие установленого тюнинга(номенклатурно)",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_devices"
+                        ]
+                    },
+                    "has_ransom": {
+                        "description": "Наличие выкупного платежа",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_ransom"
+                        ]
+                    },
+                    "has_options": {
+                        "description": "Наличие опций",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_options"
+                        ]
+                    },
+                    "colors": {
+                        "description": "Массив содержащий идентификаторы цвета (БАЗОВЫЕ ЦВЕТА - НЕ ДИЛЕРСКИЕ)",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "colors"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "BodyworkSaveRequest": {
+                "required": [
+                    "name",
+                    "acronym",
+                    "vehicle"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Название кузова",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "acronym": {
+                        "description": "Акроним кузова",
+                        "format": "string"
+                    },
+                    "vehicle": {
+                        "description": "Тип ТС",
+                        "type": "integer",
+                        "format": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "CarCreateRequest": {
+                "required": [
+                    "mark_id",
+                    "brand_id",
+                    "complectation_id",
+                    "color_id",
+                    "year",
+                    "trade_marker_id",
+                    "provider_id"
+                ]
+            },
+            "DeliveryTermRequest": {
+                "required": [
+                    "name",
+                    "text_color",
+                    "description"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Название",
+                        "type": "string",
+                        "format": "1"
+                    },
+                    "text_color": {
+                        "description": "Цвет текста",
+                        "type": "string",
+                        "format": "1"
+                    },
+                    "description": {
+                        "description": "Описание",
+                        "type": "string",
+                        "format": "1"
+                    },
+                    "begin_period": {
+                        "description": "Количество дней до начала кредитного периода",
+                        "type": "integer",
+                        "format": "1"
+                    },
+                    "end_period": {
+                        "description": "Количество дней до окончания кредитного периода",
+                        "type": "integer",
+                        "format": "1"
+                    }
+                },
+                "type": "object"
+            },
+            "DiscountListRequest": {
+                "required": [
+                    "journal"
+                ],
+                "properties": {
+                    "journal": {
+                        "description": "Тип журнала, значения для подстановки: newcar, oldcar, service, parts",
+                        "type": "string",
+                        "format": "string",
+                        "enum": [
+                            "newcar",
+                            "oldcar",
+                            "service",
+                            "parts"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "WorksheetStoreRequest": {
+                "required": [
+                    "trafic_id"
+                ],
+                "properties": {
+                    "trafic_id": {
+                        "description": "ID Трафика",
+                        "type": "integer",
+                        "format": "integer"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Кузов",
+            "description": "Кузов"
+        },
+        {
+            "name": "Новый автомобиль",
+            "description": "Новый автомобиль"
+        },
+        {
+            "name": "Журнал комплектации",
+            "description": "Журнал комплектации"
+        },
+        {
+            "name": "CRUD Условия отгрузки",
+            "description": "CRUD Условия отгрузки"
+        },
+        {
+            "name": "Журнал скидок",
+            "description": "Журнал скидок"
+        },
+        {
+            "name": "Трафик",
+            "description": "Трафик"
+        },
+        {
+            "name": "Резерв нового автомобиля",
+            "description": "Резерв нового автомобиля"
+        },
+        {
+            "name": "Рабочий лист",
+            "description": "Рабочий лист"
+        },
+        {
+            "name": "Списки",
+            "description": "Списки"
+        }
+    ]
+}

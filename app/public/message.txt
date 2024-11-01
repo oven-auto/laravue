@@ -1,0 +1,1 @@
+{"update_id":"149140964","message":{"message_id":"303","from":{"id":"476686432","is_bot":"0","first_name":"Ivan","username":"IvanSyktyvkar","language_code":"ru"},"chat":{"id":"476686432","first_name":"Ivan","username":"IvanSyktyvkar","type":"private"},"date":"1712234819","text":"\/start","entities":[{"offset":"0","length":"6","type":"bot_command"}]}}
