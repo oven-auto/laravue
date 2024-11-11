@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class SQL_VIEW_CAR_FULL_PRICE extends Command
 {
@@ -46,9 +46,11 @@ class SQL_VIEW_CAR_FULL_PRICE extends Command
                 IFNULL((ctp.price),0) as tuningprice,
                 (IFNULL(cover.price,0) + IFNULL(cop.price,0) +  IFNULL((ccp.price),0) + IFNULL((ctp.price),0)) as price,
                 c.id as car_id,
-                ifnull((ccp.id),0) as complectation_price_id
+                ifnull((ccp.id),0) as complectation_price_id,
+                ifnull((cgp.price),0) as giftprice
             FROM cars as c
             LEFT JOIN car_tuning_prices as ctp on ctp.car_id = c.id
+            LEFT JOIN car_gift_prices as cgp on cgp.car_id = c.id
             LEFT JOIN complectation_current_prices as ccp on ccp.complectation_id = c.complectation_id
             LEFT JOIN car_option_prices as cop on cop.car_id = c.id
             LEFT JOIN car_over_prices as cover on cover.car_id = c.id";
@@ -62,7 +64,7 @@ class SQL_VIEW_CAR_FULL_PRICE extends Command
         echo ('5) price - полная стоимость автомобиля' . "\r\n");
         echo ('6) car_id - id автомобиля' . "\r\n");
 
-        \DB::statement($query);
+        DB::statement($query);
 
         echo ('Закончил работу с CarFullPrice' . "\r\n" . "\r\n");
     }

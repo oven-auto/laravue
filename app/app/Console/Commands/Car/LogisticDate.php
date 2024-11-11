@@ -28,20 +28,20 @@ class LogisticDate extends Command
 
 
     private const ARR_STATUSES = [
-        ['order_date',           'Заказан',                  'in_order',],
-        ['plan_date',            'Сборка',                   'in_plan',],
-        ['build_date',           'Собран',                   'in_build',],
-        ['ready_date',           'Готов к отгрузке',         'in_ready',],
-        ['request_date',         'Заявлен в отгрузку',       'in_request',],
-        ['shipment_date',        'Отгружен',                 'in_shipment',],
-        ['stock_date',           'Приёмка',                  'in_stock',],
-        ['invoice_date',         'На складе',                'in_invoice',],
-        ['off_date',             'Списан',                   'in_off',],
-        ['presale_date',         'Прошёл предпродажку',      'in_presale',],
-        ['ransom_date',          'Выкуплен у поставщика',    'in_ransom',],
-        ['issue_date',           'Выдан',                    'in_issue',],
-        ['sale_date',            'Продан',                   'in_sale',],
-        ['application_date',     'В заявке',                 'in_application',],
+        ['order_date',           'В заказе',                 'in_order',        2],
+        ['plan_date',            'Сборка',                   'in_plan',         3],
+        ['build_date',           'Собран',                   'in_build',        4],
+        ['ready_date',           'Готов к отгрузке',         'in_ready',        5],
+        ['request_date',         'Заявлен в отгрузку',       'in_request',      6],
+        ['shipment_date',        'Отгружен',                 'in_shipment',     7],
+        ['stock_date',           'В приёмке',                'in_stock',        8],
+        ['invoice_date',         'На складе',                'in_invoice',      9],
+        ['off_date',             'Списан',                   'in_off',          0],
+        ['presale_date',         'Прошёл предпродажку',      'in_presale',      0],
+        ['ransom_date',          'Выкуплен у поставщика',    'in_ransom',       0],
+        ['issue_date',           'Выдан',                    'in_issue',        0],
+        ['sale_date',            'Продан',                   'in_sale',         0],
+        ['application_date',     'В заявке',                 'in_application',  1],
     ];
 
     /**
@@ -88,11 +88,14 @@ class LogisticDate extends Command
         $statuses = CarState::get();
 
         foreach(self::ARR_STATUSES as $status)
-            if(!$statuses->contains('logistic_system_name', $item[0]))
-                CarState::created([
-                    'logistic_system_name' => $item[0],
-                    'description' => $item[1],
-                    'status' => $item[2]
+            //if(!$statuses->contains('logistic_system_name', $status[0]))
+                CarState::updateOrCreate([
+                    'logistic_system_name' => $status[0],
+                ],
+                [
+                    'description' => $status[1],
+                    'status' => $status[2],
+                    'sort' => $status[3]
                 ]);
     }
 }

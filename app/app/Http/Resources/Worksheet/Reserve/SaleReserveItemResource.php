@@ -20,6 +20,7 @@ class SaleReserveItemResource extends JsonResource
         return [
             'id' => $this->id,
             'worksheet_id' => $this->worksheet_id,
+            'worksheet_status' => $this->worksheet->status,
             'type' => [
                 'id' => $this->type->id,
                 'name' => $this->type->name,
@@ -61,6 +62,7 @@ class SaleReserveItemResource extends JsonResource
                 'brand' => $this->modulable->car->brand->name,
                 'mark' => $this->modulable->car->mark->name,
                 'vin' => $this->modulable->car->vin,
+                'status' => $this->modulable->car->getStatusCarForDiscountList()
             ] : [],
         ];
     }

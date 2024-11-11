@@ -76,12 +76,12 @@ class CarLogisticStateService
             4 => $this->getOnlyStatus(),
             5 => $this->getOnlyStatus(),
             6 => $this->getWithDate(),
-            7 => $this->getWithDate(),
+            7 => $this->getWithCountDay(1),
             8 => $this->getWithCountDay(1),
             9 => $this->getWithDate(),
             10 => $this->getWithDate(),
             11 => $this->getWithCountDay(1),
-            14 => $this->getWithCountDay(1)
+            17 => $this->getWithCountDay(1)
         };
     }
 

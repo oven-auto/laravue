@@ -21,7 +21,7 @@ class ComplectationListResource extends JsonResource
             'code' => $this->code.' '.($this->deleted_at ? 'Архивная' : ''),
             'created_at' => $this->created_at->format('d.m.Y'),
             'saled_cars' => $this->saled_car,
-            'active_car' => $this->active_car,
+            'active_cars' => $this->active_car,
             'deleted' => $this->deleted_at ? 1 : 0,
             'alias' => ($this->alias && $this->alias->alias) ? $this->alias->alias->name : '',
             'price' => ($this->current_price && $this->current_price->id) ? [

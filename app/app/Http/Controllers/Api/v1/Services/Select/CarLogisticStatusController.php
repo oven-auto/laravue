@@ -22,7 +22,7 @@ class CarLogisticStatusController extends Controller
     public function index()
     {
         return response()->json([
-            'data' => \App\Models\CarState::pluck('status', 'description'),
+            'data' => \App\Models\CarState::where('sort', '>', 0)->orderBy('sort')->pluck('status', 'description'),
             'success' => 1
         ]);
     }

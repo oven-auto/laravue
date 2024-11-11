@@ -27,16 +27,17 @@ class CarCountController extends Controller
                     'option'    => $res->option      ?? 0,
                     'over'      => $res->overprice   ?? 0,
                     'tuning'    => $res->tuning      ?? 0,
+                    'gift'      => $res->giftprice   ?? 0,
                     'discount'  => $res->discount    ?? 0,
                     'full'      => array_sum([
                         $res->base, 
                         $res->option, 
                         $res->overprice, 
                         $res->tuning]
-                    ) - $res->discount 
+                    ) - $res->discount - $res->giftprice
                 ],
                 'report' => [
-                    'count'     => $res->owner       ?? 0,
+                    'count'     => $res->count       ?? 0,
                     'disable'   => $res->disable     ?? 0,
                     'owner'     => $res->owner       ?? 0,
                     'green'     => $res->green       ?? 0,

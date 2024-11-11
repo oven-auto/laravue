@@ -930,6 +930,15 @@ class Car extends Model
 
 
 
+    public function getLastLogistic()
+    {
+        $date = $this->logistic_dates->sortByDesc('state.state')->first();
+
+        return $date;
+    }
+
+
+
     /**
      * Сумма детализации цены
      */
@@ -1072,7 +1081,7 @@ class Car extends Model
      */
     public function getComplectationPrice(): int
     {
-        return $this->isReserved() ? $this->getComplectationContractPrice() : $this->complectation->price;
+        return $this->isFixed() ? $this->getComplectationContractPrice() : $this->complectation->price;
     }
 
 
@@ -1094,7 +1103,7 @@ class Car extends Model
      */
     public function getOptionPrice(): int
     {
-        return $this->isReserved() ? $this->getOptionContractPrice() : $this->options->sum('price');
+        return $this->isFixed() ? $this->getOptionContractPrice() : $this->options->sum('price');
     }
 
 
@@ -1382,5 +1391,27 @@ class Car extends Model
     public function isOnStock(): string
     {
         return $this->getLogisticDates('invoice_date') ? 1 : 0;
+    }
+
+
+
+    public function getStatusCarForDiscountList()
+    {
+        if($this->isSaled())
+            return [
+                'status'    => 'Продан',
+                'date'      => $this->reserve->sale->date_at->format('d.m.Y'),
+                'created_at' => $this->reserve->sale->created_at->format('d.m.Y'),
+                'author'    => $this->reserve->sale->decorator->cut_name,
+            ];
+        
+        $date = $this->getLastLogistic();
+
+        return [
+            'status' => $this->state_status->description,
+            'date' => $date->date_at->format('d.m.Y'),
+            'created_at' => $date->created_at->format('d.m.Y'),
+            'author' => $date->author->cut_name,
+        ];
     }
 }

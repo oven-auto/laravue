@@ -71,7 +71,7 @@ class FillFakeCar extends Command
      */
     public function handle()
     {
-        $carCount = 3;
+        $carCount = 10000;
 
         $progressBar = $this->output->createProgressBar($carCount);
         $progressBar->start();

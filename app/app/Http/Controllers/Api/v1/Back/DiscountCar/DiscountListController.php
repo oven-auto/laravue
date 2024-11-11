@@ -44,9 +44,7 @@ class DiscountListController extends Controller
 
         return response()->json([
             'data' => $discounts->map(function ($item) {
-                return [
-                    'discount' => new SaleReserveItemResource($item),
-                ];
+                return new SaleReserveItemResource($item);
             }),
         ]);
     }

@@ -16,6 +16,10 @@ class CarListResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'test' => $this->isReserved() ? [
+                'full' => $this->reserve->getFullCost() - $this->reserve->getSaleSum(),
+                'f' => $this->getCarPrice()
+            ] : [],
             'id' => $this->id,
             
             'state' => $this->getReserveStatus(),
@@ -42,7 +46,7 @@ class CarListResource extends JsonResource
                 'over'                  => $this->getOverPrice(),//переоценка
                 'tuning'                => $this->getFullTuningPrice(),//тюнинг
                 //'full'                  => $this->getCarPrice(),//прайс
-                'full'                   => $this->getFullPrice(),
+                'full'                   => $this->getCarPrice(),
                 'sale_sum'              => $this->getReserveSale(),//скидка
             ],
 

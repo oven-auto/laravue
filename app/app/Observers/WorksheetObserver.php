@@ -12,8 +12,10 @@ class WorksheetObserver
 
         $worksheet->executors()->attach($worksheet->author_id);
 
-        WorksheetCreateEvent::dispatch($worksheet);
+        //WorksheetCreateEvent::dispatch($worksheet);
     }
+
+    
 
     public function creating(\App\Models\Worksheet $worksheet)
     {

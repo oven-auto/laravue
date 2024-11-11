@@ -6,6 +6,7 @@ use App\Classes\Notice\Notice;
 use App\Models\Car;
 use App\Http\Filters\CarFilter;
 use App\Models\CarState;
+use App\Repositories\Car\Car\DTO\CarCountDTO;
 use App\Repositories\Car\Car\DTO\CarDTO;
 use App\Repositories\Car\Car\DTO\CarTuningDTO;
 use App\Repositories\Car\Car\DTO\LogisticDateDTO;
@@ -212,13 +213,14 @@ class CarRepository
                 'cars.id', 
                 '_full_price.tuningprice as t_price', 
                 '_full_price.overprice as ov_price',
+                '_full_price.giftprice as gift_price',
                 DB::raw('IF(_cp.price IS NOT NULL, _cp.price, _full_price.complectationprice) as com_price'),
                 DB::raw('IF(_joinOptionPrice._sum_option IS NOT NULL, _joinOptionPrice._sum_option, _full_price.optionprice) as op_price'),
                 DB::raw('sum(_disc_sum.amount) as discount_price'),
 
                 //'cars.disable_off as _disable',
                 '_owner.id as owner_count',
-                DB::raw('IF(_owner.client_id, cars.disable_off, 0) as _disable'),
+                DB::raw('IF(cars.disable_off, cars.disable_off, 0) as _disable'),
                 DB::raw('IF(_owner.client_id = IF(_w.client_id IS NULL, 0, _w.client_id) and _owner.id IS NOT NULL, 1, 0) as green_report'),
                 DB::raw('IF(_owner.client_id <> IF(_w.client_id IS NULL, 0, _w.client_id)  and _owner.id IS NOT NULL, 1, 0) as yellow_report'),
                
@@ -280,6 +282,7 @@ class CarRepository
             DB::raw('sum(com_price)         as base'),
             DB::raw('sum(op_price)          as option'),
             DB::raw('sum(discount_price)    as discount'),
+            DB::raw('sum(gift_price)        as giftprice'),
 
             DB::raw('sum(_disable)          as disable'),
             DB::raw('count(owner_count)     as owner'),
@@ -296,9 +299,8 @@ class CarRepository
             DB::raw('sum(ransom_detailing)  as ransom_detailing'),
             DB::raw('sum(ransom_collector)  as ransom_collector'),
         )->first();
-
-        $res = $countCars;
-
-        return $res;
+        
+        return $countCars;
+        //return new CarCountDTO($countCars);
     }
 }

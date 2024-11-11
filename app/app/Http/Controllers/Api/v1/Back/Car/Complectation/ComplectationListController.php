@@ -6,8 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\Car\Complectation\ComplectationListResource;
 use App\Http\Resources\Car\Factory\FactorySaveResource;
 use App\Models\Complectation;
+use App\Models\ComplectationPrice;
 use App\Repositories\Car\Complectation\ComplectationRepository;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ComplectationListController extends Controller
 {
@@ -34,8 +37,11 @@ class ComplectationListController extends Controller
     {
         $complectations = $this->repo->list($request->all());
         
+        $date = (new Carbon(ComplectationPrice::select(DB::raw('max(begin_at) as date'))->first()->date))->format('d.m.Y');
+
         return response()->json([
             'data' => ComplectationListResource::collection($complectations),
+            'last_price' => $date,
             'success' => 1,
         ]);
     }

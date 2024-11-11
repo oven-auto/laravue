@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Observers\ClientObserver;
+use App\Observers\Worksheet\Modules\ReserveNewCarObserver;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
@@ -54,6 +55,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CarTuningPrice::observe(\App\Observers\CarTuningObserver::class);
         \App\Models\CarPartPrice::observe(\App\Observers\CarPartObserver::class);
         \App\Models\Client::observe(ClientObserver::class);
+        \App\Models\WsmReserveNewCar::observe(ReserveNewCarObserver::class);
         
         Validator::excludeUnvalidatedArrayKeys();
     }

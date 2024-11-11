@@ -97,7 +97,7 @@ class ReserveResource extends JsonResource
                 'option'                => $this->getOptionCost(),
                 'over'                  => $this->getOverCost(),
                 'tuning'                => $this->getTuningCost(),
-                'full'                  => $this->getFullCost(),
+                'full'                  => $this->getTotalCost(),
                 'contract_cost'         => $this->getFullCost(),
                 'sale_sum'              => $this->getSaleSum(),
                 'total_cost'            => $this->getTotalCost(),

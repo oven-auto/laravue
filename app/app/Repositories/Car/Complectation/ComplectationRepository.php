@@ -193,9 +193,10 @@ class ComplectationRepository
         $query->filter($filter);
 
         $complectations = $query
-            ->orderBy('deleted_at')
+            ->orderBy('complectations.deleted_at')
             ->orderBy('marks.brand_id')
             ->orderBy('marks.id')
+            ->orderBy('complectations.body_work_id')
             ->get();
 
         return $complectations;

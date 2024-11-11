@@ -928,7 +928,7 @@ class CarFilter extends AbstractFilter
     public function hasOverPrice(Builder $builder, bool $value)
     {
         if($value)
-            $builder->whereNotNull('overprice.price', '>', 0);
+            $builder->where('overprice.price', '>', 0);
         else
             $builder->where(function($query) {
                 $query->whereNull('overprice.price')

@@ -9,6 +9,6 @@ class ClientObserver
 {
     public function saved(Client $client)
     {
-        ClientCreateOrUpdateEvent::dispatch($client);
+        //ClientCreateOrUpdateEvent::dispatch($client);
     }
 }
