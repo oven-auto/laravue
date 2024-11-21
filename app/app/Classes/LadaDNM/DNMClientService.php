@@ -55,7 +55,7 @@ class DNMClientService
                 'phones' => [
                     [
                         'type' => 1,
-                        'number' => '8904274'.date('di'),
+                        'number' => $this->obj->phones->first()->number,
                     ]
                 ]
             ];

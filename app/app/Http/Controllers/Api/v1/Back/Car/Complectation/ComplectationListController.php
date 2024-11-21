@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Car\Complectation;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Car\Complectation\ComplectationListRequest;
 use App\Http\Resources\Car\Complectation\ComplectationListResource;
 use App\Http\Resources\Car\Factory\FactorySaveResource;
 use App\Models\Complectation;
@@ -27,13 +28,19 @@ class ComplectationListController extends Controller
      *  operationId="getcomplectationlist",
      *  summary="Журнал комплектации",
      *  description="Журнал комплектации",
+     *  @OA\RequestBody(
+     *     @OA\JsonContent(
+     *         type="object",
+     *         ref="#/components/schemas/ComplectationListRequest",
+     *     )
+     *  ),
      *  @OA\Response(
      *      response=200,
      *      description="OK"
      *  )
      * )
      */
-    public function index(Request $request)
+    public function index(ComplectationListRequest $request)
     {
         $complectations = $this->repo->list($request->all());
         

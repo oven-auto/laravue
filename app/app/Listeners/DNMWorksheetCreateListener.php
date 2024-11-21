@@ -4,21 +4,20 @@ namespace App\Listeners;
 
 use App\Classes\LadaDNM\DNMWorksheetService;
 use App\Events\WorksheetCreateEvent;
+use App\Jobs\CreateDNMWorksheetJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class DNMWorksheetCreateListener
 {
-    public $service;
-
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct(DNMWorksheetService $service)
+    public function __construct()
     {
-        $this->service = $service;
+        
     }
 
     /**
@@ -29,7 +28,6 @@ class DNMWorksheetCreateListener
      */
     public function handle(WorksheetCreateEvent $event)
     {
-        if($event->worksheet->isLada() && $event->worksheet->isSaleDepartment() && $event->worksheet->isSaleNewCar())
-            $this->service->save($event->worksheet);
+        CreateDNMWorksheetJob::dispatch($event->worksheet);
     }
 }

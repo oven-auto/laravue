@@ -53,4 +53,11 @@ class DealerColor extends Model
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
     }
+
+
+
+    public function images()
+    {
+        return $this->hasMany(\App\Models\DealerColorImage::class, 'dealer_color_id', 'id');
+    }
 }

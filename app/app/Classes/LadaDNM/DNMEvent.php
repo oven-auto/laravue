@@ -11,9 +11,7 @@ class DNMEvent
 {
     private $dnm;
 
-    private $dNMWorksheet;
-
-    public function __construct(DNMWorksheetService $dNMWorksheet)
+    public function __construct()
     {
         $this->dnm = DNM::init();
     }

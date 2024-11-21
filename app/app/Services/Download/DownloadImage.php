@@ -3,6 +3,7 @@
 namespace App\Services\Download;
 use Storage;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage as FacadesStorage;
 
 Class DownloadImage
 {
@@ -55,7 +56,7 @@ Class DownloadImage
     {
         if($this->file instanceof UploadedFile)
             return $this->load($timeSufix);
-        throw new Exception('Не выбран фаил');
+        throw new \Exception('Не выбран фаил');
     }
 
     protected function load($timeSufix = true)
@@ -69,7 +70,7 @@ Class DownloadImage
 
         $path = $this->storagePath($this->root);
 
-        $finalName = $this->storagePath().'/'.$this->file->move(Storage::path($path), $fileName)->getFilename();
+        $finalName = $this->storagePath().'/'.$this->file->move(FacadesStorage::path($path), $fileName)->getFilename();
 
         return $finalName;
     }

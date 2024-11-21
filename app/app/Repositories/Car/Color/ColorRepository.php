@@ -3,7 +3,9 @@
 namespace App\Repositories\Car\Color;
 
 use App\Models\DealerColor;
+use App\Models\DealerColorImage;
 use App\Repositories\Car\Color\DTO\ColorDTO;
+use App\Services\Download\ColorFileLoad;
 
 Class ColorRepository
 {
@@ -105,5 +107,53 @@ Class ColorRepository
         $list = $query->get();
 
         return $list;
+    }
+
+
+
+    public function appendImage(array $data)
+    {
+        $service = new ColorFileLoad();
+
+        $strImage = $service->download($data['color_id'], $data['image']);
+        
+        $image = DealerColorImage::create([
+            'image' => $strImage,
+            'body_work_id' => $data['bodywork'],
+            'dealer_color_id' => $data['color_id'],
+        ]);
+
+        return $image;
+    }
+
+
+
+    public function updateImage(DealerColorImage $image, array $data)
+    {
+        $image->body_work_id = $data['bodywork'];
+        
+        if(isset($data['image']))
+        {
+            unset($image->image);
+            
+            $service = new ColorFileLoad();
+
+            $strImage = $service->download($image->dealer_color_id, $data['image']);
+
+            $image->image = $strImage;
+        }
+
+        $image->save();
+
+        return $image;
+    }
+
+
+
+    public function deleteImage(DealerColorImage $image)
+    {
+        unset($image->image);
+
+        $image->delete();
     }
 }

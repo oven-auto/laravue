@@ -30,7 +30,7 @@ class CarSupportResource extends JsonResource
 
             'purchase_author' => [
                 'author' => $this->purchase->author->cut_name ?? '',
-                'created_at' => $this->purchase ? $this->purchase->updated_at->format('d.m.Y (H:i)') : '',
+                'created_at' => $this->purchase->id ? $this->purchase->updated_at->format('d.m.Y (H:i)') : '',
             ],
 
             'provider' => [

@@ -514,7 +514,17 @@ class CarFilter extends AbstractFilter
      * example="[1,2]", 
      * @OA\Items())
      * */
-    public const COLOR = 'colors';//Держатель залога
+    public const COLOR = 'colors';
+
+    /**
+     * @OA\Property(
+     *  format="bool", 
+     *  description="Наличие продажи", 
+     *  property="has_sale", 
+     *  type="bool"
+     * )
+     */
+    public const HAS_SALE = 'has_sale';
 
 
 
@@ -522,12 +532,15 @@ class CarFilter extends AbstractFilter
 
     public const INIT = 'init';
 
+    public const INPUT = 'input';
+
 
 
     protected function getCallbacks(): array
     {
         return [
             self::INIT                  => [$this, 'init'],
+            self::INPUT                 => [$this, 'input'],
             self::BRAND_ID              => [$this, 'brandIds'],
             self::MARK_ID               => [$this, 'markIds'],
             self::YEAR                  => [$this, 'year'],
@@ -565,13 +578,21 @@ class CarFilter extends AbstractFilter
             self::HAS_OPTIONS           => [$this, 'hasOptions'],
             self::MOTOR_TYPE            => [$this, 'motorTypes'],
             self::COLOR                 => [$this, 'colors'],
+            self::HAS_SALE              => [$this, 'hasSale'],
         ];
     }
 
 
 
-    public function __construct(Builder $builder, array $queryParams)
+    public function input(Builder $builder, $val)
     {
+        $builder->where('cars.id', 'LIKE', '%'.$val.'%');
+    }
+
+
+
+    public function __construct(Builder $builder, array $queryParams)
+    {   
         $queryParams['init'] = $queryParams;
         
         parent::__construct($queryParams);
@@ -591,11 +612,14 @@ class CarFilter extends AbstractFilter
 
     public function setJoinForSearch(Builder $builder, array $params)
     {   
-        if(isset($params['prices']) || isset($params['has_discount']) || isset($params['report_type']))
+        if(isset($params['prices']) || isset($params['has_discount']) || isset($params['report_type']) || isset($params['has_sale']))
             $builder->leftJoin('wsm_reserve_new_cars as reserve', function($join){
                 $join->on('reserve.car_id', 'cars.id')
                     ->whereNull('reserve.deleted_at');
             });//резерв авто
+
+        if(isset($params['has_sale']))
+            $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'reserve.id');
         
         if(isset($params['has_discount']) || isset($params['report_type']))
             $builder->leftJoin('worksheets', 'worksheets.id', 'reserve.worksheet_id');
@@ -781,6 +805,16 @@ class CarFilter extends AbstractFilter
 
 
 
+    public function hasSale(Builder $builder, $val)
+    {
+        if($val)
+            $builder->whereNotNull('wsm_reserve_sales.id');
+        else
+            $builder->whereNull('wsm_reserve_sales.id');
+    }
+
+
+
     public function colors(Builder $builder, array $colors)
     {
         $builder->whereIn('dealer_colors.base_id', $colors);
@@ -788,7 +822,7 @@ class CarFilter extends AbstractFilter
 
 
 
-    public function motorType(Builder $builder, array $types)
+    public function motorTypes(Builder $builder, array $types)
     {
         $builder->whereIn('motors.motor_type_id', $types);
     }

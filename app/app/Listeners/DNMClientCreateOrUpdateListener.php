@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Classes\LadaDNM\DNMClientService;
 use App\Events\ClientCreateOrUpdateEvent;
+use App\Jobs\CreateDNMClientJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Support\Facades\Log;
@@ -17,9 +18,9 @@ class DNMClientCreateOrUpdateListener
      *
      * @return void
      */
-    public function __construct(DNMClientService $service)
+    public function __construct()
     {
-        $this->service = $service;
+       
     }
 
     /**
@@ -29,9 +30,7 @@ class DNMClientCreateOrUpdateListener
      * @return void
      */
     public function handle(ClientCreateOrUpdateEvent $event)
-    {
-        Log::alert('Пробую отправить данные о клиенте на ДНМ');
-        
-        $this->service->save($event->client);
+    {        
+        CreateDNMClientJob::dispatch($event->client);
     }
 }

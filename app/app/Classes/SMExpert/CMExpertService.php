@@ -28,10 +28,15 @@ Class CMExpertService
 
     private const URL = 'https://lk.cm.expert/api/v1/cars/appraisals/requests';
 
+
+
     public function send(WSMRedemptionCar $redemption)
     {
         if($redemption->apprailsal)
-            throw new \Exception('Оценка этого автомобиля уже была создана на CME');
+            throw new \Exception('Оценка этого автомобиля уже была создана на CME.');
+
+        if(!$redemption->client_car->vin)
+            throw new \Exception('Укажите VIN автомобиля клиента.');
 
         $token = \App\Classes\SMExpert\Token::getInstance()->getToken();
 

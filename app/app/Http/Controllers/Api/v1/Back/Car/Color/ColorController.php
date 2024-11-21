@@ -10,7 +10,10 @@ use App\Http\Resources\Car\Color\ColorCollection;
 use App\Http\Resources\Car\Color\ColorEditResource;
 use App\Http\Resources\Car\Color\ColorListResource;
 use App\Models\DealerColor;
+use App\Models\DealerColorImage;
 use App\Repositories\Car\Color\ColorRepository;
+use App\Services\Download\ColorFileLoad;
+use Illuminate\Http\Request;
 
 class ColorController extends Controller
 {

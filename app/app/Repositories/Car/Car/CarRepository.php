@@ -3,9 +3,11 @@
 namespace App\Repositories\Car\Car;
 
 use App\Classes\Notice\Notice;
+use App\Classes\Wait\Wait;
 use App\Models\Car;
 use App\Http\Filters\CarFilter;
 use App\Models\CarState;
+use App\Models\DealerColorImage;
 use App\Repositories\Car\Car\DTO\CarCountDTO;
 use App\Repositories\Car\Car\DTO\CarDTO;
 use App\Repositories\Car\Car\DTO\CarTuningDTO;
@@ -188,13 +190,24 @@ class CarRepository
      */
     public function paginate(array $data = [], $paginate = 15)
     {   
+        Wait::setWaitColor();
+
         $query = Car::query()->select('cars.*');
         
         $filter = app()->make(CarFilter::class, ['queryParams' => $data]);
+        
+        if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
+            $query->withDataForCarList();
 
-        $query->withDataForCarList()->filter($filter)->orderBy('id', 'DESC');
+        $query->filter($filter)->orderBy('id', 'DESC');
        
         $cars = $query->simplePaginate($paginate);
+        
+        if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
+            $cars->each(function($item) {
+                if(isset($item->reserve))
+                    $item->reserve->car = $item;
+            });
         
         return $cars;
     }
@@ -271,7 +284,7 @@ class CarRepository
                     ->where('_logistic.logistic_system_name', 'ransom_date');
             });
 
-        $filter = app()->make(CarFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
 
         $query->filter($filter);
         
@@ -301,6 +314,27 @@ class CarRepository
         )->first();
         
         return $countCars;
-        //return new CarCountDTO($countCars);
+    }
+
+
+
+    public function clone(Car $car)
+    {
+        $clone = new Car();
+        
+        $clone->fill([
+            'year'                      => $car->year,
+            'mark_id'                   => $car->mark_id, //model
+            'brand_id'                  => $car->brand_id, //brand
+            'complectation_id'          => $car->complectation_id,
+            'author_id'                 => $car->author_id,
+            'status'                    => $car->status,
+            'created_at'                => $car->created_at,
+        ]);
+        
+        $clone->trade_marker            = $car->trade_marker;
+        $clone->provider                = $car->provider;
+
+        return $clone;
     }
 }

@@ -56,7 +56,7 @@ class DiscountRepository
 
 
     public function paginate(array $data, $paginate = 20)
-    {
+    {   
         $query = Discount::select('discounts.*');
 
         $filter = app()->make(DiscountFilter::class, ['queryParams' => array_filter($data)]);

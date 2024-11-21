@@ -179,26 +179,22 @@ class ComplectationRepository
 
 
 
-    public function list(array $data)
+    public function list(array $data, $paginate = 20)
     {
         $query = Complectation::query()
-            ->saledCountCars()
-            ->activeCountCars()
             ->fullRelations();
-
-        $query->withTrashed();
 
         $filter = app()->make(ComplectationFilter::class, ['queryParams' => array_filter($data)]);
 
         $query->filter($filter);
-
+        //$query->dd();
         $complectations = $query
             ->orderBy('complectations.deleted_at')
             ->orderBy('marks.brand_id')
             ->orderBy('marks.id')
             ->orderBy('complectations.body_work_id')
-            ->get();
-
+            ->simplePaginate($paginate);
+        
         return $complectations;
     }
 

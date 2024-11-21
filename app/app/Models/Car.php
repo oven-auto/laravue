@@ -333,7 +333,7 @@ class Car extends Model
      */
     public function purchase()
     {
-        return $this->hasOne(\App\Models\CarPurchase::class, 'car_id', 'id');
+        return $this->hasOne(\App\Models\CarPurchase::class, 'car_id', 'id')->withDefault();
     }
 
 
@@ -660,13 +660,14 @@ class Car extends Model
             $this->purchase()->delete();
             return;
         }
-            
-        $this->purchase()->updateOrCreate([
-            'car_id' => $this->id
-        ], [
-            'cost' => $cost ?? 0,
-            'author_id' => auth()->user()->id
-        ]);
+
+        if($this->purchase->cost != $cost) 
+            $this->purchase()->updateOrCreate([
+                'car_id' => $this->id
+            ], [
+                'cost' => $cost ?? 0,
+                'author_id' => auth()->user()->id
+            ]);
     }
 
 
@@ -682,14 +683,14 @@ class Car extends Model
             return;
         }
                 
-
-        $this->delivery_terms()->updateOrCreate(
-            ['car_id' => $this->id,],
-            [
-                'delivery_term_id'  => $delivery_term_id,
-                'author_id'         => auth()->user()->id,
-            ],
-        );
+        if($delivery_term_id != $this->delivery_terms->delivery_term_id)
+            $this->delivery_terms()->updateOrCreate(
+                ['car_id' => $this->id,],
+                [
+                    'delivery_term_id'  => $delivery_term_id,
+                    'author_id'         => auth()->user()->id,
+                ],
+            );
     }
 
 
@@ -957,7 +958,7 @@ class Car extends Model
     public function getStateByName($key)
     {
         $date = $this->logistic_dates->where('logistic_system_name', $key)->first();
-
+        
         if (!$date)
             return [];
 
@@ -1413,5 +1414,17 @@ class Car extends Model
             'created_at' => $date->created_at->format('d.m.Y'),
             'author' => $date->author->cut_name,
         ];
+    }
+
+
+
+    /**
+     * GET COLOR IMAGE
+     */
+    public function getImageAttribute()
+    {   
+        if($this->color->images->contains('body_work_id', $this->complectation->body_work_id))
+            return $this->color->images->firstWhere('body_work_id', $this->complectation->body_work_id)->url;
+        return 0;
     }
 }

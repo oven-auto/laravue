@@ -43,10 +43,16 @@ class TradeMarkerController extends Controller
      * @param MarkerCreateRequest $request ['name', 'text_color', 'body_color', 'description']
      * @return MarkerItemResource
      */
-    public function store(TradeMarker $marker, MarkerCreateRequest $request): MarkerItemResource
+    public function store(TradeMarker $marker, Request $request): MarkerItemResource
     {
-        $marker = $this->repo->save($marker, $request->validated());
+        $validated = $request->validate([
+            'name' => 'required',
+            'text_color' => 'required',
+            'description' => 'sometimes'
+        ]);
 
+        $this->repo->save($marker, $validated);
+        
         return (new MarkerItemResource($marker))
             ->additional(['message' => 'Маркер добавлен']);
     }
@@ -59,10 +65,16 @@ class TradeMarkerController extends Controller
      * @param MarkerCreateRequest $request ['name', 'text_color', 'body_color', 'description']
      * @return MarkerItemResource
      */
-    public function update(TradeMarker $marker, MarkerCreateRequest $request): MarkerItemResource
+    public function update(TradeMarker $marker, Request $request): MarkerItemResource
     {
-        $this->repo->save($marker, $request->validated());
+        $validated = $request->validate([
+            'name' => 'required',
+            'text_color' => 'required',
+            'description' => 'sometimes'
+        ]);
 
+        $this->repo->save($marker, $validated);
+        
         return (new MarkerItemResource($marker))
             ->additional(['message' => 'Маркер изменен']);
     }

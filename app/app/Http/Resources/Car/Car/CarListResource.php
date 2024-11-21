@@ -44,9 +44,10 @@ class CarListResource extends JsonResource
                 'base'                  => $this->getComplectationPrice(),//кузов
                 'option'                => $this->getOptionPrice(),//опции
                 'over'                  => $this->getOverPrice(),//переоценка
-                'tuning'                => $this->getFullTuningPrice(),//тюнинг
+                'tuning'                => $this->getTuningPrice(),//тюнинг
+                'gift'                  => $this->getGiftPrice(),//gift
                 //'full'                  => $this->getCarPrice(),//прайс
-                'full'                   => $this->getCarPrice(),
+                'full'                  => $this->getCarPrice(),
                 'sale_sum'              => $this->getReserveSale(),//скидка
             ],
 

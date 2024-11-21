@@ -2,6 +2,7 @@
 
 namespace App\Classes\Telegram\Notice;
 
+use App\Jobs\TelegramJob;
 use Illuminate\Database\Eloquent\Model;
 use App\Models\TelegramConnection;
 
@@ -80,15 +81,19 @@ Class TelegramNotice
             ->leftJoin('users', 'users.telegram_connection_id', 'telegram_connections.id')
             ->whereIn('users.id', $arr)
             ->pluck('user_id');
-
+        
         foreach($users as $itemUser)
-            $this->telegram->sendMessage($itemUser, $this->handler->message, $options);
+            TelegramJob::dispatch($itemUser, $this->handler->message, $options);
+            //$this->telegram->sendMessage($itemUser, $this->handler->message, $options);
+    }
 
-        // $admin = TelegramConnection::select('user_id')
-        //     ->leftJoin('users', 'users.telegram_connection_id', 'telegram_connections.id')
-        //     ->where('users.id', 47)
-        //     ->first();
-        // $this->telegram->sendMessage($admin->user_id, '<pre>'.$this->handler->message.'</pre>', $options);
+
+
+    public static function push($user, $message, $options)
+    {
+        $telegram = \App\Classes\Telegram\Telegram::init();
+
+        $telegram->sendMessage($user, $message, $options);
     }
 
 

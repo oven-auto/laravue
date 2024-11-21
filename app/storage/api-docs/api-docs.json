@@ -110,8 +110,34 @@
                 }
             }
         },
+        "/cars/clone/{id}": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Получить данные для клона нового автомобиля",
+                "description": "Получить данные для клона нового автомобиля",
+                "operationId": "getCarCloneData",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/cars": {
-            "post": {
+            "get": {
                 "tags": [
                     "Новый автомобиль"
                 ],
@@ -316,6 +342,130 @@
                 }
             }
         },
+        "/cars/colors/images": {
+            "get": {
+                "tags": [
+                    "Цвет (картинки)"
+                ],
+                "summary": "Список картинок цвета",
+                "description": "Список картинок цвета",
+                "operationId": "getColorList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "color_id": {
+                                        "description": "ID дилерского цвета",
+                                        "type": "integer",
+                                        "format": "integer"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Цвет (картинки)"
+                ],
+                "summary": "Добавить",
+                "description": "Добавить",
+                "operationId": "storeColorList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "color_id": {
+                                        "description": "ID дилерского цвета",
+                                        "type": "integer",
+                                        "format": "integer"
+                                    },
+                                    "bodywork": {
+                                        "description": "ID кузова",
+                                        "type": "integer",
+                                        "format": "integer"
+                                    },
+                                    "image": {
+                                        "description": "Картинка",
+                                        "type": "file",
+                                        "format": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/colors/images/{imageId}": {
+            "delete": {
+                "tags": [
+                    "Цвет (картинки)"
+                ],
+                "summary": "Удалить",
+                "description": "Удалить",
+                "operationId": "deleteColorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Цвет (картинки)"
+                ],
+                "summary": "Изменить",
+                "description": "Изменить",
+                "operationId": "updateColorList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "color_id": {
+                                        "description": "ID дилерского цвета",
+                                        "type": "integer",
+                                        "format": "integer"
+                                    },
+                                    "bodywork": {
+                                        "description": "ID кузова",
+                                        "type": "integer",
+                                        "format": "integer"
+                                    },
+                                    "image": {
+                                        "description": "Картинка",
+                                        "type": "file",
+                                        "format": "file"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
         "/complectationlist": {
             "get": {
                 "tags": [
@@ -324,6 +474,15 @@
                 "summary": "Журнал комплектации",
                 "description": "Журнал комплектации",
                 "operationId": "getcomplectationlist",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ComplectationListRequest"
+                            }
+                        }
+                    }
+                },
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -761,6 +920,30 @@
                 "responses": {
                     "200": {
                         "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/reserves": {
+            "get": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Список Резервов новых автомобилей",
+                "description": "Список Резервов новых автомобилейв",
+                "operationId": "reserveList",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReserveNewCarFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
                     }
                 }
             }
@@ -1648,6 +1831,338 @@
                         "enum": [
                             "colors"
                         ]
+                    },
+                    "has_sale": {
+                        "description": "Наличие продажи",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_sale"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "ReserveNewCarFilter": {
+                "description": "Параметры фильтрации резерва",
+                "properties": {
+                    "ids": {
+                        "description": "Массив содержащий идентификаторы автомобилей",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "ids"
+                        ]
+                    },
+                    "brands": {
+                        "description": "Массив содержащий идентификаторы бренда",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "brands"
+                        ]
+                    },
+                    "models": {
+                        "description": "Массив содержащий идентификаторы моделей",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "models"
+                        ]
+                    },
+                    "prices": {
+                        "description": "Массив содержащий интервал цены от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[700000,1000000]",
+                        "enum": [
+                            "prices"
+                        ]
+                    },
+                    "year": {
+                        "description": "Год выпуска",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "2024",
+                        "enum": [
+                            "year"
+                        ]
+                    },
+                    "bodyworks": {
+                        "description": "Массив содержащий идентификаторы типов кузова",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "bodyworks"
+                        ]
+                    },
+                    "motortypes": {
+                        "description": "Массив содержащий идентификаторы типов двигателя",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "motortypes"
+                        ]
+                    },
+                    "transmissions": {
+                        "description": "Массив содержащий идентификаторы типов трансмиссий",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "transmissions"
+                        ]
+                    },
+                    "drivers": {
+                        "description": "Массив содержащий идентификаторы типов привода",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "drivers"
+                        ]
+                    },
+                    "colors": {
+                        "description": "Массив содержащий идентификаторы цвета (БАЗОВЫЕ ЦВЕТА - НЕ ДИЛЕРСКИЕ)",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "colors"
+                        ]
+                    },
+                    "has_options": {
+                        "description": "Наличие опций",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_options"
+                        ]
+                    },
+                    "has_overprice": {
+                        "description": "Наличие переоценки, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_overprice"
+                        ]
+                    },
+                    "has_tuning": {
+                        "description": "Наличие тюнинга, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_tuning"
+                        ]
+                    },
+                    "has_devices": {
+                        "description": "Наличие установленого тюнинга(номенклатурно)",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_devices"
+                        ]
+                    },
+                    "has_gift": {
+                        "description": "Наличие подарка, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_gift"
+                        ]
+                    },
+                    "has_discount": {
+                        "description": "Наличие скидки, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_discount"
+                        ]
+                    },
+                    "has_ransom": {
+                        "description": "Наличие выкупного платежа",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_ransom"
+                        ]
+                    },
+                    "has_detailing_cost": {
+                        "description": "Наличие дополнительной себестоимости, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_detailing_cost"
+                        ]
+                    },
+                    "logistic_statuses": {
+                        "description": "Массив содержащий идентификаторы текущих этапов поставки",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "logistic_statuses"
+                        ]
+                    },
+                    "trade_markers": {
+                        "description": "Массив содержащий идентификаторы типов товарных признаков ",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "trade_markers"
+                        ]
+                    },
+                    "markers": {
+                        "description": "Массив содержащий идентификаторы контрмарки",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "markers"
+                        ]
+                    },
+                    "reserve_date": {
+                        "description": "Массив содержащий интервал даты этапа создание резерва от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "reserve_date"
+                        ]
+                    },
+                    "has_contract": {
+                        "description": "Наличие контракта",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_contract"
+                        ]
+                    },
+                    "contract_date": {
+                        "description": "Массив содержащий интервал даты этапа первичноый контракт от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "contract_date"
+                        ]
+                    },
+                    "dkp_date": {
+                        "description": "Массив содержащий интервал даты этапа ДКП от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "dkp_date"
+                        ]
+                    },
+                    "pdkp_date": {
+                        "description": "Массив содержащий интервал даты этапа ПДКП от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "pdkp_date"
+                        ]
+                    },
+                    "has_client_pay": {
+                        "description": "Наличие оплаты",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_client_pay"
+                        ]
+                    },
+                    "has_issue": {
+                        "description": "Наличие выдачи",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_issue"
+                        ]
+                    },
+                    "has_sale": {
+                        "description": "Наличие продажи",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_sale"
+                        ]
+                    },
+                    "sale_date": {
+                        "description": "Массив содержащий интервал даты этапа продажи от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "sale_date"
+                        ]
+                    },
+                    "has_off": {
+                        "description": "Наличие списания, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_off"
+                        ]
+                    },
+                    "report_type": {
+                        "description": "Массив содержащий тип рапотра",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "report_type"
+                        ]
+                    },
+                    "off_date": {
+                        "description": "Массив содержащий интервал даты этапа списание от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "off_date"
+                        ]
+                    },
+                    "has_plan": {
+                        "description": "Наличие в плане поставщика, 1 - есть, 0 нет.",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_plan"
+                        ]
                     }
                 },
                 "type": "object"
@@ -1686,6 +2201,94 @@
                     "trade_marker_id",
                     "provider_id"
                 ]
+            },
+            "ComplectationListRequest": {
+                "required": [
+                    "name",
+                    "ids",
+                    "code",
+                    "mark_id",
+                    "brand_id",
+                    "trash",
+                    "status",
+                    "insale",
+                    "input",
+                    "car"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Название комплектации",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "ids": {
+                        "description": "Выбранные ID [1,2,3,4]",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "code": {
+                        "description": "Код комплектации",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "mark_id": {
+                        "description": "Выбранные модели [1,2,3,4]",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "brand_id": {
+                        "description": "Выбранные бренды [1,2,3,4]",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "trash": {
+                        "description": "Удаленные",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "status": {
+                        "description": "Статус <trash|active|all>",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "insale": {
+                        "description": "По статусам продаж <sold|sale>",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "input": {
+                        "description": "input поле",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "action": {
+                        "description": "Кнопка для вывода комплектаций с уведомлялками <totrash|towork|tochange>",
+                        "type": "string",
+                        "format": "string"
+                    }
+                },
+                "type": "object"
             },
             "DeliveryTermRequest": {
                 "required": [
@@ -1737,6 +2340,107 @@
                             "service",
                             "parts"
                         ]
+                    },
+                    "ids": {
+                        "description": "Выбранные ID",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    "type": {
+                        "description": "Тип скидки",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    },
+                    "brand_id": {
+                        "description": "Бренд авто",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "55"
+                    },
+                    "mark_id": {
+                        "description": "Модель авто",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "55"
+                    },
+                    "input": {
+                        "description": "INPUT",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "returned": {
+                        "description": "Возвращаемые",
+                        "type": "string",
+                        "format": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "example": "yes"
+                    },
+                    "checked": {
+                        "description": "Проверенная",
+                        "type": "string",
+                        "format": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "example": "yes"
+                    },
+                    "isbase": {
+                        "description": "Есть оснавание",
+                        "type": "string",
+                        "format": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "example": "yes"
+                    },
+                    "isreparation": {
+                        "description": "Есть возмещение",
+                        "type": "string",
+                        "format": "string",
+                        "enum": [
+                            "yes",
+                            "no"
+                        ],
+                        "example": "yes"
+                    },
+                    "sale_interval": {
+                        "description": "Интервал даты продажы",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "12.05.2024, 15.05.2024"
+                        }
+                    },
+                    "fact_interval": {
+                        "description": "Интервал даты возмещения",
+                        "type": "array",
+                        "format": "array",
+                        "items": {
+                            "type": "string",
+                            "example": "12.05.2024, 15.05.2024"
+                        }
                     }
                 },
                 "type": "object"
@@ -1766,6 +2470,10 @@
             "description": "Новый автомобиль"
         },
         {
+            "name": "Цвет (картинки)",
+            "description": "Цвет (картинки)"
+        },
+        {
             "name": "Журнал комплектации",
             "description": "Журнал комплектации"
         },
@@ -1780,6 +2488,10 @@
         {
             "name": "Трафик",
             "description": "Трафик"
+        },
+        {
+            "name": "Резерв",
+            "description": "Резерв"
         },
         {
             "name": "Резерв нового автомобиля",

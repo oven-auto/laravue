@@ -31,7 +31,8 @@ class CarResource extends JsonResource
             'vehicle'               => $this->complectation->vehicle->name,
             'color'                 => [
                 'name' => $this->color->name ?? '',
-                'code' => $this->color->base->web ?? ''
+                'code' => $this->color->base->web ?? '',
+                'image' => $this->image,
             ],
             'logistic_status'       => $this->currentCarState(),
             'vin'                   => $this->vin,

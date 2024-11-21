@@ -2,6 +2,9 @@
 
 namespace App\Observers;
 
+use App\Classes\Telegram\Telegram;
+use App\Jobs\TelegramJob;
+
 class TraficObserver
 {
     public function updating(\App\Models\Trafic $trafic)
@@ -29,36 +32,31 @@ class TraficObserver
 
     public function saved(\App\Models\Trafic $trafic)
     {
-        $notice = new \App\Classes\Telegram\Notice\TelegramNotice();
-
         $current = $trafic->trafic_status_id;
+
         $old = $trafic->getOriginal('trafic_status_id');
 
-        $userId = auth()->user()->id;
+        if($current == $old)
+            return;
 
-        if ($current != $old)
-            switch ($current) {
-                case 1:
-                    $notice->set($trafic)->waiting()->send($trafic->usersIdByTraficAppeal(1));
-                    break;
-                case 2:
-                    if ($trafic->manager_id != $userId)
-                        $notice->set($trafic)->assign()->send([$trafic->manager_id]);
-                    break;
-                case 3:
-                    if ($trafic->author_id != $userId)
-                        $notice->set($trafic)->confirm()->send([$trafic->author_id]);
-                    break;
-                case 4:
-                    if ($trafic->author_id != $userId)
-                        $notice->set($trafic)->confirm()->send([$trafic->author_id]);
-                    break;
-                case 5:
-                    if ($trafic->author_id != $userId)
-                        $notice->set($trafic)->confirm()->send([$trafic->author_id]);
-                    break;
-            }
+        $array = match($current) {
+            '1' => ['action' => 'waiting',  'users'     => $trafic->usersIdByTraficAppeal(1)],
+            '2' => ['action' => 'assign',   'users'     => [$trafic->manager_id]],
+            '3' => ['action' => 'confirm',  'users'     => [$trafic->author_id]],
+            '4' => ['action' => 'confirm',  'users'     => [$trafic->author_id]],
+            '5' => ['action' => 'confirm',  'users'     => [$trafic->author_id]],
+            default => '',
+        };
+        
+        if(!is_array($array))
+            return;
+
+        $notice = new \App\Classes\Telegram\Notice\TelegramNotice();
+        
+        $notice->set($trafic)->$array['action']()->send($array['users']);
     }
+
+    
 
     public function deleted(\App\Models\Trafic $trafic)
     {

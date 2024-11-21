@@ -4,21 +4,21 @@ namespace App\Listeners;
 
 use App\Classes\LadaDNM\DNMEvent;
 use App\Events\DNMVisitEvent;
+use App\Jobs\CreateDNMEventJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class DNMEventListener
 {
-    public $service;
 
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct(DNMEvent $service)
+    public function __construct()
     {
-        $this->service = $service;
+        
     }
 
     /**
@@ -29,6 +29,6 @@ class DNMEventListener
      */
     public function handle(DNMVisitEvent $event)
     {
-        $this->service->handler($event->reserve, $event->eventType);
+        CreateDNMEventJob::dispatch($event->reserve, $event->eventType);
     }
 }

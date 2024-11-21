@@ -3,6 +3,7 @@
 namespace App\Repositories\Worksheet\Modules\Reserve;
 
 use App\Classes\Notice\Notice;
+use App\Events\DNMVisitEvent;
 use App\Exceptions\Reserve\ReserveException;
 use App\Http\Filters\ContractFilter;
 use App\Models\WsmReserveNewCar;
@@ -131,6 +132,7 @@ class ReserveContractRepository
         $contractOld = WsmReserveNewCarContract::where('reserve_id', $data['reserve_id'])->first();
         
         $reserve = WsmReserveNewCar::findOrFail($data['reserve_id']);
+
         $client = $reserve->worksheet->client;
 
         if (!$client->checkContractFields())
@@ -142,6 +144,8 @@ class ReserveContractRepository
             throw new ReserveException('has_contract');
 
         $this->save($contract, $data);
+
+        DNMVisitEvent::dispatch($reserve, 'contract');
     }
 
 
@@ -149,8 +153,8 @@ class ReserveContractRepository
     public static function updateContract(WsmReserveNewCarContract $contract, array $data)
     {
         $service = new self;
+
         $service->fixCarPrice($contract);
-        //$service->update($contract, $data);
     }
 
 

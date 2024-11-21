@@ -41,13 +41,12 @@ class MarkSelectController extends Controller
             'brand_id' => 'required|numeric'
         ]);
 
-        $result = Cache::remember('list:mark', config('cache', 'period'), function () use ($validated) {
-            return Mark::where('brand_id', $validated['brand_id'])->where('diller_status', 1)->select('name', 'id')->get();
-        });
+        $result = Mark::where('brand_id', $validated['brand_id'])->where('diller_status', 1)->select('name', 'id')->get();
 
         return response()->json([
             'success' => 1,
             'data' => $result,
+            'request' => $request->all()
         ]);
     }
 

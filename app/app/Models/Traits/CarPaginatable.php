@@ -18,9 +18,12 @@ trait CarPaginatable
                 $q->select('id', 'name');
             },
             'color' => function($q) {
-                $q->select('id','name','base_id')->with(['base' => function($qb){
-                    $qb->select('id','web');
-                }]);
+                $q->select('id','name','base_id')->with([
+                    'base' => function($qb){
+                        $qb->select('id','web');
+                    },
+                    'images',
+                ],);
             },
             'order' => function($q){
                 $q->select('order_number', 'car_id');
@@ -98,7 +101,8 @@ trait CarPaginatable
             },
 
             'logistic_dates' => function($q){
-                $q->select('car_id', 'logistic_system_name', 'date_at');
+                $q->select('car_id', 'logistic_system_name', 'date_at', 'author_id')
+                    ->with('author');
             },
 
             'reserve' => function ($builderReserve) {

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\v1\Back\Bodywork\BodyworkController;
+use App\Http\Controllers\Api\v1\Back\Car\CarCloneController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\v1\Back\Car\Complectation\ComplectationController;
 use App\Http\Controllers\Api\v1\Back\Car\Color\ColorController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\Api\v1\Back\Car\CarController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCountController;
 use App\Http\Controllers\Api\v1\Back\Car\CarOwnerController;
 use App\Http\Controllers\Api\v1\Back\Car\Collector\CollectorController;
+use App\Http\Controllers\Api\v1\Back\Car\Color\ImageColorController;
 use App\Http\Controllers\Api\v1\Back\Car\Complectation\ComplectationListController;
 use App\Http\Controllers\Api\v1\Back\Car\Complectation\PriceComplectationController;
 use App\Http\Controllers\Api\v1\Back\Car\OrderType\OrderTypeController;
@@ -423,6 +425,8 @@ Route::middleware(['userfromtoken'])->group(function () {
      **************************************************************************************/
     Route::prefix('cars')->middleware(['corsing', 'userfromtoken'])->group(function () {
 
+        Route::get('/clone/{car}', [CarCloneController::class, 'clone']);
+
         Route::prefix('factories')->group(function () {
             Route::get('/',                 [FactoryController::class, 'index']);
             Route::post('/',                [FactoryController::class, 'store']);
@@ -500,6 +504,13 @@ Route::middleware(['userfromtoken'])->group(function () {
          * МАРШРУТЫ КРУДА ДИЛЕРСКИХ ЦВЕТОВ
          */
         Route::prefix('colors')->group(function () {
+            Route::prefix('images')->group(function(){
+                Route::get('',                      [ImageColorController::class, 'index']);
+                Route::post('',                     [ImageColorController::class, 'store']);
+                Route::patch('{image}',             [ImageColorController::class, 'update']);
+                Route::delete('{image}',            [ImageColorController::class, 'delete']);
+            });    
+               
             Route::get('',                          [ColorController::class, 'index']);
             Route::get('list',                      [ColorController::class, 'list']);
             Route::post('',                         [ColorController::class, 'store']);

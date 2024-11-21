@@ -11,7 +11,6 @@ use App\Http\Resources\Car\Car\CarListCollection;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Repositories\Car\Car\CarRepository;
-use Illuminate\Support\Facades\DB;
 
 class CarController extends Controller
 {
@@ -27,7 +26,7 @@ class CarController extends Controller
 
 
     /**
-     * @OA\Post(
+     * @OA\Get(
      *      path="/cars",
      *      operationId="carsList",
      *      tags={"Новый автомобиль"},

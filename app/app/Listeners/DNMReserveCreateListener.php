@@ -4,21 +4,20 @@ namespace App\Listeners;
 
 use App\Classes\LadaDNM\DNMAppealService;
 use App\Events\ReserveCreateEvent;
+use App\Jobs\CreateDNMReserveJob;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
 class DNMReserveCreateListener
 {
-    public $service;
-
     /**
      * Create the event listener.
      *
      * @return void
      */
-    public function __construct(DNMAppealService $service)
+    public function __construct()
     {
-        $this->service = $service;
+       
     }
 
     /**
@@ -29,6 +28,6 @@ class DNMReserveCreateListener
      */
     public function handle(ReserveCreateEvent $event)
     {
-        $this->service->save($event->reserve);
+        CreateDNMReserveJob::dispatch($event->reserve);
     }
 }

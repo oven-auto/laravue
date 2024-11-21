@@ -16,11 +16,11 @@ class DNMWorksheetService
 
     public $event;
 
-    public function __construct(Worksheet $worksheet)
+    public function __construct()
     {
         $this->dnmService = DNM::init();
 
-        $this->worksheet = $worksheet;
+        //$this->worksheet = $worksheet;
 
         
     }

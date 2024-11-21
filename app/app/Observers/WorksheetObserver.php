@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Events\ClientCreateOrUpdateEvent;
 use App\Events\WorksheetCreateEvent;
 
 class WorksheetObserver
@@ -12,7 +13,9 @@ class WorksheetObserver
 
         $worksheet->executors()->attach($worksheet->author_id);
 
-        //WorksheetCreateEvent::dispatch($worksheet);
+        ClientCreateOrUpdateEvent::dispatch($worksheet->client);
+
+        WorksheetCreateEvent::dispatch($worksheet);
     }
 
     

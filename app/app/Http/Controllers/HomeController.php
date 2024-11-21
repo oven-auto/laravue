@@ -16,10 +16,13 @@ use App\Events\DNMVisitEvent;
 use App\Events\ReserveCreateEvent;
 use App\Events\WorksheetCreateEvent;
 use App\Helpers\String\StringHelper;
+use App\Jobs\CreateDNMReserveJob;
+use App\Jobs\TestJob;
 use App\Listeners\DNMReserveCreateListener;
 use App\Models\Car;
 use App\Models\Client as ModelsClient;
 use App\Models\ClientUnion;
+use App\Models\DealerColorImage;
 use App\Models\DiscountModul;
 use App\Models\MarkAlias;
 use App\Models\Trafic;
@@ -116,6 +119,8 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index() {
+        TestJob::dispatch();
+
         // $serverFactory = new ServerFactory();
 
         // $auth = new BasicAuth('root', 'oa', 'Vesta2020');
@@ -140,15 +145,15 @@ class HomeController extends Controller
         // $paid = $car->paid_date;
 
         // dd($paid->date_at->format('d'));
-        $trafic = Trafic::query()->limit(10)->orderBy('id','DESC')->get();
+        // $trafic = Trafic::query()->limit(10)->orderBy('id','DESC')->get();
         
-        $links = DB::table('trafic_links')
-            ->select('trafic_links.trafic_id')
-            ->whereIn('trafic_links.trafic_id', $trafic->pluck('id'))
-            ->groupBy('trafic_links.trafic_id')
-            ->get();
+        // $links = DB::table('trafic_links')
+        //     ->select('trafic_links.trafic_id')
+        //     ->whereIn('trafic_links.trafic_id', $trafic->pluck('id'))
+        //     ->groupBy('trafic_links.trafic_id')
+        //     ->get();
 
-        dd($links);
+        // dd($links);
     }
 
 

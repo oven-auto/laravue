@@ -10,21 +10,21 @@ use App\Models\WsmReserveNewCar;
 
 class ReserveNewCarObserver
 {
-    public function creating(WsmReserveNewCar $reserve)
+    public function created(WsmReserveNewCar $reserve)
     {
         if($reserve->worksheet->isLada() && $reserve->worksheet->isSaleDepartment() && $reserve->worksheet->isSaleNewCar())
         {
-            // ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
+            ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
 
-            // WorksheetCreateEvent::dispatch($reserve->worksheet);
+            WorksheetCreateEvent::dispatch($reserve->worksheet);
 
-            // ReserveCreateEvent::dispatch($reserve);
+            ReserveCreateEvent::dispatch($reserve);
 
-            // match($reserve->worksheet->trafic->chanel->id) {
-            //     '1'         => DNMVisitEvent::dispatch($reserve, 'visit'),
-            //     '2'         => DNMVisitEvent::dispatch($reserve, 'call'),
-            //     default     => DNMVisitEvent::dispatch($reserve, 'internet'),
-            // };
+            match($reserve->worksheet->trafic->chanel->id) {
+                '1'         => DNMVisitEvent::dispatch($reserve, 'visit'),
+                '2'         => DNMVisitEvent::dispatch($reserve, 'call'),
+                default     => DNMVisitEvent::dispatch($reserve, 'internet'),
+            };
         }
     }
 
@@ -32,6 +32,6 @@ class ReserveNewCarObserver
 
     public function deleted(WsmReserveNewCar $reserve)
     {
-
+        DNMVisitEvent::dispatch($reserve, 'reject');
     }
 }

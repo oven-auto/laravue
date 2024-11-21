@@ -61,7 +61,7 @@ class MarkerController extends Controller
      */
     public function update(Marker $marker, MarkerCreateRequest $request) : MarkerItemResource
     {
-        $this->repo->update($marker, $request->all());
+        $this->repo->update($marker, $request->validated());
         
         return (new MarkerItemResource($marker))
             ->additional(['message' => 'Маркер изменен']);
