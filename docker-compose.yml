@@ -27,6 +27,8 @@ services:
       - "443:443"
     tty: true
 
+
+
   php-fpm:
     container_name: php-fpm
     build:
@@ -48,6 +50,8 @@ services:
       - "POST_MAX_SIZE = 20M"
     tty: true
 
+
+
   php-cli:
     container_name: php-cli
     build:
@@ -64,6 +68,8 @@ services:
       # - "DB_PORT=3306"
       # - "DB_HOST=localhost"
     tty: true
+
+
 
   # mysql:
   #   container_name: mysql
@@ -89,18 +95,20 @@ services:
   #     - "33061:3306"
   #   tty: true
 
-  # phpmyadmin:
-  #   container_name: phpmyadmin
-  #   image: corbinu/docker-phpmyadmin
-  #   networks:
-  #     - database
-  #   ports:
-  #     - 8281:80
-  #   environment:
-  #     MYSQL_USERNAME: app
-  #     MYSQL_ROOT_PASSWORD: secret
-  #     MYSQL_PORT_3306_TCP_ADDR: mysql
-  #   tty: true
+
+
+  phpmyadmin:
+    container_name: phpmyadmin
+    image: phpmyadmin
+    ports:
+      - 8281:80
+    environment:
+      MYSQL_USERNAME: app
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_PORT_3306_TCP_ADDR: mysql
+    tty: true
+
+
 
   redis:
     container_name: redis
@@ -110,6 +118,9 @@ services:
     networks:
       general:
         ipv4_address: 172.16.238.15
+
+
+
   # node:
   #   container_name: node
   #   networks:
@@ -121,3 +132,20 @@ services:
   #   volumes:
   #     - ./app/:/var/www
   #   tty: true
+
+
+
+  rabbit:
+    container_name: rabbit
+    image: rabbitmq:4-management
+    hostname: rabbitmq
+    restart: always
+    ports:
+      - 15672:15672
+      - 5672:5672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+      - RABBITMQ_SERVER_ADDITIONAL_ERL_ARGS=-rabbit log_levels [{connection,error},{default,error}] disk_free_limit 2147483648
+    volumes:
+      - ./docker/images/rabbitmq:/var/lib/rabbitmq
