@@ -53,7 +53,6 @@ class RewriteTraficCommentCommand extends Command
 
         foreach($trafics as $key => $item)
         {
-            dump($key . ' iz '. $trafics->count());
             if($item->comment)
                 TraficMessage::updateOrCreate(
                     ['trafic_id' => $item->id,],
