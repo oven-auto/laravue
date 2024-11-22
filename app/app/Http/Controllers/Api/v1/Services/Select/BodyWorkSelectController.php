@@ -56,9 +56,7 @@ class BodyWorkSelectController extends Controller
      */
     public function vehicletypes()
     {
-        $result = Cache::remember('list:vehicletype', config('cache', 'period'), function () {
-            return VehicleType::select('name', 'id')->get();
-        });
+        $result = VehicleType::select('name', 'id')->get();
 
         return response()->json([
             'data' => $result,
@@ -83,9 +81,7 @@ class BodyWorkSelectController extends Controller
      */
     public function acronym()
     {
-        $result = Cache::remember('list:bodyacrony', config('cache', 'period'), function () {
-            return BodyWork::select('acronym', 'name')->where('main', 1)->get();
-        });
+        $result = BodyWork::select('acronym', 'name')->where('main', 1)->get();
 
         return response()->json([
             'data' => $result->map(function ($item) {

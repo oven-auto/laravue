@@ -1,6 +1,6 @@
 #!/bin/sh
 curDate=$(date +"%Y-%m-%d_%H:%M")
-path='/mnt/mysql/backup/'
+path='/home/user/DUMP/'
 file=${path}${curDate}.sql
-mysqldump -uroot -psecret app > ${file}
+mysqldump -uroot -prerfhfxf app > ${file}
 
