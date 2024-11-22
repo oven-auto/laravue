@@ -54,5 +54,7 @@ class SQL_VIEW_FULL_COMMAND extends Command
         $this->call('sql:traficprod');
         //Текущее состояние машины(свободная резерв, клиент, продан)
         $this->call('sql:carstatustype');
+
+        $this->call('sql:ransomcar');
     }
 }
