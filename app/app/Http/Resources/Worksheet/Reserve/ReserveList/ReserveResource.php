@@ -118,7 +118,7 @@ class ReserveResource extends JsonResource
                     'color'         => $this->car->delivery_terms->term->text_color,
                 ],
                 'order_type'            => [
-                    'name'          => $this->car->order_type ? $this->car->order_type->type->name : 'Тип заказа не указан',
+                    'name'          => $this->car->order_type ? $this->car->order_type->type->name : '',
                     'text_color'    => $this->car->order_type ? $this->car->order_type->type->text_color : '',
                     'body_color'    => $this->car->order_type ? $this->car->order_type->type->body_color : '',
                 ],

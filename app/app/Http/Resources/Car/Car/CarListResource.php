@@ -65,7 +65,7 @@ class CarListResource extends JsonResource
                     'color'         => $this->delivery_terms->term->text_color,
                 ],
                 'order_type'            => [
-                    'name' => $this->order_type ? $this->order_type->type->name : 'Тип заказа не указан',
+                    'name' => $this->order_type ? $this->order_type->type->name : '',
                     'text_color' => $this->order_type ? $this->order_type->type->text_color : '',
                     'body_color' => $this->order_type ? $this->order_type->type->body_color : '',
                 ],
