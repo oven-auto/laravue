@@ -13,17 +13,17 @@ Class Wait
         $count = DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'];
         $sleep = 0;
 
-        if($count > 0 && $count < 3)
+        if($count > 0 && $count <= 3)
             $sleep = 1;
-        elseif($count > 3 && $count < 6)
+        elseif($count > 3 && $count <= 6)
             $sleep = 3;
-        elseif($count > 6 && $count < 9)
+        elseif($count > 6 && $count <= 9)
             $sleep = 4;
-        elseif($count > 9 && $count < 12)
+        elseif($count > 9 && $count <=12)
             $sleep = 5;
-        elseif($count > 12 && $count < 15)
+        elseif($count > 12 && $count <= 15)
             $sleep = 6;
-        elseif($count > 15 && $count < 18)
+        elseif($count > 15 && $count <= 18)
             $sleep = 7;
         elseif($count > 15)
             $sleep = 8;
