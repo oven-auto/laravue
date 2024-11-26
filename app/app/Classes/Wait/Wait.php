@@ -12,6 +12,7 @@ Class Wait
     {
         $count = DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'];
         $sleep = 0;
+
         if($count > 0 && $count < 3)
             $sleep = 1;
         elseif($count > 3 && $count < 6)
@@ -28,6 +29,6 @@ Class Wait
             $sleep = 8;
 
         sleep($sleep);
-        Log::alert('Внимание Большая Задержка'. $sleep);
+        Log::alert('Внимание Большая Задержка'. $sleep.'['.$count.']');
     }
 }
