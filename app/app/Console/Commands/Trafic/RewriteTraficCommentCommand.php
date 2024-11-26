@@ -9,6 +9,7 @@ use App\Models\TraficMessage;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\Console\Helper\ProgressBar;
 
 class RewriteTraficCommentCommand extends Command
 {
@@ -43,6 +44,9 @@ class RewriteTraficCommentCommand extends Command
      */
     public function handle()
     {
+
+        ProgressBar::setFormatDefinition('custom', ' %current%/%max% [%bar%] %message%');
+
         Auth::attempt([
             'email' => 'oit@oven-auto.ru',
             'password' => 'Jdty2019'
@@ -53,11 +57,17 @@ class RewriteTraficCommentCommand extends Command
         $defaultClientTypeId = ClientType::first()->id;
 
         $progressBar = $this->output->createProgressBar($trafics->count());
+        
+        $progressBar->setFormat('custom');
+
+        echo "Переиндексирую трафик".PHP_EOL;
 
         $progressBar->start();
 
         foreach($trafics as $key => $item)
         {
+            $progressBar->setMessage('ОЗУ '.round(memory_get_usage()/1048576).'мб.');
+            
             $progressBar->advance();
 
             if($item->comment)
