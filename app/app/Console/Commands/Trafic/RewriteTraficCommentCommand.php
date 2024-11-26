@@ -63,10 +63,18 @@ class RewriteTraficCommentCommand extends Command
         echo "Переиндексирую трафик".PHP_EOL;
 
         $progressBar->start();
+        
+        $start_time = microtime(true);
+
+        $currentTime = 0;
 
         foreach($trafics as $key => $item)
         {
-            $progressBar->setMessage('ОЗУ '.round(memory_get_usage()/1048576).'мб.');
+            $end_time = microtime(true);
+
+            $time = ($end_time - $start_time);
+
+            $progressBar->setMessage('ОЗУ '.round(memory_get_usage()/1048576).'мб. [Время выполнения = '.$time.']');
             
             $progressBar->advance();
 
