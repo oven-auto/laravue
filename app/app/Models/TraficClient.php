@@ -21,6 +21,8 @@ class TraficClient extends Model implements CommentInterface
         'fathername',
         'phone',
         'trafic_id',
+        'inn',
+        'company_name'
     ];
 
     public static function boot()
