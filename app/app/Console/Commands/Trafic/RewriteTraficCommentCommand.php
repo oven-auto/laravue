@@ -62,7 +62,12 @@ class RewriteTraficCommentCommand extends Command
                     ]
                 );
 
-            if($item->firstname || $item->phone || $item->inn || $item->email || $item->company_name)
+            if(
+                $item->firstname || $item->phone || 
+                $item->inn || $item->email || 
+                $item->company_name || $item->client_type_id || 
+                $item->trafic_sex_id
+            )
                 TraficClient::updateOrCreate(
                     ['trafic_id' => $item->id,],
                     [

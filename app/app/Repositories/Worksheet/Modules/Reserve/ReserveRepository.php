@@ -131,6 +131,7 @@ class ReserveRepository
     public function changeCar(WsmReserveNewCar $reserve, array $data)
     {
         $currentCar = $reserve->car;
+
         $newCar = Car::find($data['car_id']);
 
         try{
@@ -152,6 +153,8 @@ class ReserveRepository
             }
 
             $reserve->fill(['car_id' => $newCar->id])->save();
+
+            $reserve->car = $newCar;
             
             ReserveContractRepository::updateContract($reserve->contract, $reserve->contract->toArray());
         } catch(Throwable $e){
