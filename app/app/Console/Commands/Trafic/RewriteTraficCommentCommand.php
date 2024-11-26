@@ -49,10 +49,17 @@ class RewriteTraficCommentCommand extends Command
         ]);
         
         $trafics = DB::table('trafics')->get();
+
         $defaultClientTypeId = ClientType::first()->id;
+
+        $progressBar = $this->output->createProgressBar($trafics->count());
+
+        $progressBar->start();
 
         foreach($trafics as $key => $item)
         {
+            $progressBar->advance();
+
             if($item->comment)
                 TraficMessage::updateOrCreate(
                     ['trafic_id' => $item->id,],
@@ -96,5 +103,6 @@ class RewriteTraficCommentCommand extends Command
                     ]
                 );
         }
+        $progressBar->finish();
     }
 }
