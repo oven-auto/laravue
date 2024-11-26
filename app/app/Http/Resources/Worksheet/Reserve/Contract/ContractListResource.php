@@ -18,6 +18,7 @@ class ContractListResource extends JsonResource
             'id' => $this->id,
             'worksheet' => [
                 'id' => $this->reserve->worksheet->id,
+                'status' => $this->reserve->worksheet->status->name,
             ],
             'car' => [
                 'id' => $this->reserve->car->id,

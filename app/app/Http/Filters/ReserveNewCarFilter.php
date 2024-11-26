@@ -542,6 +542,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function executors(Builder $builder, array $array)
     {
+        sleep(2);
         $builder->whereIn('worksheet_executors.user_id', $array);
     }
 
