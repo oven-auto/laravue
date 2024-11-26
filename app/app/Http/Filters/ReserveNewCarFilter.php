@@ -450,7 +450,7 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public function setJoinToSearch(Builder $builder, array $params)
     {
-        if(isset($params['prices']))
+        //if(isset($params['prices']))
             $builder ->leftJoin('car_full_prices as cfp', 'cfp.car_id', 'cars.id')//представление хранящее актуальную цену авто по прайсу
                 ->leftJoin('wsm_reserve_complectation_prices as wrcp','wrcp.contract_id', 'contract.id')//сохраненая в контракте цена
                 ->leftJoin('complectation_prices as cp', 'cp.id', 'wrcp.complectation_price_id')//цены комплектации
@@ -468,31 +468,31 @@ class ReserveNewCarFilter extends AbstractFilter
                     'cp.id                      as _cp_id', 
                 ]);
         
-        if(isset($params['prices']) || isset($params['has_gift']))
+        //if(isset($params['prices']) || isset($params['has_gift']))
             $builder->leftJoin('car_gift_prices as gift', 'gift.car_id', 'cars.id')//gift
                 ->addSelect([
                     'gift.price as _gift_price', 
                 ]);
         
-        if(isset($params['prices']) || isset($params['has_overprice']))
+        //if(isset($params['prices']) || isset($params['has_overprice']))
             $builder->leftJoin('car_over_prices as overprice', 'overprice.car_id', 'cars.id')//overprice
                 ->addSelect([
                     'overprice.price as _over_price',
                 ]);
 
-        if(isset($params['prices']) || isset($params['has_tuning']))
+        //if(isset($params['prices']) || isset($params['has_tuning']))
             $builder->leftJoin('car_tuning_prices as tuning', 'tuning.car_id', 'cars.id')//цена тюнинга
                 ->addSelect([
                     'tuning.price as _tuning_price',
                 ]);
 
-        if(isset($params['has_options']))//has_option
+        //if(isset($params['has_options']))//has_option
             $builder->leftJoin('car_options', 'car_options.car_id', 'cars.id');
 
-        if(isset($params['has_devices']))//has_devices
+        //if(isset($params['has_devices']))//has_devices
             $builder->leftJoin('car_tunings', 'car_tunings.car_id', 'cars.id');
 
-        if(isset($params['has_discount']))
+        //if(isset($params['has_discount']))
             $builder->leftJoin('discounts', function($join){
                 $join->on('discounts.worksheet_id', '=', 'worksheets.id')
                     ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
@@ -502,34 +502,34 @@ class ReserveNewCarFilter extends AbstractFilter
         if(isset($params['has_ransom']))//has_ransom
             $builder->leftJoin('ransom_cars', 'ransom_cars.car_id', 'cars.id'); 
 
-        if(isset($params['has_detailing_cost']))//has_detailing_cost
+        //if(isset($params['has_detailing_cost']))//has_detailing_cost
             $builder->leftJoin('car_detailing_costs', 'car_detailing_costs.car_id', 'cars.id');
 
-        if(isset($params['trade_markers']))//trade_marker
+        //if(isset($params['trade_markers']))//trade_marker
             $builder->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id');
 
-        if(isset($params['markers']))//markers
+        //if(isset($params['markers']))//markers
             $builder->leftJoin('car_markers', 'car_markers.car_id', 'cars.id');
 
-        if(isset($params['has_client_pay']))
+        //if(isset($params['has_client_pay']))
             $builder->leftJoin('wsm_reserve_payments', 'wsm_reserve_payments.reserve_id', 'wsm_reserve_new_cars.id');
 
-        if(isset($params['has_issue']))
+        //if(isset($params['has_issue']))
             $builder->leftJoin('wsm_reserve_issues', 'wsm_reserve_issues.reserve_id', 'wsm_reserve_new_cars.id');
 
-        if(isset($params['has_sale']) || (isset($params['sale_date'])))
+        //if(isset($params['has_sale']) || (isset($params['sale_date'])))
             $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id');
 
-        if(
-            isset($params['has_off']) || //has_off
-            isset($params['report_type']) //report_type
-        )
+        //if(
+        //    isset($params['has_off']) || //has_off
+        //    isset($params['report_type']) //report_type
+        //)
             $builder->leftJoin('car_owners', 'car_owners.car_id', 'cars.id');
         
-        if(isset($params['logistic_dates']) && count($params['logistic_dates']))//логистика
+        //if(isset($params['logistic_dates']) && count($params['logistic_dates']))//логистика
             $builder->leftJoin('car_date_logistics', 'car_date_logistics.car_id', 'cars.id');
 
-        if(isset($params['colors']))
+        //if(isset($params['colors']))
             $builder->leftJoin('dealer_colors', 'dealer_colors.id', 'cars.color_id');
 
         $builder->groupBy('wsm_reserve_new_cars.id');
