@@ -63,6 +63,7 @@ services:
       database:
     volumes:
       - ./app/:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/uploads.ini
     environment:
       - "UPLOAD_LIMIT=20M"
       # - "DB_PORT=3306"
