@@ -19,12 +19,6 @@ class ReserveNewCarObserver
             WorksheetCreateEvent::dispatch($reserve->worksheet);
 
             ReserveCreateEvent::dispatch($reserve);
-
-            match($reserve->worksheet->trafic->chanel->id) {
-                '1'         => DNMVisitEvent::dispatch($reserve, 'visit'),
-                '2'         => DNMVisitEvent::dispatch($reserve, 'call'),
-                default     => DNMVisitEvent::dispatch($reserve, 'internet'),
-            };
         }
     }
 

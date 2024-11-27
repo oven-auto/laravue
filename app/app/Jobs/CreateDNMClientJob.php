@@ -37,18 +37,6 @@ class CreateDNMClientJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::alert('Пробую отправить данные о клиенте на ДНМ');
-
-        echo 'Отправляю в ДНМ данные клиента'.PHP_EOL;
-
-        print_r([
-            'id' => $this->client->id,
-            'firstname' => $this->client->firstname,
-            'lastname' => $this->client->lastname,
-        ]);
-
         $service = (new DNMClientService())->save($this->client);
-
-        Log::alert('Отправил данные о клиенте на ДНМ');
     }
 }

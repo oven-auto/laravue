@@ -46,10 +46,8 @@ class DNMEvent
             'code' => $data['code'],
         ]);
 
-        Log::alert('Пробую отправить данные по клиенту в ЛадаДНМ.');
         $clientE = (new DNMClientService())->save($reserve->worksheet->client);
 
-        Log::alert('Пробую отправить данные по рл в ЛадаДНМ.');
         $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
     }
 
@@ -139,6 +137,8 @@ class DNMEvent
      */
     public function internet(WsmReserveNewCar $reserve)
     {
+        $reserve->load('dnm');
+        
         $data = [
             'event_type' => 'internet',
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,

@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Classes\LadaDNM\DNMClientService;
 use App\Classes\LadaDNM\DNMWorksheetService;
 use App\Events\ClientCreateOrUpdateEvent;
 use App\Models\Worksheet;
@@ -38,23 +39,13 @@ class CreateDNMWorksheetJob implements ShouldQueue
     {
         $worksheet = $this->worksheet;
 
-        Log::alert('Пробую отправить данные о РЛ на ДНМ');
-
         if($worksheet->isLada() && $worksheet->isSaleDepartment() && $worksheet->isSaleNewCar())
         {
-            //ClientCreateOrUpdateEvent::dispatch($worksheet->client);
-
-            echo 'Отправляю в ДНМ данные о рабочем листе'.PHP_EOL;
-
-            print_r([
-                'id_worksheet' => $this->worksheet->id,
-                'firstname' => $this->worksheet->client->firstname,
-                'lastname' => $this->worksheet->client->lastname,
-            ]);
+            $this->worksheet->load('client');
+            
+            $service = (new DNMClientService())->save($this->worksheet->client);
          
             $service = (new DNMWorksheetService())->save($worksheet);
         }
-
-        Log::alert('Завершил отправку данных о РЛ на ДНМ');
     }
 }

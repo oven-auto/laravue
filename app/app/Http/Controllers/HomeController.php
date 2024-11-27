@@ -21,6 +21,7 @@ use App\Jobs\TestJob;
 use App\Listeners\DNMReserveCreateListener;
 use App\Models\Car;
 use App\Models\Client as ModelsClient;
+use App\Models\ClientFile;
 use App\Models\ClientUnion;
 use App\Models\DealerColorImage;
 use App\Models\DiscountModul;
@@ -119,7 +120,9 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index() {
-        TestJob::dispatch();
+        $client = \App\Models\Client::find(13235);
+        
+        (new DNMClientService())->save($client);
 
         // $serverFactory = new ServerFactory();
 

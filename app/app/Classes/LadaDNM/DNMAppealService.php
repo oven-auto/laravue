@@ -119,13 +119,10 @@ class DNMAppealService
      */
     public function save(WsmReserveNewCar $reserve)
     {
-        Log::alert('Пробую отправить данные по клиенту в ЛадаДНМ.');
         $clientE = (new DNMClientService())->save($reserve->worksheet->client);
 
-        Log::alert('Пробую отправить данные по рл в ЛадаДНМ.');
         $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
 
-        Log::alert('Пробую отправить данные по потребности в ЛадаДНМ.');
         if($this->isExist($reserve))
             $this->update($reserve);
         else

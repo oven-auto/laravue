@@ -43,7 +43,7 @@ class DNMClientService
     {
         if ($this->obj->isPerson())
             return [
-                'name' => $this->obj->firstname ?? '',
+                'name' => $this->obj->firstname ?? 'Неизвестно',
                 'last_name' => $this->obj->lastname,
                 'middle_name' => $this->obj->fathername,
                 'phone_hash' => $this->obj->phones->count() ? sha1($this->obj->phones[0]) : '',
@@ -51,11 +51,11 @@ class DNMClientService
                 'code' => (string)$this->obj->id,
                 'type' => $this->obj->getDnmTypeClient() ?? '',
                 'email' => $this->obj->email ? $this->obj->email->first()->email : '',
-                'address' => '445031 г. Югра, ул. Рижская, дом 2',
+                'address' => 'Сыктывкар',
                 'phones' => [
                     [
                         'type' => 1,
-                        'number' => $this->obj->phones->first()->number,
+                        'number' => $this->obj->phones->first()->phone,
                     ]
                 ]
             ];
@@ -69,7 +69,7 @@ class DNMClientService
                 'last_name' => 'Петров',
                 'middle_name' => 'Семенович',
                 "company_legal_form" => "ООО",
-                "company_address" => "г. Москва, ул. Тверская, 1, оф. 3",
+                "company_address" => "Сыктывкар",
                 "email" => "ivan@mail.ru",
                 "company_email" => "info@sintez.ru",
                 "phones" => [

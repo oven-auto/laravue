@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Classes\LadaDNM\DNMAppealService;
+use App\Classes\LadaDNM\DNMEvent;
 use App\Models\WsmReserveNewCar;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -35,18 +36,14 @@ class CreateDNMReserveJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::alert('Пробую отправить данные о РЕЗЕРВЕ на ДНМ');
-
-        echo 'Отправляю в ДНМ данные о резерве'.PHP_EOL;
-
-            print_r([
-                'id_reserve' => $this->reserve->id,
-                'firstname' => $this->reserve->worksheet->client->firstname,
-                'lastname' => $this->reserve->worksheet->client->lastname,
-            ]);
-
         $service = (new DNMAppealService())->save($this->reserve);
-        
-        Log::alert('Закончил отправлять данные о РЕЗЕРВЕ на ДНМ');
+
+        $action = match($this->reserve->worksheet->trafic->chanel->id) {
+            '1'         => 'visit',
+            '2'         => 'call',
+            default     => 'internet',
+        };
+
+        $service = (new DNMEvent())->handler($this->reserve, $action);
     }
 }

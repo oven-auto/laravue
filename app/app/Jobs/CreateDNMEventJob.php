@@ -40,10 +40,6 @@ class CreateDNMEventJob implements ShouldQueue
      */
     public function handle()
     {
-        Log::alert('Пробую отправить событие '.$this->action.' в DNM');
-
         $service = (new DNMEvent())->handler($this->reserve, $this->action);
-
-        Log::alert('Завершил отправку события '.$this->action.' в DNM');
     }
 }
