@@ -63,7 +63,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
         ];
 
@@ -89,7 +89,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
             'result_id' => 12,
         ];
@@ -116,7 +116,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
         ];
 
@@ -138,13 +138,13 @@ class DNMEvent
     public function internet(WsmReserveNewCar $reserve)
     {
         $reserve->load('dnm');
-        
+
         $data = [
             'event_type' => 'internet',
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
         ];
 
@@ -170,7 +170,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
         ];
 
@@ -196,7 +196,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
         ];
 
@@ -222,7 +222,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
         ];
 
@@ -245,7 +245,7 @@ class DNMEvent
             'worksheet_id' => $reserve->worksheet->dnm->dnm_id,
             'code' => (string)$reserve->id.date('-dmYHis'),
             'occurred' => now()->format('d.m.Y H:i:s'),
-            'manager_id' => 1764,
+            'manager_id' => 1433,
             'car_id' => $reserve->dnm->dnm_appeal_id,
             'vin' => $reserve->car->vin,
         ];
