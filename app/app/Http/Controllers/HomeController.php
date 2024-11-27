@@ -124,7 +124,7 @@ class HomeController extends Controller
     public function index(HttpRequest $request) {
         if($request->has('reserve_id'))
         {
-            $reserve = WsmReserveNewCar::find($request->reserve_id);
+            $reserve = WsmReserveNewCar::withTrashed()->find($request->reserve_id);
 
             $action = $request->action ?? 'visit';
 
