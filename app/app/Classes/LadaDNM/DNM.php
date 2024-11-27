@@ -7,24 +7,14 @@ use Illuminate\Support\Facades\Http;
 class DNM
 {
     private static $instance;
-
-    private const TOKEN = 'SCDJCHFpIzAad7WMM6XYv1biG86T3Qru4OZPUK1utkzQ3y2TrW7Z1O6HJEwNZKfcFOLGo9Tj66dzSLEoS4CkZAAXakDULS6oagxduMb2To_cn_01lw_qybtpUsT74Erk';
-
-    private const BASE_URL = 'https://vaz-test.autocrm.ru';
+    
+    private static $token; 
+    
+    private static $baseUrl;
 
     public $service;
 
-    // public function __construct()
-    // {
-    //     $headers = [
-    //         'Authorization' => 'Bearer ' . self::TOKEN,
-    //         'Accept' => 'application/json',
-    //         'Connection' => 'keep-alive',
-    //         'Content-Type' => 'application/json; charset=utf-8',
-    //     ];
 
-    //     $this->service = Http::withHeaders($headers);
-    // }
 
     private function __construct()
     {
@@ -36,19 +26,23 @@ class DNM
     {
         if (self::$instance !== null)
             return self::$instance;
+        
+        self::$instance = new self;
+        
+        self::$token = env("DNM_TOKEN");
 
-        $me = new self;
+        self::$baseUrl = env("DNM_URL");
 
         $headers = [
-            'Authorization' => 'Bearer ' . self::TOKEN,
+            'Authorization' => 'Bearer ' . self::$token,
             'Accept' => 'application/json',
             'Connection' => 'keep-alive',
             'Content-Type' => 'application/json; charset=utf-8',
         ];
 
-        $me->service = Http::withHeaders($headers);
+        self::$instance->service = Http::withHeaders($headers);
 
-        return $me;
+        return self::$instance;
     }
 
 
@@ -78,7 +72,7 @@ class DNM
     {
         $getParam = trim($getParam, '/');
 
-        return self::BASE_URL . '/' . $getParam;
+        return self::$baseUrl . '/' . $getParam;
     }
 
 

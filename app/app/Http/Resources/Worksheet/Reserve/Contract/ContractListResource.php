@@ -45,7 +45,7 @@ class ContractListResource extends JsonResource
                 'debit' => $this->getDebtorArrears(),
                 'credit' => $this->getCreditorArrears(),
             ],
-            'sale_at' => $this->reserve->getSaleDate()
+            'sale_at' => '',
         ];
     }
 }

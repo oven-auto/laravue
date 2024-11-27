@@ -55,9 +55,9 @@ class DiscountReserveController extends Controller
     public function update(Discount $discount, SaleSaveRequest $request)
     {
         $this->repo->save($discount, $request->validated());
-
+        
         return (new SaleReserveResource($discount))->additional([
-            'message' => 'Скидка изменена.',
+            'message' => 'Скидка изменена.'.$request->reparation_date,
         ]);
     }
 

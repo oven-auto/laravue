@@ -89,15 +89,13 @@ class ReserveDiscountRepository
      */
     public function saveReparationDate(Discount $discount, string $date = null)
     {
-
-
         if (!$date)
             $discount->reparation_date()->delete();
 
-
         else {
-            $date = DateHelper::createFromString($date, 'd.m.Y');
-            if (($discount->reparation_date && $date->diffInDays($discount->reparation_date->date_at)) || !$discount->reparation_date) {
+            $date = DateHelper::createFromString($date, 'd.m.Y')->startOfDay();
+
+            if (($discount->reparation_date && $date->diffInDays($discount->reparation_date->date_at->startOfDay())) || !$discount->reparation_date) {
                 $discount->reparation_date()->updateOrCreate(
                     ['discount_id' => $discount->id],
                     [
