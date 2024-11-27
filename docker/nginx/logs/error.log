@@ -106,3 +106,4 @@
 2024/11/26 11:03:06 [notice] 1#1: start worker process 28
 2024/11/26 11:03:06 [notice] 1#1: start worker process 29
 2024/11/26 11:03:06 [notice] 1#1: start worker process 30
+2024/11/27 00:20:20 [error] 30#30: *5053 open() "/var/www/public/php-cgi/php-cgi.exe" failed (2: No such file or directory), client: 137.184.85.175, server: _, request: "POST /php-cgi/php-cgi.exe?%add+allow_url_include%3d1+%add+auto_prepend_file%3dphp://input HTTP/1.1", host: "62.182.31.140:8280"

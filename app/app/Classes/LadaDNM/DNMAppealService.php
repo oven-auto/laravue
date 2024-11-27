@@ -121,6 +121,10 @@ class DNMAppealService
     {
         Log::alert('Пробую отправить данные по потребности в ЛадаДНМ.');
 
+        $clientE = (new DNMClientService())->save($reserve->worksheet->client);
+
+        $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
+
         if($this->isExist($reserve))
             $this->update($reserve);
         else
