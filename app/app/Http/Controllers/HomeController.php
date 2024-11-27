@@ -7,6 +7,7 @@ namespace App\Http\Controllers;
 use App\Classes\LadaDNM\DNM;
 use App\Classes\LadaDNM\DNMClient;
 use App\Classes\LadaDNM\DNMClientService;
+use App\Classes\LadaDNM\DNMEvent;
 use App\Classes\LadaDNM\DNMFactory;
 use App\Classes\LadaDNM\DNMWorksheet;
 use App\Classes\LadaDNM\DNMWorksheetService;
@@ -39,6 +40,7 @@ use GuzzleHttp\RequestOptions;
 use Icewind\SMB\BasicAuth;
 use Icewind\SMB\ServerFactory;
 use Illuminate\Contracts\Cache\Store;
+use Illuminate\Http\Request as HttpRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -119,10 +121,16 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() {
-        $client = \App\Models\Client::find(13235);
+    public function index(HttpRequest $request) {
+        if($request->has('reserve_id'))
+        {
+            $reserve = WsmReserveNewCar::find($request->reserve_id);
+
+            $action = $request->action ?? 'visit';
+
+            (new DNMEvent())->handler($reserve, $action);
+        }
         
-        (new DNMClientService())->save($client);
 
         // $serverFactory = new ServerFactory();
 
