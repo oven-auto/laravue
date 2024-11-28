@@ -17,7 +17,7 @@ class CreateCarControllPaidDatesTable extends Migration
             $table->id();
             $table->dateTime('date_at');
             $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignIdFor(\App\Models\Car::class);
+            $table->foreignId('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->timestamps();
         });
     }
