@@ -122,15 +122,18 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index(HttpRequest $request) {
-        if($request->has('reserve_id'))
-        {
-            $reserve = WsmReserveNewCar::withTrashed()->find($request->reserve_id);
+        // if($request->has('reserve_id'))
+        // {
+        //     $reserve = WsmReserveNewCar::withTrashed()->find($request->reserve_id);
 
-            $action = $request->action ?? 'visit';
+        //     $action = $request->action ?? 'visit';
 
-            (new DNMEvent())->handler($reserve, $action);
-        }
-        
+        //     (new DNMEvent())->handler($reserve, $action);
+        // }
+
+        $reserve = WsmReserveNewCar::find(4298);
+
+        dd($reserve->worksheet->subclients->first());        
 
         // $serverFactory = new ServerFactory();
 

@@ -60,6 +60,8 @@ class DNMClientService
                 ]
             ];
         elseif ($this->obj->isCompany())
+        {
+            
             return [
                 'code' => (string)$this->obj->id,
                 'company_name' => (string)$this->obj->company_name,
@@ -83,6 +85,7 @@ class DNMClientService
                     ]
                 ],
             ];
+        }
     }
 
 

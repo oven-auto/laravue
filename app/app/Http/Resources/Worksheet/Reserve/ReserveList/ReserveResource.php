@@ -23,7 +23,10 @@ class ReserveResource extends JsonResource
             ],
 
             'car' => new CarResource($this->car),
-            'trade_marker' => $this->car->trade_marker->marker->name,
+            'trade_marker' => [
+                'name' => $this->car->trade_marker->marker->name,
+                'text_color' => $this->car->trade_marker->marker->text_color,
+            ],
 
             'worksheet' => [
                 'id' => $this->worksheet->id,

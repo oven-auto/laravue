@@ -82,6 +82,9 @@ class CME_BRANDMARK extends Command
             $models = Mark::where('brand_id', $brand->id)->get();
 
             $ourModelCount += $models->count();
+            
+            $file = fopen('cme.txt', 'a');
+            fwrite($file, json_encode($responseModel['models']));
 
             foreach ($responseModel['models'] as $itemModel)
                 if (!$models->contains('uid', $itemModel['id'])) {
@@ -116,5 +119,7 @@ class CME_BRANDMARK extends Command
         echo "В нашей базе было {$ourModelCount} брендов\n";
         echo "Добавлено {$appendedCount} брендов\n";
         echo "Добавлено {$appendedMarkCount} моделей\n";
+
+        fclose($file);
     }
 }
