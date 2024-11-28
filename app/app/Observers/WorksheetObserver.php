@@ -13,9 +13,9 @@ class WorksheetObserver
 
         $worksheet->executors()->attach($worksheet->author_id);
 
-        ClientCreateOrUpdateEvent::dispatch($worksheet->client);
+        //ClientCreateOrUpdateEvent::dispatch($worksheet->client);
 
-        WorksheetCreateEvent::dispatch($worksheet);
+        //WorksheetCreateEvent::dispatch($worksheet);
     }
 
     

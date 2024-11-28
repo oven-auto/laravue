@@ -11,6 +11,7 @@ Class Wait
     public static function setWaitColor()
     {
         $count = DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'];
+        
         $sleep = 0;
 
         if($count > 0 && $count <= 3)

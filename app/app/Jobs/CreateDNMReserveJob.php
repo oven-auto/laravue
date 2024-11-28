@@ -3,7 +3,9 @@
 namespace App\Jobs;
 
 use App\Classes\LadaDNM\DNMAppealService;
+use App\Classes\LadaDNM\DNMClientService;
 use App\Classes\LadaDNM\DNMEvent;
+use App\Classes\LadaDNM\DNMWorksheetService;
 use App\Models\WsmReserveNewCar;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -36,14 +38,21 @@ class CreateDNMReserveJob implements ShouldQueue
      */
     public function handle()
     {
-        $service = (new DNMAppealService())->save($this->reserve);
+        if($this->reserve->worksheet->isLada() && $this->reserve->worksheet->isSaleDepartment() && $this->reserve->worksheet->isSaleNewCar())
+        {
+            (new DNMClientService())->save($this->reserve->worksheet->client);
 
-        $action = match($this->reserve->worksheet->trafic->chanel->id) {
-            '1'         => 'visit',
-            '2'         => 'call',
-            default     => 'internet',
-        };
+            (new DNMWorksheetService())->save($this->reserve->worksheet);
 
-        $service = (new DNMEvent())->handler($this->reserve, $action);
+            (new DNMAppealService())->save($this->reserve);
+            
+            $action = match($this->reserve->worksheet->trafic->chanel->id) {
+                1         => 'visit',
+                2         => 'call',
+                default     => 'internet',
+            };
+
+            (new DNMEvent())->handler($this->reserve, $action);
+        }
     }
 }

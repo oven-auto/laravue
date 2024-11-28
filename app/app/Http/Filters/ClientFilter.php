@@ -67,20 +67,28 @@ class ClientFilter extends AbstractFilter
             $builder->whereIn('clients.id', explode(',',$value));
     }
 
+
+
     public function lastname(Builder $builder, $value)
     {
         $builder->where('clients.lastname', 'like', '%'. $value.'%');
     }
+
+
 
     public function firstname(Builder $builder, $value)
     {
         $builder->where('clients.firstname', 'like', '%'. $value.'%');
     }
 
+
+
     public function fathername(Builder $builder, $value)
     {
         $builder->where('clients.fathername', 'like', '%'. $value.'%');
     }
+
+
 
     public function phone(Builder $builder, $value)
     {
@@ -89,6 +97,8 @@ class ClientFilter extends AbstractFilter
         $builder->where('client_phones.phone', 'like', '%'. $value.'%');
     }
 
+
+
     public function email(Builder $builder, $value)
     {
         if(!$this->checkJoin($builder, 'client_emails'))
@@ -96,20 +106,28 @@ class ClientFilter extends AbstractFilter
         $builder->where('client_emails.email', 'like', '%'. $value.'%');
     }
 
+
+
     public function clientTypeId(Builder $builder, $value)
     {
         $builder->where('clients.client_type_id', $value);
     }
+
+
 
     public function traficSexId(Builder $builder, $value)
     {
         $builder->where('clients.trafic_sex_id', $value);
     }
 
+
+
     public function traficZoneId(Builder $builder, $value)
     {
         $builder->where('clients.trafic_zone_id', $value);
     }
+
+
 
     public function hasWorksheet(Builder $builder, $value)
     {
@@ -121,6 +139,8 @@ class ClientFilter extends AbstractFilter
             $builder->whereNull('worksheets.id');
     }
 
+
+    
     public function input(Builder $builder, $value)
     {
         if(!$this->checkJoin($builder, 'client_phones'))

@@ -14,9 +14,9 @@ class ReserveNewCarObserver
     {
         if($reserve->worksheet->isLada() && $reserve->worksheet->isSaleDepartment() && $reserve->worksheet->isSaleNewCar())
         {
-            ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
+            //ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
 
-            WorksheetCreateEvent::dispatch($reserve->worksheet);
+            //WorksheetCreateEvent::dispatch($reserve->worksheet);
 
             ReserveCreateEvent::dispatch($reserve);
         }
