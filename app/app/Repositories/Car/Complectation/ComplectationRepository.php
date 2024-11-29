@@ -187,13 +187,13 @@ class ComplectationRepository
         $filter = app()->make(ComplectationFilter::class, ['queryParams' => array_filter($data)]);
 
         $query->filter($filter);
-        //$query->dd();
+        
         $complectations = $query
             ->orderBy('complectations.deleted_at')
             ->orderBy('marks.brand_id')
             ->orderBy('marks.id')
             ->orderBy('complectations.body_work_id')
-            ->simplePaginate($paginate);
+            ->get();
         
         return $complectations;
     }
