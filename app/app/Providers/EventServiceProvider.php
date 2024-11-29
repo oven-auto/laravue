@@ -30,12 +30,6 @@ class EventServiceProvider extends ServiceProvider
         TraficEvent::class => [
             SendTraficInfo::class,
         ],
-        \App\Events\ClientCreateOrUpdateEvent::class => [
-            \App\Listeners\DNMClientCreateOrUpdateListener::class
-        ],
-        \App\Events\WorksheetCreateEvent::class => [
-            \App\Listeners\DNMWorksheetCreateListener::class
-        ],
         \App\Events\ReserveCreateEvent::class => [
             \App\Listeners\DNMReserveCreateListener::class,
         ],

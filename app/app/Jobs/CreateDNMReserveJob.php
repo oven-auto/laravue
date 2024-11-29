@@ -40,7 +40,7 @@ class CreateDNMReserveJob implements ShouldQueue
     {
         if($this->reserve->worksheet->isLada() && $this->reserve->worksheet->isSaleDepartment() && $this->reserve->worksheet->isSaleNewCar())
         {
-            (new DNMClientService())->save($this->reserve->worksheet->client);
+            (new DNMClientService())->save($this->reserve);
 
             (new DNMWorksheetService())->save($this->reserve->worksheet);
 

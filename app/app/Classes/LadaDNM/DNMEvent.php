@@ -46,7 +46,7 @@ class DNMEvent
             'code' => $data['code'],
         ]);
 
-        $clientE = (new DNMClientService())->save($reserve->worksheet->client);
+        $clientE = (new DNMClientService())->save($reserve);
 
         $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
     }

@@ -119,9 +119,9 @@ class DNMAppealService
      */
     public function save(WsmReserveNewCar $reserve)
     {
-        $clientE = (new DNMClientService())->save($reserve->worksheet->client);
+        (new DNMClientService())->save($reserve);
 
-        $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
+        (new DNMWorksheetService())->save($reserve->worksheet);
 
         if($this->isExist($reserve))
             $this->update($reserve);

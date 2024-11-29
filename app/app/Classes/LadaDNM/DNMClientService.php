@@ -4,6 +4,7 @@ namespace App\Classes\LadaDNM;
 
 use App\Models\Client;
 use App\Models\DnmClient;
+use App\Models\WsmReserveNewCar;
 use Illuminate\Support\Facades\Log;
 
 class DNMClientService
@@ -13,6 +14,8 @@ class DNMClientService
     private $obj;
 
     private $dnmClient;
+
+    private $reserve;
 
     public function __construct()
     {
@@ -144,11 +147,13 @@ class DNMClientService
     /**
      * ОБРАБОТЧИК
      */
-    public function save(Client $client)
+    public function save(WsmReserveNewCar $reserve)
     {
-        $this->obj = $client;
+        $this->reserve = $reserve;
 
-        $this->dnmClient = \App\Models\DnmClient::where('client_id', $client->id)->first() ?? new DnmClient();
+        $this->obj = $reserve->worksheet->client;
+
+        $this->dnmClient = \App\Models\DnmClient::where('client_id', $this->obj->id)->first() ?? new DnmClient();
 
         if ($this->check())
             $this->update();
