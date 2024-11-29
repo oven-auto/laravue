@@ -121,8 +121,8 @@ class CarRepository
 
         $colorImage = $car->color->images->where('body_work_id', $bodyWork)->first();
 
-        if(!$car->color->images->contains('body_work_id', $bodyWork))
-            throw new \Exception('Нет картинки для этого цвета.');
+        //if(!$car->color->images->contains('body_work_id', $bodyWork))
+        //    throw new \Exception('Нет картинки для этого цвета.');
 
         if($colorImage)
             $car->image()->sync([$colorImage->id]);
