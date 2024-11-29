@@ -113,15 +113,20 @@ class CarRepository
 
 
 
-    // public function saveApplication(Car $car)
-    // {
-    //     $car->logistic_dates()->create([
-    //         'car_id' => $car->id,
-    //         'author_id' => auth()->user()->id,
-    //         'logistic_system_name' => 'application_date',
-    //         'date_at' => '2024-02-02',
-    //     ]);
-    // }
+    public function setCarImage(Car $car)
+    {
+        
+
+        $bodyWork = $car->complectation->body_work_id;
+
+        $colorImage = $car->color->images->where('body_work_id', $bodyWork)->first();
+
+        if(!$car->color->images->contains('body_work_id', $bodyWork))
+            throw new \Exception('Нет картинки для этого цвета.');
+
+        if($colorImage)
+            $car->image()->sync([$colorImage->id]);
+    }
 
 
 
@@ -143,6 +148,8 @@ class CarRepository
                 $this->setCarStatus($car);
 
                 $car->refresh();
+
+                $this->setCarImage($car);
 
                 Notice::setMessage('Автомобиль добавлен.');
 
@@ -176,10 +183,12 @@ class CarRepository
 
                 $car->refresh();
 
+                $this->setCarImage($car);
+
                 Notice::setMessage('Автомобиль изменен.');
             }, 3);
         } catch (\Exception $exception) {
-            throw new \Exception('Произошла ошибка, автомобиль не изменен.');
+            throw new \Exception('Произошла ошибка, автомобиль не изменен. '.$exception->getMessage());
         }
     }
 
@@ -190,8 +199,6 @@ class CarRepository
      */
     public function paginate(array $data = [], $paginate = 15)
     {   
-        Wait::setWaitColor();
-
         $query = Car::query()->select('cars.*');
         
         $filter = app()->make(CarFilter::class, ['queryParams' => $data]);

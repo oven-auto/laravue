@@ -47,7 +47,7 @@ class CarController extends Controller
     public function index(Request $request)
     {
         $cars = $this->repo->paginate($request->all());
-
+        
         return new CarListCollection($cars);
     }
 

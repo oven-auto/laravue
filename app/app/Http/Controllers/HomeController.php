@@ -130,12 +130,13 @@ class HomeController extends Controller
 
         //     (new DNMEvent())->handler($reserve, $action);
         // }
+        $car = Car::find(11213);
 
-        $reserve = WsmReserveNewCar::find(4307);
+        $bodyWork = $car->complectation->body_work_id;
 
-        $client = $reserve->worksheet->subclients->first();
+        $colorImage = $car->color->images->where('body_work_id', $bodyWork)->first();      
 
-        dd($client->phones->first()->phone);        
+        dd($colorImage);
 
         // $serverFactory = new ServerFactory();
 

@@ -11,9 +11,8 @@ class ColorController extends Controller
 {
     public function index()
     {
-        $result = \Cache::remember('list:color', config('cache', 'period'), function() {
-            return Color::select('name', 'id')->get();
-        });
+        
+            $result = Color::select('name', 'id')->get();
 
         return response()->json([
             'data' => $result,
@@ -29,13 +28,14 @@ class ColorController extends Controller
             'mark_id' => 'required'
         ]);
 
-        $result = \Cache::remember('list:dealercolor:'.$validated['mark_id'], config('cache', 'period'), function() use ($validated){
-            return DealerColor::select('name', 'id')->where('mark_id', $validated['mark_id'])->get();
-        });
+        //$result = \Cache::remember('list:dealercolor:'.$validated['mark_id'], config('cache', 'period'), function() use ($validated){
+        $result = DealerColor::select('name', 'id')->where('mark_id', $validated['mark_id'])->get();
+        //});
 
         return response()->json([
             'data' => $result,
-            'success' => 1
+            'success' => 1,
+            'test' => 1
         ]);
     }
 }

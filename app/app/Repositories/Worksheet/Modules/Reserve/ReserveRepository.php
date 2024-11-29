@@ -215,8 +215,6 @@ class ReserveRepository
 
     public function paginate(array $data, $paginate = 20)
     {
-        Wait::setWaitColor();
-
         $query = WsmReserveNewCar::select('wsm_reserve_new_cars.*');
 
         if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'])

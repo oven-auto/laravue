@@ -195,6 +195,10 @@ class Car extends Model
     // {
     //     return $this->hasOne(\App\Models\CarOptionPrice::class, 'car_id', 'id')->withDefault();
     // }
+    public function image()
+    {
+        return $this->belongsToMany(\App\Models\DealerColorImage::class, 'car_images', 'car_id', 'image_id');
+    }
 
 
 
@@ -1421,10 +1425,10 @@ class Car extends Model
     /**
      * GET COLOR IMAGE
      */
-    public function getImageAttribute()
+    public function getImageURLAttribute()
     {   
-        if($this->color->images->contains('body_work_id', $this->complectation->body_work_id))
-            return $this->color->images->firstWhere('body_work_id', $this->complectation->body_work_id)->url;
+        if($this->image->first())
+            return $this->image->first()->url;
         return 0;
     }
 }
