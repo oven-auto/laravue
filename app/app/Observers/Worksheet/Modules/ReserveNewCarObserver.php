@@ -10,12 +10,18 @@ use App\Models\WsmReserveNewCar;
 
 class ReserveNewCarObserver
 {
+    public function creating(WsmReserveNewCar $reserve)
+    {
+        if($reserve->worksheet->client->isCompany() && $reserve->worksheet->subclients->count() == 0)
+            throw new \Exception('У юр.лица отсутствует контактное лицо.');
+    }
+
+
+
     public function created(WsmReserveNewCar $reserve)
     {
         if($reserve->worksheet->isLada() && $reserve->worksheet->isSaleDepartment() && $reserve->worksheet->isSaleNewCar())
-        {
             ReserveCreateEvent::dispatch($reserve);
-        }
     }
 
 

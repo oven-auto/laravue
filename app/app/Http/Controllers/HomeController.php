@@ -131,9 +131,11 @@ class HomeController extends Controller
         //     (new DNMEvent())->handler($reserve, $action);
         // }
 
-        $reserve = WsmReserveNewCar::find(4298);
+        $reserve = WsmReserveNewCar::find(4307);
 
-        dd($reserve->worksheet->subclients->first());        
+        $client = $reserve->worksheet->subclients->first();
+
+        dd($client->phones->first()->phone);        
 
         // $serverFactory = new ServerFactory();
 

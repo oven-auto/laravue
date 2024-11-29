@@ -62,30 +62,31 @@ class DNMClientService
                     ]
                 ]
             ];
-        elseif ($this->obj->isCompany())
+        elseif (!$this->obj->isPerson())
         {
-            
+            $client = $this->reserve->worksheet->subclients->first();
+            $client->load('phones');
             return [
                 'code' => (string)$this->obj->id,
                 'company_name' => (string)$this->obj->company_name,
                 'type' => $this->obj->getDnmTypeClient() ?? '',
                 'company_address' => $this->obj->zone->name ?? '',
-                "name" => "Иван",
-                'last_name' => 'Петров',
-                'middle_name' => 'Семенович',
+                "name" => $client->firstname,
+                'last_name' => $client->lastname,
+                'middle_name' => $client->fathername,
                 "company_legal_form" => "ООО",
                 "company_address" => "Сыктывкар",
-                "email" => "ivan@mail.ru",
-                "company_email" => "info@sintez.ru",
+                "email" => "",
+                "company_email" => "",
                 "phones" => [
+                    // [
+                    // "type" => 1,
+                    // "number" => $client->phones->first()->phone,
+                    // ],
                     [
-                    "type" => 1,
-                    "number" => "79038185495"
+                    "type" => 2,
+                    "number" => $client->phones->first()->phone,
                     ],
-                    [
-                    "type" =>  2,
-                    "number"=> "74955055051"
-                    ]
                 ],
             ];
         }

@@ -213,7 +213,7 @@ class Client extends Model implements PersonInterface, CommentInterface
 
     public function isCompany()
     {
-        if ($this->client_type_id == 2)
+        if ($this->client_type_id != 1)
             return true;
         return false;
     }
