@@ -16,10 +16,6 @@ class CarListResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'test' => $this->isReserved() ? [
-                'full' => $this->reserve->getFullCost() - $this->reserve->getSaleSum(),
-                'f' => $this->getCarPrice()
-            ] : [],
             'id' => $this->id,
             
             'state' => $this->getReserveStatus(),

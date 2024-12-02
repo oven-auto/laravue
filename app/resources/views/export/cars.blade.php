@@ -25,7 +25,7 @@
         <tr>
             <td align="left">{{$item->brand->name}}</td>
             <td align="left">{{$item->mark->name}}</td>
-            <td align="left">{{$item->order->number}} </td>
+            <td align="left">{{$item->order->order_number}} </td>
             <td align="left">{{$item->vin}} </td>
             <td align="left">{{$item->color->name}}</td>
             <td align="left">{{$item->getInvoiceDate()}}</td>
