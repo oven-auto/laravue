@@ -27,12 +27,14 @@ class OverdueCountController extends Controller
             ->leftJoin('worksheet_executors', 'worksheet_executors.worksheet_id', 'worksheet_actions.worksheet_id')
             ->where('worksheet_executors.user_id', $user)
             ->whereDate('end_at', '<', now())
+            ->where('worksheets.status', 'work')
             ->count() ?? 0;
 
         $subAction = SubAction::query()
             ->leftJoin('sub_action_executors', 'sub_action_executors.sub_action_id', 'sub_actions.id')
             ->where('sub_action_executors.user_id', $user)
             ->WhereDate('sub_actions.created_at', '<', now()->addHour(1))
+            ->where('sub_actions.status', 1)
             ->count() ?? 0;
 
         $events = ClientEventStatus::query()
