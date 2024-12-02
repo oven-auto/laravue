@@ -27,28 +27,31 @@ class CorsMiddleware
 
     public function handle(Request $request, Closure $next)
     {
-        $domains = config('cors.trusted');
+        return $next($request);
+        // $domains = config('cors.trusted');
 
-        $origin = $request->headers->get('origin');
-        //dd($origin = $request->headers);
-        if($origin && in_array($origin, $domains, true)) {
-            return $next($request)
-                ->header('Access-Control-Allow-Origin', $origin)
-                ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE','PATCH')
-                ->header('Access-Control-Allow-Credentials', 'true')
-                ->header(
-                    'Access-Control-Allow-Headers',
-                    'Authorization, Origin, X-Requested-With, Accept, X-PINGOTHER, Content-Type'
-                );
-        }
+        // $origin = $request->headers->get('origin');
+        
+        // //return $next($request);
 
-        return response()->json([
-            'message' => 'Ваш домен или устройство не поддерживается сервером',
-            'error' => 'Доступ отклонен',
-            'success' => 0,
-            'domains' => $domains,
-            'origin' => $origin
-        ],403);
+        // if($origin && in_array($origin, $domains, true)) {
+        //     return $next($request)
+        //         ->header('Access-Control-Allow-Origin', $origin)
+        //         ->header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE','PATCH')
+        //         ->header('Access-Control-Allow-Credentials', 'true')
+        //         ->header(
+        //             'Access-Control-Allow-Headers',
+        //             'Authorization, Origin, X-Requested-With, Accept, X-PINGOTHER, Content-Type'
+        //         );
+        // }
+
+        // return response()->json([
+        //     'message' => 'Ваш домен или устройство не поддерживается сервером',
+        //     'error' => 'Доступ отклонен',
+        //     'success' => 0,
+        //     'domains' => $domains,
+        //     'origin' => $origin
+        // ],403);
 
     }
 }

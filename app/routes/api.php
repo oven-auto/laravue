@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\v1\Back\Car\Marker\MarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Option\OptionController;
 use App\Http\Controllers\Api\v1\Back\Car\CarController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCountController;
+use App\Http\Controllers\Api\v1\Back\Car\CarExcelController;
 use App\Http\Controllers\Api\v1\Back\Car\CarOwnerController;
 use App\Http\Controllers\Api\v1\Back\Car\Collector\CollectorController;
 use App\Http\Controllers\Api\v1\Back\Car\Color\ImageColorController;
@@ -285,11 +286,12 @@ Route::middleware(['userfromtoken'])->group(function () {
      * ЭКСПОРТЫ обернуты правами доступа
      */
     // Route::prefix('export')->middleware(['userfromtoken'])->group(function () {
-    //     Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@export')
+    //     Route::get('trafic', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController@index')
     //         ->middleware(['permission.trafic.list:trafic_export']);
     //     //Экспорт клиентов в excel
     //     Route::get('client', '\App\Http\Controllers\Api\v1\Back\Client\ClientExportController')
-    //         ->middleware(['permission.trafic.list:client_export']);;
+    //         ->middleware(['permission.trafic.list:client_export']);
+    //     Route::get('cars',      [CarExcelController::class, 'index']);
     // });
 
 
@@ -1095,7 +1097,7 @@ Route::middleware(['userfromtoken'])->group(function () {
 
 
     /**RESERVE LIST */
-    Route::prefix('reserves')->group(function () {
+    Route::prefix('reserves')->middleware('userfromtoken')->group(function () {
         Route::get('/', [ReserveListController::class, 'index']);
         Route::get('count', [ReserveListController::class, 'count']);
     });

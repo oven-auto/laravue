@@ -1,9 +1,8 @@
 <?php
 
-use App\Http\Controllers\Api\v1\Back\Car\CarExcelController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 /*
 |--------------------------------------------------------------------------
@@ -52,21 +51,9 @@ Route::get('hash', function (Request $request) {
     echo Hash::make($request->get('string'));
 });
 
-Route::prefix('export')->group(function () {
-    //Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
-    Route::get('cars', [CarExcelController::class, 'index']);
-});
-
 Route::prefix('pdf')->group(function () {
     Route::get('trafics/{trafic}', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficPDFController');
-    // Route::get('trafics/{trafic}', function() {
-    //     echo 1;
-    // });
 });
-
-// Route::get( '/cms', function() {
-//     return view('layouts.admin');
-// })->where('any', '.*');
 
 Route::get('test/{id?}', '\App\Http\Controllers\HomeController@test');
 Route::post('test', '\App\Http\Controllers\HomeController@test');

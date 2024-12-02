@@ -164,7 +164,7 @@ class TraficRepository
      * @param array $data данные для фильтра
      * @return \Illuminate\Database\Eloquent\Collection
      */
-    public function get($data = []): \Illuminate\Database\Eloquent\Collection
+    public function get($data = [], $limit = ''): \Illuminate\Database\Eloquent\Collection
     {
         $query = Trafic::select('trafics.*');
 
@@ -183,7 +183,10 @@ class TraficRepository
             ->orderBy(DB::raw('trafics.manager_id IS NULL'), 'DESC')
             ->orderBy('trafics.created_at', 'DESC')
             ->groupBy('trafics.id');
-
+        
+        if($limit)
+            $query->limit($limit);
+        
         $result = $query->get();
 
         return $result;
@@ -198,7 +201,9 @@ class TraficRepository
      */
     public function export($data = []): \Illuminate\Database\Eloquent\Collection
     {
-        $result = $this->get($data);
+        $limit = 1000;
+
+        $result = $this->get($data, $limit);
 
         return $result;
     }

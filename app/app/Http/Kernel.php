@@ -45,6 +45,12 @@ class Kernel extends HttpKernel
             'throttle:60000,1',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+
+        'export' => [
+            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            'throttle:60000,1',
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        ]
     ];
 
     /**
