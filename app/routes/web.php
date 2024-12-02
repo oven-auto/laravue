@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Back\Car\CarExcelController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
@@ -51,9 +52,10 @@ Route::get('hash', function (Request $request) {
     echo Hash::make($request->get('string'));
 });
 
-// Route::prefix('export')->middleware(['corsing','userfromtoken'])->group(function () {
-//     Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
-// });
+Route::prefix('export')->group(function () {
+    //Route::get('trafics', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficExportController');
+    Route::get('cars', [CarExcelController::class, 'index']);
+});
 
 Route::prefix('pdf')->group(function () {
     Route::get('trafics/{trafic}', '\App\Http\Controllers\Api\v1\Back\Trafic\TraficPDFController');

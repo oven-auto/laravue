@@ -21,4 +21,13 @@ class CarControllPaidDate extends Model
     {
         return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
     }
+
+
+
+    public function getDateAttribute()
+    {
+        if($this->date_at)
+            return $this->date_at->format('d.m.Y');
+        return '';
+    }
 }

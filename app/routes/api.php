@@ -23,6 +23,7 @@ use App\Http\Controllers\Api\v1\Back\Car\TradeMarker\TradeMarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Tuning\TuningController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
+use App\Http\Controllers\Api\v1\Back\TaskList\OverdueCountController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveNewCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\RedemptionController;
@@ -142,8 +143,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('marks',              [MarkSelectController::class, 'index']); 
 
                 //Все моделиv ????????????????
-                Route::get('allmarks',           [MarkSelectController::class, 'all']);
-                
+                Route::get('allmarks',           [MarkSelectController::class, 'all']);                
                 
                 Route::get('motortransmissions', [App\Http\Controllers\Api\v1\Services\Select\MotorTransmissionSelectController::class, 'index']); //трансмиссии (автомат, вариатор итд)
                 Route::get('motordrivers',       [App\Http\Controllers\Api\v1\Services\Select\MotorDriverSelectController::class, 'index']); //привода (передний задний и тд)
@@ -1068,6 +1068,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('trafics', 'TraficListController')->middleware('tasklist.setmanager:manager');
                 Route::get('events', 'EventListController')->middleware('tasklist.setmanager:executor');
                 Route::get('worksheets', 'WorksheetListController')->middleware('tasklist.setmanager:executor');
+                Route::get('overdue', [OverdueCountController::class, 'index']);
             }
         );
 
