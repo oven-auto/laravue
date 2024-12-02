@@ -205,7 +205,10 @@ class CarRepository
         
         $query->withDataForCarList();
 
-        $query->filter($filter)->orderBy('id', 'DESC');
+        $query->filter($filter);
+        
+        $query->orderBy('cars.brand_id',    'ASC');
+        $query->orderBy('cars.mark_id',     'ASC');
        
         $cars = $query->limit($limit)->get();
         
