@@ -73,7 +73,7 @@ class DiscountListRequest extends FormRequest
             'returned' => 'sometimes|in:yes,no',
             'checked' => 'sometimes|in:yes,no',
             'brand_id' => 'sometimes|numeric',
-            'mark_id' => 'sometimes|numeric',
+            'mark_id' => 'sometimes|array',
             'isbase' => 'sometimes|in:yes,no',
             'isreparation' => 'sometimes|in:yes,no',
             'sale_interval' => 'sometimes|array',

@@ -236,6 +236,27 @@ class ReserveRepository
 
 
 
+    public function get(array $data, $limit = 1000)
+    {
+        $query = WsmReserveNewCar::select('wsm_reserve_new_cars.*');
+
+        $query->withDataForReserveList();
+
+        $filter = app()->make(ReserveNewCarFilter::class, ['queryParams' => ($data)]);
+
+        $query->filter($filter);
+        
+        $reserves = $query->orderBy('wsm_reserve_new_cars.id', 'DESC')->get($limit);
+
+        $reserves->each(function($item) {
+            $item->car->reserve = $item;
+        });
+        
+        return $reserves;
+    }
+
+
+
     public function counter(array $data)
     {   
         $query = WsmReserveNewCar::query()

@@ -180,7 +180,7 @@ Class DiscountFilter extends AbstractFilter
     /**
      * Вернуть скидки для автомобилей казанных моделей
      */
-    public function markd_id(Builder $builder, array $value)
+    public function mark_id(Builder $builder, array $value)
     {
         $builder->whereIn('cars.mark_id', $value);
     }
