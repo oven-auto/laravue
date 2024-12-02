@@ -21,7 +21,7 @@ class CarExcelController extends Controller
 
     public function index(Request $request)
     {
-        $cars = $this->repo->paginate($request->all());
+        $cars = $this->repo->get($request->all());
 
         $export = (new CarExport($cars));
 

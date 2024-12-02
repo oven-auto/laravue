@@ -197,6 +197,31 @@ class CarRepository
     /**
      * PAGINATE
      */
+    public function get(array $data = [], $limit = 3000)
+    {   
+        $query = Car::query()->select('cars.*');
+        
+        $filter = app()->make(CarFilter::class, ['queryParams' => $data]);
+        
+        $query->withDataForCarList();
+
+        $query->filter($filter)->orderBy('id', 'DESC');
+       
+        $cars = $query->limit($limit)->get();
+        
+        $cars->each(function($item) {
+            if(isset($item->reserve))
+                $item->reserve->car = $item;
+        });
+        
+        return $cars;
+    }
+
+
+
+    /**
+     * PAGINATE
+     */
     public function paginate(array $data = [], $paginate = 15)
     {   
         $query = Car::query()->select('cars.*');
