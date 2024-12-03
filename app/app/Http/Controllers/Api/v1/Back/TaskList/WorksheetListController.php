@@ -4,23 +4,16 @@ namespace App\Http\Controllers\Api\v1\Back\TaskList;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TaskList\WorksheetListCollection;
-use App\Repositories\Worksheet\WorksheetRepository;
+use App\Services\TaskList\WorksheetTaskList;
 use Illuminate\Http\Request;
 
 class WorksheetListController extends Controller
 {
-    public function __invoke(WorksheetRepository $repo, Request $request)
+    public function __invoke(WorksheetTaskList $repo, Request $request)
     {
-        $worksheets = $repo->getWorksheetsForTaskList($request->all());
+        $result = $repo->getAllActionInWorksheet($request->all());
 
-        $subAction = $repo->getSubActionForTaskList($request->all());
-
-        $collect = collect(array_merge($subAction, $worksheets));
-
-        $merged = $collect->sortBy('sort')->values();
-
-        return (new WorksheetListCollection($merged->all()))
-            ->additional(['test' => ('11.12.2023' > '02.02.2024')]);
+        return (new WorksheetListCollection($result));
     }
 }
 

@@ -224,11 +224,11 @@ class TraficRepository
 
 
 
-    /**
-     * ПОЛУЧИТЬ СПИСОК ТРАФИКОВ ДЛЯ ЖУРНАЛА ЗАДАЧ
-     * @param $data данные для фильтрации
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
+    // /**
+    //  * ПОЛУЧИТЬ СПИСОК ТРАФИКОВ ДЛЯ ЖУРНАЛА ЗАДАЧ
+    //  * @param $data данные для фильтрации
+    //  * @return \Illuminate\Database\Eloquent\Collection
+    //  */
     public function getTraficsForTaskList(array $data): \Illuminate\Database\Eloquent\Collection
     {
         $query = Trafic::select('trafics.*')->withTrashed();

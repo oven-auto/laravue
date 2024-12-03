@@ -34,6 +34,8 @@ Class ClientEventListFilter extends AbstractFilter
         parent::__construct($queryParams);
     }
 
+
+
     public function init(Builder $builder)
     {
         $builder->leftJoin('client_events', 'client_events.id','client_event_statuses.event_id');
@@ -43,12 +45,16 @@ Class ClientEventListFilter extends AbstractFilter
         $builder->groupBy('client_event_statuses.id');
     }
 
+
+
     public function dateForClosing(Builder $builder, $value)
     {
         $date = $this->formatDate($value);
 
         $builder->whereDate('client_event_statuses.processed_at', '=', $date);
     }
+
+
 
     public function controlDate(Builder $builder, $value)
     {
@@ -60,6 +66,8 @@ Class ClientEventListFilter extends AbstractFilter
             $builder->whereDate('client_event_statuses.date_at', '=', $date);
     }
 
+
+
     public function show(Builder $builder, $value)
     {
         if($value == 'closing')
@@ -69,11 +77,13 @@ Class ClientEventListFilter extends AbstractFilter
 
     }
 
+
+
     public function executorIds(Builder $builder, Array $value)
     {
         $builder->where(function($query) use ($value){
             $query->whereIn('client_event_status_executors.user_id', $value);
-            $query->orWhereIn('client_events.author_id', $value);
+            //$query->orWhereIn('client_events.author_id', $value);
         });
 
 
