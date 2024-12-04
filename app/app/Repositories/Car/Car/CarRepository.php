@@ -115,14 +115,12 @@ class CarRepository
 
     public function setCarImage(Car $car)
     {
-        
+        if($car->image->count())
+            return;
 
         $bodyWork = $car->complectation->body_work_id;
 
         $colorImage = $car->color->images->where('body_work_id', $bodyWork)->first();
-
-        //if(!$car->color->images->contains('body_work_id', $bodyWork))
-        //    throw new \Exception('Нет картинки для этого цвета.');
 
         if($colorImage)
             $car->image()->sync([$colorImage->id]);
@@ -208,6 +206,7 @@ class CarRepository
         $query->filter($filter);
         
         $query->orderBy('cars.brand_id',    'ASC');
+        
         $query->orderBy('cars.mark_id',     'ASC');
        
         $cars = $query->limit($limit)->get();

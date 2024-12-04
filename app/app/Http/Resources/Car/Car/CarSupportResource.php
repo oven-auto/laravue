@@ -108,6 +108,8 @@ class CarSupportResource extends JsonResource
                 'description' => 'Контроль срока оплаты',
             ] : [],
 
+            'image' => $this->ImageURL,
+
         ];
 
         $support = array_merge($support, $this->getLogisticAuthors()->collapse()->toArray());

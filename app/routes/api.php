@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\v1\Back\Car\Option\OptionController;
 use App\Http\Controllers\Api\v1\Back\Car\CarController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCountController;
 use App\Http\Controllers\Api\v1\Back\Car\CarExcelController;
+use App\Http\Controllers\Api\v1\Back\Car\CarImageController;
 use App\Http\Controllers\Api\v1\Back\Car\CarOwnerController;
 use App\Http\Controllers\Api\v1\Back\Car\Collector\CollectorController;
 use App\Http\Controllers\Api\v1\Back\Car\Color\ImageColorController;
@@ -428,6 +429,8 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::prefix('cars')->middleware(['corsing', 'userfromtoken'])->group(function () {
 
         Route::get('/clone/{car}', [CarCloneController::class, 'clone']);
+
+        Route::delete('/image/{car}', [CarImageController::class, 'delete']);
 
         Route::prefix('factories')->group(function () {
             Route::get('/',                 [FactoryController::class, 'index']);
