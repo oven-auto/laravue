@@ -17,7 +17,9 @@ class CarFilterMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $logisticStates = LogisticState::pluck('system_name')->toArray();
+        $logisticStates = LogisticState::whereNotIn('system_name',[
+            'sale_date', 'issue_date'
+        ])->pluck('system_name')->toArray();
         
         $requestStates = $request->only($logisticStates);
        

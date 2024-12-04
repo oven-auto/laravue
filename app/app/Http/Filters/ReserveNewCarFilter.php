@@ -368,11 +368,22 @@ class ReserveNewCarFilter extends AbstractFilter
      * */
     public const HAS_PLAN = 'has_plan';
 
+    /**  @OA\Property(
+     * format="string", 
+     * description="Полнотекстовый поиск, если перед строкой поиска подставить id@ будет искать по id машины. Возможны следующие уточнения:
+     * id@ - id машины (точный поиск), vin@ - вин машины, order@ - номер заказа, model@ - модель машины", 
+     * property="search", 
+     * type="string", 
+     * example="1122")
+     * */
+    public const SEARCH = 'search';//Полнотекстовы поиск
+
     public const LOGISTIC_DATES = 'logistic_dates';
 
     protected function getCallbacks(): array
     {
         return [
+            self::SEARCH                            => [$this, 'search'],
             self::INIT                              => [$this, 'init'],
             self::IDS                               => [$this, 'ids'],
             self::TRASH                             => [$this, 'trash'],
@@ -993,4 +1004,33 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         $builder->whereIn('dealer_colors.base_id', $colors);
     }
+
+
+
+    public function search(Builder $builder, string $value)
+    {
+        $value = str_contains($value, '@') ? $value : '@'.$value;
+        $value = explode('@', $value);
+        list($column, $val) = $value;
+
+        switch($column){
+            case 'id':
+                $builder->where('cars.id', $val);
+                break;
+            case 'vin':
+                $builder->where('cars.vin', 'LIKE', '%' . $val . '%');
+                break;
+            case 'order':
+                $builder->where('car_orders.order_number', 'LIKE', '%' . $val . '%');
+                break;
+            default:
+                $builder->where(function ($query) use ($val) {
+                    $query->where('cars.vin',                   'LIKE', '%' . $val . '%')
+                        ->orWhere('cars.id',                    'LIKE', '%' . $val . '%')
+                        ->orWhere('car_orders.order_number',    'LIKE', '%' . $val . '%');
+                });
+                break;
+        }
+    }
+
 }

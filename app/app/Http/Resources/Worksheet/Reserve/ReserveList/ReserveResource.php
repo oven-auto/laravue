@@ -43,12 +43,12 @@ class ReserveResource extends JsonResource
 
             'sale_date' => $this->sale ? [
                 'date' => $this->sale->date_at->format('d.m.Y'),
-                'author' => $this->sale->author->cut_name
+                'author' => $this->sale->decorator->cut_name
             ] : [],
 
             'issue_date' => $this->issue ? [
                 'date' => $this->issue->date_at->format('d.m.Y'),
-                'author' => $this->issue->author->cut_name
+                'author' => $this->issue->decorator->cut_name
             ] : [],
 
             'contract' => [
