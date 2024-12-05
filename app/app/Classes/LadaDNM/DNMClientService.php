@@ -46,19 +46,19 @@ class DNMClientService
     {
         if ($this->obj->isPerson())
             return [
-                'name' => $this->obj->firstname ?? 'Неизвестно',
-                'last_name' => $this->obj->lastname,
-                'middle_name' => $this->obj->fathername,
-                'phone_hash' => $this->obj->phones->count() ? sha1($this->obj->phones[0]) : '',
-                'sex' => $this->obj->sex->dnm_id ?? '',
-                'code' => (string)$this->obj->id,
-                'type' => $this->obj->getDnmTypeClient() ?? '',
-                'email' => $this->obj->email ? $this->obj->email->first()->email : '',
-                'address' => 'Сыктывкар',
-                'phones' => [
+                'name'          => $this->obj->firstname ?? 'Неизвестно',
+                'last_name'     => $this->obj->lastname,
+                'middle_name'   => $this->obj->fathername,
+                'phone_hash'    => $this->obj->phones->count() ? sha1($this->obj->phones[0]) : '',
+                'sex'           => $this->obj->sex->dnm_id ?? '',
+                'code'          => (string)$this->obj->id,
+                'type'          => $this->obj->getDnmTypeClient() ?? '',
+                'email'         => $this->obj->email ? $this->obj->email->first()->email : '',
+                'address'       => 'Сыктывкар',
+                'phones'        => [
                     [
-                        'type' => 1,
-                        'number' => $this->obj->phones->first()->phone,
+                        'type'      => 1,
+                        'number'    => $this->obj->phones->first()->phone,
                     ]
                 ]
             ];
@@ -67,17 +67,17 @@ class DNMClientService
             $client = $this->reserve->worksheet->subclients->first();
             $client->load('phones');
             return [
-                'code' => (string)$this->obj->id,
-                'company_name' => (string)$this->obj->company_name,
-                'type' => $this->obj->getDnmTypeClient() ?? '',
-                'company_address' => $this->obj->zone->name ?? '',
-                "name" => $client->firstname,
-                'last_name' => $client->lastname,
-                'middle_name' => $client->fathername,
-                "company_legal_form" => "ООО",
-                "company_address" => "Сыктывкар",
-                "email" => "",
-                "company_email" => "",
+                'code'                  => (string)$this->obj->id,
+                'company_name'          => (string)$this->obj->company_name,
+                'type'                  => $this->obj->getDnmTypeClient() ?? '',
+                'company_address'       => $this->obj->zone->name ?? '',
+                "name"                  => $client->firstname,
+                'last_name'             => $client->lastname,
+                'middle_name'           => $client->fathername,
+                "company_legal_form"    => "ООО",
+                "company_address"       => "Сыктывкар",
+                "email"                 => "",
+                "company_email"         => "",
                 "phones" => [
                     // [
                     // "type" => 1,

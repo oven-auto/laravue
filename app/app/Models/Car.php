@@ -542,13 +542,14 @@ class Car extends Model
             return;
         }
 
-        $this->order_type()->updateOrCreate(
-            ['car_id'           => $this->id],
-            [
-                'order_type_id'     => $orderTypeId,
-                'author_id'         => auth()->user()->id
-            ],
-        );
+        if(!$this->order_type || ($this->order_type && $this->order_type->order_type_id != $orderTypeId))
+            $this->order_type()->updateOrCreate(
+                ['car_id'           => $this->id],
+                [
+                    'order_type_id'     => $orderTypeId,
+                    'author_id'         => auth()->user()->id
+                ],
+            );
     }
 
 
