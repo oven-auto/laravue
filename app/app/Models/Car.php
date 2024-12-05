@@ -750,7 +750,7 @@ class Car extends Model
      * SAVE TUNING PRICE
      * @param int|null $price
      */
-    public function saveTuningPrice(int|null $price) : void
+    public function saveTuningPrice(float|null $price) : void
     {   
         if(NumberHelper::strictComparison($price,'>',0))
             $this->tuning_price()->updateOrCreate(
@@ -770,7 +770,7 @@ class Car extends Model
      * SAVE GIFT PRICE
      * @param int|null $price
      */
-    public function saveGiftPrice(int|null $price) : void
+    public function saveGiftPrice(float|null $price) : void
     {   
         if(NumberHelper::strictComparison($price,'>',0))
             $this->gift_price()->updateOrCreate(
@@ -788,7 +788,7 @@ class Car extends Model
      * SAVE PART PRICE
      * @param int|null $price
      */
-    public function savePartPrice(int|null $price) : void
+    public function savePartPrice(float|null $price) : void
     {
         if(NumberHelper::strictComparison($price,'>',0))
             $this->part_price()->updateOrCreate(
@@ -1127,7 +1127,7 @@ class Car extends Model
     /**
      * Получить стоимость тюнинга
      */
-    public function getTuningPrice(): int
+    public function getTuningPrice(): float
     {
         $tuning = $this->tuning_price ? $this->tuning_price->price : 0;
         
@@ -1139,7 +1139,7 @@ class Car extends Model
     /**
      * Получить стоимость подарка
      */
-    public function getGiftPrice(): int
+    public function getGiftPrice(): float
     {
         $gift = $this->gift_price ? $this->gift_price->price : 0;
         
@@ -1151,7 +1151,7 @@ class Car extends Model
     /**
      * Получить стоимость запчастей
      */
-    public function getPartPrice(): int
+    public function getPartPrice(): float
     {
         $part = $this->part_price ? $this->part_price->price : 0;
         
