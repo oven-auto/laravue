@@ -277,7 +277,15 @@ class Client extends Model implements PersonInterface, CommentInterface
     public function checkContractFields()
     {
         if ($this->isPerson())
-            if ($this->firstname && $this->lastname && $this->fathername && $this->trafic_zone_id && $this->trafic_sex_id)
+            if (
+                $this->firstname && 
+                $this->lastname && 
+                $this->fathername && 
+                $this->trafic_zone_id && 
+                $this->trafic_sex_id &&
+                $this->passport->birthday_at && 
+                $this->passport->address
+            )
                 return 1;
 
         if ($this->isCompany())

@@ -44,6 +44,15 @@ class DNMClientService
      */
     private function fill()
     {
+        $confirm = 0;
+        $personal = 0;
+
+        if($this->reserve->contract)
+        {
+            $confirm = 1;
+            $personal = 1;
+        }
+
         if ($this->obj->isPerson())
             return [
                 'name'          => $this->obj->firstname ?? 'Неизвестно',
@@ -54,7 +63,11 @@ class DNMClientService
                 'code'          => (string)$this->obj->id,
                 'type'          => $this->obj->getDnmTypeClient() ?? '',
                 'email'         => $this->obj->email ? $this->obj->email->first()->email : '',
-                'address'       => 'Сыктывкар',
+                'address'       => $this->obj->passport ? $this->obj->passport->address : '',
+                'birthday'      => $this->obj->passport ? $this->obj->passport->birthday : '',                
+                'client_confirm_communication'  => $confirm,
+                'may_process_personal_data'     => $personal,
+
                 'phones'        => [
                     [
                         'type'      => 1,

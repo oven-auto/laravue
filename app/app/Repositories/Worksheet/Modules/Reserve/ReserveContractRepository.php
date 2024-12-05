@@ -81,9 +81,6 @@ class ReserveContractRepository
         
         if(!$car->isInvoice() && isset($data['dkp_offer_at']) && $data['dkp_offer_at'])
             throw new ReserveException('contract_on_not_invoice');
-        
-        //if($car->isInvoice() && isset($data['pdkp_offer_at']) && $data['pdkp_offer_at'] && !isset($data['dkp_offer_at']))
-        //    throw new ReserveException('contract_on_invoice');
     }
 
 
@@ -136,7 +133,7 @@ class ReserveContractRepository
         $client = $reserve->worksheet->client;
 
         if (!$client->checkContractFields())
-            if(Auth::id() != 47)
+            //if(Auth::id() != 47)
                 throw new ReserveException('empty_client_data');
 
 

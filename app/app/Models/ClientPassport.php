@@ -24,4 +24,13 @@ class ClientPassport extends Model
         $clientPassport = new ClientPassport();
         return $clientPassport->getConnection()->getSchemaBuilder()->getColumnListing($clientPassport->getTable());
     }
+
+
+
+    public function getBirthdayAttribute()
+    {
+        if($this->birthday_at)
+            return $this->birthday_at->format('d.m.Y');
+        return '';
+    }
 }
