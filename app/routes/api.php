@@ -42,6 +42,7 @@ use App\Http\Controllers\Api\v1\Services\Select\CarBuisnesStatusController;
 use App\Http\Controllers\Api\v1\Services\Select\CarLogisticStatusController;
 use App\Http\Controllers\Api\v1\Services\Select\CarStateController;
 use App\Http\Controllers\Api\v1\Services\Select\CollectorController as SelectCollectorController;
+use App\Http\Controllers\Api\v1\Services\Select\FormOwnerController;
 use App\Http\Controllers\Api\v1\Services\Select\MarkerSelectController;
 use App\Http\Controllers\Api\v1\Services\Select\MarkSelectController;
 use App\Http\Controllers\Api\v1\Services\Select\ModuleListController;
@@ -135,6 +136,9 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::prefix('services')->group(function () {
         Route::prefix('html')->group(function () { //МАРШРУТЫ ПОЛУЧЕНИЯ СПИСКОВ ДЛЯ HTML
             Route::prefix('select')->group(function () {
+                //all form owner
+                Route::get('formowners',            [FormOwnerController::class, 'index']);
+
                 //Все бренды
                 Route::get('brands',             [BrandSelectController::class, 'all']); 
 

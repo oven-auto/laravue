@@ -29,7 +29,8 @@ class ClientListResource extends JsonResource
             'issex' => $this->sex->id ? 1 : 0,
             'iszone' => $this->zone->id ? 1 : 0,
             'created_at' => $this->created_at->format('d.m.Y'),
-            'action_at' => $this->latest_worksheet->created_at ? $this->latest_worksheet->created_at->format('d.m.Y') : ''
+            'action_at' => $this->latest_worksheet->created_at ? $this->latest_worksheet->created_at->format('d.m.Y') : '',
+            
         ];
     }
 }

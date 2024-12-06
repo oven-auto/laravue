@@ -53,10 +53,14 @@ class ClientController extends Controller
         return new ClientListCollection($clients);
     }
 
+
+
     public function show(Client $client)
     {
         return new \App\Http\Resources\Client\ClientCartResource($client);
     }
+
+
 
     /**
      * Получить данные клиента, по указанному id, id превратится в модель Client в middleware
@@ -71,6 +75,8 @@ class ClientController extends Controller
 
         return new ClientEditResource($client);
     }
+
+
 
     /**
      * Создать клиента из полученного request
@@ -87,6 +93,8 @@ class ClientController extends Controller
         return (new ClientEditResource($client))
             ->additional(['message' => 'Клиент создан']);
     }
+
+
 
     /**
      * Изменить клиента, по полученому id, данные взять из полученного request
@@ -107,6 +115,8 @@ class ClientController extends Controller
             ]);
     }
 
+
+    
     /**
      * Удаление клиента
      * @param Client $client Client

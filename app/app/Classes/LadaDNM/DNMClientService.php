@@ -101,6 +101,8 @@ class DNMClientService
                     "number" => $client->phones->first()->phone,
                     ],
                 ],
+                'client_confirm_communication'  => $confirm,
+                'may_process_personal_data'     => $personal,
             ];
         }
     }

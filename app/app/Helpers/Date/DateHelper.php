@@ -11,25 +11,35 @@ class DateHelper
         return date('Y-m-d H:i:s', strtotime("+$year year", strtotime($date)));
     }
 
+
+
     public static function addMonth($date, $month = 1)
     {
         return date('Y-m-d H:i:s', strtotime("+$month month", strtotime($date)));
     }
+
+
 
     public static function addDay($date, $day = 1)
     {
         return date('Y-m-d H:i:s', strtotime("+$day day", strtotime($date)));
     }
 
+
+
     public static function addWeek($date, $week = 1)
     {
         return date('Y-m-d H:i:s', strtotime("+$week week", strtotime($date)));
     }
 
+
+
     public static function format($date, $format = 'd.m.Y')
     {
         return date($format, strtotime($date));
     }
+
+
 
     public static function russianMonth($index)
     {
@@ -48,5 +58,14 @@ class DateHelper
     public static function createFromString($string, $format = 'd.m.Y'): Carbon
     {
         return Carbon::createFromFormat($format, $string);
+    }
+
+
+
+    public static function getFormatedDate(string|null $date = null, string $in = 'd.m.Y', $out = 'd.m.Y')
+    {
+        if(!$date)
+            return NULL;
+        return Carbon::createFromFormat($in, $date)->format($out);
     }
 }

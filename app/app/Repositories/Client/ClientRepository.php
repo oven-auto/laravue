@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Client;
 
+use App\Helpers\Date\DateHelper;
 use App\Models\Client;
 use App\Http\Filters\ClientFilter;
 use App\Models\Trafic;
@@ -81,40 +82,71 @@ class ClientRepository
      */
     public function save(Client $client, $data = []): Client
     {
-        $columns = Arr::except(Client::getColumnsName(), ['id']);
+        $client->fill(Arr::only($data, Arr::except(Client::getColumnsName(), ['id'])))->save();
 
+        $this->savePassport($client, $data);
 
-        $data['trafic_sex_id'] = $data['trafic_sex_id'] == 0 ? $data['trafic_sex_id'] = null : $data['trafic_sex_id'];
-        $data['trafic_zone_id'] = $data['trafic_zone_id'] == 0 ? $data['trafic_zone_id'] = null : $data['trafic_zone_id'];
-
-        $client->fill(Arr::only($data, $columns))->save();
-
-        $client->phones()->delete();
-        $client->emails()->delete();
-
-        if (isset($data['inn']))
-            $client->inn->fill([
-                'number' => $data['inn']
-            ])->save();
-
+        if($client->isCompany())
+            if (isset($data['inn']))
+                $this->saveInn($client, $data['inn']);
+        
         foreach ($data['contacts'] as $itemRowContact) {
-            if (isset($itemRowContact['phone']) && $itemRowContact['phone'])
-                $client->phones()->create(['client_id' => $client->id, 'phone' => preg_replace("/[^,.0-9]/", '', $itemRowContact['phone'])]);
-            if (isset($itemRowContact['email']))
-                $client->emails()->create(['client_id' => $client->id, 'email' => $itemRowContact['email']]);
-        }
+            if (isset($itemRowContact['phone']))
+                $this->savePhone($client, $itemRowContact['phone']);
 
-        if ($client->client_type_id == 1) {
-            $passportData = Arr::only($data, ClientPassport::getColumnsName());
-            $passportData['birthday_at'] =              isset($passportData['birthday_at']) ? date('Y-m-d', \strtotime($passportData['birthday_at'])) : NULL;
-            $passportData['driver_license_issue_at'] =  isset($passportData['driver_license_issue_at']) ? date('Y-m-d', \strtotime($passportData['driver_license_issue_at'])) : NULL;
-            $passportData['passport_issue_at'] =        isset($passportData['passport_issue_at']) ? date('Y-m-d', \strtotime($passportData['passport_issue_at'])) : NULL;
-            $passportData['client_id'] = $client->id;
-            $client->passport->fill($passportData)->save();
+            if (isset($itemRowContact['email']))
+                $this->saveEmail($client, $itemRowContact['email']);
         }
 
         return $client;
     }
+
+
+
+    public function saveInn(Client $client, string $inn)
+    {
+        $client->inn->fill([
+            'number' => $inn
+        ])->save();
+    }
+
+
+
+    private function savePhone(Client $client, string $phone)
+    {
+        $phone = preg_replace("/[^,.0-9]/", '', $phone);
+
+        if(!$client->phones->contains('phone', $phone))
+            $client->phones()->create([
+                'client_id' => $client->id, 
+                'phone' => $phone
+            ]);
+    }
+
+
+
+    private function saveEmail(Client $client, string $email)
+    {
+        if(!$client->emails->contains('email', $email))
+            $client->emails()->create([
+                'client_id' => $client->id, 
+                'email' => $email
+            ]);
+    }
+
+
+
+    public function savePassport(Client $client, array $data)
+    {
+        $passportData = Arr::only($data, ClientPassport::getColumnsName());
+        $passportData['birthday_at'] =              DateHelper::getFormatedDate($passportData['birthday_at'] ?? null, 'd.m.Y', 'Y-m-d');
+        $passportData['driver_license_issue_at'] =  DateHelper::getFormatedDate($passportData['driver_license_issue_at'] ?? null, 'd.m.Y', 'Y-m-d');
+        $passportData['passport_issue_at'] =        DateHelper::getFormatedDate($passportData['passport_issue_at'] ?? null, 'd.m.Y', 'Y-m-d');
+        $passportData['client_id'] = $client->id;
+        $client->passport->fill($passportData)->save();
+    }
+
+    
 
     /**
      * Метод создания или получения клиента из бд, используется при создании рабочего листа Worksheet из трафика Trafic

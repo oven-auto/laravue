@@ -83,6 +83,7 @@ class ClientStoreRequest extends FormRequest
             'driving_license' => 'nullable|regex:([0-9]{4}\s{1}[0-9]{6})',
             'serial_number' => 'nullable|regex:([0-9]{4}\s{1}[0-9]{6})',
             'contacts' => 'array|required',
+            'form_owner_id' => 'sometimes|numeric',
 
             'contacts.*.phone' => [
                 'distinct',

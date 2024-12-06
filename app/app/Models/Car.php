@@ -1165,7 +1165,6 @@ class Car extends Model
      */
     public function getFullTuningPrice()
     {
-        //return $this->getTuningPrice() + $this->getPartPrice() + $this->getGiftPrice();
         return $this->getTuningPrice() - $this->getGiftPrice();
     }
 
@@ -1314,14 +1313,7 @@ class Car extends Model
      * Получить тип списания из резерва (желтый/зеленый)
      */
     public function getReportTypeStatus(): int
-    {
-        // if ($this->isReserved())
-        //     return $this->reserve->getReserveReportStatus();
-        // else if($this->getOffDate())
-        //     return 2;
-
-        // return 0;
-        
+    {        
         if(!$this->owner)
             return 0;
         
@@ -1338,12 +1330,6 @@ class Car extends Model
      */
     public function getReportTypeString(): string
     {
-        // if ($this->isReserved())
-        //     return $this->reserve->getReserveReportString();
-        // else if($this->getOffDate())
-        //     return 'Желтый рапотр';
-
-        // return '';
         $status = $this->getReportTypeStatus();
 
         if(array_key_exists($status, self::REPORT_STATUSES))
@@ -1396,7 +1382,7 @@ class Car extends Model
      */
     public function isOnStock(): string
     {
-        return $this->getLogisticDates('invoice_date') ? 1 : 0;
+        return $this->getLogisticDates('stock_date') ? 1 : 0;
     }
 
 

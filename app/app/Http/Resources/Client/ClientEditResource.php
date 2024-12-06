@@ -45,6 +45,7 @@ class ClientEditResource extends JsonResource
                     'created_at'                => $this->created_at ? $this->created_at->format('d.m.Y (H:i)') : '',
                     'files'                     => $this->files_count,
                     'links'                     => $this->links_count,
+                    'form_owner_id'             => $this->passport->form_owner_id,
                 ],
                 'success' => 1,
             ];
