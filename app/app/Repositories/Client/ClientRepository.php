@@ -143,7 +143,7 @@ class ClientRepository
         $passportData['driver_license_issue_at'] =  DateHelper::getFormatedDate($passportData['driver_license_issue_at'] ?? null, 'd.m.Y', 'Y-m-d');
         $passportData['passport_issue_at'] =        DateHelper::getFormatedDate($passportData['passport_issue_at'] ?? null, 'd.m.Y', 'Y-m-d');
         $passportData['client_id'] = $client->id;
-        $passportData['form_owner_id'] = $passportData['form_owner_id'] != '' ? $passportData['form_owner_id'] : null;
+        $passportData['form_owner_id'] = isset($passportData['form_owner_id']) ? $passportData['form_owner_id'] : null;
         $client->passport->fill($passportData)->save();
     }
 
