@@ -20,7 +20,7 @@ Class WorksheetTaskList
             ->leftJoin('worksheets','worksheets.id', 'worksheet_actions.worksheet_id')
             ->where('worksheet_executors.user_id', $user)
             ->where('end_at', '<', now())
-            ->where('worksheets.status_id', 'work')//->dd();
+            ->where('worksheets.status_id', 'work')
             ->count() ?? 0;
 
         return $worksheetCount;

@@ -19,7 +19,7 @@ Class TraficTaskList
             ->where(function($query) use ($user, $traficWaitingStatuses){
                 $query->where('trafics.manager_id', $user);
                 $query->whereIn('trafics.trafic_status_id', $traficWaitingStatuses);
-                $query->whereDate('trafic_controls.end_at', '<', now());
+                $query->where('trafic_controls.end_at', '<', now());
             })->count();
 
         return $traficCount;

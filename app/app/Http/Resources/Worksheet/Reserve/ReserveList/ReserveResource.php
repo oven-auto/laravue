@@ -14,7 +14,7 @@ class ReserveResource extends JsonResource
      */
     public function toArray($request)
     {   
-        usleep(300000);
+        //usleep(rand(100000,300000));
 
         return [
             'id' => $this->id,
@@ -89,7 +89,8 @@ class ReserveResource extends JsonResource
                         'odometer'      => $item->client_car->odometer,
                         'vin'           => $item->client_car->vin,
                         'created_at'    => $item->created_at->format('d.m.Y'),
-                        'status'        => $item->control_point()->title,
+                        'status'        => 1,
+                        //'status'        => $item->control_point()->title,
                     ];
                 }),
             ],
