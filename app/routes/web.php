@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DNM\DNMController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +21,7 @@ use Illuminate\Support\Facades\Hash;
 // });
 
 
-
+Route::get('/checkdnm/{reserve}', [DNMController::class, 'index']);
 
 
 //Auth::routes();
