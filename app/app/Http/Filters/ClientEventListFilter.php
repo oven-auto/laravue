@@ -61,7 +61,7 @@ Class ClientEventListFilter extends AbstractFilter
     {
         $date = DateHelper::createFromString($value, 'd.m.Y');
         
-        if($date <= now()->format('Y-m-d'))
+        if($date <= now())
             $builder->whereDate('client_event_statuses.date_at', '<=', $date);
         else
             $builder->whereDate('client_event_statuses.date_at', '=', $date);

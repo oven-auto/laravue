@@ -13,7 +13,9 @@ class ReserveResource extends JsonResource
      * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
      */
     public function toArray($request)
-    {
+    {   
+        usleep(500000);
+        
         return [
             'id' => $this->id,
             'state' => $this->getStatus(),
@@ -87,6 +89,7 @@ class ReserveResource extends JsonResource
                         'odometer'      => $item->client_car->odometer,
                         'vin'           => $item->client_car->vin,
                         'created_at'    => $item->created_at->format('d.m.Y'),
+                        'status'        => $item->control_point()->title,
                     ];
                 }),
             ],
