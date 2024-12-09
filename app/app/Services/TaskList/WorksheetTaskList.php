@@ -19,8 +19,8 @@ Class WorksheetTaskList
             ->leftJoin('worksheet_executors', 'worksheet_executors.worksheet_id', 'worksheet_actions.worksheet_id')
             ->leftJoin('worksheets','worksheets.id', 'worksheet_actions.worksheet_id')
             ->where('worksheet_executors.user_id', $user)
-            ->whereDate('end_at', '<', now())
-            ->where('worksheets.status_id', 'work')
+            ->where('end_at', '<', now())
+            ->where('worksheets.status_id', 'work')//->dd();
             ->count() ?? 0;
 
         return $worksheetCount;
