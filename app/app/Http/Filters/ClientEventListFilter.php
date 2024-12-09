@@ -2,6 +2,7 @@
 
 namespace App\Http\Filters;
 
+use App\Helpers\Date\DateHelper;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -58,8 +59,8 @@ Class ClientEventListFilter extends AbstractFilter
 
     public function controlDate(Builder $builder, $value)
     {
-        $date = $this->formatDate($value);
-
+        $date = DateHelper::createFromString($value, 'd.m.Y');
+        
         if($date <= now()->format('Y-m-d'))
             $builder->whereDate('client_event_statuses.date_at', '<=', $date);
         else

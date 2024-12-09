@@ -8,6 +8,7 @@ use App\Classes\Telegram\Notice\TelegramNotice;
 use App\Exceptions\Client\EventCloseIsWorking;
 use App\Exceptions\Client\EventCloseNotWhileIsNew;
 use App\Helpers\Array\ArrayHelper;
+use Illuminate\Support\Facades\Auth;
 
 Class EventCloseService
 {
@@ -95,6 +96,9 @@ Class EventCloseService
                 'begin_time' => $begin,
                 'end_time' => $end
             ]);
+
+            $newStatus->executors()->attach($eventStatus->author_id);
+            
             //Записываем новый коммент
             $this->writeComment($newStatus, self::NEW_EVENT.\DateHelp::format($dateAt));
         }
@@ -135,8 +139,7 @@ Class EventCloseService
         //Закрываем событие
         $this->writeStatus($eventStatus);
         //Уведомление всем исполнителям события
-        $sender = ArrayHelper::except($eventStatus->executors->pluck('id')->toArray(), auth()->user()->id);
-        TelegramNotice::run($eventStatus)->close()->send($sender);
+        TelegramNotice::run($eventStatus)->close()->send(ArrayHelper::except($eventStatus->executors->pluck('id')->toArray(), Auth::id()));
 
         return $eventStatus;
     }

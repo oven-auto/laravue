@@ -33,7 +33,7 @@ Class EventTaskList
         $filter = app()->make(ClientEventListFilter::class, ['queryParams' => array_filter($data)]);
 
         $query->filter($filter);
-
+        
         $query->OnlyTableData()->WithEventAndTrafic()->ListOrder();
 
         $result = $query->get();
