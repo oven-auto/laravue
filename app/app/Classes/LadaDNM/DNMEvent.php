@@ -20,6 +20,10 @@ class DNMEvent
 
     public function handler(WsmReserveNewCar $reserve, string $type)
     {
+        $clientE = (new DNMClientService())->save($reserve);
+
+        $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
+
         match ($type) {
             'visit'         => $this->visit($reserve),
             'reject'        => $this->reject($reserve),
@@ -44,11 +48,7 @@ class DNMEvent
             'dnm_appeal_id' => $data['car_id'],
             'status' => $data['status'],
             'code' => $data['code'],
-        ]);
-
-        $clientE = (new DNMClientService())->save($reserve);
-
-        $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
+        ]); 
     }
 
 
