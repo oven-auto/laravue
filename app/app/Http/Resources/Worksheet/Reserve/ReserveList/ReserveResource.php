@@ -15,7 +15,7 @@ class ReserveResource extends JsonResource
     public function toArray($request)
     {   
         //usleep(rand(100000,300000));
-       
+        //dd();
         return [
             'id' => $this->id,
             'state' => $this->getStatus(),
