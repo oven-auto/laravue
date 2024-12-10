@@ -2,6 +2,7 @@
 
 namespace App\Classes\LadaDNM;
 
+use App\Models\DnmWorksheetAppeal;
 use App\Models\DnmWorksheetEvent;
 use App\Models\WsmReserveNewCar;
 use App\Models\WsmReserveSale;
@@ -23,6 +24,8 @@ class DNMEvent
         $clientE = (new DNMClientService())->save($reserve);
 
         $worksheetE = (new DNMWorksheetService())->save($reserve->worksheet);
+
+        $appeal = (new DNMAppealService())->save($reserve);
 
         match ($type) {
             'visit'         => $this->visit($reserve),

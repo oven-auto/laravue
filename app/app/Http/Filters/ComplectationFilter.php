@@ -70,7 +70,10 @@ class ComplectationFilter extends AbstractFilter
      */
     public function input(Builder $builder, string $value)
     {
-        $builder->where('complectations.code', 'LIKE', '%'.$value.'%');
+        $builder->where(function($query) use($value){
+            $query->where('complectations.code', 'LIKE', '%'.$value.'%');
+            $query->orWhere('complectations.name', 'LIKE', '%'.$value.'%');
+        });
     }
 
 

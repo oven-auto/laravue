@@ -21,10 +21,10 @@ class PriceComplectationRepository
 
     public function get(array $data = null)
     {
-        $strategy = FactoryPriceListStrategy::getStrategy($data);
-        $priceListService = new ComplectationPriceList($strategy);
-        $prices = $priceListService->getPriceListData();
-        $complectation = $priceListService->getComplectationData();
+        $strategy           = FactoryPriceListStrategy::getStrategy($data);
+        $priceListService   = new ComplectationPriceList($strategy);
+        $prices             = $priceListService->getPriceListData();
+        $complectation      = $priceListService->getComplectationData();
 
         return [
             'complectation' => $complectation,
