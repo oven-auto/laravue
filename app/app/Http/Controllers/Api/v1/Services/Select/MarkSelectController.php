@@ -41,12 +41,19 @@ class MarkSelectController extends Controller
             'brand_id' => 'required|numeric'
         ]);
 
-        $result = Mark::where('brand_id', $validated['brand_id'])->where('diller_status', 1)->select('name', 'id')->get();
-
+        $result = Mark::withCount(['cars' => function($query){
+            $query->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id')->where('car_status_types.status', '<>', 'saled');
+        }])->where('brand_id', $validated['brand_id'])->where('diller_status', 1)->get();
+        
         return response()->json([
             'success' => 1,
-            'data' => $result,
-            'request' => $request->all()
+            'data' => $result->map(function($item){
+                return [
+                    'name' => $item->name,
+                    'id' => $item->id,
+                    'count' => $item->cars_count,
+                ];
+            }),
         ]);
     }
 

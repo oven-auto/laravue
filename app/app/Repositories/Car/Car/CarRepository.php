@@ -123,7 +123,10 @@ class CarRepository
         $colorImage = $car->color->images->where('body_work_id', $bodyWork)->first();
 
         if($colorImage)
+        {
             $car->image()->sync([$colorImage->id]);
+            $car->load('image');
+        }
     }
 
 
@@ -230,18 +233,18 @@ class CarRepository
         
         $filter = app()->make(CarFilter::class, ['queryParams' => $data]);
         
-        if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
-            $query->withDataForCarList();
+        //if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
+        $query->withDataForCarList();
 
-        $query->filter($filter)->orderBy('id', 'DESC');
-       
+        $query->filter($filter);
+   
         $cars = $query->simplePaginate($paginate);
         
-        if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
-            $cars->each(function($item) {
-                if(isset($item->reserve))
-                    $item->reserve->car = $item;
-            });
+        //if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
+        $cars->each(function($item) {
+            if(isset($item->reserve))
+                $item->reserve->car = $item;
+        });
         
         return $cars;
     }

@@ -1839,6 +1839,24 @@
                         "enum": [
                             "has_sale"
                         ]
+                    },
+                    "power": {
+                        "description": "Массив содержащий интервал мощности мотора от - до, параметр ДО необязателен, \n     *      отсутствие второго параметра, будет означать, что используется не интервал, \n     *      соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[140,150]",
+                        "enum": [
+                            "power"
+                        ]
+                    },
+                    "sort": {
+                        "description": "Сортировка: price_low, price_high, sale_old, sale_new, stock_old, stock_new",
+                        "type": "string",
+                        "format": "123",
+                        "enum": [
+                            "sort"
+                        ]
                     }
                 },
                 "type": "object"
@@ -2162,6 +2180,15 @@
                         "example": "1",
                         "enum": [
                             "has_plan"
+                        ]
+                    },
+                    "search": {
+                        "description": "Полнотекстовый поиск, если перед строкой поиска подставить id@ будет искать по id машины. Возможны следующие уточнения:\n     * id@ - id машины (точный поиск), vin@ - вин машины, order@ - номер заказа, model@ - модель машины",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "search"
                         ]
                     }
                 },

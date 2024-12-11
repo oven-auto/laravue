@@ -510,7 +510,7 @@ class ReserveNewCarFilter extends AbstractFilter
                     ->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
             });
 
-        if(isset($params['has_ransom']))//has_ransom
+        //if(isset($params['has_ransom']))//has_ransom
             $builder->leftJoin('ransom_cars', 'ransom_cars.car_id', 'cars.id'); 
 
         //if(isset($params['has_detailing_cost']))//has_detailing_cost
@@ -1014,6 +1014,12 @@ class ReserveNewCarFilter extends AbstractFilter
         list($column, $val) = $value;
 
         switch($column){
+            case 'client':
+                $builder->where(function($subQ) use ($val){
+                    $subQ->where('clients.lastname', 'LIKE', '%'.$val.'%');
+                    $subQ->orWhere('clients.inn', 'LIKE', '%'.$val.'%');
+                });
+                break;
             case 'id':
                 $builder->where('cars.id', $val);
                 break;

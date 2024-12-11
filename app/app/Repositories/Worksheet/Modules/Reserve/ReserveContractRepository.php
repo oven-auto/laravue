@@ -79,7 +79,7 @@ class ReserveContractRepository
 
         $car = $reserve->car;
         
-        if(!$car->isInvoice() && isset($data['dkp_offer_at']) && $data['dkp_offer_at'])
+        if(!$car->isOnStock() && isset($data['dkp_offer_at']) && $data['dkp_offer_at'])
             throw new ReserveException('contract_on_not_invoice');
     }
 

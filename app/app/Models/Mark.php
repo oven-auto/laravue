@@ -29,4 +29,11 @@ class Mark extends Model implements SortInterface
     {
         return $this->hasMany(\App\Models\DealerColor::class, 'mark_id', 'id');
     }
+
+
+
+    public function cars()
+    {
+        return $this->hasMany(\App\Models\Car::class, 'mark_id', 'id');
+    }
 }

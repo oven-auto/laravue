@@ -135,14 +135,14 @@ class ReserveRepository
         $newCar = Car::find($data['car_id']);
 
         try{
-            if($reserve->hasPDKP() && $reserve->hasDKP() && !$newCar->isInvoice())
+            if($reserve->hasPDKP() && $reserve->hasDKP() && !$newCar->isOnStock())
             {
                 $reserve->contract->fill([
                     'dkp_offer_at' => null,
                     'dkp_decorator_id' => null,
                 ])->save();
             }
-            elseif(!$reserve->hasPDKP() && $reserve->hasDKP() && !$newCar->isInvoice())
+            elseif(!$reserve->hasPDKP() && $reserve->hasDKP() && !$newCar->isOnStock())
             {
                 $reserve->contract->fill([
                     'dkp_offer_at' => null,
