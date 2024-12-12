@@ -19,7 +19,7 @@ Class EventTaskList
                     $subQuery->where('client_event_status_executors.user_id', $user);
                 });
                 $query->where('client_event_statuses.confirm', 'waiting');
-                $query->whereRaw('ADDDATE(cast(client_event_statuses.date_at as date), INTERVAL client_event_statuses.end_time HOUR_SECOND) < CURRENT_DATE()');
+                $query->whereRaw('ADDDATE(cast(client_event_statuses.date_at as date), INTERVAL client_event_statuses.end_time HOUR_SECOND) < CURRENT_TIMESTAMP()');
             })->count();
 
         return $events;
