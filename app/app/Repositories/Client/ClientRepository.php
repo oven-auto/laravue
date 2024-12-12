@@ -98,6 +98,8 @@ class ClientRepository
                 $this->saveEmail($client, $itemRowContact['email']);
         }
 
+        $client->refresh();
+
         return $client;
     }
 

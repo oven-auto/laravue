@@ -87,7 +87,7 @@ class ClientController extends Controller
     public function store(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
         $this->repo->save($client, $request->all());
-
+        
         Comment::add($client, 'create');
 
         return (new ClientEditResource($client))
@@ -111,7 +111,6 @@ class ClientController extends Controller
         return (new ClientEditResource($client))
             ->additional([
                 'message' => 'Клиент изменен',
-                'client' => new ClientListResource(($client))
             ]);
     }
 
