@@ -645,9 +645,7 @@ class CarFilter extends AbstractFilter
     {   
         $queryParams['init'] = $queryParams;
         
-        parent::__construct($queryParams);
-
-        
+        parent::__construct($queryParams);        
     }
 
 

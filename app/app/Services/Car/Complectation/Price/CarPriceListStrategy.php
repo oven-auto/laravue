@@ -33,6 +33,6 @@ class CarPriceListStrategy implements PriceListStrategyInterface
 
     public function getPriceList()
     {
-        return $this->complectation->prices->orderBy('begin_at', 'DESC');
+        return $this->complectation->prices;
     }
 }
