@@ -5,6 +5,7 @@ namespace App\Services\TaskList;
 use App\Http\Filters\ClientEventListFilter;
 use App\Models\ClientEventStatus;
 use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 Class EventTaskList
 {
@@ -18,7 +19,7 @@ Class EventTaskList
                     $subQuery->where('client_event_status_executors.user_id', $user);
                 });
                 $query->where('client_event_statuses.confirm', 'waiting');
-                $query->whereDate('client_event_statuses.date_at', '<', now());
+                $query->whereRaw('ADDDATE(cast(client_event_statuses.date_at as date), INTERVAL client_event_statuses.end_time HOUR_SECOND) < CURRENT_DATE()');
             })->count();
 
         return $events;
