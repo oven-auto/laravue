@@ -162,8 +162,8 @@ class Complectation extends Model
                 ->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id')
                 ->leftJoin('wsm_reserve_issues', 'wsm_reserve_issues.reserve_id', 'wsm_reserve_new_cars.id')
                 ->whereNull('wsm_reserve_sales.reserve_id')
-                ->whereNull('wsm_reserve_issues.reserve_id')
-                ->whereNull('wsm_reserve_new_cars.deleted_at');
+                ->whereNull('wsm_reserve_issues.reserve_id');
+                //->whereNull('wsm_reserve_new_cars.deleted_at');
         }]);
     }
 
@@ -177,8 +177,8 @@ class Complectation extends Model
                 ->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id')
                 ->leftJoin('wsm_reserve_issues', 'wsm_reserve_issues.reserve_id', 'wsm_reserve_new_cars.id')
                 ->whereNotNull('wsm_reserve_sales.reserve_id')
-                ->whereNotNull('wsm_reserve_issues.reserve_id')
-                ->whereNull('wsm_reserve_new_cars.deleted_at');
+                ->whereNotNull('wsm_reserve_issues.reserve_id');
+                //->whereNull('wsm_reserve_new_cars.deleted_at');
         }]);
     }
 
