@@ -90,6 +90,9 @@ class ClientRepository
             if (isset($data['inn']))
                 $this->saveInn($client, $data['inn']);
         
+        $client->phones()->delete();
+        $client->emails()->delete();
+        
         foreach ($data['contacts'] as $itemRowContact) {
             if (isset($itemRowContact['phone']))
                 $this->savePhone($client, $itemRowContact['phone']);

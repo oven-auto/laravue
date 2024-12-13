@@ -41,7 +41,7 @@ class DelWaitingTrafic extends Command
     {
         $arr = [
             [
-                'slug' => 'trafic_del_waiting_author',
+                'slug' => 'trafic_delete_waiting_author',
                 'name' => 'Трафик: Удалить ожидающий (где я автор)'
             ],
             [
