@@ -86,7 +86,9 @@ class DNM
 
     public function getModelAliases()
     {
-        return $this->service->get($this->concatUrl('api/model-alias'))->json();
+        $arr1 = $this->service->get($this->concatUrl('api/model-alias?page=1'))->json();
+        $arr2 = $this->service->get($this->concatUrl('api/model-alias?page=2'))->json();
+        return array_merge($arr1,$arr2);
     }
 
 

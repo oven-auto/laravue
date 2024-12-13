@@ -81,7 +81,8 @@ class Kernel extends HttpKernel
         'permission.trafic.show' => \App\Http\Middleware\Permissions\Trafic\TraficShow::class,
         'permission.trafic.showalien' => \App\Http\Middleware\Permissions\Trafic\TraficShowAlien::class,
         'permission.trafic.showdraft' => \App\Http\Middleware\Permissions\Trafic\CanShowDraft::class,
-        'permission.trafic.delete' => \App\Http\Middleware\Permissions\Trafic\DeleteTraficMiddleware::class,
+        'permission.trafic.delete' => \App\Http\Middleware\Permissions\Trafic\TraficDelete::class,
+        'permission.trafic.close' => \App\Http\Middleware\Permissions\Trafic\TraficClose::class,
 
         'permission.worksheet.create' => \App\Http\Middleware\Permissions\Worksheet\WorksheetCreate::class,
         'permission.worksheet.show'   => \App\Http\Middleware\Permissions\Worksheet\WorksheetShow::class,

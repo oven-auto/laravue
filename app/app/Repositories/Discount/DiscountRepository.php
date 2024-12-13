@@ -6,6 +6,7 @@ use App\Http\Filters\DiscountFilter;
 use App\Models\Discount;
 use App\Models\DiscountType;
 use App\Repositories\Discount\DTO\DiscountCarDTO;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 class DiscountRepository
@@ -70,15 +71,19 @@ class DiscountRepository
 
 
 
-    public function count(array $data = []): int
+    public function count(array $data = []) : mixed
     {
-        $query = Discount::query()->select('discounts.id');
+        $query = Discount::query()->select(
+            DB::raw('count(*) as total'),
+            DB::raw('sum(discount_sums.amount) as sum'),
+            DB::raw('sum(discount_reparations.amount) as reparation')
+        );
 
         $filter = app()->make(DiscountFilter::class, ['queryParams' => array_filter($data)]);
 
         $query->filter($filter);
 
-        $countCars = DB::table($query)->count();
+        $countCars = DB::table($query)->get();
 
         return $countCars;
     }

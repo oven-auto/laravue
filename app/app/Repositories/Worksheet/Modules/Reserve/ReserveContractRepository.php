@@ -168,7 +168,15 @@ class ReserveContractRepository
      */
     public function paginate(array $data, $paginate = 20)
     {
-        $query = WsmReserveNewCarContract::select('wsm_reserve_new_car_contracts.*')->with('reserve');
+        $query = WsmReserveNewCarContract::select('wsm_reserve_new_car_contracts.*')
+            ->with(['reserve' => function($subQ){
+                $subQ->with([
+                    'car' => function($qCar){
+                        $qCar->with(['mark', 'brand', 'logistic_dates']);
+                    },
+                    'sale'
+                ]);
+            }]);
 
         $filter = app()->make(ContractFilter::class, ['queryParams' => array_filter($data)]);
 

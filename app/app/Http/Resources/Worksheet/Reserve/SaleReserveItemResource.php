@@ -58,11 +58,11 @@ class SaleReserveItemResource extends JsonResource
             ],
             'client' => new ClientResource($this->worksheet->client),
             'newcar' => ($this->modulable && $this->modulable::class == WsmReserveNewCar::class) ? [
-                'id' => $this->modulable->car_id,
-                'brand' => $this->modulable->car->brand->name,
-                'mark' => $this->modulable->car->mark->name,
-                'vin' => $this->modulable->car->vin,
-                'status' => $this->modulable->car->getStatusCarForDiscountList()
+                'id'        => $this->modulable->car_id,
+                'brand'     => $this->modulable->car->brand->name,
+                'mark'      => $this->modulable->car->mark->name,
+                'vin'       => $this->modulable->car->vin,
+                'status'    => $this->modulable->car->getStatusCarForDiscountList()
             ] : [],
         ];
     }

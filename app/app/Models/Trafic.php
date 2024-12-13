@@ -539,6 +539,36 @@ class Trafic extends Model implements CommentInterface
      */
 
 
+    //Ожидающий
+    public function isWaiting()
+    {
+        return $this->trafic_status_id == 1 ? 1 : 0;
+    }
+
+
+
+    //Назначенный
+    public function isPersonal()
+    {
+        return $this->trafic_status_id == 2 ? 1 : 0;
+    }
+
+
+
+    public function isWorking()
+    {
+        return $this->isWaiting() && $this->isPersonal();
+    }
+
+
+
+    //Принятый
+    public function isAccepted()
+    {
+        return $this->trafic_status_id == 3 ? 1 : 0;
+    }
+
+
     public function getControlStatus()
     {
         $currentTime = date('Y-m-d H:i');

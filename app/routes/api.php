@@ -370,8 +370,7 @@ Route::middleware(['userfromtoken'])->group(function () {
         Route::patch('close/{trafic}', 'TraficController@close')
             ->withTrashed()
             ->middleware([
-                'permission.trafic.show:trafic_close',
-                'permission.trafic.showalien:trafic_close_alien'
+                'permission.trafic.close',
             ]);
         
         Route::prefix('audit')->group(function(){
@@ -400,7 +399,7 @@ Route::middleware(['userfromtoken'])->group(function () {
         //пометить трафик как удаленный
         Route::delete('{trafic}', 'TraficController@delete')
             ->middleware([
-                'permission.trafic.delete:trafic_softdelete,trafic_softdelete_appeals,trafic_softdelete_alien'
+                'permission.trafic.delete'
             ]);
 
         //просмотр трафика

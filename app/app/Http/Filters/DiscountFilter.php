@@ -35,6 +35,8 @@ Class DiscountFilter extends AbstractFilter
     public function init(Builder $builder)
     {
         $builder
+            ->leftJoin('discount_sums', 'discount_sums.discount_id', 'discounts.id')
+            ->leftJoin('discount_reparations', 'discount_reparations.discount_id', 'discounts.id')
             ->leftJoin('discount_reparation_dates', 'discount_reparation_dates.discount_id', 'discounts.id')
             ->leftJoin('discount_bases', 'discount_bases.discount_id', 'discounts.id')
             ->leftJoin('discount_types', 'discount_types.id', 'discounts.discount_type_id')

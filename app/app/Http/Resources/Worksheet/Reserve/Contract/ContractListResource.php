@@ -46,6 +46,8 @@ class ContractListResource extends JsonResource
                 'credit' => $this->getCreditorArrears(),
             ],
             'sale_at' => '',
+
+            'state' => $this->reserve->car->getStatusCarForDiscountList(),
         ];
     }
 }
