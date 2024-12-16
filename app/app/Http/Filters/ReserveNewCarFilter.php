@@ -1017,7 +1017,7 @@ class ReserveNewCarFilter extends AbstractFilter
             case 'client':
                 $builder->where(function($subQ) use ($val){
                     $subQ->where('clients.lastname', 'LIKE', '%'.$val.'%');
-                    $subQ->orWhere('clients.inn', 'LIKE', '%'.$val.'%');
+                    $subQ->orWhere('clients.company_name', 'LIKE', '%'.$val.'%');
                 });
                 break;
             case 'id':
