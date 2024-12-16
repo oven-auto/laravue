@@ -194,19 +194,46 @@ class ReserveContractRepository
      */
     public function counter(array $data)
     {
-        $query = WsmReserveNewCarContract::query()->select('wsm_reserve_new_car_contracts.id');
+        //$query = WsmReserveNewCarContract::query()->select('wsm_reserve_new_car_contracts.id');
 
-        $subQuery = WsmReserveNewCarContract::query()->select('wsm_reserve_new_car_contracts.id');
+        $subQuery = WsmReserveNewCarContract::query();
 
         $filter = app()->make(ContractFilter::class, ['queryParams' => array_filter($data)]);
 
         $subQuery->filter($filter);
 
-        $query->rightJoinSub($subQuery, 'subQuery', function ($join) {
-            $join->on('subQuery.id', '=', 'wsm_reserve_new_car_contracts.id');
+        $subQuery ->leftJoin('car_full_prices', 'car_full_prices.car_id', 'cars.id')//представление хранящее актуальную цену авто по прайсу
+        ->leftJoin('wsm_reserve_complectation_prices','wsm_reserve_complectation_prices.contract_id', 'wsm_reserve_new_car_contracts.id')//сохраненая в контракте цена
+        ->leftJoin('complectation_prices', 'complectation_prices.id', 'wsm_reserve_complectation_prices.complectation_price_id')//цены комплектации
+        ->leftJoin('wsm_reserve_option_prices', 'wsm_reserve_option_prices.contract_id', 'wsm_reserve_new_car_contracts.id')//сохраненные в контракте опции
+        ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
+            left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
+            left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
+            left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
+            where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
+            GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
+        )
+        ->addSelect([
+            DB::raw('COUNT(wsm_reserve_new_car_contracts.id) as count'),
+            DB::raw('SUM(IF(complectation_prices.id,complectation_prices.price,car_full_prices.price)) as com_price'),
+            DB::raw('SUM(IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, car_full_prices.optionprice)) as opt_price'),
+            DB::raw('SUM(car_full_prices.overprice) as over_price'),
+            DB::raw('SUM(car_full_prices.tuningprice) as tun_price'),
+            DB::raw('SUM(car_full_prices.giftprice) as gift_price'),
+        ]);
+
+    //if(isset($params['has_discount']))
+        $subQuery->leftJoin('discounts', function($join){
+            $join->on('discounts.worksheet_id', '=', 'worksheets.id')
+                ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
+                ->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
         });
 
-        $result = $query->count();
+        // $query->rightJoinSub($subQuery, 'subQuery', function ($join) {
+        //     $join->on('subQuery.id', '=', 'wsm_reserve_new_car_contracts.id');
+        // });
+        
+        $result = $subQuery->get();
 
         return $result;
     }
