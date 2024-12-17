@@ -279,10 +279,10 @@ class CarRepository
                 DB::raw('IF(_purchase.id, sum(_cd_cost.price), 0) as factoring_detailing'),
                 DB::raw('IF(_purchase.id, IF(_collector.id IS NOT NULL, 1, 0), 0) as factoring_collector'),
                
-                DB::raw('IF(_logistic.id, 1, 0) as ransom_date'),
-                DB::raw('IF(_logistic.id, _purchase.cost, 0) as ransom_sum'),
-                DB::raw('IF(_logistic.id, sum(_cd_cost.price), 0) as ransom_detailing'),
-                DB::raw('IF(_logistic.id, IF(_collector.id IS NOT NULL, 1, 0), 0) as ransom_collector'),
+                DB::raw('IF(_ransom_car.car_id, 1, 0) as ransom_date'),
+                DB::raw('IF(_ransom_car.car_id, _purchase.cost, 0) as ransom_sum'),
+                DB::raw('IF(_ransom_car.car_id, sum(_cd_cost.price), 0) as ransom_detailing'),
+                DB::raw('IF(_ransom_car.car_id, IF(_collector.id IS NOT NULL, 1, 0), 0) as ransom_collector'),
             )
             ->leftJoin('car_full_prices as _full_price', '_full_price.car_id', 'cars.id')
             ->leftJoin('wsm_reserve_new_cars as _reserve', function($join){
@@ -316,10 +316,8 @@ class CarRepository
             ->leftJoin('car_purchases as _purchase', '_purchase.car_id', 'cars.id')
             ->leftJoin('car_detailing_costs as _cd_cost', '_cd_cost.car_id', 'cars.id')
             ->leftJoin('car_collectors as _collector', '_collector.car_id', 'cars.id')
-            ->leftJoin('car_date_logistics as _logistic', function($join){
-                $join->on('_logistic.car_id', 'cars.id')
-                    ->where('_logistic.logistic_system_name', 'ransom_date');
-            });
+
+            ->leftJoin('ransom_cars as _ransom_car', '_ransom_car.car_id', 'cars.id');
 
         $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
 
