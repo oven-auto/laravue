@@ -7,20 +7,128 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
+/**
+ * @OA\Schema(
+ *   description = "Параметры фильтрации контрактов"
+ * )
+ */
 class ContractFilter extends AbstractFilter
 {
-    public const IDS        = 'ids';
-    public const INIT       = 'init';
-    public const OVERDUE    = 'overdue';
-    public const ISCLOSE      = 'isclose';
-    public const DKP        = 'dkp';
-    public const PDKP       = 'pdkp';
-    public const CREATE     = 'create';
-    public const CLOSE      = 'close';
-    public const SALE       = 'sale';
-    public const DKP_MANAGER = 'dkp_manager';
-    public const PDKP_MANAGER = 'pdkp_manager';
-    public const SALE_MANAGER = 'sale_manager';
+    public const IDS            = 'ids';
+    public const INIT           = 'init';
+
+    /**  @OA\Property(
+     * format="bool", 
+     * description="Просроченные, 1 - есть, 0 нет.", 
+     * property="overdue", 
+     * type="bool", 
+     * example="1")
+     * */
+    public const OVERDUE        = 'overdue';
+
+    /**  @OA\Property(
+     * format="bool", 
+     * description="Расторгнутые, 1 - есть, 0 нет.", 
+     * property="isclose", 
+     * type="bool", 
+     * example="1")
+     * */
+    public const ISCLOSE        = 'isclose';
+    
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты ДКП от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="dkp", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const DKP            = 'dkp';
+
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты ПДКП от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="pdkp", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const PDKP           = 'pdkp';
+
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты Первичный контракт от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="create", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const CREATE         = 'create';
+
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты Расторжение от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="close", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const CLOSE          = 'close';
+
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты Продажа от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="sale", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const SALE           = 'sale';
+
+    /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы Оформителей ДКП", 
+     * property="dkp_manager", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const DKP_MANAGER    = 'dkp_manager';
+
+    /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы Оформителей ПДКП", 
+     * property="pdkp_manager", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const PDKP_MANAGER   = 'pdkp_manager';
+
+    /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы Оформителей продажи", 
+     * property="sale_manager", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const SALE_MANAGER   = 'sale_manager';
 
 
 
@@ -75,20 +183,22 @@ class ContractFilter extends AbstractFilter
 
 
 
-    public function overdue(Builder $builder, int $val)
+    public function overdue(Builder $builder, bool $val)
     {
-        $builder->where(function($q){
-            $q->whereNotNull('wsm_reserve_new_car_contracts.pdkp_delivery_at');
-            $q->whereDate('wsm_reserve_new_car_contracts.pdkp_delivery_at', '<', now());
-            $q->whereNull('wsm_reserve_new_car_contracts.dkp_offer_at');
-        });
+        if($val)
+            $builder->where(function($q){
+                $q->whereNotNull('wsm_reserve_new_car_contracts.pdkp_delivery_at');
+                $q->whereDate('wsm_reserve_new_car_contracts.pdkp_delivery_at', '<', now());
+                $q->whereNull('wsm_reserve_new_car_contracts.dkp_offer_at');
+            });
     }
 
 
 
-    public function isClose(Builder $builder, int $val)
+    public function isClose(Builder $builder, bool $val)
     {
-        $builder->whereNotNull('wsm_reserve_new_car_contracts.dkp_closed_at');
+        if($val)
+            $builder->whereNotNull('wsm_reserve_new_car_contracts.dkp_closed_at');
     }
 
 
@@ -96,16 +206,16 @@ class ContractFilter extends AbstractFilter
     public function create(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($paidDate[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
         $builder->whereBetween('wsm_reserve_new_car_contracts.created_at', [$date_1, $date_2]);
     }
 
 
 
     public function dkp(Builder $builder, array $dates)
-    {
+    {  
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($paidDate[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
         $builder->whereBetween('wsm_reserve_new_car_contracts.dkp_offer_at', [$date_1, $date_2]);
     }
 
@@ -114,7 +224,7 @@ class ContractFilter extends AbstractFilter
     public function pdkp(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($paidDate[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
         $builder->whereBetween('wsm_reserve_new_car_contracts.pdkp_offer_at', [$date_1, $date_2]);
     }
 
@@ -123,7 +233,7 @@ class ContractFilter extends AbstractFilter
     public function sale(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($paidDate[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
         $builder->whereBetween('wsm_reserve_sales.date_at', [$date_1, $date_2]);
     }
 
@@ -132,28 +242,28 @@ class ContractFilter extends AbstractFilter
     public function close(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($paidDate[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
         $builder->whereBetween('wsm_reserve_new_car_contracts.dkp_closed_at', [$date_1, $date_2]);
     }
 
 
 
-    public function dkp_manager(Builder $builder, int $val)
+    public function dkp_manager(Builder $builder, array $val)
     {
-        $builder->where('wsm_reserve_new_car_contracts.dkp_decorator_id', $val);
+        $builder->whereIn('wsm_reserve_new_car_contracts.dkp_decorator_id', $val);
     }
 
 
 
-    public function pdkp_manager(Builder $builder, int $val)
+    public function pdkp_manager(Builder $builder, array $val)
     {
-        $builder->where('wsm_reserve_new_car_contracts.pdkp_decorator_id', $val);
+        $builder->whereIn('wsm_reserve_new_car_contracts.pdkp_decorator_id', $val);
     }
 
 
 
-    public function sale_manager(Builder $builder, int $val)
+    public function sale_manager(Builder $builder, array $val)
     {
-        $builder->where('wsm_reserve_sales.decorator_id', $val);
+        $builder->whereIn('wsm_reserve_sales.decorator_id', $val);
     }
 }

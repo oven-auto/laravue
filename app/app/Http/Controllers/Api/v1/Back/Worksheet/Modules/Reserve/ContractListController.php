@@ -9,6 +9,25 @@ use Illuminate\Http\Request;
 
 class ContractListController extends Controller
 {
+    /**
+     * @OA\Get(
+     *      path="/contracts",
+     *      operationId="contractList",
+     *      tags={"Контракты"},
+     *      summary="Список Контракты новых автомобилей",
+     *      description="Список Контракты новых автомобилейв",
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(
+     *              type="object",
+     *              ref="#/components/schemas/ContractFilter",
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
+     */
     public function index(Request $request, ReserveContractRepository $repo)
     {
         $contracts = $repo->paginate($request->all());
