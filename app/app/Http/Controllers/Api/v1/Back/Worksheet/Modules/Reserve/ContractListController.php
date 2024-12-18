@@ -20,10 +20,10 @@ class ContractListController extends Controller
 
     public function count(Request $request, ReserveContractRepository $repo)
     {
-        $count = $repo->counter($request->all());
-
+        $result = $repo->counter($request->all());
+        
         return response()->json([
-            'count' => $count,
+            'count' => $result,
             'success' => 1,
             'message' => '',
         ]);

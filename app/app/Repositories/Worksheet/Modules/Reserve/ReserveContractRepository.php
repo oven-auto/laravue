@@ -210,31 +210,55 @@ class ReserveContractRepository
             left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
             left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
             left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
-            where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
+            where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is null
             GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
         )
         ->addSelect([
-            DB::raw('COUNT(wsm_reserve_new_car_contracts.id) as count'),
-            DB::raw('SUM(IF(complectation_prices.id,complectation_prices.price,car_full_prices.price)) as com_price'),
-            DB::raw('SUM(IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, car_full_prices.optionprice)) as opt_price'),
-            DB::raw('SUM(car_full_prices.overprice) as over_price'),
-            DB::raw('SUM(car_full_prices.tuningprice) as tun_price'),
-            DB::raw('SUM(car_full_prices.giftprice) as gift_price'),
+            DB::raw('cars.id as carId'),
+            DB::raw('(IF(complectation_prices.id,complectation_prices.price,car_full_prices.complectationprice)) as com_price'),
+            DB::raw('(IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, car_full_prices.optionprice)) as opt_price'),
+            DB::raw('(car_full_prices.overprice) as over_price'),
+            DB::raw('(car_full_prices.tuningprice) as tun_price'),
+            DB::raw('(car_full_prices.giftprice) as gift_price'),
+            DB::raw('joinDiscount.amount as discount_sum'),
+            DB::raw('joinPay.amount as payment_sum'),
+            DB::raw('joinTradeIn.amount as tradein_sum'),
+            DB::raw('IF(wsm_reserve_new_car_contracts.dkp_closed_at is null, 0, 1) as closed_at'),
         ]);
 
-    //if(isset($params['has_discount']))
-        $subQuery->leftJoin('discounts', function($join){
-            $join->on('discounts.worksheet_id', '=', 'worksheets.id')
-                ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
-                ->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
-        });
+        $subQuery->leftJoin(DB::raw('(SELECT sum(ds.amount) as amount, d.modulable_id as reserveId from discounts as d
+            left join discount_sums as ds on ds.discount_id = d.id
+            where d.modulable_type = "App\\\Models\\\WsmReserveNewCar"
+            group by reserveId) as joinDiscount'), 'joinDiscount.reserveId', 'wsm_reserve_new_cars.id');
+       
+        $subQuery->leftJoin(DB::raw('(SELECT sum(pay.amount) as amount, pay.reserve_id as reserveId
+            from wsm_reserve_payments as pay group by reserveId) as joinPay'), 'joinPay.reserveId', 'wsm_reserve_new_cars.id');
 
-        // $query->rightJoinSub($subQuery, 'subQuery', function ($join) {
-        //     $join->on('subQuery.id', '=', 'wsm_reserve_new_car_contracts.id');
-        // });
+        $subQuery->leftJoin(DB::raw('(SELECT sum(uc.purchase_price) as amount, t.reserve_id as reserveId
+            from wsm_reserve_trade_ins as t
+            left join used_cars as uc on uc.id = t.used_car_id) as joinTradeIn'), 'joinTradeIn.reserveId', 'wsm_reserve_new_cars.id');
+
+        $subQuery->groupBy('wsm_reserve_new_car_contracts.id');
+
+        $result = DB::table($subQuery)->select(
+            DB::raw('count(*) as count'),
+            DB::raw('(
+                sum(com_price) + sum(opt_price) + sum(over_price) + 
+                sum(tun_price) - sum(gift_price) - sum(discount_sum) - 
+                sum(payment_sum) - sum(tradein_sum)) as debit'
+            ),
+            DB::raw('(
+                sum(payment_sum) + sum(tradein_sum)) as credit'),
+            // DB::raw('sum(com_price)     as _com_price'),
+            // DB::raw('sum(opt_price)     as _opt_price'),
+            // DB::raw('sum(over_price)    as _over_price'),
+            // DB::raw('sum(tun_price)     as _tun_price'),
+            // DB::raw('sum(gift_price)    as _gift_price'),
+            // DB::raw('sum(discount_sum)  as _discount_sum'),
+            // DB::raw('sum(payment_sum)   as _payment_sum'),
+            // DB::raw('sum(tradein_sum)   as _tradein_sum'),
+        )->first();
         
-        $result = $subQuery->get();
-
         return $result;
     }
 }

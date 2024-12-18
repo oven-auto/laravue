@@ -104,7 +104,7 @@ class ClientController extends Controller
      */
     public function update(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
-        $this->repo->save($client, $request->all());
+        $this->repo->save($client, $request->except('id'));
 
         Comment::add($client, 'update');
 
