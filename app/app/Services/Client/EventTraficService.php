@@ -35,7 +35,7 @@ Class EventTraficService
         $clientArr['trafic_chanel_id'] = 37;
 
         $this->traficRepo->save($this->trafic, $clientArr);
-
+       
         \App\Models\ClientEventTrafic::create([
             'trafic_id' => $this->trafic->id,
             'event_id' => $eventStatus->event_id,

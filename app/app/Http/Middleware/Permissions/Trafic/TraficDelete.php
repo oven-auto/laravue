@@ -17,7 +17,7 @@ class TraficDelete
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next)
-    {
+    {  
         $trafic = $request->trafic;
 
         //Если статус 3 (принят) то ошибка

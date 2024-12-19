@@ -12,12 +12,12 @@ Class SaveTraficClient extends AbstractTraficSaveService
             'firstname' => $data['firstname'] ?? '',
             'lastname'  => $data['lastname'] ?? '',
             'fathername' => $data['fathername'] ?? '',
-            'inn'       => $data['inn'] ?? '',
-            'company_name' => $data['company_name'] ?? '',
+            'inn'       => $data['inn'] ?? null,
+            'company_name' => $data['company_name'] ?? null,
             'phone' => isset($data['phone']) ? preg_replace("/[^,.0-9]/", '', $data['phone']) : '',
-            'email' => $data['email'] ?? '',
+            'email' => $data['email'] ?? null,
             'trafic_sex_id' => $data['trafic_sex_id'] ?? NULL,
-            'client_type_id' => isset($data['person_type_id']) ? $data['person_type_id'] : ($arr['client_type_id'] ?? ''),
+            'client_type_id' => isset($data['person_type_id']) ? $data['person_type_id'] : ($arr['client_type_id'] ?? null),
         ];
         
         $count = 0;

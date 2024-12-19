@@ -61,6 +61,7 @@ class TraficSaveResource extends JsonResource
                 'person_type_id' => $this->client_type_id,
                 'files' => $this->files_count,
                 'links' => $this->links_count,
+                'deleted' => $this->deleted_at ? 1 : 0
             ],
             'success' => $this->id ? 1 : 0,
         ];

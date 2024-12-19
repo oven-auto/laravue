@@ -18,13 +18,13 @@ class TraficClose
     public function handle(Request $request, Closure $next)
     {
         $trafic = $request->trafic;
-
+        
         //Если статус 3 (принят) то ошибка
         if($trafic->isWorking())
             throw new \Exception('Трафик принят, его нельзя упустить/удалить.');
 
         $userPermission = auth()->user()->role->permissions;
-
+        
         //если супер права
         if($userPermission->contains('slug', 'trafic_close_alien'))
             return $next($request);

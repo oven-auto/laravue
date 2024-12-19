@@ -11,6 +11,8 @@ use App\Classes\LadaDNM\DNMEvent;
 use App\Classes\LadaDNM\DNMFactory;
 use App\Classes\LadaDNM\DNMWorksheet;
 use App\Classes\LadaDNM\DNMWorksheetService;
+use App\Classes\ORM\ORMConnection;
+use App\Classes\ORM\Trafc;
 use App\Classes\Vin\Vin;
 use App\Events\ClientCreateOrUpdateEvent;
 use App\Events\DNMVisitEvent;
@@ -27,7 +29,7 @@ use App\Models\ClientUnion;
 use App\Models\DealerColorImage;
 use App\Models\DiscountModul;
 use App\Models\MarkAlias;
-use App\Models\Trafic;
+use App\Classes\ORM\Trafic;
 use App\Models\Tuning;
 use App\Models\Worksheet;
 use App\Models\WsmReserveNewCar;
@@ -46,6 +48,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
+use ReflectionClass;
 use Telegram\Bot\Api;
 use Telegram\Bot\FileUpload\InputFile;
 use ZipArchive;
@@ -121,57 +124,36 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index(HttpRequest $request) {
-        // if($request->has('reserve_id'))
-        // {
-        //     $reserve = WsmReserveNewCar::withTrashed()->find($request->reserve_id);
+    public function index() 
+    {
+        $data = Trafic::select('*')
+            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', '=', 'trafics.id')
+            ->orderBy('trafics.id', 'DESC')
+            ->orderBy('trafics.trafic_sex_id', 'DESC')
+            ->limit(5)
+            ->get();
 
-        //     $action = $request->action ?? 'visit';
-
-        //     (new DNMEvent())->handler($reserve, $action);
-        // }
-        $car = Car::find(11213);
-
-        $bodyWork = $car->complectation->body_work_id;
-
-        $colorImage = $car->color->images->where('body_work_id', $bodyWork)->first();      
-
-        dd($colorImage);
-
-        // $serverFactory = new ServerFactory();
-
-        // $auth = new BasicAuth('root', 'oa', 'Vesta2020');
-
-        // $server = $serverFactory->createServer('192.168.1.6', $auth);
-        
-        // $shares = $server->listShares();
-
-        // foreach($shares as $itemShare)
-        // {
-
-        //     dump('-------------'.$itemShare->getName());
-        //     $content = $itemShare->dir('');
-        //     foreach($content as $item)
-        //         if($item->isDirectory())
-        //             dump($item->getSize(). ' - '.$item->getName());
-        //     dd();
-        // }
-        
-        // $car = Car::find(26);
-
-        // $paid = $car->paid_date;
-
-        // dd($paid->date_at->format('d'));
-        // $trafic = Trafic::query()->limit(10)->orderBy('id','DESC')->get();
-        
-        // $links = DB::table('trafic_links')
-        //     ->select('trafic_links.trafic_id')
-        //     ->whereIn('trafic_links.trafic_id', $trafic->pluck('id'))
-        //     ->groupBy('trafic_links.trafic_id')
+        // $data = \App\Models\Trafic::select('*')
+        //     ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
+        //     ->orderBy('trafics.id', 'DESC')
+        //     ->orderBy('trafics.trafic_sex_id', 'DESC')
+        //     ->limit(5)
         //     ->get();
 
-        // dd($links);
+        // $trafic = new \App\Classes\ORM\Trafic();
+        
+        // $data = $trafic->select('trafics.id', 'trafics.trafic_status_id')->limit(5)->where('id', 358)->get();
+        
+        dd($data);
     }
+
+
+
+
+
+
+
+
 
 
 

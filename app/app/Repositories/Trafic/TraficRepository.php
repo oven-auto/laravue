@@ -25,11 +25,9 @@ class TraficRepository
         if (isset($trafic->worksheet->id))
             throw new \Exception("Не могу закрыть трафик, из которого назначен рабочий лист");
 
-        if($trafic->manager_id) 
-        {
-            $trafic->trafic_status_id = 4;
-            $trafic->save(); 
-        } 
+        $trafic->trafic_status_id = 4;
+        
+        $trafic->save(); 
     }
 
 

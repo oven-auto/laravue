@@ -21,7 +21,9 @@ class CreateEventTrafic extends Controller
 
         return (new \App\Http\Resources\Client\EventSaveResource($eventStatus))
             ->additional([
-                'data' => ['trafic_id' => $traficId],
+                'data' => [
+                    'trafic_id' => $traficId
+                ],
                 'message' => $eventStatus->lastComment->text,
             ]);
     }

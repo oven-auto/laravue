@@ -16,7 +16,7 @@ class DeleteTraficMiddleware
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
     public function handle(Request $request, Closure $next, $permission_author = '', $permission_appeals = '', $permission_all = '')
-    {
+    {   
         $userPermission = auth()->user()->role->permissions;
 
         $trafic = $request->trafic;

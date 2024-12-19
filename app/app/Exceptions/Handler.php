@@ -4,6 +4,7 @@ namespace App\Exceptions;
 
 use App\Exceptions\Redemption\RedemptionException;
 use App\Exceptions\Reserve\ReserveException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Throwable;
 use Illuminate\Validation\ValidationException;
@@ -44,6 +45,16 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
+        if($exception instanceof ModelNotFoundException)
+            return response()->json([
+                'message' => 'Объект не найден. Его либо нет, либо он помечен как удаленный. '.$exception->getMessage(),
+                'success' => 0,
+                'error' => implode(', ', [
+                    'Фаил где поймал исключение: '.$exception->getFile(),
+                    'Cтрока с исключением: '.$exception->getLine(),
+                ])
+            ], 404);
+
         if($exception instanceof RedemptionException)
             return $exception->render();
 

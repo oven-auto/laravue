@@ -310,6 +310,13 @@ Route::middleware(['userfromtoken'])->group(function () {
      **************************************************************************************/
     Route::prefix('trafic')->middleware(['corsing', 'userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Back\Trafic')->group(function () {
 
+        //пометить трафик как удаленный
+        Route::delete('/{trafic}', 'TraficController@delete')
+            ->middleware([
+                'permission.trafic.delete'
+
+            ]);
+
         Route::prefix('links')->group(function () {
             Route::get('/', 'TraficLinkController@index');
             Route::post('/{trafic}', 'TraficLinkController@store');
@@ -396,11 +403,6 @@ Route::middleware(['userfromtoken'])->group(function () {
         });
 
 
-        //пометить трафик как удаленный
-        Route::delete('{trafic}', 'TraficController@delete')
-            ->middleware([
-                'permission.trafic.delete'
-            ]);
 
         //просмотр трафика
         Route::get('{trafic}', 'TraficController@edit')
@@ -1129,25 +1131,25 @@ Route::middleware(['userfromtoken'])->group(function () {
      * DISCOUNT CAR LIST
      */
     Route::prefix('discounts')->group(function () {
-        Route::get('/',                 [DiscountCarController::class, 'index']);
-        Route::post('/',                [DiscountCarController::class, 'store']);
-        Route::patch('/{discounttype}',      [DiscountCarController::class, 'update'])->withTrashed();
-        Route::get('/{discounttype}',        [DiscountCarController::class, 'show'])->withTrashed();
-        Route::delete('/{discounttype}',     [DiscountCarController::class, 'destroy']);
-        Route::patch('{discounttype}/restore', [DiscountCarController::class, 'restore'])->withTrashed();
+        Route::get('/',                         [DiscountCarController::class, 'index']);
+        Route::post('/',                        [DiscountCarController::class, 'store']);
+        Route::patch('/{discounttype}',         [DiscountCarController::class, 'update'])->withTrashed();
+        Route::get('/{discounttype}',           [DiscountCarController::class, 'show'])->withTrashed();
+        Route::delete('/{discounttype}',        [DiscountCarController::class, 'destroy']);
+        Route::patch('{discounttype}/restore',  [DiscountCarController::class, 'restore'])->withTrashed();
     });
 
 
 
     Route::prefix('discountlist')->group(function () {
-        Route::get('/', [DiscountListController::class, 'index']);
-        Route::get('/count', [DiscountListController::class, 'count']);
+        Route::get('/',         [DiscountListController::class, 'index']);
+        Route::get('/count',    [DiscountListController::class, 'count']);
     });
 
 
 
     Route::prefix('complectationlist')->group(function(){
-        Route::get('/', [ComplectationListController::class, 'index']);
-        Route::get('/count', [ComplectationListController::class, 'count']);
+        Route::get('/',         [ComplectationListController::class, 'index']);
+        Route::get('/count',    [ComplectationListController::class, 'count']);
     });    
 });
