@@ -790,9 +790,8 @@ class CarFilter extends AbstractFilter
 
         //if(isset($params['has_discount']))
             $builder->leftJoin('discounts', function($join){
-                $join->on('discounts.worksheet_id', '=', 'worksheets.id')
-                    ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
-                    ->on('discounts.modulable_id', 'reserve.id');
+                    $join->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'));
+                    $join->on('discounts.modulable_id', 'reserve.id');
             });
 
         

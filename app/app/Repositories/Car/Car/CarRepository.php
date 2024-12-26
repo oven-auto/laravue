@@ -233,14 +233,12 @@ class CarRepository
         
         $filter = app()->make(CarFilter::class, ['queryParams' => $data]);
         
-        //if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
-        $query->withDataForCarList();
-
         $query->filter($filter);
+
+        $query->withDataForCarList();
    
         $cars = $query->simplePaginate($paginate);
         
-        //if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)
         $cars->each(function($item) {
             if(isset($item->reserve))
                 $item->reserve->car = $item;
@@ -261,67 +259,38 @@ class CarRepository
         $query = Car::query()
             ->select(
                 'cars.id', 
-                '_full_price.tuningprice as t_price', 
-                '_full_price.overprice as ov_price',
-                '_full_price.giftprice as gift_price',
-                DB::raw('IF(_cp.price IS NOT NULL, _cp.price, _full_price.complectationprice) as com_price'),
-                DB::raw('IF(_joinOptionPrice._sum_option IS NOT NULL, _joinOptionPrice._sum_option, _full_price.optionprice) as op_price'),
+                'cfp.tuningprice as t_price', 
+                'cfp.overprice as ov_price',
+                'cfp.giftprice as gift_price',
+                DB::raw('IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) as com_price'),
+                DB::raw('IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) as op_price'),
                 DB::raw('sum(_disc_sum.amount) as discount_price'),
 
                 //'cars.disable_off as _disable',
-                '_owner.id as owner_count',
+                'car_owners.id as owner_count',
                 DB::raw('IF(cars.disable_off, cars.disable_off, 0) as _disable'),
-                DB::raw('IF(_owner.client_id = IF(_w.client_id IS NULL, 0, _w.client_id) and _owner.id IS NOT NULL, 1, 0) as green_report'),
-                DB::raw('IF(_owner.client_id <> IF(_w.client_id IS NULL, 0, _w.client_id)  and _owner.id IS NOT NULL, 1, 0) as yellow_report'),
+                DB::raw('IF(car_owners.client_id = IF(worksheets.client_id IS NULL, 0, worksheets.client_id) and car_owners.id IS NOT NULL, 1, 0) as green_report'),
+                DB::raw('IF(car_owners.client_id <> IF(worksheets.client_id IS NULL, 0, worksheets.client_id)  and car_owners.id IS NOT NULL, 1, 0) as yellow_report'),
+               
+                DB::raw('IF(ransom_cars.car_id, 1, 0) as ransom_date'),
+                DB::raw('IF(ransom_cars.car_id, _purchase.cost, 0) as ransom_sum'),
+                DB::raw('IF(ransom_cars.car_id, sum(car_detailing_costs.price), 0) as ransom_detailing'),
+                DB::raw('IF(ransom_cars.car_id, IF(car_collectors.id IS NOT NULL, 1, 0), 0) as ransom_collector'),
                
                 DB::raw('IF(_purchase.id, 1, 0) as factoring_count'),
                 DB::raw('IF(_purchase.id, _purchase.cost, 0) as factoring_sum'),
-                DB::raw('IF(_purchase.id, sum(_cd_cost.price), 0) as factoring_detailing'),
-                DB::raw('IF(_purchase.id, IF(_collector.id IS NOT NULL, 1, 0), 0) as factoring_collector'),
-               
-                DB::raw('IF(_ransom_car.car_id, 1, 0) as ransom_date'),
-                DB::raw('IF(_ransom_car.car_id, _purchase.cost, 0) as ransom_sum'),
-                DB::raw('IF(_ransom_car.car_id, sum(_cd_cost.price), 0) as ransom_detailing'),
-                DB::raw('IF(_ransom_car.car_id, IF(_collector.id IS NOT NULL, 1, 0), 0) as ransom_collector'),
-            )
-            ->leftJoin('car_full_prices as _full_price', '_full_price.car_id', 'cars.id')
-            ->leftJoin('wsm_reserve_new_cars as _reserve', function($join){
-                $join->on('_reserve.car_id', 'cars.id')
-                    ->whereNull('_reserve.deleted_at');
-            })
-            ->leftJoin('wsm_reserve_new_car_contracts as _contract', '_contract.reserve_id', '_reserve.id')//контракт резерва
-            ->leftJoin('wsm_reserve_complectation_prices as _wrcp','_wrcp.contract_id', '_contract.id')//сохраненая в контракте цена
-            ->leftJoin('complectation_prices as _cp', '_cp.id', '_wrcp.complectation_price_id')//цены комплектации
-            ->leftJoin('wsm_reserve_option_prices as _wrop', '_wrop.contract_id', '_contract.id')//сохраненные в контракте опции
-            ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as _sum_option, wsm_reserve_new_cars.car_id from option_prices
-                left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
-                left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
-                left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
-                where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
-                GROUP  BY  wsm_reserve_new_cars.car_id) as _joinOptionPrice'), '_joinOptionPrice.car_id', 'cars.id'
-            )
-            ->addSelect([
-                '_joinOptionPrice._sum_option as q_sum_option',
-                '_cp.price                   as q_comprice', 
-                '_cp.id                      as q_comid', 
-            ])
-            ->leftJoin('worksheets as _w', '_w.id', '_reserve.worksheet_id')
-            ->leftJoin('discounts as _disc', function($join){
-                $join->on('_disc.worksheet_id', '=', '_w.id')
-                    ->on('_disc.modulable_id', '_reserve.id')
-                    ->on('_disc.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'));
-            })
-            ->leftJoin('discount_sums as _disc_sum', '_disc_sum.discount_id', '_disc.id')
-            ->leftJoin('car_owners as _owner', '_owner.car_id', 'cars.id')
-            ->leftJoin('car_purchases as _purchase', '_purchase.car_id', 'cars.id')
-            ->leftJoin('car_detailing_costs as _cd_cost', '_cd_cost.car_id', 'cars.id')
-            ->leftJoin('car_collectors as _collector', '_collector.car_id', 'cars.id')
-
-            ->leftJoin('ransom_cars as _ransom_car', '_ransom_car.car_id', 'cars.id');
+                DB::raw('IF(_purchase.id, sum(car_detailing_costs.price), 0) as factoring_detailing'),
+                DB::raw('IF(_purchase.id, IF(car_collectors.id IS NOT NULL, 1, 0), 0) as factoring_collector'),
+            );
+            
 
         $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
 
         $query->filter($filter);
+
+        $query->leftJoin('discount_sums as _disc_sum', '_disc_sum.discount_id', 'discounts.id');
+
+        $query->leftJoin('car_purchases as _purchase', '_purchase.car_id', 'cars.id');
         
         $countCars = DB::table($query)->select(
             DB::raw('count(id)              as count'),
@@ -349,6 +318,137 @@ class CarRepository
         )->first();
         
         return $countCars;
+    }
+
+
+
+    public function countSum(array $data = [])
+    {
+        $query = Car::query()
+            ->select(
+                'cars.id', 
+                'cfp.tuningprice as t_price', 
+                'cfp.overprice as ov_price',
+                'cfp.giftprice as gift_price',
+                DB::raw('IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) as com_price'),
+                DB::raw('IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) as op_price'),
+                DB::raw('sum(_disc_sum.amount) as discount_price'),
+            );  
+
+        $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
+
+        $query->filter($filter);
+
+        $query->leftJoin('discount_sums as _disc_sum', '_disc_sum.discount_id', 'discounts.id');
+
+        $countSum = DB::table($query)->select(
+            DB::raw('count(id)              as count'),
+            DB::raw('sum(t_price)           as tuning'),
+            DB::raw('sum(ov_price)          as overprice'),
+            DB::raw('sum(com_price)         as base'),
+            DB::raw('sum(op_price)          as option'),
+            DB::raw('sum(discount_price)    as discount'),
+            DB::raw('sum(gift_price)        as giftprice'),
+        )->first();
+
+        return $countSum;
+    }
+
+
+
+    /**
+     * ОТЧЕТ
+     */
+    public function countReport(array $data = [])
+    {
+        $query = Car::query()
+            ->select(
+                'cars.id', 
+                'car_owners.id as owner_count',
+                DB::raw('IF(cars.disable_off, cars.disable_off, 0) as _disable'),
+                DB::raw('IF(car_owners.client_id = IF(worksheets.client_id IS NULL, 0, worksheets.client_id) and car_owners.id IS NOT NULL, 1, 0) as green_report'),
+                DB::raw('IF(car_owners.client_id <> IF(worksheets.client_id IS NULL, 0, worksheets.client_id)  and car_owners.id IS NOT NULL, 1, 0) as yellow_report'),
+            );
+
+        $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
+
+        $query->filter($filter);
+
+        $countReport = DB::table($query)->select(
+            DB::raw('sum(_disable)          as disable'),
+            DB::raw('count(owner_count)     as owner'),
+            DB::raw('sum(green_report)      as green'),
+            DB::raw('sum(yellow_report)     as yellow'),
+        )->first();
+
+        return $countReport;
+    }
+
+
+
+    /**
+     * ВЫКУПНОЙ
+     */
+    public function countRansom(array $data = [])
+    {
+        $query = Car::query()
+            ->select(
+                'cars.id', 
+                DB::raw('IF(ransom_cars.car_id, 1, 0) as ransom_date'),
+                DB::raw('IF(ransom_cars.car_id, _purchase.cost, 0) as ransom_sum'),
+                DB::raw('IF(ransom_cars.car_id, sum(car_detailing_costs.price), 0) as ransom_detailing'),
+                DB::raw('IF(ransom_cars.car_id, IF(car_collectors.id IS NOT NULL, 1, 0), 0) as ransom_collector')
+            )
+            //->leftJoin('ransom_cars as _ransom_car', '_ransom_car.car_id', 'cars.id')
+            //->leftJoin('car_collectors as _collector', '_collector.car_id', 'cars.id')
+            ->leftJoin('car_purchases as _purchase', '_purchase.car_id', 'cars.id');
+            //->leftJoin('car_detailing_costs as _cd_cost', '_cd_cost.car_id', 'cars.id');
+
+        $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
+
+        $query->filter($filter);
+
+        $countRansom = DB::table($query)->select(
+            DB::raw('sum(ransom_date)       as ransom_count'),
+            DB::raw('sum(ransom_sum)        as ransom_sum'),
+            DB::raw('sum(ransom_detailing)  as ransom_detailing'),
+            DB::raw('sum(ransom_collector)  as ransom_collector'),
+        )->first();
+
+        return $countRansom;
+    }
+
+
+
+    /**
+     * ФАКТУРНЫЙ
+     */
+    public function countFactoring(array $data = [])
+    {
+        $query = Car::query()
+            ->select(
+                'cars.id', 
+                DB::raw('IF(_purchase.id, 1, 0) as factoring_count'),
+                DB::raw('IF(_purchase.id, _purchase.cost, 0) as factoring_sum'),
+                DB::raw('IF(_purchase.id, sum(car_detailing_costs.price), 0) as factoring_detailing'),
+                DB::raw('IF(_purchase.id, IF(car_collectors.id IS NOT NULL, 1, 0), 0) as factoring_collector'),
+            )
+            //->leftJoin('car_collectors as _collector', '_collector.car_id', 'cars.id')
+            ->leftJoin('car_purchases as _purchase', '_purchase.car_id', 'cars.id');
+            //->leftJoin('car_detailing_costs as _cd_cost', '_cd_cost.car_id', 'cars.id');
+
+        $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
+
+        $query->filter($filter);
+
+        $countRansom = DB::table($query)->select(
+            DB::raw('sum(factoring_sum)         as factoring_sum'),
+            DB::raw('sum(factoring_count)       as factoring_count'),
+            DB::raw('sum(factoring_detailing)   as factoring_detailing'),
+            DB::raw('sum(factoring_collector)   as factoring_collector'),
+        )->first();
+
+        return $countRansom;
     }
 
 

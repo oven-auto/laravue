@@ -37,12 +37,11 @@ use App\Repositories\Car\Car\CarRepository;
 use App\Services\Car\CalculatePaidDate;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
-use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\RequestOptions;
 use Icewind\SMB\BasicAuth;
 use Icewind\SMB\ServerFactory;
 use Illuminate\Contracts\Cache\Store;
-use Illuminate\Http\Request as HttpRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -124,14 +123,14 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
-    public function index() 
+    public function index(Request $request) 
     {
-        $data = Trafic::select('*')
-            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', '=', 'trafics.id')
-            ->orderBy('trafics.id', 'DESC')
-            ->orderBy('trafics.trafic_sex_id', 'DESC')
-            ->limit(5)
-            ->get();
+        // $data = Trafic::select('*')
+        //     ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', '=', 'trafics.id')
+        //     ->orderBy('trafics.id', 'DESC')
+        //     ->orderBy('trafics.trafic_sex_id', 'DESC')
+        //     ->limit(5)
+        //     ->get();
 
         // $data = \App\Models\Trafic::select('*')
         //     ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
@@ -144,7 +143,19 @@ class HomeController extends Controller
         
         // $data = $trafic->select('trafics.id', 'trafics.trafic_status_id')->limit(5)->where('id', 358)->get();
         
-        dd($data);
+        //dd($data);
+
+        $repo = new \App\Repositories\Car\Car\CarRepository();
+
+        //$result = $repo->paginate($request->all());
+        //$result = $repo->countRansom($request->all());
+        //$result = $repo->countFactoring($request->all());
+        //$result = $repo->countReport($request->all());
+        //$result = $repo->countSum($request->all());
+
+        $result = $repo->count($request->all());
+
+        dd($result);
     }
 
 
