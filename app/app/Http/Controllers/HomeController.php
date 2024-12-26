@@ -126,25 +126,19 @@ class HomeController extends Controller
      */
     public function index() 
     {
-        $data = Trafic::select('*')
+        $data = Trafic::select('trafics.id', 'trafics.trafic_sex_id')
+            ->select('trafics.firstname')
+            ->where('trafics.id', 13822)
+            ->orWhere('trafics.id', '<', 13000)
             ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', '=', 'trafics.id')
             ->orderBy('trafics.id', 'DESC')
             ->orderBy('trafics.trafic_sex_id', 'DESC')
             ->limit(5)
-            ->get();
+            ->limit(3);
 
-        // $data = \App\Models\Trafic::select('*')
-        //     ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
-        //     ->orderBy('trafics.id', 'DESC')
-        //     ->orderBy('trafics.trafic_sex_id', 'DESC')
-        //     ->limit(5)
-        //     ->get();
+        $res = $data->limit(10)->get();      
 
-        // $trafic = new \App\Classes\ORM\Trafic();
-        
-        // $data = $trafic->select('trafics.id', 'trafics.trafic_status_id')->limit(5)->where('id', 358)->get();
-        
-        dd($data);
+        dd($res);
     }
 
 
