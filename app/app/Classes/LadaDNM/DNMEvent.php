@@ -262,4 +262,27 @@ class DNMEvent
 
         Log::alert('Не получилось создать событие ISSUE в ЛадаДНМ.', $response->json());
     }
+
+
+
+    public function update(int $eventId, string $newStatus)
+    {
+        $data = [
+            'status' => $newStatus,
+            'occurred' => now()->format('d.m.Y H:i:s'),
+        ];
+
+        $response = $this->dnm->sendPut('/api/event/'.$eventId, $data);
+
+        if ($response->getStatusCode() == 201 || $response->getStatusCode() == 200) {
+            $dnmEvent = DnmWorksheetEvent::where('dnm_event_id', $eventId)->first();
+
+            $dnmEvent->fill([
+                'status' => $data['status'],
+            ])->save();
+
+            return;
+        }
+        
+    }
 }

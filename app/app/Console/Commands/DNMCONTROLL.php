@@ -7,6 +7,7 @@ use App\Classes\LadaDNM\DNMClientService;
 use App\Classes\LadaDNM\DNMEvent;
 use App\Classes\LadaDNM\DNMWorksheetService;
 use App\Models\Client;
+use App\Models\DnmWorksheetEvent;
 use App\Models\WsmReserveNewCar;
 use Illuminate\Console\Command;
 
@@ -57,6 +58,7 @@ class DNMCONTROLL extends Command
             '2' => 'Создать/Изменить РЛ',
             '3' => 'Создать/Изменить потребность',
             '4' => 'Создать/Изменить событие',
+            '5' => 'Изменить статус события'
         ]);
 
         $action = $this->ask('Укажи номер действия');
@@ -66,6 +68,7 @@ class DNMCONTROLL extends Command
             '2' => $this->worksheetSend($reserve),
             '3' => $this->appealSend($reserve),
             '4' => $this->eventSend($reserve),
+            '5' => $this->eventStatusSend($reserve),
             default => '',
         };
     }
@@ -109,5 +112,28 @@ class DNMCONTROLL extends Command
         $action = $this->ask('Введите действие');
 
         (new DNMEvent())->handler($reserve, $action);
+    }
+
+
+
+    public function eventStatusSend(WsmReserveNewCar $reserve)
+    {
+        $events = DnmWorksheetEvent::where('reserve_id', $reserve->id)->get();
+
+        print('Резерв '.$reserve->id);
+
+        print_r($events->map(function($item){
+            return [
+                'event_id' => $item->dnm_event_id,
+                'status' => $item->status,
+                'created' => $item->created_at->format('d.m.Y H:i'),
+            ];
+        }));
+
+        $eventId = $this->ask('Укажите event_id');
+
+        $status = $this->ask('Укажите новый статус active/canceled/planed');
+
+        (new DNMEvent())->update($eventId, $status);
     }
 }
