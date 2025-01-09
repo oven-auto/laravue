@@ -536,3 +536,13 @@
 2024/12/24 22:06:31 [error] 29#29: *1866 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 192.168.1.11, server: _, request: "POST /api/cars/count? HTTP/1.1", upstream: "fastcgi://172.16.238.11:9000", host: "192.168.1.131:8280", referrer: "http://192.168.1.11:8080/"
 2024/12/25 00:44:29 [error] 31#31: *1979 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 192.168.1.11, server: _, request: "POST /api/cars/count? HTTP/1.1", upstream: "fastcgi://172.16.238.11:9000", host: "192.168.1.131:8280", referrer: "http://192.168.1.11:8080/"
 2024/12/25 00:45:14 [error] 31#31: *2120 upstream timed out (110: Connection timed out) while reading response header from upstream, client: 192.168.1.11, server: _, request: "POST /api/cars/count? HTTP/1.1", upstream: "fastcgi://172.16.238.11:9000", host: "192.168.1.131:8280", referrer: "http://192.168.1.11:8080/"
+2024/12/28 15:22:43 [notice] 1#1: using the "epoll" event method
+2024/12/28 15:22:43 [notice] 1#1: nginx/1.25.3
+2024/12/28 15:22:43 [notice] 1#1: built by gcc 12.2.0 (Debian 12.2.0-14) 
+2024/12/28 15:22:43 [notice] 1#1: OS: Linux 5.10.0-21-amd64
+2024/12/28 15:22:43 [notice] 1#1: getrlimit(RLIMIT_NOFILE): 1048576:1048576
+2024/12/28 15:22:43 [notice] 1#1: start worker processes
+2024/12/28 15:22:43 [notice] 1#1: start worker process 28
+2024/12/28 15:22:43 [notice] 1#1: start worker process 29
+2024/12/28 15:22:43 [notice] 1#1: start worker process 30
+2024/12/28 15:22:43 [notice] 1#1: start worker process 31

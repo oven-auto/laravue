@@ -70,9 +70,10 @@ class TraficObserver
 
 
 
-    public function created(\App\Models\Trafic $trafic)
+    public function creating(\App\Models\Trafic $trafic)
     {
-        
+        if(!$trafic->manager_id && $trafic->company_id)
+            $trafic->trafic_status_id = 1;
     }
 
 

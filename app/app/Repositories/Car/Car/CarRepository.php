@@ -264,7 +264,8 @@ class CarRepository
                 'cfp.giftprice as gift_price',
                 DB::raw('IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) as com_price'),
                 DB::raw('IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) as op_price'),
-                DB::raw('sum(_disc_sum.amount) as discount_price'),
+                //DB::raw('sum(IF(_disc_sum.discount_id, _disc_sum.amount+3, 0)) as discount_price'),
+                DB::raw('(_joinds._dsum) as discount_price'),
 
                 //'cars.disable_off as _disable',
                 'car_owners.id as owner_count',
@@ -288,7 +289,10 @@ class CarRepository
 
         $query->filter($filter);
 
-        $query->leftJoin('discount_sums as _disc_sum', '_disc_sum.discount_id', 'discounts.id');
+        $query->leftJoin(DB::raw('(
+                SELECT sum(_ds.amount) as _dsum, _d.modulable_id as _dreserve FROM discounts as _d 
+                LEFT JOIN discount_sums as _ds on _ds.discount_id = _d.id group by _d.modulable_id
+            ) as _joinds'), '_joinds._dreserve', 'reserve.id');
 
         $query->leftJoin('car_purchases as _purchase', '_purchase.car_id', 'cars.id');
         

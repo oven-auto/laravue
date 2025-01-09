@@ -126,9 +126,7 @@ Trait ReservePaginatable
                         $q->select('car_id', 'logistic_system_name', 'date_at');
                     },
         
-                    'owner' => function($q){
-                        $q->select('car_id');
-                    },
+                    'owner',
                     'options' => function($q){
                         $q->with(['current_price','prices']);
                     },
