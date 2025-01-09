@@ -51,6 +51,7 @@ class DNMEvent
             'dnm_appeal_id' => $data['car_id'],
             'status' => $data['status'],
             'code' => $data['code'],
+            'event_type' => $data['event_type'],
         ]); 
     }
 
