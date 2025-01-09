@@ -126,6 +126,7 @@ class DNMCONTROLL extends Command
             return [
                 'event_id' => $item->dnm_event_id,
                 'status' => $item->status,
+                'event_type' => $item->event_type,
                 'created' => $item->created_at->format('d.m.Y H:i'),
             ];
         }));
