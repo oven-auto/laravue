@@ -133,6 +133,10 @@ abstract Class ORMModel
 
     public function __call($name, $arguments)
     {
+        $reflectionClass = new ReflectionClass($this->query);
+        dump(func_get_args());
+        dump($reflectionClass->getMethod($name));
+
         $this->query->$name($arguments);
         
         return $this;

@@ -11,7 +11,7 @@ class TraficZoneController extends Controller
 {
     public function index(Request $request)
     {
-        $buttons = TraficZone::with('childrens')->where('parent',0)->get();
+        $buttons = TraficZone::with('childrens')->select('*')->where('parent',0)->get();
 
         return new TraficListCollection($buttons);
     }

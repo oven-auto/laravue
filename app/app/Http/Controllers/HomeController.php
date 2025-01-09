@@ -125,37 +125,8 @@ class HomeController extends Controller
      */
     public function index(Request $request) 
     {
-        // $data = Trafic::select('*')
-        //     ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', '=', 'trafics.id')
-        //     ->orderBy('trafics.id', 'DESC')
-        //     ->orderBy('trafics.trafic_sex_id', 'DESC')
-        //     ->limit(5)
-        //     ->get();
 
-        // $data = \App\Models\Trafic::select('*')
-        //     ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
-        //     ->orderBy('trafics.id', 'DESC')
-        //     ->orderBy('trafics.trafic_sex_id', 'DESC')
-        //     ->limit(5)
-        //     ->get();
 
-        // $trafic = new \App\Classes\ORM\Trafic();
-        
-        // $data = $trafic->select('trafics.id', 'trafics.trafic_status_id')->limit(5)->where('id', 358)->get();
-        
-        //dd($data);
-
-        $repo = new \App\Repositories\Car\Car\CarRepository();
-
-        //$result = $repo->paginate($request->all());
-        //$result = $repo->countRansom($request->all());
-        //$result = $repo->countFactoring($request->all());
-        //$result = $repo->countReport($request->all());
-        //$result = $repo->countSum($request->all());
-
-        $result = $repo->count($request->all());
-
-        dd($result);
     }
 
 
