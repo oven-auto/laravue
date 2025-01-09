@@ -264,10 +264,8 @@ class CarRepository
                 'cfp.giftprice as gift_price',
                 DB::raw('IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) as com_price'),
                 DB::raw('IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) as op_price'),
-                //DB::raw('sum(IF(_disc_sum.discount_id, _disc_sum.amount+3, 0)) as discount_price'),
                 DB::raw('(_joinds._dsum) as discount_price'),
 
-                //'cars.disable_off as _disable',
                 'car_owners.id as owner_count',
                 DB::raw('IF(cars.disable_off, cars.disable_off, 0) as _disable'),
                 DB::raw('IF(car_owners.client_id = IF(worksheets.client_id IS NULL, 0, worksheets.client_id) and car_owners.id IS NOT NULL, 1, 0) as green_report'),
@@ -283,7 +281,6 @@ class CarRepository
                 DB::raw('IF(_purchase.id, sum(car_detailing_costs.price), 0) as factoring_detailing'),
                 DB::raw('IF(_purchase.id, IF(car_collectors.id IS NOT NULL, 1, 0), 0) as factoring_collector'),
             );
-            
 
         $filter = app()->make(CarFilter::class, ['queryParams' => ($data)]);
 
