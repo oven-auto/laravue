@@ -5,8 +5,6 @@ namespace App\Http\Controllers\Api\v1\Back\Car\Complectation;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Car\Complectation\ComplectationListRequest;
 use App\Http\Resources\Car\Complectation\ComplectationListResource;
-use App\Http\Resources\Car\Factory\FactorySaveResource;
-use App\Models\Complectation;
 use App\Models\ComplectationPrice;
 use App\Repositories\Car\Complectation\ComplectationRepository;
 use Carbon\Carbon;

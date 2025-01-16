@@ -29,6 +29,7 @@ class ComplectationListResource extends JsonResource
                 'price' => $this->current_price->price,
                 'author' => $this->current_price->curprice->author->cut_name,
                 'begin_at' => $this->current_price->begin_at->format('d.m.Y'),
+                'created_at' => $this->current_price->curprice->created_at->format('d.m.Y')
             ] : [],
             'file' => $this->file ? 1 : 0,
             'factory' => $this->factory->only(['city','country']),

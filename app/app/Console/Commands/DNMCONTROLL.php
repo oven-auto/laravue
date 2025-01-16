@@ -58,7 +58,8 @@ class DNMCONTROLL extends Command
             '2' => 'Создать/Изменить РЛ',
             '3' => 'Создать/Изменить потребность',
             '4' => 'Создать/Изменить событие',
-            '5' => 'Изменить статус события'
+            '5' => 'Изменить статус события',
+            '6' => 'Показать события резерва',
         ]);
 
         $action = $this->ask('Укажи номер действия');
@@ -69,6 +70,7 @@ class DNMCONTROLL extends Command
             '3' => $this->appealSend($reserve),
             '4' => $this->eventSend($reserve),
             '5' => $this->eventStatusSend($reserve),
+            '6' => $this->eventShow($reserve),
             default => '',
         };
     }
@@ -136,5 +138,23 @@ class DNMCONTROLL extends Command
         $status = $this->ask('Укажите новый статус active/canceled/planed');
 
         (new DNMEvent())->update($eventId, $status);
+    }
+
+
+
+    public function eventShow(WsmReserveNewCar $reserve)
+    {
+        $events = DnmWorksheetEvent::where('reserve_id', $reserve->id)->get();
+
+        print('Резерв '.$reserve->id);
+
+        print_r($events->map(function($item){
+            return [
+                'event_id' => $item->dnm_event_id,
+                'status' => $item->status,
+                'event_type' => $item->event_type,
+                'created' => $item->created_at->format('d.m.Y H:i'),
+            ];
+        }));
     }
 }
