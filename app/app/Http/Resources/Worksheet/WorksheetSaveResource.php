@@ -16,6 +16,7 @@ class WorksheetSaveResource extends JsonResource
     {
         return [
             'data' => [
+                'close_at' => $this->closeDate,
                 'worksheet_status' => $this->status->name,
                 'id' => $this->id,
                 'trafic_id' => $this->trafic_id,

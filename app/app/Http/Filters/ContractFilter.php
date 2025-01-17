@@ -4,8 +4,6 @@ namespace App\Http\Filters;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Schema(
@@ -15,6 +13,7 @@ use Illuminate\Support\Facades\DB;
 class ContractFilter extends AbstractFilter
 {
     public const IDS            = 'ids';
+
     public const INIT           = 'init';
 
     /**  @OA\Property(
@@ -130,6 +129,16 @@ class ContractFilter extends AbstractFilter
      * */
     public const SALE_MANAGER   = 'sale_manager';
 
+    /**  @OA\Property(
+     * format="string", 
+     * description="Полнотекстовый поиск, если перед строкой поиска подставить id@ будет искать по id машины. Возможны следующие уточнения:
+     * id@ - id машины (точный поиск), vin@ - вин машины, order@ - номер заказа, client@ - фамилия клиента", 
+     * property="search", 
+     * type="string", 
+     * example="1122")
+     * */
+    public const SEARCH = 'search';//Полнотекстовы поиск
+
 
 
     protected function getCallbacks(): array
@@ -147,6 +156,7 @@ class ContractFilter extends AbstractFilter
             self::DKP_MANAGER       => [$this, 'dkp_manager'],
             self::PDKP_MANAGER      => [$this, 'pdkp_manager'],
             self::SALE_MANAGER      => [$this, 'sale_manager'],
+            self::SEARCH            => [$this, 'search'],
         ];
     }
 
@@ -167,7 +177,7 @@ class ContractFilter extends AbstractFilter
         $builder->leftJoin('worksheets',   'worksheets.id',  'wsm_reserve_new_cars.worksheet_id'); //РЛ
         $builder->leftJoin('clients',      'clients.id',     'worksheets.client_id'); //Клиент
         $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id');
-
+        $builder->leftJoin('car_orders', 'car_orders.car_id', 'cars.id');
 
     }
 
@@ -265,5 +275,36 @@ class ContractFilter extends AbstractFilter
     public function sale_manager(Builder $builder, array $val)
     {
         $builder->whereIn('wsm_reserve_sales.decorator_id', $val);
+    }
+
+
+
+    public function search(Builder $builder, string $value)
+    {
+        $value = str_contains($value, '@') ? $value : '@'.$value;
+        $value = explode('@', $value);
+        list($column, $val) = $value;
+
+        switch($column){
+            case 'id':
+                $builder->where('cars.id', $val);
+                break;
+            case 'vin':
+                $builder->where('cars.vin', 'LIKE', '%' . $val . '%');
+                break;
+            case 'order':
+                $builder->where('car_orders.order_number', 'LIKE', '%' . $val . '%');
+                break;
+            case 'client':
+                $builder->where('clients.lastname', 'LIKE', '%' . $val . '%');
+                break;
+            default:
+                $builder->where(function ($query) use ($val) {
+                    $query->where('cars.vin',                   'LIKE', '%' . $val . '%')
+                        ->orWhere('cars.id',                    'LIKE', '%' . $val . '%')
+                        ->orWhere('car_orders.order_number',    'LIKE', '%' . $val . '%');
+                });
+                break;
+        }
     }
 }

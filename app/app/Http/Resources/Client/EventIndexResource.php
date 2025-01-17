@@ -83,8 +83,8 @@ class EventIndexResource extends JsonResource
             'me_in_reporters' => ($this->reporters->contains('id', auth()->user()->id)) ? 1 : 0,
             'personal' => $this->event->personal,
 
-            'links' => $this->event->links_count,
-            'files' => $this->event->files_count,
+            'links' => $this->links->count(),
+            'files' => $this->files->count(),
         ];
     }
 }

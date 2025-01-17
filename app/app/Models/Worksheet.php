@@ -292,4 +292,11 @@ class Worksheet extends Model
             return 1;
         return 0;
     }
+
+
+
+    public function getCloseDateAttribute()
+    {
+        return $this->close_at ? $this->close_at->format('d.m.Y (H:i)') : '';
+    }
 }

@@ -66,6 +66,8 @@ class TraficObserver
     public function deleting(\App\Models\Trafic $trafic)
     {
         $trafic->trafic_status_id = 5;
+
+        $trafic->processing_at = now();
     }
 
 

@@ -2,7 +2,9 @@
 
 namespace App\Http\Resources\Client;
 
+use App\Helpers\Url\WebUrl;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Route;
 
 class EventSaveResource extends JsonResource
 {
@@ -65,12 +67,12 @@ class EventSaveResource extends JsonResource
                 'personal' => $this->event->personal,
                 'status' => $this->confirm,
                 'fillable_properties' => $params,
-                'method' => \Route::current()->methods(),
+                'method' => Route::current()->methods(),
                 'event_status_id' => $this->id,
                 'files' => $this->event->files->map(function($itemFile){
                     $arr = explode('/',$itemFile->file);
                     return [
-                        'file' => \WebUrl::make_link($itemFile->file),
+                        'file' => WebUrl::make_link($itemFile->file),
                         'author' => $itemFile->author->cut_name,
                         'created_at' =>$itemFile->created_at->format('d.m.Y (H:i)'),
                         'name' => end($arr),
@@ -84,8 +86,8 @@ class EventSaveResource extends JsonResource
                         'created_at' => $item->pivot->created_at ? $item->pivot->created_at->format('d.m.Y (H:i)') : ''
                     ];
                 }),
-                'file_count' => $this->event->files->count(),
-                'link_count' => $this->event->links->count(),
+                'file_count' => $this->files->count(),
+                'link_count' => $this->links->count(),
             ],
             'success' => 1,
         ];
