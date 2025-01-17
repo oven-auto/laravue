@@ -61,7 +61,7 @@ class DNMWorksheetService
             return 1;
         }
 
-        Log::alert('Не смог создать РЛ.');
+        Log::alert('Не смог создать РЛ (WorksheetId='.$this->worksheet->id.').', $response->json());
     }
 
 
@@ -76,7 +76,7 @@ class DNMWorksheetService
             return 1;
         }
 
-        Log::alert('Не смог изменить РЛ.');
+        Log::alert('Не смог изменить РЛ (WorksheetId='.$this->worksheet->id.').', $response->json());
     }
 
 
@@ -100,11 +100,15 @@ class DNMWorksheetService
 
         $this->dnmWorksheet = DnmWorksheet::where('worksheet_id', $worksheet->id)->first() ?? new DnmWorksheet();
 
-        Log::alert('Пробую отправить данные по РЛ в ЛадаДНМ.');
-
         if ($this->check())
+        {
+            Log::alert('Пробую обновить РЛ (WorksheetId='.$worksheet->id.')');
             $this->update();
+        }
         else
+        {
+            Log::alert('Пробую создать РЛ (WorksheetId='.$worksheet->id.')');
             $this->create();
+        }
     }
 }

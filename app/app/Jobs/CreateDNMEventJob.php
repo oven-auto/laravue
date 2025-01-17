@@ -2,7 +2,10 @@
 
 namespace App\Jobs;
 
+use App\Classes\LadaDNM\DNMAppealService;
+use App\Classes\LadaDNM\DNMClientService;
 use App\Classes\LadaDNM\DNMEvent;
+use App\Classes\LadaDNM\DNMWorksheetService;
 use App\Events\DNMVisitEvent;
 use App\Models\WsmReserveNewCar;
 use Illuminate\Bus\Queueable;
@@ -34,12 +37,18 @@ class CreateDNMEventJob implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Джоба для отправки события в ДНМ
      *
      * @return void
      */
     public function handle()
     {
-        $service = (new DNMEvent())->handler($this->reserve, $this->action);
+        (new DNMClientService())->save($this->reserve);
+
+        (new DNMWorksheetService())->save($this->reserve->worksheet);
+
+        (new DNMAppealService())->save($this->reserve);
+
+        (new DNMEvent())->handler($this->reserve, $this->action);
     }
 }

@@ -70,10 +70,14 @@ class DNMAppealService
             'vin'   => $reserve->car->vin,
         ]);
 
-        if ($response->getStatusCode() == 201)
+        if ($response->getStatusCode() == 200 || $response->getStatusCode() == 201)
+        {
             $this->write($response, $reserve);
-        else
-            Log::alert('Не удалось создать потребность в DNM.', $response->json());
+
+            return;
+        }
+        
+        Log::alert('Не удалось создать потребность в DNM резерва '.$reserve->id.'.', $response->json());
     }
 
 
@@ -92,10 +96,14 @@ class DNMAppealService
             'vin'   => $reserve->car->vin,
         ]);
         
-        if ($response->getStatusCode() == 200)
+        if ($response->getStatusCode() == 200 || $response->getStatusCode() == 201)
+        {
             $this->write($response, $reserve);
-        else
-            Log::alert('Не удалось изменить потребность в DNM.', $response->json());
+
+            return;
+        }
+        
+        Log::alert('Не удалось изменить потребность в DNM резерва '.$reserve->id.'.', $response->json());
     }
 
 
@@ -119,13 +127,15 @@ class DNMAppealService
      */
     public function save(WsmReserveNewCar $reserve)
     {
-        (new DNMClientService())->save($reserve);
-
-        (new DNMWorksheetService())->save($reserve->worksheet);
-
         if($this->isExist($reserve))
+        {
+            Log::alert('Пробую обновить потребность резерва '.$reserve->id.' (CarID='.$reserve->car->id.').');
             $this->update($reserve);
+        }
         else
+        {
+            Log::alert('Пробую создать потребность резерва '.$reserve->id.' (CarID='.$reserve->car->id.').');
             $this->create($reserve);
+        }
     }
 }

@@ -32,7 +32,7 @@ class CreateDNMReserveJob implements ShouldQueue
     }
 
     /**
-     * Execute the job.
+     * Джоба для создания резерва в ДНМ
      *
      * @return void
      */

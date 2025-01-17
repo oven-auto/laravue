@@ -123,7 +123,7 @@ class DNMClientService
             return 1;
         }
 
-        Log::alert('Не получилось создать клиента на портале ДНМ', $response->json());
+        Log::alert('Не получилось создать клиента (ClientId='.$this->obj->id.') на портале ДНМ', $response->json());
     }
 
 
@@ -134,7 +134,7 @@ class DNMClientService
     private function update()
     {
         $data = $this->fill();
-        //dd($data);
+        
         $response = $this->dnmService->sendPut('/api/client/' . $this->dnmClient->dnm_id, $data);
         
         if ($response->getStatusCode() == 200) {
@@ -142,7 +142,7 @@ class DNMClientService
             return 1;
         }
 
-        Log::alert('Не получилось изменить клиента на портале ДНМ', $response->json());
+        Log::alert('Не получилось изменить клиента (ClientId='.$this->obj->id.') на портале ДНМ', $response->json());
     }
 
 
@@ -172,9 +172,15 @@ class DNMClientService
         $this->dnmClient = \App\Models\DnmClient::where('client_id', $this->obj->id)->first() ?? new DnmClient();
 
         if ($this->check())
+        {
+            Log::alert('Пробую обновить клиента (ClientId='.$this->obj->id.').');
             $this->update();
+        }
         else
+        {
+            Log::alert('Пробую создать клиента (ClientId='.$this->obj->id.').');
             $this->create();
+        }
     }
 
 
