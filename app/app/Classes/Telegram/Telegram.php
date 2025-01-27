@@ -83,8 +83,9 @@ class Telegram
     public function sendMessage($chatId, $message, $options = [])
     {
         $options['chat_id'] = $chatId;
+        
         $options['text'] = $message;
         
-        return $this->service->sendMessage($options);
+        $this->service->sendMessage($options);
     }
 }
