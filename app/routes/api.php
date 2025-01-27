@@ -787,7 +787,7 @@ Route::middleware(['userfromtoken'])->group(function () {
             ->middleware(['permission.trafic.list:client_delete']);
 
         Route::prefix('car')->middleware('permission.trafic.list:client_add')->group(function () {
-            Route::patch('owner/{car}', [ClientChangeCarOwner::class, 'change']);
+            
             //список брендов
             Route::get('brands', 'BrandCarController');
             //количество машин клиента
@@ -801,6 +801,8 @@ Route::middleware(['userfromtoken'])->group(function () {
             //список машин конкретного клиета
             Route::get('/list/{client}', 'ClientCarController@index');
             //Получить конкретную машину
+            Route::patch('{car}/owner', [ClientChangeCarOwner::class, 'change']);
+
             Route::get('{car}', 'ClientCarController@show');
             //изменить машину
             Route::patch('{car}', 'ClientCarController@update');

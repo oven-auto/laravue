@@ -653,7 +653,7 @@
                 }
             }
         },
-        "/client/car/owner/{id}": {
+        "/client/car/{id}/owner": {
             "patch": {
                 "tags": [
                     "Клиенты"

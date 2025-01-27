@@ -10,7 +10,7 @@ class ClientChangeCarOwner extends Controller
 {
         /**
      * @OA\Patch(
-     *      path="/client/car/owner/{id}",
+     *      path="/client/car/{id}/owner",
      *      operationId="client_car",
      *      tags={"Клиенты"},
      *      summary="Изменить владельца авто",
