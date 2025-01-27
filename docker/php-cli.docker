@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y apt-utils \
         libzip-dev \
         zip \
 		-y watch \
+		supervisor \
 	&& docker-php-ext-configure zip \
 	&& docker-php-ext-install zip \
     && docker-php-ext-install pdo_mysql \
@@ -21,6 +22,8 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 RUN rm -rf /etc/localtime
 RUN ln -s /usr/share/zoneinfo/Europe/Moscow /etc/localtime
 RUN echo "Europe/Moscow" > /etc/timezone
+CMD php /var/www/artisan tgbot:run
+CMD php /var/www/artisan queue:work
 
 WORKDIR /var/www
 
