@@ -32,7 +32,7 @@ class TelegramBot extends Command
             }
             catch(\Exception $e)
             {
-                Log::channel('telegram')->error('Ошибка в цикле');
+                Log::channel('telegram')->error('Ошибка в цикле: '.$e->getMessage());
             }
         }
     }
