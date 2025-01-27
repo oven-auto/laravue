@@ -42,8 +42,6 @@ class OverdueCountController extends Controller
                 'trafics'           => $trafic,
                 'worksheets'        => $subAction + $worksheet,
                 'events'            => $events,
-                'tt1' => $subAction,
-                'tt2' => $worksheet,
             ],
             'success' => 1
         ]);
