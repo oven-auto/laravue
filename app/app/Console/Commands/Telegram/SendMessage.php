@@ -52,6 +52,8 @@ class SendMessage extends Command
             ->first();
         
         dump("Отправляю -> ".$user->user_id);
-        TelegramJob::dispatch($user->user_id, 'test', $options);
+
+        
+        (TelegramJob::dispatch($user->user_id, 'test', $options));
     }
 }

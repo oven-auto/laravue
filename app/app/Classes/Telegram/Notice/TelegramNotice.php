@@ -92,7 +92,7 @@ Class TelegramNotice
     {
         $telegram = \App\Classes\Telegram\Telegram::init();
 
-        $telegram->sendMessage($user, $message, $options);
+        return $telegram->sendMessage($user, $message, $options);
     }
 
 
