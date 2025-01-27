@@ -53,10 +53,10 @@ class SendMessage extends Command
         
         dump("Отправляю -> ".$user->user_id);
 
-        $telegram = \App\Classes\Telegram\Telegram::init();
+        // $telegram = \App\Classes\Telegram\Telegram::init();
 
-        $telegram->sendMessage($user->user_id, 'test', $options);
+        // $telegram->sendMessage($user->user_id, 'test', $options);
 
-        //(TelegramJob::dispatch($user->user_id, 'test', $options));
+        (TelegramJob::dispatch($user->user_id, 'test', $options));
     }
 }
