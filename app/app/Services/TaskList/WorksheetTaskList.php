@@ -33,7 +33,7 @@ Class WorksheetTaskList
         $subAction = SubAction::query()
             ->leftJoin('sub_action_executors', 'sub_action_executors.sub_action_id', 'sub_actions.id')
             ->where('sub_action_executors.user_id', $user)
-            ->WhereDate('sub_actions.created_at', '<', now()->addHour(1))
+            ->Where('sub_actions.created_at', '<', now()->addHour(1))
             ->where('sub_actions.status', 1)
             ->count() ?? 0;
 
