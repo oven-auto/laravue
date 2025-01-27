@@ -84,7 +84,6 @@ Class TelegramNotice
         
         foreach($users as $itemUser)
             TelegramJob::dispatch($itemUser, $this->handler->message, $options);
-            //$this->telegram->sendMessage($itemUser, $this->handler->message, $options);
     }
 
 
