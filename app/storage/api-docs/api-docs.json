@@ -653,6 +653,53 @@
                 }
             }
         },
+        "/client/car/owner/{id}": {
+            "patch": {
+                "tags": [
+                    "Клиенты"
+                ],
+                "summary": "Изменить владельца авто",
+                "description": "Изменить владельца авто",
+                "operationId": "client_car",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор мышины",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Новый владелец",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "owner"
+                                ],
+                                "properties": {
+                                    "owner": {
+                                        "type": "integer",
+                                        "format": "integer",
+                                        "example": "55"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/discountlist": {
             "get": {
                 "tags": [
@@ -1985,6 +2032,15 @@
                         "enum": [
                             "sale_manager"
                         ]
+                    },
+                    "search": {
+                        "description": "Полнотекстовый поиск, если перед строкой поиска подставить id@ будет искать по id машины. Возможны следующие уточнения:\n     * id@ - id машины (точный поиск), vin@ - вин машины, order@ - номер заказа, client@ - фамилия клиента",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "search"
+                        ]
                     }
                 },
                 "type": "object"
@@ -2635,6 +2691,10 @@
         {
             "name": "CRUD Условия отгрузки",
             "description": "CRUD Условия отгрузки"
+        },
+        {
+            "name": "Клиенты",
+            "description": "Клиенты"
         },
         {
             "name": "Журнал скидок",

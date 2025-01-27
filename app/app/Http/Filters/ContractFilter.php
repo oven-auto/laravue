@@ -296,7 +296,10 @@ class ContractFilter extends AbstractFilter
                 $builder->where('car_orders.order_number', 'LIKE', '%' . $val . '%');
                 break;
             case 'client':
-                $builder->where('clients.lastname', 'LIKE', '%' . $val . '%');
+                $builder->where(function($subQ) use ($val){
+                    $subQ->where('clients.lastname', 'LIKE', '%'.$val.'%');
+                    $subQ->orWhere('clients.company_name', 'LIKE', '%'.$val.'%');
+                });
                 break;
             default:
                 $builder->where(function ($query) use ($val) {

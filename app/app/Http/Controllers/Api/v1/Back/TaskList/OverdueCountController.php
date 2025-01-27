@@ -18,9 +18,9 @@ class OverdueCountController extends Controller
         EventTaskList $eventRepo 
     )
     {
-        $this->repo['trafic'] = $traficRepo;
-        $this->repo['worksheet'] = $worksheetRepo;
-        $this->repo['event'] = $eventRepo;
+        $this->repo['trafic']       = $traficRepo;
+        $this->repo['worksheet']    = $worksheetRepo;
+        $this->repo['event']        = $eventRepo;
     }
 
 
@@ -41,7 +41,9 @@ class OverdueCountController extends Controller
             'data' => [
                 'trafics'           => $trafic,
                 'worksheets'        => $subAction + $worksheet,
-                'events'            => $events
+                'events'            => $events,
+                'tt1' => $subAction,
+                'tt2' => $worksheet,
             ],
             'success' => 1
         ]);

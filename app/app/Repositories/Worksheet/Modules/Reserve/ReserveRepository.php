@@ -223,7 +223,7 @@ class ReserveRepository
         $filter = app()->make(ReserveNewCarFilter::class, ['queryParams' => ($data)]);
 
         $query->filter($filter);
-        
+       
         $reserves = $query->orderBy('wsm_reserve_new_cars.id', 'DESC')->simplePaginate($paginate);
 
         if(DealerColorImage::select(DB::raw('count(id) as count'))->first()->toArray()['count'] == 0)

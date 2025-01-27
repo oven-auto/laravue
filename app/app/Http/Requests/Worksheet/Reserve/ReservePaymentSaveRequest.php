@@ -26,8 +26,8 @@ class ReservePaymentSaveRequest extends FormRequest
         return [
             'reserve_id' => 'required',
             'payment_id' => 'required',
-            'amount' => 'required',
-            'date_at'   => 'required',
+            'amount' =>     'required|numeric',
+            'date_at'   =>  'required',
         ];
     }
 }

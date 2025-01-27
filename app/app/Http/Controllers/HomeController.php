@@ -48,6 +48,8 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redis;
 use ReflectionClass;
+use SplQueue;
+use SplStack;
 use Telegram\Bot\Api;
 use Telegram\Bot\FileUpload\InputFile;
 use ZipArchive;
@@ -118,15 +120,238 @@ class HomeController extends Controller
 
 
 
-    /**
-     * Show the application dashboard.
-     *
-     * @return \Illuminate\Contracts\Support\Renderable
-     */
+    private function priority(string $key) : int
+    {
+        return match($key){
+            '(' => 0,
+            ')' => 0,
+            '+' => 1,
+            '-' => 1,
+            '*' => 2,
+            '/' => 2,
+            '^' => 3,
+            '~' => 4,
+            'default' => 0,
+        };
+    }
+
+
+
+    public function isOperand(string $key) : bool
+    {
+        $operand = ['+', '-', '*', '/', '^', '~', '(', ')'];
+
+        return in_array($key, $operand) ? 1 : 0;
+    }
+
+
+
+    public function isUnarMinus(string $key)
+    {
+        return $key == '~' ? 1 : 0;
+    }
+
+
+
+    public function toInfix(string $data) : SplQueue
+    {
+        $queue = new SplQueue();
+        $tmpVal = '';
+        
+        for($i = 0; $i < mb_strlen($data); $i++)
+        {
+            if($this->isOperand($data[$i]))
+            {
+                if($tmpVal)
+                    $queue->push($tmpVal);
+
+                
+                if(($queue->count() == 0 || $this->isOperand($data[$i-1])) && $data[$i] == '-')
+                {
+                    $queue->push(0);
+                    $queue->push('-');
+                    continue;
+                }
+
+
+                $queue->push($data[$i]);
+                $tmpVal = '';
+            }
+            else
+            {
+                $tmpVal .= $data[$i];
+            }
+
+            if($i == mb_strlen($data)-1)
+                if($tmpVal)
+                    $queue->push($tmpVal);
+        }
+
+        return $queue;
+    }
+
+
+
+    public function postFix(SplQueue $data) : SplQueue
+    {
+        $currentPriority    = 0;
+        $priority           = 0;
+        $stackString        = new SplQueue();
+        $stackOper          = new SplQueue();
+        
+        while($data->count())
+        {   
+            if(!$this->isOperand($data->bottom()))
+                $stackString->push($data->shift());
+
+            else
+            {
+                $currentPriority = $this->priority($data->bottom());                
+
+                if($data->bottom() == ')')
+                {
+                    while($stackOper->count())
+                    {
+                        if($stackOper->top() == '(')
+                            break;
+                        $stackString->push($stackOper->pop());
+                    }
+                    dump($stackOper);
+                    $priority = $currentPriority;
+                    continue;
+                }
+
+                // if($currentPriority <= $priority)
+                // {
+                //     while($stackOper->count())
+                //     {
+                //         if($stackOper->top() == '(')
+                //             break;
+                //         $stackString->push($stackOper->pop());
+                //     }
+                // }
+
+                $stackOper->push($data->shift());
+
+                $priority = $currentPriority;
+            }
+
+            if($data->count()==0)
+                while($stackOper->count())  
+                    $stackString->push($stackOper->pop());
+        }
+
+        return $stackString;
+    }
+
+
+
+    public function printStack($stack)
+    {
+        $res = '';
+        foreach($stack as $item)
+            $res .= $item;
+        dump($res);
+    }
+
+
+
+    public function calculate(SplQueue $queue) : int|float
+    {
+        $valStack = new SplStack();
+        $y = 0;
+        $x = 0;
+        
+        foreach($queue as $item)
+        {
+            if($item)
+                if(!$this->isOperand($item))
+                {
+                    $valStack->push($item);
+                }
+                else
+                {   
+                    if($this->isUnarMinus($item))
+                    {
+                        $y = 0;
+                        $x = $valStack->pop();
+                    }
+                    else
+                    {
+                        $y = $valStack->pop();
+                        $x = $valStack->pop();
+                    }
+
+                    
+                    dump($x . ' & '.$y);
+                    $valStack->push(match($item){
+                        '+' => $this->summation($x, $y),
+                        '-' => $this->subtraction($x, $y),
+                        '~' => $this->subtraction($x, $y),
+                        '*' => $this->multiplication($x, $y),
+                        '/' => $this->division($x, $y),
+                        '^' => $this->exponentiation($x, $y),
+                        'default' => throw new \Exception('Error'),
+                    });
+                }
+        }
+
+        return $valStack->top();
+    }
+
+
+
+    public function summation(int|float $x, int|float $y)  : int|float
+    {
+        return $x + $y;
+    }
+
+
+
+    public function subtraction(int|float $x, int|float $y) : int|float
+    {
+        return $x - $y;
+    }
+
+
+
+    public function multiplication(int|float $x, int|float $y) : int|float
+    {
+        return $x * $y;
+    }
+
+
+
+    public function division(int|float $x, int|float $y) : int|float
+    {
+        return $x / $y;
+    }
+
+
+
+    public function exponentiation(int|float $x, int|float $y) : int|float
+    {
+        return pow($x, $y);
+    }
+
+
+
     public function index(Request $request) 
     {
+        $data = $request->has('data') ? $request->data : '1*(2+3)/2';
+        dump('INFIX');
+        $res = $this->toInfix($data);
+        foreach($res as $item)
+            echo $item;
 
+        dump('POSTFIX');
+        $res = $this->postFix($res);   
+        foreach($res as $item)
+            echo $item;
 
+        //$res = $this->calculate($res);
+
+        dump($res);
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Classes\Telegram;
 
+use Illuminate\Support\Facades\Log;
 use Telegram\Bot\Objects\Update;
 
 Class Scenario
@@ -18,6 +19,7 @@ Class Scenario
     private static function getNameSpace()
     {
         $reflection = new \ReflectionClass(self::class);
+
         return $reflection->getNamespaceName();
     }
 
@@ -26,7 +28,25 @@ Class Scenario
     public function handler()
     {
         $messages = $this->telegram->getUpdates();
+        
+        try {
+            foreach($messages as $item)
+            {
+                $str = join(' ', [
+                    'id'            => $item->message->from->id,
+                    'firstname'     => $item->message->from->first_name,
+                    'username'      => $item->message->from->username,
+                    'text'          => '['.$item->message->text.']',
+                ]);
 
+                Log::channel('telegram')->info($str);
+            }
+        }
+        catch(\Exception $e)
+        {
+            dump($e->getMessage());
+        }
+        
         foreach($messages as $item)
         {
             $callback   = @($item->callbackQuery->data);

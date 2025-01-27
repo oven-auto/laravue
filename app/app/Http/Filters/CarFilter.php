@@ -549,6 +549,8 @@ class CarFilter extends AbstractFilter
      */
     public const SORT = 'sort';
 
+    public const SALE_DATE = 'sale_date';
+
 
 
     public const LOGISTIC_DATES = 'logistic_dates';
@@ -604,6 +606,7 @@ class CarFilter extends AbstractFilter
             self::HAS_SALE              => [$this, 'hasSale'],
             self::POWER                 => [$this, 'power'],
             self::SORT                  => [$this, 'sort'],
+            self::SALE_DATE             => [$this, 'saleDate'],
         ];
     }
 
@@ -628,6 +631,12 @@ class CarFilter extends AbstractFilter
             'stock_new'     => $builder
                 ->orderBy(DB::raw('IF(stocking_date IS NOT NULL, 0, 1)'))
                 ->orderBy('stocking_date', 'DESC'),
+            'name_asc' => $builder
+                ->orderBy('brands.name', 'ASC')
+                ->orderBy('marks.name', 'ASC'),
+            'name_desc' => $builder
+                ->orderBy('brands.name', 'DESC')
+                ->orderBy('marks.name', 'DESC'),
             default => '',
         };
     }
@@ -794,68 +803,20 @@ class CarFilter extends AbstractFilter
                     $join->on('discounts.modulable_id', 'reserve.id');
             });
 
-        
-
-        // $builder->addSelect([
-        //     'cp.id                      as _cp_id', 
-        //     'cp.price                   as _cp_price', 
-        //     'tuning.price               as _tuning_price',
-        //     'gift.price                 as _gift_price', 
-        //     'part.price                 as _part_price', 
-        //     'overprice.price            as _over_price',
-        //     'joinOptionPrice.sum_option as _sum_option'
-        // ]);
-
-        $builder
-            // ->leftJoin('brands', 'brands.id', 'cars.brand_id') //Бренд
-            // ->leftJoin('marks', 'marks.id', 'cars.mark_id') //Модель
-            // ->leftJoin('complectations', 'complectations.id', 'cars.complectation_id') //Комплектация
-            // ->leftJoin('motors', 'motors.id', 'complectations.motor_id') //Мотор
-            // ->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id') //Товарный признак
-            // ->leftJoin('car_markers', 'car_markers.car_id', 'cars.id') //Контрмарка
-            // ->leftJoin('car_orders', 'car_orders.car_id', 'cars.id') //Заказ
-            // ->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id') //car type status
-            // ->leftJoin('car_date_logistics', 'car_date_logistics.car_id', 'cars.id')//логистика
-            // ->leftJoin('car_technics', 'car_technics.car_id', 'cars.id')//техник по приемке
-            // ->leftJoin('car_delivery_terms', 'car_delivery_terms.car_id', 'cars.id')//условие поставки
-            // ->leftJoin('car_paid_dates', 'car_paid_dates.car_id', 'cars.id')//кредитный период
-            // ->leftJoin('car_controll_paid_dates', 'car_controll_paid_dates.car_id', 'cars.id')//контроль оплаты
-            // ->leftJoin('car_collectors', 'car_collectors.car_id', 'cars.id')//держатель залога
-            // ->leftJoin('car_owners', 'car_owners.car_id', 'cars.id')
-            // ->leftJoin('car_detailing_costs', 'car_detailing_costs.car_id', 'cars.id')
-            // ->leftJoin('car_purchases', 'car_purchases.car_id', 'cars.id')
-            // ->leftJoin('car_options', 'car_options.car_id', 'cars.id')
-            // ->leftJoin('ransom_cars', 'ransom_cars.car_id', 'cars.id')
-            // ->leftJoin('dealer_colors', 'dealer_colors.id', 'cars.color_id')
-
-            // ->leftJoin('car_full_prices as cfp', 'cfp.car_id', 'cars.id')//представление хранящее актуальную цену авто по прайсу
-            // ->leftJoin('wsm_reserve_new_cars as reserve', function($join){
-            //     $join->on('reserve.car_id', 'cars.id')
-            //         ->whereNull('reserve.deleted_at');
-            // })//резерв авто
-            // ->leftJoin('wsm_reserve_new_car_contracts as contract', 'contract.reserve_id', 'reserve.id')//контракт резерва
-            // ->leftJoin('wsm_reserve_complectation_prices as wrcp','wrcp.contract_id', 'contract.id')//сохраненая в контракте цена
-            // ->leftJoin('complectation_prices as cp', 'cp.id', 'wrcp.complectation_price_id')//цены комплектации
-            // ->leftJoin('wsm_reserve_option_prices as wrop', 'wrop.contract_id', 'contract.id')//сохраненные в контракте опции
-            // ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
-	        //     left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
-	        //     left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
-	        //     left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
-	        //     where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
-	        //     GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
-            // )
-            
-            // ->leftJoin('car_over_prices as overprice', 'overprice.car_id', 'cars.id')//переоценка он же воздух
-            // ->leftJoin('car_tuning_prices as tuning', 'tuning.car_id', 'cars.id')//цена тюнинга
-            // ->leftJoin('car_gift_prices as gift', 'gift.car_id', 'cars.id')//цера подарка
-            // ->leftJoin('car_part_prices as part', 'part.car_id', 'cars.id')//цена запчастей
-            // ->leftJoin('worksheets', 'worksheets.id', 'reserve.worksheet_id')
-            // ->leftJoin('discounts', function($join){
-            //     $join->on('discounts.worksheet_id', '=', 'worksheets.id')
-            //         ->on('discounts.modulable_type', '=', DB::raw('"App\Models\WsmReserveNewCar"'));
-            // })
-            
+        $builder            
             ->groupBy('cars.id');            
+    }
+
+
+
+    /**
+     * Дата продажи
+     */
+    public function saleDate(Builder $builder, array $date)
+    {
+        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $builder->whereBetween('wsm_reserve_sales.date_at', [$date_1, $date_2]);
     }
 
 
@@ -1245,9 +1206,12 @@ class CarFilter extends AbstractFilter
     /**
      * Товарный признак
      */
-    public function tradeMarkerId(Builder $builder, $value)
+    public function tradeMarkerId(Builder $builder, array|string $value)
     {
-        $builder->where('car_trade_markers.trade_marker_id', $value);
+        if(is_string($value))
+            $builder->where('car_trade_markers.trade_marker_id', $value);
+        elseif(is_array($value))
+            $builder->whereIn('car_trade_markers.trade_marker_id', $value);
     }
 
 
@@ -1255,9 +1219,12 @@ class CarFilter extends AbstractFilter
     /**
      * КонтрМарка
      */
-    public function markerId(Builder $builder, $value)
+    public function markerId(Builder $builder, array|string $value)
     {
-        $builder->where('car_markers.marker_id', $value);
+        if(is_string($value))
+            $builder->where('car_markers.marker_id', $value);
+        elseif(is_array($value))
+            $builder->whereIn('car_markers.marker_id', $value);
     }
 
 

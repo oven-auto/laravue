@@ -3,6 +3,7 @@
 namespace App\Http\Filters;
 
 use App\Models\CarState;
+use App\Models\CarStatusType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -380,6 +381,14 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public const LOGISTIC_DATES = 'logistic_dates';
 
+    public const SORT = 'sort';
+
+    public const POWER = 'power';
+
+    public const TYPE_STATUS = 'type_statuses';
+
+    public const HAS_TRADEIN = 'has_tradein';
+
     protected function getCallbacks(): array
     {
         return [
@@ -427,6 +436,11 @@ class ReserveNewCarFilter extends AbstractFilter
             self::REPORT_TYPE                       => [$this, 'reportType'],
             self::HAS_PLAN                          => [$this, 'hasPlan'],
             self::LOGISTIC_DATES                    => [$this, 'logisticDates'],
+            self::POWER                             => [$this, 'power'],
+            self::HAS_TRADEIN                        => [$this, 'has_tradein'],
+
+            self::SORT                              => [$this, 'sort'],
+            self::TYPE_STATUS                       => [$this, 'typeStatuses'],
         ];
     }
 
@@ -543,7 +557,77 @@ class ReserveNewCarFilter extends AbstractFilter
         //if(isset($params['colors']))
             $builder->leftJoin('dealer_colors', 'dealer_colors.id', 'cars.color_id');
 
+        $builder->leftJoin('marks', 'marks.id', 'cars.mark_id');
+
+        $builder->leftJoin('brands', 'brands.id', 'cars.brand_id');
+
+        $builder->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id');
+
+        $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
+
         $builder->groupBy('wsm_reserve_new_cars.id');
+    }
+
+
+
+    public function has_tradein(Builder $builder, $val)
+    {
+        if($val)
+            $builder->whereNotNull('wsm_reserve_trade_ins.reserve_id');
+        else
+            $builder->whereNull('wsm_reserve_trade_ins.reserve_id');
+    }   
+
+
+
+    public function power(Builder $builder, array $power)
+    {
+        if(count($power) == 1)
+            $power[] = $power[0];
+        $builder->whereBetween('motors.power', $power);
+    }
+
+
+
+    public function typeStatuses(Builder $builder, array $value)
+    {
+        $arr = array_unique($value);
+
+        $result = array_intersect($arr, CarStatusType::VALUES);
+
+        $builder->whereIn('car_status_types.status', $result);
+    }
+
+
+
+    public function sort(Builder $builder, string $val)
+    {
+        match($val){
+            // 'price_low'     => $builder
+            //     ->orderBy('cfp.complectationprice', 'ASC'),
+            // 'price_high'    => $builder
+            //     ->orderBy('cfp.complectationprice', 'DESC'),
+            'sale_old'      => $builder
+                ->orderBy(DB::raw('IF(wsm_reserve_sales.id IS NOT NULL, 0, 1)'))
+                ->orderBy('wsm_reserve_sales.date_at', 'ASC'),
+            'sale_new'      => $builder
+                ->orderBy(DB::raw('IF(wsm_reserve_sales.id IS NOT NULL, 0, 1)'))
+                ->orderBy('wsm_reserve_sales.date_at', 'DESC'),
+            // 'stock_old'     => $builder
+            //     ->orderBy(DB::raw('IF(stocking_date IS NOT NULL, 0, 1)'))
+            //     ->orderBy('stocking_date', 'ASC'),
+            // 'stock_new'     => $builder
+            //     ->orderBy(DB::raw('IF(stocking_date IS NOT NULL, 0, 1)'))
+            //     ->orderBy('stocking_date', 'DESC'),
+            
+            'name_asc' => $builder
+                ->orderBy('brands.name', 'ASC')
+                ->orderBy('marks.name', 'ASC'),
+            'name_desc' => $builder
+                ->orderBy('brands.name', 'DESC')
+                ->orderBy('marks.name', 'DESC'),
+            default => '',
+        };
     }
 
 
@@ -785,9 +869,11 @@ class ReserveNewCarFilter extends AbstractFilter
     /**
      * Товарный признак
      */
-    public function tradeMarkerId(Builder $builder, $value)
+    public function tradeMarkerId(Builder $builder, string|array $value)
     {
-        $builder->where('car_trade_markers.trade_marker_id', $value);
+        if(is_string($value))
+            $value = [$value];
+        $builder->whereIn('car_trade_markers.trade_marker_id', $value);
     }
 
 
@@ -795,9 +881,11 @@ class ReserveNewCarFilter extends AbstractFilter
     /**
      * КонтрМарка
      */
-    public function markerId(Builder $builder, $value)
+    public function markerId(Builder $builder, string|array $value)
     {
-        $builder->where('car_markers.marker_id', $value);
+        if(is_string($value))
+            $value = [$value];
+        $builder->whereIn('car_markers.marker_id', $value);
     }
 
 
@@ -808,7 +896,7 @@ class ReserveNewCarFilter extends AbstractFilter
     public function reserveDate(Builder $builder, array $date)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
-        $date_2 = isset($paidDate[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
         $builder->whereBetween('wsm_reserve_new_cars.created_at', [$date_1, $date_2]);
     }
 

@@ -84,6 +84,7 @@ class Telegram
     {
         $options['chat_id'] = $chatId;
         $options['text'] = $message;
-        $response = Http::post('https://telegram.oven-auto.ru/send', $options);
+        
+        $this->service->sendMessage($options);
     }
 }

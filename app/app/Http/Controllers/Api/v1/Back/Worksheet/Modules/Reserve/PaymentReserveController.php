@@ -41,4 +41,16 @@ class PaymentReserveController extends Controller
             'success' => 1,
         ]);
     }
+
+
+
+    public function update(WsmReservePayment $pay, ReservePaymentSaveRequest $request)
+    {
+        $this->repo->save($pay, $request->validated());
+
+        return response()->json([
+            'message' => 'Оплата зафиксирована.',
+            'success' => 1,
+        ]);
+    }
 }

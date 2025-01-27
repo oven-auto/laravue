@@ -1,25 +1,25 @@
 <?php
 
-namespace App\Console\Commands;
+namespace App\Console\Commands\Telegram\LongPolling;
 
-use App\Models\Banner;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Http;
 
-class TelegramBot extends Command
+class DeleteWebhook extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'tgbot:run';
+    protected $signature = 'tgbot:delhook';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Запустить телеграм бота';
+    protected $description = 'Command description';
 
     /**
      * Create a new command instance.
@@ -36,8 +36,12 @@ class TelegramBot extends Command
      *
      * @return int
      */
-    public function handle(\App\Classes\Telegram\Scenario $scenario)
+    public function handle()
     {
-        $scenario->handler();
+        $webUrl = 'https://telegram.oven-auto.ru/get';
+
+        $url = env('TELEGRAM_URL').env('TELEGRAM_KEY').'/deleteWebhook';
+
+        $res = Http::get($url);
     }
 }

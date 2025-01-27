@@ -35,6 +35,7 @@ class PotokBitController extends Controller
         $structureId = $company->structures->where('id', 1)->first()->pivot->id;
 
         $appeal = NULL;
+        
         if ($request->has('appeal'))
             $appeal = match ($request->appeal) {
                 'sale' => 36,

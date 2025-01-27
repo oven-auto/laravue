@@ -18,17 +18,21 @@ Class Comment
             self::$comment = new $class($model);
     }
 
+
+
     private static function getNameSpace()
     {
         $reflection = new \ReflectionClass(self::class);
+        
         return $reflection->getNamespaceName();
     }
 
-    /*----------------------------------------------------------------------*/
+
 
     public static function add(CommentInterface $model, string $action, $data = [])
     {
         self::makeFactory($model);
+
         if(method_exists(self::$comment, $action))
         {
             $param[] = $model;
@@ -39,14 +43,18 @@ Class Comment
                 call_user_func_array(array(self::$comment, $action), $param)
             );
         }
-
     }
+
+
 
     public static function text(CommentInterface $model, string $message)
     {
         self::makeFactory($model);
+
         return $model->writeComment(self::$comment->text($message));
     }
+
+
 
     public static function getComment()
     {

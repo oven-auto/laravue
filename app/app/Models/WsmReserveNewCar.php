@@ -2,17 +2,27 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\ReservePaginatable;
 
-class WsmReserveNewCar extends Model
+class WsmReserveNewCar extends Model implements CommentInterface
 {
     use HasFactory, SoftDeletes, Filterable, ReservePaginatable;
 
     protected $guarded = [];
+
+
+
+    public function writeComment(array $data)
+    {
+        return WsmReserveComment::create($data);
+    }
+
+
 
     /**
      * RELATIONS

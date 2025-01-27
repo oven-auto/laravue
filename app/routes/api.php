@@ -23,8 +23,10 @@ use App\Http\Controllers\Api\v1\Back\Car\Factory\FactoryController;
 use App\Http\Controllers\Api\v1\Back\Car\Option\PriceOptionController;
 use App\Http\Controllers\Api\v1\Back\Car\TradeMarker\TradeMarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Tuning\TuningController;
+use App\Http\Controllers\Api\v1\Back\Client\Car\ClientChangeCarOwner;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
+use App\Http\Controllers\Api\v1\Back\Payment\PaymentController as CRUDPaymentController;
 use App\Http\Controllers\Api\v1\Back\TaskList\OverdueCountController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveNewCarController;
@@ -431,6 +433,12 @@ Route::middleware(['userfromtoken'])->group(function () {
      **************************************************************************************
      **************************************************************************************
      **************************************************************************************/
+    Route::prefix('payments')->middleware(['corsing', 'userfromtoken'])->group(function () {
+        Route::patch('/{payment}', [CRUDPaymentController::class, 'update']);
+    });
+
+
+
     Route::prefix('cars')->middleware(['corsing', 'userfromtoken'])->group(function () {
 
         Route::get('/clone/{car}', [CarCloneController::class, 'clone']);
@@ -779,6 +787,7 @@ Route::middleware(['userfromtoken'])->group(function () {
             ->middleware(['permission.trafic.list:client_delete']);
 
         Route::prefix('car')->middleware('permission.trafic.list:client_add')->group(function () {
+            Route::patch('owner/{car}', [ClientChangeCarOwner::class, 'change']);
             //список брендов
             Route::get('brands', 'BrandCarController');
             //количество машин клиента
@@ -1014,8 +1023,9 @@ Route::middleware(['userfromtoken'])->group(function () {
                 });
 
                 Route::prefix('payments')->group(function () {
-                    Route::post('', [PaymentReserveController::class, 'store']);
-                    Route::delete('{pay}', [PaymentReserveController::class, 'destroy']);
+                    Route::post('',             [PaymentReserveController::class, 'store']);
+                    Route::delete('{pay}',      [PaymentReserveController::class, 'destroy']);
+                    Route::patch('{pay}',       [PaymentReserveController::class, 'update']);
                 });
 
                 Route::prefix('tradeins')->group(function () {

@@ -7,6 +7,7 @@ use App\Events\DNMVisitEvent;
 use App\Events\ReserveCreateEvent;
 use App\Events\WorksheetCreateEvent;
 use App\Models\WsmReserveNewCar;
+use App\Services\Comment\Comment;
 
 class ReserveNewCarObserver
 {
@@ -25,6 +26,8 @@ class ReserveNewCarObserver
     {
         if($reserve->worksheet->isLada() && $reserve->worksheet->isSaleDepartment() && $reserve->worksheet->isSaleNewCar())
             ReserveCreateEvent::dispatch($reserve);
+
+        Comment::add($reserve, 'store');
     }
 
 

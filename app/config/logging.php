@@ -104,6 +104,11 @@ return [
         'potok' => [
             'driver' => 'single',
             'path' => storage_path('logs/potok.log'),
+        ],
+
+        'telegram' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/telegram.log'),
         ]
     ],
 
