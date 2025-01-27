@@ -338,6 +338,7 @@ class HomeController extends Controller
 
     public function index(Request $request) 
     {
+        dd($_SERVER['REMOTE_ADDR']);
         $data = $request->has('data') ? $request->data : '1*(2+3)/2';
         dump('INFIX');
         $res = $this->toInfix($data);
