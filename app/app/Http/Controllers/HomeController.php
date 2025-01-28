@@ -31,6 +31,7 @@ use App\Models\DiscountModul;
 use App\Models\MarkAlias;
 use App\Classes\ORM\Trafic;
 use App\Models\Tuning;
+use App\Models\User;
 use App\Models\Worksheet;
 use App\Models\WsmReserveNewCar;
 use App\Repositories\Car\Car\CarRepository;
@@ -338,21 +339,50 @@ class HomeController extends Controller
 
     public function index(Request $request) 
     {
-        dd($_SERVER['REMOTE_ADDR']);
-        $data = $request->has('data') ? $request->data : '1*(2+3)/2';
-        dump('INFIX');
-        $res = $this->toInfix($data);
-        foreach($res as $item)
-            echo $item;
+        // dd($_SERVER['REMOTE_ADDR']);
+        // $data = $request->has('data') ? $request->data : '1*(2+3)/2';
+        // dump('INFIX');
+        // $res = $this->toInfix($data);
+        // foreach($res as $item)
+        //     echo $item;
 
-        dump('POSTFIX');
-        $res = $this->postFix($res);   
-        foreach($res as $item)
-            echo $item;
+        // dump('POSTFIX');
+        // $res = $this->postFix($res);   
+        // foreach($res as $item)
+        //     echo $item;
 
         //$res = $this->calculate($res);
 
-        dump($res);
+        // dump($res);
+
+        if($request->has('username'))
+        {
+            $user = User::where('lastname', $request->username)->first();
+
+            Auth::login($user);
+
+            dump($user->toArray());
+
+            $user->role->permissions->each(function($item){
+                echo('slug => '.$item->slug.'  === '.' name '.$item->name).'<br>';
+            });
+        }
+
+        if($request->has('worksheet_id'))
+        {
+            $worksheet = Worksheet::find($request->worksheet_id);
+
+            dump('РЛ - '.$worksheet->id); 
+
+            $worksheet->executors->map(function($item){
+                return [
+                    'name' => $item->cut_name,
+                    'id' => $item->id,
+                ];
+            })->each(function($item){
+                dump($item);
+            });
+        }
     }
 
 

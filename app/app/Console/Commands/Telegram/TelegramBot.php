@@ -29,17 +29,17 @@ class TelegramBot extends Command
         //$test = 1;
 
 
-        //while(true)
-        //{
+        while(true)
+        {
     
            sleep(1);
-           //try {
+           try {
                 $this->bot->handler();
-           //}
-           //catch(\Exception $e)
-           //{
-            //   Log::channel('telegram')->error('Ошибка в цикле: '.$e->getMessage());
-           //}
-       //}
+           }
+           catch(\Exception $e)
+           {
+              Log::channel('telegram')->error('Ошибка в цикле: '.$e->getMessage());
+           }
+       }
     }
 }

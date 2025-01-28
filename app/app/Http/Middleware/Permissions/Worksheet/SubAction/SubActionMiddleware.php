@@ -46,7 +46,7 @@ class SubActionMiddleware
                 if($request->subAction)
                 {
                     $worksheet = \App\Models\Worksheet::findOrFail($request->subAction->worksheet_id);
-                    //dd($worksheet->executors);
+                    
                     if($userPermissions->contains('slug', $superPerm))
                         return $next($request);
 
