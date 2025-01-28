@@ -14,7 +14,7 @@
         "fruitcake/laravel-cors": "^3.0",
         "guzzlehttp/guzzle": "^7.3",
         "irazasyed/telegram-bot-sdk": "^3.9",
-        "laravel/framework": "^8.40",
+        "laravel/framework": "9.*",
         "laravel/helpers": "^1.6",
         "laravel/sanctum": "^2.15",
         "laravel/telescope": "^5.2",
@@ -27,11 +27,11 @@
         "workerman/workerman": "^5.0"
     },
     "require-dev": {
-        "facade/ignition": "^2.5",
+        "spatie/laravel-ignition": "^1.0",
         "fakerphp/faker": "^1.9.1",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.2",
-        "nunomaduro/collision": "^5.0",
+        "nunomaduro/collision": "^6.0",
         "phpunit/phpunit": "^9.3.3"
     },
     "autoload": {

@@ -30,7 +30,11 @@ class ClientCarEditResource extends JsonResource
                 'motor_driver_id' => $this->motor_driver_id,
                 'motor_type_id' => $this->motor_type_id,
                 'color_id' => $this->color_id,
-                'vehicle_type_id' => $this->vehicle_type_id
+                'vehicle_type_id' => $this->vehicle_type_id,
+                'editor' => [
+                    'name' => $this->editor->cut_name,
+                    'updated_at' => $this->updated_at->format('d.m.Y (H:i)'),
+                ],
             ],
             'success' => 1
         ];

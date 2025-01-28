@@ -22,7 +22,11 @@ class ClientCarResource extends JsonResource
             'vin' => $this->vin ? $this->vin : '',
             'odometer' => $this->odometer ? $this->odometer : '',
             'register_plate' => $this->register_plate ? $this->register_plate : '',
-            'year' => $this->year ? $this->year : ''
+            'year' => $this->year ? $this->year : '',
+            'editor' => [
+                'name' => $this->editor->cut_name,
+                'updated_at' => $this->updated_at->format('d.m.Y (H:i)'),
+            ],
         ];
     }
 }

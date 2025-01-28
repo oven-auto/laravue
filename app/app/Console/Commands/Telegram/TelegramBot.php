@@ -13,6 +13,8 @@ class TelegramBot extends Command
 
     protected $bot;
 
+    private static $test = false;
+
     public function __construct(\App\Classes\Telegram\Scenario $scenario)
     {
         parent::__construct();
@@ -24,16 +26,20 @@ class TelegramBot extends Command
     
     public function handle()
     {
-        while(true)
-        {
-            sleep(1);
-            try {
+        //$test = 1;
+
+
+        //while(true)
+        //{
+    
+           sleep(1);
+           //try {
                 $this->bot->handler();
-            }
-            catch(\Exception $e)
-            {
-                Log::channel('telegram')->error('Ошибка в цикле: '.$e->getMessage());
-            }
-        }
+           //}
+           //catch(\Exception $e)
+           //{
+            //   Log::channel('telegram')->error('Ошибка в цикле: '.$e->getMessage());
+           //}
+       //}
     }
 }

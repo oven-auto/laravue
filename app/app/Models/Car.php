@@ -962,8 +962,10 @@ class Car extends Model
      */
     public function getStateByName($key)
     {
-        $date = $this->logistic_dates->where('logistic_system_name', $key)->first();
+        $this->load('logistic_dates');
         
+        $date = $this->logistic_dates->where('logistic_system_name', $key)->first();
+       
         if (!$date)
             return [];
 

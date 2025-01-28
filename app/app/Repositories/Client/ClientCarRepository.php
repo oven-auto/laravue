@@ -39,6 +39,9 @@ Class ClientCarRepository
 
         return $client->cars()->create($mas);
     }
+
+
+    
     /**
      * Изменить машину клиента
      * @param ClientCar $car App\Models\ClientCar
