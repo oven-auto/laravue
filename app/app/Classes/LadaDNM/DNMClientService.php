@@ -77,8 +77,10 @@ class DNMClientService
             ];
         elseif (!$this->obj->isPerson())
         {
-            $client = $this->reserve->worksheet->subclients->first();
+            $client = $this->reserve->worksheet->subclients->where('client_type_id', 1)->first();
+
             $client->load('phones');
+            
             return [
                 'code'                  => (string)$this->obj->id,
                 'company_name'          => (string)$this->obj->company_name,
@@ -98,7 +100,7 @@ class DNMClientService
                     // ],
                     [
                     "type" => 2,
-                    "number" => $client->phones->first()->phone,
+                    "number" => $client ? $client->phones->first()->phone : '',
                     ],
                 ],
                 'client_confirm_communication'  => $confirm,

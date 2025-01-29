@@ -19,6 +19,7 @@ class SaleReserveItemResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'reserve_id' => $this->modulable_id,
             'worksheet_id' => $this->worksheet_id,
             'worksheet_status' => $this->worksheet->status,
             'type' => [
