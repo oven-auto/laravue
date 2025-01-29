@@ -50,12 +50,6 @@ class SendMessage extends Command
             ->leftJoin('users', 'users.telegram_connection_id', 'telegram_connections.id')
             ->where('users.id', 47)
             ->first();
-        
-        dump("Отправляю -> ".$user->user_id);
-
-        // $telegram = \App\Classes\Telegram\Telegram::init();
-
-        // $telegram->sendMessage($user->user_id, 'test', $options);
 
         (TelegramJob::dispatch($user->user_id, 'test', $options));
     }

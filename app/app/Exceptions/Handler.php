@@ -4,8 +4,11 @@ namespace App\Exceptions;
 
 use App\Exceptions\Redemption\RedemptionException;
 use App\Exceptions\Reserve\ReserveException;
+use App\Jobs\TelegramJob;
+use App\Models\TelegramConnection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Auth;
 use Throwable;
 use Illuminate\Validation\ValidationException;
 
@@ -43,50 +46,55 @@ class Handler extends ExceptionHandler
         });
     }
 
+
+
+    public function sendTelegram(Throwable $exception)
+    {       
+        $options = [
+            'parse_mode' => 'HTML',
+            'disable_web_page_preview' => true,
+        ];
+
+        $user = TelegramConnection::select('user_id')
+            ->leftJoin('users', 'users.telegram_connection_id', 'telegram_connections.id')
+            ->where('users.id', 47)
+            ->first();
+
+        $message = [
+            '**************************',
+            'Дата: '. now()->format('d.m.Y H:i'),
+            'Инициатор: '.Auth::user()->cut_name,
+            'Сообщение:' .$exception->getMessage(), 
+            'Фаил где поймал исключение: '.$exception->getFile(),
+            'Cтрока с исключением: '.$exception->getLine(),
+            '**************************',
+        ];
+
+        $message = implode("\n", $message);
+
+        (TelegramJob::dispatch($user->user_id, $message, $options));
+    }
+
+
+
     public function render($request, Throwable $exception)
     {
-        if($exception instanceof ModelNotFoundException)
-            return response()->json([
-                'message' => 'Объект не найден. Его либо нет, либо он помечен как удаленный. '.$exception->getMessage(),
-                'success' => 0,
-                'error' => implode(', ', [
-                    'Фаил где поймал исключение: '.$exception->getFile(),
-                    'Cтрока с исключением: '.$exception->getLine(),
-                ])
-            ], 404);
-
-        if($exception instanceof RedemptionException)
-            return $exception->render();
-
-        if($exception instanceof ReserveException)
-            return $exception->render();
+        $this->sendTelegram($exception);
 
         if(
+            $exception instanceof ReserveException ||
+            $exception instanceof RedemptionException ||
             $exception instanceof \App\Exceptions\Client\EventExcecutorAppendException ||
             $exception instanceof \App\Exceptions\Client\EventExcecutorDetachException ||
             $exception instanceof \App\Exceptions\Client\EventReporterAttachException ||
             $exception instanceof \App\Exceptions\Client\EventReporterIsAuthorException ||
             $exception instanceof \App\Exceptions\Client\EventReporterNotException ||
             $exception instanceof \App\Exceptions\Client\EventCloseIsWorking ||
-            $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew
+            $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew || 
+            $exception instanceof ValidationException
         )
+        {
             return $exception->render();
-
-
-        if($exception instanceof ValidationException) {
-            $errors = [];
-
-            foreach($exception->errors() as $item)
-                $errors[] = $item[0];
-
-            return response()->json([
-                'message' => implode(PHP_EOL,$errors),
-                'success' => 0,
-                'error' => implode(', ', [
-                    'Фаил где поймал исключение: '.$exception->getFile(),
-                    'Cтрока с исключением: '.$exception->getLine(),
-                ])
-            ], 415);
         }
 
         return response()->json([
