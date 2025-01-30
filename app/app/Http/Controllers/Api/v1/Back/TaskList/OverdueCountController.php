@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Services\TaskList\EventTaskList;
 use App\Services\TaskList\TraficTaskList;
 use App\Services\TaskList\WorksheetTaskList;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class OverdueCountController extends Controller
@@ -25,11 +26,13 @@ class OverdueCountController extends Controller
 
 
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::id();
 
-        $trafic     =   $this->repo['trafic']->getUserTraficCount($user);
+        $request->merge(['control_date' => now()->format('d.m.Y')]);
+
+        $trafic     =   $this->repo['trafic']->getUserTraficCount($request->all());
 
         $worksheet  =   $this->repo['worksheet']->getUserWorksheetActionCount($user);
 

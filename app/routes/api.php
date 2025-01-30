@@ -1090,7 +1090,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('trafics', 'TraficListController')->middleware('tasklist.setmanager:manager');
                 Route::get('events', 'EventListController')->middleware('tasklist.setmanager:executor');
                 Route::get('worksheets', 'WorksheetListController')->middleware('tasklist.setmanager:executor');
-                Route::get('overdue', [OverdueCountController::class, 'index']);
+                Route::get('overdue', [OverdueCountController::class, 'index'])->middleware('tasklist.setmanager:manager');
             }
         );
 
