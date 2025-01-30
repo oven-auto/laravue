@@ -16,20 +16,11 @@ Class MytraficScene extends AbstractScene implements SceneInterface
     ];
 
     public  $answer = [
-        0 => 'Введите дату в формате ДД.ММ.ГГГГ, либо 0 для текущей даты.',
-        1 => 'Список трафика',
+        0 => 'Список трафика',
         'error' => "Ошибочка. Попробуй /help",
     ];
 
-    public  $storageState = [
-        1 => 'controll_date',
-    ];
-
-    public  $rules = [
-        'controll_date' => 'date_or_current'
-    ];
-
-    private  $stateCount = 1;
+    private  $stateCount = 0;
 
     private $traficRepo;
 
@@ -53,7 +44,7 @@ Class MytraficScene extends AbstractScene implements SceneInterface
 
         $trafics = $this->traficRepo->getTraficsForTaskList([
             'manager_id' => $this->user->id,
-            'control_date' => $this->getStorage('controll_date') ?? date('d.m.Y'),
+            'control_date' => date('d.m.Y'),
             'show' => 'opening'
         ]);
 
