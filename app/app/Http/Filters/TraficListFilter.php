@@ -44,16 +44,17 @@ Class TraficListFilter extends AbstractFilter{
     public function init(Builder $builder)
     {
         $builder->leftJoin('trafic_controls', 'trafic_controls.trafic_id', 'trafics.id');
+        $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');
 
         if(!$this->getQueryParam('date_for_closing'))
         {
             //Получить ожидающие которые может обработать пользователь
             //добавляем таблицу ссылок цели обращения
-            $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');
-            $builder->orWhere(function($q){
+            
+            $builder->OrWhere(function($q){
                 //только ожидающие
                 $q->where('trafics.trafic_status_id',1);
-
+                
                 if(auth()->user())
                 {
                     //цель должна быть у пользователя
@@ -97,7 +98,7 @@ Class TraficListFilter extends AbstractFilter{
 
         if(now()->format('Y-m-d') >= $date)
             $builder->where(function($query) use ($date){
-                $query->whereDate('trafic_controls.begin_at', '<=', $date)->orWhereNull('trafic_controls.begin_at');
+                $query->whereDate('trafic_controls.begin_at', '<=', $date);//->orWhereNull('trafic_controls.begin_at');
             });
         else
             $builder->whereDate('trafic_controls.begin_at', '=', $date);
