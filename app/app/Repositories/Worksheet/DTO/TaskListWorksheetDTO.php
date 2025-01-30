@@ -27,6 +27,7 @@ class TaskListWorksheetDTO extends AbstractDTO
             'reporters'         => $item->reporters->map(fn ($reporter) => $reporter->cut_name)->toArray(),
             'closed_at'         => $item->close_at ? $item->close_at->format('d.m.Y (H:i)') : '',
             'sort'              => $item->last_action->begin_at->format('YmdHi'),
+            'client_id'         => $item->client->id,
         ];
     }
 }

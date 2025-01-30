@@ -72,7 +72,7 @@ Class WorksheetTaskList
         ]);
 
         $query = SubAction::query()
-            ->with(['worksheet', 'executors', 'reporters'])
+            ->with(['worksheet.client', 'executors', 'reporters'])
             ->filter($filter);
 
         $result = $query->get()->map(fn ($item) => (object)(new TaskListSubActionDTO($item))->get())->toArray();

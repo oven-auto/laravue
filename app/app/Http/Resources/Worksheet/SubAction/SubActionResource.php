@@ -16,6 +16,10 @@ class SubActionResource extends JsonResource
     {
         return [
             'data' => [
+                'client'            => [
+                    'name' => $this->worksheet->client->full_name,
+                    'id' => $this->worksheet->client->id,
+                ],
                 'indicator'         => $this->indicator(),
                 'created_at'        => $this->created_at->format('d.m.Y (H:i').' - '.$this->created_at->addMinutes($this->duration)->format('H:i)'),
                 'id'                => $this->id,
