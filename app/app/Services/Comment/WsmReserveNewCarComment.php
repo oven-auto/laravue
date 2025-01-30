@@ -3,15 +3,15 @@
 namespace App\Services\Comment;
 
 use App\Models\Interfaces\CommentInterface;
-use App\Models\WsmReserveComment;
+use App\Models\WsmReserveNewCar;
 
 Class WsmReserveNewCarComment extends AbstractComment
 {
-    public function __construct(WsmReserveComment $redemption)
+    public function __construct(WsmReserveNewCar $reserve)
     {
         $this->data = [
             'author_id' => auth()->user()->id,
-            'redemption_car_id' => $redemption->id,
+            'reserve_id' => $reserve->id,
         ];
     }
 
