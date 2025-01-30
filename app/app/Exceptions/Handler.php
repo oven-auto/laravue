@@ -62,8 +62,11 @@ class Handler extends ExceptionHandler
 
         $message = [
             '**************************',
+            '',
             'Дата: '. now()->format('d.m.Y H:i'),
+            '',
             'Инициатор: '.Auth::user()->cut_name,
+            '',
             'Сообщение:' .$exception->getMessage(), 
             'Фаил где поймал исключение: '.$exception->getFile(),
             'Cтрока с исключением: '.$exception->getLine(),
@@ -90,8 +93,7 @@ class Handler extends ExceptionHandler
             $exception instanceof \App\Exceptions\Client\EventReporterIsAuthorException ||
             $exception instanceof \App\Exceptions\Client\EventReporterNotException ||
             $exception instanceof \App\Exceptions\Client\EventCloseIsWorking ||
-            $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew || 
-            $exception instanceof ValidationException
+            $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew
         )
         {
             return $exception->render();
