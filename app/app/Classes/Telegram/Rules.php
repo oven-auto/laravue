@@ -66,7 +66,7 @@ Class Rules
             $table = $rules[0];
             $col = $rules[1];
             $val = substr($val, 1);
-            $result = \DB::table($table)->select('id')->where($col, 'LIKE', "%{$val}%")->first();
+            $result = DB::table($table)->select('id')->where($col, 'LIKE', "%{$val}%")->first();
 
             if($result)
                 return 1;
@@ -121,7 +121,7 @@ Class Rules
 
         $col_2 = $collumns[1];
 
-        $result = \DB::table($table)
+        $result = DB::table($table)
             ->select([$col_1, $col_2])
             ->where($col_1, 'LIKE', "%{$paramText}%")
             ->where($col_2, $val)

@@ -29,6 +29,7 @@ Class MytraficScene extends AbstractScene implements SceneInterface
     public function __construct($obj)
     {
         parent::__construct($obj);
+        
         $this->traficRepo = new \App\Repositories\Trafic\TraficRepository();
     }
 

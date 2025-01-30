@@ -11,9 +11,9 @@ class TaskListSubActionDTO extends AbstractDTO
     {
         $this->data = [
             'id'                => $item->worksheet_id,
-            'type'              => '',
+            'type'              => $item->title,
             'status'            => SubAction::STATUSES[$item->status],
-            'client'            => $item->title,
+            'client'            => $item->worksheet->client->full_name,
             'begin_at'          => $item->created_at->format('d.m.Y (H:i)'),
             'end_at'            => $item->created_at->addMinutes($item->duration)->format('d.m.Y (H:i)'),
             'appeal'            => '',
