@@ -4,12 +4,13 @@ namespace App\Services\Comment;
 
 use App\Models\Interfaces\CommentInterface;
 use App\Models\Client;
+use Illuminate\Support\Facades\DB;
 
 Class WorksheetSubClientComment extends AbstractComment
 {
     public function __construct(CommentInterface $model)
     {
-        $action_id = \DB::table('worksheet_actions')
+        $action_id = DB::table('worksheet_actions')
             ->select('id')
             ->where('worksheet_id', $model->worksheet_id)
             ->orderBy('worksheet_actions.id', 'DESC')
@@ -28,18 +29,30 @@ Class WorksheetSubClientComment extends AbstractComment
     public function attach(CommentInterface $model)
     {
         $client = Client::find($model->client_id);
-        return array_merge($this->data, [
-            'text' => 'Добавлено новое контактное лицо '.$client->full_name.' ('.$client->phones->first()->phone.')',
-            'type' => 1
-        ]);
+        if($client->isPerson()) 
+            return array_merge($this->data, [
+                'text' => 'Добавлено новое контактное лицо '.$client->full_name.' ('.$client->phones->first()->phone.')',
+                'type' => 1
+            ]);
+        else
+            return array_merge($this->data, [
+                'text' => 'Добавлено новое контактное лицо '.$client->full_name,
+                'type' => 1
+            ]);
     }
 
     public function detach(CommentInterface $model)
     {
         $client = Client::find($model->client_id);
-        return array_merge($this->data, [
-            'text' => 'Удалено контактное лицо '.$client->full_name.' ('.$client->phones->first()->phone.')',
-            'type' => 1
-        ]);
+        if($client->isPerson()) 
+            return array_merge($this->data, [
+                'text' => 'Удалено контактное лицо '.$client->full_name.' ('.$client->phones->first()->phone.')',
+                'type' => 1
+            ]);
+        else
+            return array_merge($this->data, [
+                'text' => 'Удалено контактное лицо '.$client->full_name,
+                'type' => 1
+            ]);
     }
 }

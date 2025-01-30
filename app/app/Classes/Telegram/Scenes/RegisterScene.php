@@ -29,7 +29,7 @@ Class RegisterScene extends AbstractScene implements SceneInterface
 
     public  $rules = [
         'phone' => 'length:11|numeric|exist:users.phone',
-        'code' => 'length:4|numeric',
+        'code' => 'length:5|numeric|findby:users.tg_token=users.phone',
     ];
 
     private  $stateCount = 2;
@@ -38,7 +38,14 @@ Class RegisterScene extends AbstractScene implements SceneInterface
     {
         $phone = $this->getStorage('phone');
 
+        $code = $this->getStorage('code');
+
         $user = \App\Models\User::where('phone', 'LIKE', '%'.substr($phone,1).'%')->first();
+
+        if(!$user || $code != $user->tg_token)
+        {
+
+        }
 
         $user->telegram_connection_id = $this->connection->id;
 

@@ -3,6 +3,7 @@
 namespace App\Classes\Telegram;
 
 use DateTime;
+use Illuminate\Support\Facades\DB;
 
 Class Rules
 {
@@ -133,6 +134,8 @@ Class Rules
         return 0;
     }
 
+
+
     public function date_or_current(string $val, string $format = 'd.m.Y')
     {
         if(!$val)
@@ -146,6 +149,29 @@ Class Rules
             return 1;
 
         $this->scene->telegram->sendMessage($this->scene->chatId, 'Формат даты не верен.', $this->scene->options);
+        return 0;
+    }
+
+
+
+    /**
+     * rule = users.tg_token=users.phone
+     */
+    public function findby(string $val, string $rule)
+    {
+        $rules = explode('=', $rule);
+
+        $firstArr = explode('.', $rules[0]);
+        
+        $first = DB::table($firstArr[0])->where($firstArr[1], $val)->first();
+
+        if($first)
+        {
+            $this->scene->telegram->sendMessage($this->scene->chatId, '+.', $this->scene->options);
+            return 1;
+        }
+
+        $this->scene->telegram->sendMessage($this->scene->chatId, '-.', $this->scene->options);
         return 0;
     }
 }
