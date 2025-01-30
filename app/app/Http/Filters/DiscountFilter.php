@@ -217,6 +217,7 @@ Class DiscountFilter extends AbstractFilter
         $builder->where(function($query) use ($value){
             $query->orWhere('clients.lastname', 'LIKE', '%'.$value.'%');
             $query->orWhere('cars.vin', 'LIKE', '%'.$value.'%');
+            $query->orWhere('clients.company_name', 'LIKE', '%'.$value.'%');
         });
     }
 }
