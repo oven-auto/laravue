@@ -155,7 +155,7 @@ Class Rules
 
 
     /**
-     * rule = users.tg_token=users.phone
+     * rule = users.tg_token=phone-phone
      */
     public function findby(string $val, string $rule)
     {
@@ -165,13 +165,24 @@ Class Rules
         
         $first = DB::table($firstArr[0])->where($firstArr[1], $val)->first();
 
-        if($first)
+        if(!$first)
         {
-            $this->scene->telegram->sendMessage($this->scene->chatId, '+.', $this->scene->options);
+            $this->scene->telegram->sendMessage($this->scene->chatId, 'Не удалось выполнить проверку. Проверте вводимые данные и попробуйте ещё раз.', $this->scene->options);
+            return 0;
+        }
+
+        $secondArr = $firstArr = explode('-', $rules[1]);
+
+        $col = $secondArr[0];
+
+        $storage = $secondArr[1];
+
+        if(mb_substr($first->$col, 1) == mb_substr($this->scene->getStorage($storage),1))
+        {
             return 1;
         }
 
-        $this->scene->telegram->sendMessage($this->scene->chatId, '-.', $this->scene->options);
+        $this->scene->telegram->sendMessage($this->scene->chatId, 'Не удалось выполнить проверку. Проверте и повторите.', $this->scene->options);
         return 0;
     }
 }
