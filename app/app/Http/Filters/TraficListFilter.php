@@ -98,7 +98,7 @@ Class TraficListFilter extends AbstractFilter{
 
         if(now()->format('Y-m-d') >= $date)
             $builder->where(function($query) use ($date){
-                $query->whereDate('trafic_controls.begin_at', '<=', $date);//->orWhereNull('trafic_controls.begin_at');
+                $query->whereDate('trafic_controls.begin_at', '<=', $date)->orWhereNull('trafic_controls.begin_at');
             });
         else
             $builder->whereDate('trafic_controls.begin_at', '=', $date);
