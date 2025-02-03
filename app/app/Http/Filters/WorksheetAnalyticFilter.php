@@ -18,6 +18,7 @@ Class WorksheetAnalyticFilter extends AbstractFilter
     public const CLOSED_END = 'closed_end';
     public const COMPANY_IDS = 'company_ids';
     public const STRUCTURE_IDS = 'structure_ids';
+    public const CHANEL = 'chanels';
 
     public static $GroupByWorkshhetId = 1;
 
@@ -45,6 +46,7 @@ Class WorksheetAnalyticFilter extends AbstractFilter
 
             self::STRUCTURE_IDS         => [$this, 'structureIds'],
             self::COMPANY_IDS           => [$this, 'companyIds'],
+            self::CHANEL                => [$this, 'chanels'],
         ];
     }
 
@@ -53,27 +55,35 @@ Class WorksheetAnalyticFilter extends AbstractFilter
         $builder->leftJoin('worksheet_actions', function($join) {
                 $join->on('worksheet_actions.worksheet_id','worksheets.id');
             })
-            // ->where(
-            //     'worksheet_actions.id',
-            //     \DB::raw('(SELECT max(SWA.id) FROM worksheet_actions as SWA WHERE SWA.worksheet_id = worksheets.id)')
-            // )
             ->leftJoin('trafics', 'trafics.id', 'worksheets.trafic_id')
-            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
-            ->where('trafic_clients.client_type_id', '<>', 3);
+            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id');
 
         if(self::$GroupByWorkshhetId)
             $builder->groupBy('worksheets.id');
     }
+
+
+
+    public function chanels(Builder $builder, array $values)
+    {
+        $builder->whereIn('trafics.trafic_chanel_id', $values);
+    }
+
+
 
     public function createdBegin(Builder $builder, $value)
     {
         $builder->whereDate('worksheets.created_at', '>=', $this->formatDate($value));
     }
 
+
+
     public function createdEnd(Builder $builder, $value)
     {
         $builder->whereDate('worksheets.created_at', '<=', $this->formatDate($value));
     }
+
+
 
     public function closedBegin(Builder $builder, $value)
     {
@@ -81,20 +91,28 @@ Class WorksheetAnalyticFilter extends AbstractFilter
             ->whereDate('worksheet_actions.updated_at', '>=', $this->formatDate($value));
     }
 
+
+
     public function closedEnd(Builder $builder, $value)
     {
         $builder->whereDate('worksheet_actions.updated_at', '<=', $this->formatDate($value));
     }
+
+
 
     public function intervalBegin(Builder $builder, $value)
     {
 
     }
 
+
+
     public function intervalEnd(Builder $builder, $value)
     {
 
     }
+
+
 
     public function appealIds(Builder $builder, $value)
     {
@@ -104,6 +122,8 @@ Class WorksheetAnalyticFilter extends AbstractFilter
             $builder->where('worksheets.appeal_id', $value);
     }
 
+
+
     public function authorId(Builder $builder, $value)
     {
         if(is_array($value))
@@ -111,6 +131,8 @@ Class WorksheetAnalyticFilter extends AbstractFilter
         elseif(is_numeric($value) || is_string($value))
             $builder->where('worksheets.author_id', $value);
     }
+
+
 
     public function executorIds(Builder $builder, $value)
     {
@@ -122,10 +144,14 @@ Class WorksheetAnalyticFilter extends AbstractFilter
             $builder->where('worksheet_executors.user_id', $value);
     }
 
+
+
     public function companyIds(Builder $builder, $value)
     {
         $builder->whereIn('worksheets.company_id', $value);
     }
+
+
 
     public function structureIds(Builder $builder, $value)
     {

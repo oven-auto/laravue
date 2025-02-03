@@ -30,8 +30,10 @@ class TraficController extends Controller
                 'target'    => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTraficAnalytic()),
 
                 'author'    => $analytic->fasade($request->all(), new \App\Services\Analytic\AuthorTraficAnalytic()),
-
+ 
                 'personal'  => $analytic->fasade($request->all(), new \App\Services\Analytic\PersonalTraficAnalytic()),
+
+                'chanel'    => $analytic->fasade($request->all(), new \App\Services\Analytic\ChanelTraficAnalytic()),
             ],
 
             'success' => 1,

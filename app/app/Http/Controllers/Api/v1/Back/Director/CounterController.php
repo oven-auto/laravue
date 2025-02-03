@@ -45,28 +45,28 @@ class CounterController extends Controller
             ],
 
             '1' => [
-                'name' => 'Просроченные события в РЛ',
+                'name' => 'Просроченные переговоры',
                 'count' => $worksheetOverdue->count(),
                 'ids' => $worksheetOverdue,
                 'type' => 'events'
             ],
 
             '2' => [
-                'name' => 'РЛ на проверке',
+                'name' => 'Рабочие листы на проверке',
                 'count' => $worksheetCheck->count(),
                 'ids' => $worksheetCheck,
                 'type' => 'worksheets'
             ],
 
             '3' => [
-                'name' => 'Оценки на контроле',
+                'name' => 'Оценка в закрытом Рабочем листе',
                 'count' => $redemptionControl->count(),
                 'ids' => $redemptionControl,
                 'type' => 'appraisals'
             ],
 
             '4' => [
-                'name' => 'Оценки ожидающие',
+                'name' => 'Ожидающие оценки',
                 'count' => $redemptionWait->count(),
                 'ids' => $redemptionWait,
                 'type' => 'appraisals'

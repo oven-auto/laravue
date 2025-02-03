@@ -14,6 +14,7 @@ Class TraficAnalyticFilter extends AbstractFilter
     public const MANAGER_ID = 'manager_id';
     public const COMPANY_IDS = 'company_ids';
     public const STUCTURE_IDS = 'structure_ids';
+    public const CHANDEL = 'chanels';
 
     /*-----------------------------------------*/
     public const INIT = 'init';
@@ -31,6 +32,7 @@ Class TraficAnalyticFilter extends AbstractFilter
             self::AUTHOR_ID         => [$this, 'authorId'],
             self::COMPANY_IDS       => [$this, 'companyIds'],
             self::STUCTURE_IDS      => [$this, 'structureIds'],
+            self::CHANDEL           => [$this, 'chanels'],
         ];
     }
 
@@ -48,6 +50,13 @@ Class TraficAnalyticFilter extends AbstractFilter
     {
         $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id')
             ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id');
+    }
+
+
+
+    public function chanels(Builder $builder, array $values)
+    {
+        $builder->whereIn('trafics.trafic_chanel_id', $values);
     }
 
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Director;
 
 use App\Http\Controllers\Controller;
+use App\Models\TraficChanel;
 use Illuminate\Http\Request;
 
 class OptionsController extends Controller
@@ -25,6 +26,16 @@ class OptionsController extends Controller
             'name' => $item->name,
             'id' => $item->id
         ]);
+
+        $filterOption['chanels'] = TraficChanel::where(function($q){
+            $q->where('parent', '<>', 0)
+                ->orWhereNotIn('id', [39,7,6,5,4,3]);
+        })->get()->map(function($item) {
+            return [
+                'name' => $item->name,
+                'id' => $item->id,
+            ];
+        });
 
         return response()->json([
             'data' => $filterOption,
