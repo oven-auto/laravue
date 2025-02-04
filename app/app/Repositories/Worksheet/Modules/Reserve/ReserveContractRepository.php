@@ -177,13 +177,17 @@ class ReserveContractRepository
                     'sale'
                 ]);
             }]);
+        
+        $query->orderBy('wsm_reserve_new_car_contracts.id', 'DESC');
 
-        $filter = app()->make(ContractFilter::class, ['queryParams' => array_filter($data)]);
+        $filter = app()->make(ContractFilter::class, ['queryParams' => ($data)]);
 
         $query->filter($filter);
+        
+        
 
-        $contracts = $query->orderBy('wsm_reserve_new_car_contracts.id', 'DESC')->simplePaginate($paginate);
-
+        $contracts = $query->simplePaginate($paginate);
+        
         return $contracts;
     }
 

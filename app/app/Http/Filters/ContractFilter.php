@@ -4,6 +4,7 @@ namespace App\Http\Filters;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 /**
  * @OA\Schema(
@@ -139,6 +140,25 @@ class ContractFilter extends AbstractFilter
      * */
     public const SEARCH = 'search';//Полнотекстовы поиск
 
+    /**  @OA\Property(
+     * format="integer", 
+     * description="1 - вывод только завершенных РЛ. 0 - только рабочих", 
+     * property="is_worksheet_abort", 
+     * type="integer", 
+     * example="1")
+     * */
+    public const IS_WORKSHEET_ABORT        = 'is_worksheet_abort';
+    
+    /**  @OA\Property(
+     * format="integer", 
+     * description="Дебиторская задолженность ((Контракт + Опции + Переоценка + Тюнинг – Подарки - Скидки) - (Оплата клиента + Трейд-ин))
+     * относительно 0, 1 > 0, 0 = 0, -1 < 0",
+     * property="debit_relative_zero", 
+     * type="integer", 
+     * example="-1")
+     * */
+    public const DEBIT_RELATIVE_ZERO = 'debit_relative_zero';
+
 
 
     protected function getCallbacks(): array
@@ -157,6 +177,8 @@ class ContractFilter extends AbstractFilter
             self::PDKP_MANAGER      => [$this, 'pdkp_manager'],
             self::SALE_MANAGER      => [$this, 'sale_manager'],
             self::SEARCH            => [$this, 'search'],
+            self::IS_WORKSHEET_ABORT    => [$this, 'isWorksheetAbort'],
+            self::DEBIT_RELATIVE_ZERO   => [$this, 'debitRelativeZero'],
         ];
     }
 
@@ -179,6 +201,79 @@ class ContractFilter extends AbstractFilter
         $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id');
         $builder->leftJoin('car_orders', 'car_orders.car_id', 'cars.id');
 
+        //Complectation price
+        $builder->leftJoin('wsm_reserve_complectation_prices as contract_cp', 'contract_cp.contract_id', 'wsm_reserve_new_car_contracts.id');
+        $builder->leftJoin('complectation_prices as complect_price', 'complect_price.id', 'contract_cp.complectation_price_id');
+
+        // Option price
+        $builder->leftJoin('wsm_reserve_option_prices as contract_op', 'contract_op.contract_id', 'wsm_reserve_new_car_contracts.id');
+        $builder->leftJoin('option_prices as opt_price', 'opt_price.id', 'contract_op.option_price_id');
+
+        // Overprice Tuning Gift
+        $builder->leftJoin('car_full_prices as car_fp', 'car_fp.car_id', 'cars.id');
+
+        // discounts
+        $builder->leftJoin('discounts', function($join){
+            $join->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'));
+            $join->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
+        });
+        $builder->leftJoin('discount_sums', 'discount_sums.discount_id', 'discounts.id');
+
+        // tradeIn
+        $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
+        $builder->leftJoin('used_cars', 'used_cars.id', 'wsm_reserve_trade_ins.used_car_id');
+
+        //payments
+        $builder->leftJoin('wsm_reserve_payments', 'wsm_reserve_payments.reserve_id', 'wsm_reserve_new_cars.id');
+
+        $builder->groupBy('wsm_reserve_new_car_contracts.id');
+
+        $builder->addSelect([
+            'complect_price.price as cpprice',
+            'car_fp.overprice as cfpover',
+            'car_fp.tuningprice as cfptuning',
+            'car_fp.giftprice as cfpgift',
+            DB::raw('sum(opt_price.price) as optprice'),
+            DB::raw('SUM(discount_sums.amount) as dsamount'),
+            DB::raw('sum(wsm_reserve_payments.amount) as payamount'),
+            DB::raw('sum(used_cars.purchase_price) as usedprice'),
+        ]);
+    }
+
+
+
+    public function debitRelativeZero(Builder $builder, int $val)
+    {
+        $znak = match($val){
+            -1 => '<',
+            0 => '=',
+            1 => '>',
+            default => '',
+        };
+
+        if(!$znak)
+            return;
+        
+        $builder->havingRaw(DB::raw('(
+            IFNULL(cpprice,0) + 
+            IFNULL(optprice, 0) + 
+            IFNULL(cfpover,0) + 
+            IFNULL(cfptuning, 0) - 
+            IFNULL(cfpgift, 0) - 
+            IFNULL(dsamount, 0) - 
+            IFNULL(payamount, 0) - 
+            IFNULL(usedprice, 0)) '.$znak.' 0
+        '));
+    }
+
+
+
+    public function isWorksheetAbort(Builder $builder, int $val)
+    {
+        if($val === 1)
+            $builder->where('worksheets.status_id', 'confirm');
+        elseif($val === 0)
+            $builder->where('worksheets.status_id', 'work');
     }
 
 
@@ -200,6 +295,7 @@ class ContractFilter extends AbstractFilter
                 $q->whereNotNull('wsm_reserve_new_car_contracts.pdkp_delivery_at');
                 $q->whereDate('wsm_reserve_new_car_contracts.pdkp_delivery_at', '<', now());
                 $q->whereNull('wsm_reserve_new_car_contracts.dkp_offer_at');
+                $q->whereNull('wsm_reserve_new_car_contracts.dkp_closed_at');
             });
     }
 

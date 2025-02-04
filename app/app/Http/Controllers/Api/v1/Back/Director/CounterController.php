@@ -37,35 +37,35 @@ class CounterController extends Controller
         $redemptionWait = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemptionWait)->pluck('id');
 
         $counter = [
-            '0' => [
+            0 => [
                 'name' => 'Необработанные обращения',
                 'count' => $trafic->count(),
                 'ids' => $trafic,
                 'type' => 'trafics'
             ],
 
-            '1' => [
+            1 => [
                 'name' => 'Просроченные переговоры',
                 'count' => $worksheetOverdue->count(),
                 'ids' => $worksheetOverdue,
                 'type' => 'events'
             ],
 
-            '2' => [
+            2 => [
                 'name' => 'Рабочие листы на проверке',
                 'count' => $worksheetCheck->count(),
                 'ids' => $worksheetCheck,
                 'type' => 'worksheets'
             ],
 
-            '3' => [
+            3 => [
                 'name' => 'Оценка в закрытом Рабочем листе',
                 'count' => $redemptionControl->count(),
                 'ids' => $redemptionControl,
                 'type' => 'appraisals'
             ],
 
-            '4' => [
+            4 => [
                 'name' => 'Ожидающие оценки',
                 'count' => $redemptionWait->count(),
                 'ids' => $redemptionWait,

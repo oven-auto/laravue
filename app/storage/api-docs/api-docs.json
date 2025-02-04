@@ -2041,6 +2041,24 @@
                         "enum": [
                             "search"
                         ]
+                    },
+                    "is_worksheet_abort": {
+                        "description": "1 - вывод только завершенных РЛ. 0 - только рабочих",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "1",
+                        "enum": [
+                            "is_worksheet_abort"
+                        ]
+                    },
+                    "debit_relative_zero": {
+                        "description": "Дебиторская задолженность ((Контракт + Опции + Переоценка + Тюнинг – Подарки - Скидки) - (Оплата клиента + Трейд-ин))\n     * относительно 0, 1 > 0, 0 = 0, -1 < 0",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "-1",
+                        "enum": [
+                            "debit_relative_zero"
+                        ]
                     }
                 },
                 "type": "object"
