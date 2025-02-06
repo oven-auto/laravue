@@ -142,22 +142,60 @@ class ContractFilter extends AbstractFilter
 
     /**  @OA\Property(
      * format="integer", 
-     * description="1 - вывод только завершенных РЛ. 0 - только рабочих", 
-     * property="is_worksheet_abort", 
+     * description="Вывод РЛ по выбранному статусу (список статусов work, confirm, check)", 
+     * property="worksheet_status", 
      * type="integer", 
      * example="1")
      * */
-    public const IS_WORKSHEET_ABORT        = 'is_worksheet_abort';
+    public const WORKSHEET_STATUS        = 'worksheet_status';
     
     /**  @OA\Property(
      * format="integer", 
-     * description="Дебиторская задолженность ((Контракт + Опции + Переоценка + Тюнинг – Подарки - Скидки) - (Оплата клиента + Трейд-ин))
-     * относительно 0, 1 > 0, 0 = 0, -1 < 0",
-     * property="debit_relative_zero", 
+     * description="Дебиторская задолженность (если есть рассторжение, то 0, иначе
+     * (Контракт + Опции + Переоценка + Тюнинг – Подарки - Скидки) - (Оплата клиента + Трейд-ин))
+     * 1 - есть, 0 - нет",
+     * property="has_debit", 
      * type="integer", 
-     * example="-1")
+     * example="0")
      * */
-    public const DEBIT_RELATIVE_ZERO = 'debit_relative_zero';
+    public const HAS_DEBIT = 'has_debit';
+
+    /**  @OA\Property(
+     * format="boolean", 
+     * description="Наличие дкп 1 - да, 0 - нет", 
+     * property="has_dkp", 
+     * type="boolean", 
+     * example="1")
+     * */
+    public const HAS_DKP = 'has_dkp';
+
+    /**  @OA\Property(
+     * format="boolean", 
+     * description="Наличие пдкп 1 - да, 0 - нет", 
+     * property="has_pdkp", 
+     * type="boolean", 
+     * example="1")
+     * */
+    public const HAS_PDKP = 'has_pdkp';
+
+    /**  @OA\Property(
+     * format="boolean", 
+     * description="Наличие продажи 1 - да, 0 - нет", 
+     * property="has_sale", 
+     * type="boolean", 
+     * example="1")
+     * */
+    public const HAS_SALE = 'has_sale';
+
+    /**  @OA\Property(
+     * format="integer", 
+     * description="Наличие кредиторской задолженности (если есть продажа, то 0 иначе, оплата + стоимость трейдына)
+     * 1 - есть задолженность, 0 - нет задолженности",
+     * property="has_credit", 
+     * type="integer", 
+     * example="1")
+     * */
+    public const HAS_CREDIT = 'has_credit';
 
 
 
@@ -177,8 +215,12 @@ class ContractFilter extends AbstractFilter
             self::PDKP_MANAGER      => [$this, 'pdkp_manager'],
             self::SALE_MANAGER      => [$this, 'sale_manager'],
             self::SEARCH            => [$this, 'search'],
-            self::IS_WORKSHEET_ABORT    => [$this, 'isWorksheetAbort'],
-            self::DEBIT_RELATIVE_ZERO   => [$this, 'debitRelativeZero'],
+            self::WORKSHEET_STATUS    => [$this, 'isWorksheetAbort'],
+            self::HAS_DEBIT             => [$this, 'debitRelativeZero'],
+            self::HAS_DKP               => [$this, 'hasDKP'],
+            self::HAS_PDKP              => [$this, 'hasPDKP'],
+            self::HAS_SALE              => [$this, 'hasSale'],
+            self::HAS_CREDIT            => [$this, 'hasCredit'],
         ];
     }
 
@@ -230,9 +272,7 @@ class ContractFilter extends AbstractFilter
             'wsm_reserve_new_car_contracts.reserve_id'
         );
 
-        // tradeIn
-        // $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
-        // $builder->leftJoin('used_cars', 'used_cars.id', 'wsm_reserve_trade_ins.used_car_id');
+        // trade-In
         $builder->leftJoin(
             DB::raw('(SELECT wrt.reserve_id as reserve_id, sum(used_cars.purchase_price) as price 
                 FROM wsm_reserve_trade_ins as wrt
@@ -255,63 +295,126 @@ class ContractFilter extends AbstractFilter
         $builder->groupBy('wsm_reserve_new_car_contracts.id');
 
         $builder->addSelect([
-            'complect_price.price as cpprice',
+            DB::raw('IF(complect_price.price IS NULL, car_fp.complectationprice, complect_price.price) as cpprice'),
+            DB::raw('IF(_options.price IS NULL, car_fp.optionprice, _options.price) as optprice'),
             'car_fp.overprice as cfpover',
             'car_fp.tuningprice as cfptuning',
-            'car_fp.giftprice as cfpgift',
-            '_options.price as optprice',
+            'car_fp.giftprice as cfpgift',            
             '_discounts.amount as dsamount',
             '_payments.amount as payamount',
             '_tradins.price as usedprice',
         ]);
-
-        $builder->addSelect(DB::raw('(
-            IFNULL(complect_price.price,0) + 
-            IFNULL(_options.price, 0) + 
-            IFNULL(car_fp.overprice,0) + 
-            IFNULL(car_fp.tuningprice, 0) - 
-            IFNULL(car_fp.giftprice, 0) - 
-            IFNULL(_discounts.amount, 0) - 
-            IFNULL(_payments.amount, 0) - 
-            IFNULL(_tradins.price, 0)
-            ) as d
-        '));
     }
 
 
 
+    /**
+     * Наличие кредиторской задолженности
+     */
+    public function hasCredit(Builder $builder, bool $val)
+    {
+        $znak = match($val) {
+            true => '>',
+            false => '<=',
+            default => null
+        }; 
+
+        if(!$znak)
+            return;
+
+        $builder->where(DB::raw('
+            IF(
+                wsm_reserve_sales.id is not null,
+                0,
+                IFNULL(_payments.amount, 0) + IFNULL(_tradins.price, 0)
+            )
+        '), $znak, 0);
+    }
+
+
+
+    /**
+     * Наличие ДКП
+     */
+    public function hasDKP(Builder $builder, bool $val)
+    {
+        if($val)
+            $builder->whereNotNull('wsm_reserve_new_car_contracts.dkp_offer_at');
+        else
+            $builder->whereNull('wsm_reserve_new_car_contracts.dkp_offer_at');
+    }
+
+
+
+    /**
+     * Наличие ПДКП
+     */
+    public function hasPDKP(Builder $builder, bool $val)
+    {
+        if($val)
+            $builder->whereNotNull('wsm_reserve_new_car_contracts.pdkp_offer_at');
+        else
+            $builder->whereNull('wsm_reserve_new_car_contracts.pdkp_offer_at');
+    }
+
+
+
+    /**
+     * Наличие продажи
+     */
+    public function hasSale(Builder $builder, bool $val)
+    {   
+        if($val)
+            $builder->whereNotNull('wsm_reserve_sales.id');
+        else
+            $builder->whereNull('wsm_reserve_sales.id');
+    }
+
+
+
+    /**
+     * Наличие дебиторской задолженности
+     */
     public function debitRelativeZero(Builder $builder, int $val)
     {
         $znak = match($val){
             -1 => '<',
-            0 => '=',
+            0 => '<=',
             1 => '>',
-            default => '',
+            default => null,
         };
 
         if(!$znak)
             return;
-        
-        $builder->havingRaw(DB::raw('(
-            IFNULL(cpprice,0) + 
-            IFNULL(optprice, 0) + 
-            IFNULL(cfpover,0) + 
-            IFNULL(cfptuning, 0) - 
-            IFNULL(cfpgift, 0) - 
-            IFNULL(dsamount, 0) - 
-            IFNULL(payamount, 0) - 
-            IFNULL(usedprice, 0)) '.$znak.' 0
-        '));
+
+        $builder->where(DB::raw('IF(
+            wsm_reserve_new_car_contracts.dkp_closed_at is not null, 
+            0, (
+                IF(complect_price.price IS NULL, car_fp.complectationprice, complect_price.price) + 
+                IF(_options.price IS NULL, car_fp.optionprice, _options.price) + 
+                IFNULL(car_fp.overprice,0) + 
+                IFNULL(car_fp.tuningprice, 0) - 
+                IFNULL(car_fp.giftprice, 0) - 
+                IFNULL(_discounts.amount, 0) - 
+                IFNULL(_payments.amount, 0) - 
+                IFNULL(_tradins.price, 0)
+            )
+        )'), $znak, 0);
     }
 
 
 
-    public function isWorksheetAbort(Builder $builder, int $val)
+    /**
+     * Статус рабочего листв
+     */
+    public function isWorksheetAbort(Builder $builder, string $val)
     {
-        if($val === 1)
+        if($val === 'confirm')
             $builder->where('worksheets.status_id', 'confirm');
-        elseif($val === 0)
+        elseif($val === 'work')
             $builder->where('worksheets.status_id', 'work');
+        elseif($val === 'check')
+            $builder->where('worksheets.status_id', 'check');
     }
 
 
@@ -326,6 +429,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Наличие просроченной поставки
+     */
     public function overdue(Builder $builder, bool $val)
     {
         if($val)
@@ -335,18 +441,33 @@ class ContractFilter extends AbstractFilter
                 $q->whereNull('wsm_reserve_new_car_contracts.dkp_offer_at');
                 $q->whereNull('wsm_reserve_new_car_contracts.dkp_closed_at');
             });
+        else
+            $builder->where(function($q){
+                $q->whereNotNull('wsm_reserve_new_car_contracts.pdkp_delivery_at');
+                $q->whereDate('wsm_reserve_new_car_contracts.pdkp_delivery_at', '>=', now());
+                $q->whereNull('wsm_reserve_new_car_contracts.dkp_offer_at');
+                $q->whereNull('wsm_reserve_new_car_contracts.dkp_closed_at');
+            });
     }
 
 
 
+    /**
+     * Наличие расторжения
+     */
     public function isClose(Builder $builder, bool $val)
     {
         if($val)
             $builder->whereNotNull('wsm_reserve_new_car_contracts.dkp_closed_at');
+        else
+            $builder->whereNull('wsm_reserve_new_car_contracts.dkp_closed_at');
     }
 
 
 
+    /**
+     * Дата создания (первичный контракт)
+     */
     public function create(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
@@ -356,6 +477,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Дата заключения ДКП
+     */
     public function dkp(Builder $builder, array $dates)
     {  
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
@@ -365,6 +489,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Дата заключения ПДКП
+     */
     public function pdkp(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
@@ -374,6 +501,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Дата продажи
+     */
     public function sale(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
@@ -383,6 +513,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Дата расторжения
+     */
     public function close(Builder $builder, array $dates)
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
@@ -392,6 +525,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Менеджер ДКП
+     */
     public function dkp_manager(Builder $builder, array $val)
     {
         $builder->whereIn('wsm_reserve_new_car_contracts.dkp_decorator_id', $val);
@@ -399,6 +535,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Менеджер ПДКП
+     */
     public function pdkp_manager(Builder $builder, array $val)
     {
         $builder->whereIn('wsm_reserve_new_car_contracts.pdkp_decorator_id', $val);
@@ -406,6 +545,9 @@ class ContractFilter extends AbstractFilter
 
 
 
+    /**
+     * Оформитель продажи
+     */
     public function sale_manager(Builder $builder, array $val)
     {
         $builder->whereIn('wsm_reserve_sales.decorator_id', $val);

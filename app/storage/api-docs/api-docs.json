@@ -2042,22 +2042,58 @@
                             "search"
                         ]
                     },
-                    "is_worksheet_abort": {
-                        "description": "1 - вывод только завершенных РЛ. 0 - только рабочих",
+                    "worksheet_status": {
+                        "description": "Вывод РЛ по выбранному статусу (список статусов work, confirm, check)",
                         "type": "integer",
                         "format": "integer",
                         "example": "1",
                         "enum": [
-                            "is_worksheet_abort"
+                            "worksheet_status"
                         ]
                     },
-                    "debit_relative_zero": {
-                        "description": "Дебиторская задолженность ((Контракт + Опции + Переоценка + Тюнинг – Подарки - Скидки) - (Оплата клиента + Трейд-ин))\n     * относительно 0, 1 > 0, 0 = 0, -1 < 0",
+                    "has_debit": {
+                        "description": "Дебиторская задолженность (если есть рассторжение, то 0, иначе\n     * (Контракт + Опции + Переоценка + Тюнинг – Подарки - Скидки) - (Оплата клиента + Трейд-ин))\n     * 1 - есть, 0 - нет",
                         "type": "integer",
                         "format": "integer",
-                        "example": "-1",
+                        "example": "0",
                         "enum": [
-                            "debit_relative_zero"
+                            "has_debit"
+                        ]
+                    },
+                    "has_dkp": {
+                        "description": "Наличие дкп 1 - да, 0 - нет",
+                        "type": "boolean",
+                        "format": "boolean",
+                        "example": "1",
+                        "enum": [
+                            "has_dkp"
+                        ]
+                    },
+                    "has_pdkp": {
+                        "description": "Наличие пдкп 1 - да, 0 - нет",
+                        "type": "boolean",
+                        "format": "boolean",
+                        "example": "1",
+                        "enum": [
+                            "has_pdkp"
+                        ]
+                    },
+                    "has_sale": {
+                        "description": "Наличие продажи 1 - да, 0 - нет",
+                        "type": "boolean",
+                        "format": "boolean",
+                        "example": "1",
+                        "enum": [
+                            "has_sale"
+                        ]
+                    },
+                    "has_credit": {
+                        "description": "Наличие кредиторской задолженности (если есть продажа, то 0 иначе, оплата + стоимость трейдына)\n     * 1 - есть задолженность, 0 - нет задолженности",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "1",
+                        "enum": [
+                            "has_credit"
                         ]
                     }
                 },
