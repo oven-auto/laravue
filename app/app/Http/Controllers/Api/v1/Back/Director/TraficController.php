@@ -19,19 +19,19 @@ class TraficController extends Controller
         return response()->json([
 
             'data' => [
-                'total'     => $analytic->fasade($request->all(), new \App\Services\Analytic\TotalTraficAnalytic()),
+                // 'total'     => $analytic->fasade($request->all(), new \App\Services\Analytic\TotalTraficAnalytic()),
 
-                'deleted'   => $analytic->fasade($request->all(), new \App\Services\Analytic\DeleteTraficAnalytic()),
+                // 'deleted'   => $analytic->fasade($request->all(), new \App\Services\Analytic\DeleteTraficAnalytic()),
 
-                'general'   => $analytic->fasade($request->all(), new \App\Services\Analytic\GeneralTraficAnalytic()),
+                // 'general'   => $analytic->fasade($request->all(), new \App\Services\Analytic\GeneralTraficAnalytic()),
 
-                'target_total' => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTotalTraficAnalytic()),
+                // 'target_total' => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTotalTraficAnalytic()),
 
-                'target'    => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTraficAnalytic()),
+                // 'target'    => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTraficAnalytic()),
 
-                'author'    => $analytic->fasade($request->all(), new \App\Services\Analytic\AuthorTraficAnalytic()),
+                // 'author'    => $analytic->fasade($request->all(), new \App\Services\Analytic\AuthorTraficAnalytic()),
  
-                'personal'  => $analytic->fasade($request->all(), new \App\Services\Analytic\PersonalTraficAnalytic()),
+                // 'personal'  => $analytic->fasade($request->all(), new \App\Services\Analytic\PersonalTraficAnalytic()),
 
                 'chanel'    => $analytic->fasade($request->all(), new \App\Services\Analytic\ChanelTraficAnalytic()),
             ],

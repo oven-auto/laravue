@@ -64,7 +64,7 @@ Class TraficAnalyticFilter extends AbstractFilter
     public function intervalBegin(Builder $builder, $value) : void
     {
         $carbon = Carbon::createFromFormat('Y-m-d', $this->formatDate($value));
-
+        
         $builder->whereDate('trafics.created_at', '>=', $carbon);
     }
 
@@ -73,7 +73,7 @@ Class TraficAnalyticFilter extends AbstractFilter
     public function intervalEnd(Builder $builder, $value) : void
     {
         $carbon = Carbon::createFromFormat('Y-m-d', $this->formatDate($value));
-
+        
         $builder->whereDate('trafics.created_at', '<=', $carbon);
     }
 

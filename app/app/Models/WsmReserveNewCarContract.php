@@ -244,11 +244,21 @@ class WsmReserveNewCarContract extends Model
 
 
     /**
+     * Проверить контракт на расторгнутость
+     */
+    public function isClosed()
+    {
+        return ($this->dkpCloseDate || $this->pdkpCloseDate) ? 1 : 0;
+    }
+
+
+
+    /**
      * Получить дебиторскую задолженность
      */
     public function getDebtorArrears()
     {
-        if ($this->dkpCloseDate || $this->pdkpCloseDate)
+        if ($this->isClosed())
             return 0;
         return $this->reserve->getDebt();
     }

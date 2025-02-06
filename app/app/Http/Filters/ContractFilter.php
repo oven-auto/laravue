@@ -205,26 +205,52 @@ class ContractFilter extends AbstractFilter
         $builder->leftJoin('wsm_reserve_complectation_prices as contract_cp', 'contract_cp.contract_id', 'wsm_reserve_new_car_contracts.id');
         $builder->leftJoin('complectation_prices as complect_price', 'complect_price.id', 'contract_cp.complectation_price_id');
 
-        // Option price
-        $builder->leftJoin('wsm_reserve_option_prices as contract_op', 'contract_op.contract_id', 'wsm_reserve_new_car_contracts.id');
-        $builder->leftJoin('option_prices as opt_price', 'opt_price.id', 'contract_op.option_price_id');
+        // Option price////////////////////////
+        $builder->leftJoin(
+            DB::raw('(SELECT sum(opt_price.price) as price, contract_op.contract_id FROM wsm_reserve_option_prices as contract_op
+                LEFT JOIN option_prices as opt_price on opt_price.id = contract_op.option_price_id
+                GROUP BY contract_op.contract_id)
+                as _options
+            '),
+            '_options.contract_id',
+            'wsm_reserve_new_car_contracts.id'
+        );
 
         // Overprice Tuning Gift
         $builder->leftJoin('car_full_prices as car_fp', 'car_fp.car_id', 'cars.id');
 
         // discounts
-        $builder->leftJoin('discounts', function($join){
-            $join->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'));
-            $join->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
-        });
-        $builder->leftJoin('discount_sums', 'discount_sums.discount_id', 'discounts.id');
+        $builder->leftJoin(
+            DB::raw('(SELECT discounts.modulable_id as reserve_id, sum(discount_sums.amount) as amount FROM discounts
+                LEFT JOIN discount_sums on discount_sums.discount_id = discounts.id
+                WHERE discounts.modulable_type = "App\\\Models\\\WsmReserveNewCar"
+                GROUP BY discounts.modulable_id) as _discounts'
+            ),
+            '_discounts.reserve_id',
+            'wsm_reserve_new_car_contracts.reserve_id'
+        );
 
         // tradeIn
-        $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
-        $builder->leftJoin('used_cars', 'used_cars.id', 'wsm_reserve_trade_ins.used_car_id');
+        // $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
+        // $builder->leftJoin('used_cars', 'used_cars.id', 'wsm_reserve_trade_ins.used_car_id');
+        $builder->leftJoin(
+            DB::raw('(SELECT wrt.reserve_id as reserve_id, sum(used_cars.purchase_price) as price 
+                FROM wsm_reserve_trade_ins as wrt
+                LEFT JOIN used_cars on used_cars.id = wrt.used_car_id
+                GROUP BY wrt.reserve_id) as _tradins'),
+            '_tradins.reserve_id',
+            'wsm_reserve_new_car_contracts.reserve_id'
+        );
 
         //payments
-        $builder->leftJoin('wsm_reserve_payments', 'wsm_reserve_payments.reserve_id', 'wsm_reserve_new_cars.id');
+        $builder->leftJoin(
+            DB::raw('(SELECT wrp.reserve_id as reserve_id, sum(wrp.amount) as amount 
+                FROM wsm_reserve_payments as wrp 
+                GROUP BY wrp.reserve_id) as _payments'
+            ),
+            '_payments.reserve_id',
+            'wsm_reserve_new_car_contracts.reserve_id'
+        );
 
         $builder->groupBy('wsm_reserve_new_car_contracts.id');
 
@@ -233,11 +259,23 @@ class ContractFilter extends AbstractFilter
             'car_fp.overprice as cfpover',
             'car_fp.tuningprice as cfptuning',
             'car_fp.giftprice as cfpgift',
-            DB::raw('sum(opt_price.price) as optprice'),
-            DB::raw('SUM(discount_sums.amount) as dsamount'),
-            DB::raw('sum(wsm_reserve_payments.amount) as payamount'),
-            DB::raw('sum(used_cars.purchase_price) as usedprice'),
+            '_options.price as optprice',
+            '_discounts.amount as dsamount',
+            '_payments.amount as payamount',
+            '_tradins.price as usedprice',
         ]);
+
+        $builder->addSelect(DB::raw('(
+            IFNULL(complect_price.price,0) + 
+            IFNULL(_options.price, 0) + 
+            IFNULL(car_fp.overprice,0) + 
+            IFNULL(car_fp.tuningprice, 0) - 
+            IFNULL(car_fp.giftprice, 0) - 
+            IFNULL(_discounts.amount, 0) - 
+            IFNULL(_payments.amount, 0) - 
+            IFNULL(_tradins.price, 0)
+            ) as d
+        '));
     }
 
 

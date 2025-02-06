@@ -4,7 +4,9 @@ namespace App\Services\Analytic;
 
 use App\Http\Filters\TraficAnalyticFilter;
 use App\Models\Trafic;
+use App\Models\TraficChanel;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Concerns\ToArray;
 
 Class ChanelTraficAnalytic implements TraficAnalyticInterface
 {
@@ -13,14 +15,15 @@ Class ChanelTraficAnalytic implements TraficAnalyticInterface
         $filter = app()->make(TraficAnalyticFilter::class, ['queryParams' => array_filter($data)]);
 
         $query = Trafic::select([
-                DB::raw('COUNT(trafics.id) as count'),
-                DB::raw('trafic_chanels.name as name'),
-                'total' => Trafic::select(DB::raw('count(*)'))->filter($filter)->withTrashed()->onlyTarget(),
+                    DB::raw('COUNT(trafics.id) as count'),
+                    DB::raw('trafic_chanels.name as name'),
+                    'total' => Trafic::select(DB::raw('count(*)'))->filter($filter)->withTrashed()->onlyTarget(),
+                    DB::raw('trafic_chanels.id as type')
             ])
             ->withTrashed()
             ->onlyTarget()
-            ->leftJoin('trafic_chanels', 'trafic_chanels.id', 'trafics.trafic_chanel_id')
-            ->groupBy('trafics.trafic_chanel_id')
+            ->rightJoin('trafic_chanels', 'trafic_chanels.id', 'trafics.trafic_chanel_id')
+            ->groupBy('trafic_chanels.id')
             ->filter($filter);
 
         return $query->get()->map(fn($item) => [
@@ -28,7 +31,7 @@ Class ChanelTraficAnalytic implements TraficAnalyticInterface
             'name' => $item->name ?? 'Не назначено',
             'total' => $item->total ?? 0,
             'percent' => $item->total ? round((100 / $item->total) * $item->count, 2) : 0,
-            'type' => ''
+            'type' => $item->type
         ]);
     }
 }

@@ -183,8 +183,6 @@ class ReserveContractRepository
         $filter = app()->make(ContractFilter::class, ['queryParams' => ($data)]);
 
         $query->filter($filter);
-        
-        
 
         $contracts = $query->simplePaginate($paginate);
         
@@ -205,64 +203,100 @@ class ReserveContractRepository
         $subQuery->filter($filter);
 
         $subQuery ->leftJoin('car_full_prices', 'car_full_prices.car_id', 'cars.id')//представление хранящее актуальную цену авто по прайсу
-        ->leftJoin('wsm_reserve_complectation_prices','wsm_reserve_complectation_prices.contract_id', 'wsm_reserve_new_car_contracts.id')//сохраненая в контракте цена
-        ->leftJoin('complectation_prices', 'complectation_prices.id', 'wsm_reserve_complectation_prices.complectation_price_id')//цены комплектации
-        ->leftJoin('wsm_reserve_option_prices', 'wsm_reserve_option_prices.contract_id', 'wsm_reserve_new_car_contracts.id')//сохраненные в контракте опции
-        ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
-            left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
-            left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
-            left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
-            where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is null
-            GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
-        )
+        // ->leftJoin('wsm_reserve_complectation_prices','wsm_reserve_complectation_prices.contract_id', 'wsm_reserve_new_car_contracts.id')//сохраненая в контракте цена
+        // ->leftJoin('complectation_prices', 'complectation_prices.id', 'wsm_reserve_complectation_prices.complectation_price_id')//цены комплектации
+        // ->leftJoin('wsm_reserve_option_prices', 'wsm_reserve_option_prices.contract_id', 'wsm_reserve_new_car_contracts.id')//сохраненные в контракте опции
+        // ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
+        //     left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
+        //     left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
+        //     left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
+        //     where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is null
+        //     GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
+        // )
         ->addSelect([
             DB::raw('cars.id as carId'),
-            DB::raw('cast(
-                    IF(complectation_prices.id,complectation_prices.price,car_full_prices.complectationprice
-                )                                       as integer) as com_price'),
-            DB::raw('cast(
-                    IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, car_full_prices.optionprice
-                )                                       as integer) as opt_price'),
-            DB::raw('cast(car_full_prices.overprice     as integer) as over_price'),
-            DB::raw('cast(car_full_prices.tuningprice   as integer) as tun_price'),
-            DB::raw('cast(car_full_prices.giftprice     as integer) as gift_price'),
-            DB::raw('cast(joinDiscount.amount           as integer) as discount_sum'),
+            // DB::raw('cast(
+            //         IF(complectation_prices.id,complectation_prices.price,car_full_prices.complectationprice
+            //     )                                       as integer) as com_price'),
+            // DB::raw('cast(
+            //         IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, car_full_prices.optionprice
+            //     )                                       as integer) as opt_price'),
+            // DB::raw('cast(car_full_prices.overprice     as integer) as over_price'),
+            // DB::raw('cast(car_full_prices.tuningprice   as integer) as tun_price'),
+            // DB::raw('cast(car_full_prices.giftprice     as integer) as gift_price'),
+            // DB::raw('cast(joinDiscount.amount           as integer) as discount_sum'),
             DB::raw('cast(joinPay.amount                as integer) as payment_sum'),
             DB::raw('cast(joinTradeIn.amount            as integer) as tradein_sum'),
             DB::raw('IF(wsm_reserve_new_car_contracts.dkp_closed_at is null, 0, 1) as closed_at'),
             DB::raw('IF(wrs.date_at is null, 0, 1) as saled_at')
         ]);
 
-        $subQuery->leftJoin(DB::raw('(SELECT sum(ds.amount) as amount, d.modulable_id as reserveId from discounts as d
-            left join discount_sums as ds on ds.discount_id = d.id
-            where d.modulable_type = "App\\\Models\\\WsmReserveNewCar"
-            group by reserveId) as joinDiscount'), 'joinDiscount.reserveId', 'wsm_reserve_new_cars.id');
+        // $subQuery->leftJoin(DB::raw('(SELECT sum(ds.amount) as amount, d.modulable_id as reserveId from discounts as d
+        //     left join discount_sums as ds on ds.discount_id = d.id
+        //     where d.modulable_type = "App\\\Models\\\WsmReserveNewCar"
+        //     group by reserveId) as joinDiscount'), 'joinDiscount.reserveId', 'wsm_reserve_new_cars.id');
        
         $subQuery->leftJoin(DB::raw('(SELECT sum(pay.amount) as amount, pay.reserve_id as reserveId
             from wsm_reserve_payments as pay group by reserveId) as joinPay'), 'joinPay.reserveId', 'wsm_reserve_new_cars.id');
 
-        $subQuery->leftJoin(DB::raw('(SELECT sum(uc.purchase_price) as amount, t.reserve_id as reserveId
-            from wsm_reserve_trade_ins as t
-            left join used_cars as uc on uc.id = t.used_car_id) as joinTradeIn'), 'joinTradeIn.reserveId', 'wsm_reserve_new_cars.id');
+        $subQuery->leftJoin(DB::raw('(
+                SELECT sum(uc.purchase_price) as amount, t.reserve_id as reserveId
+                from wsm_reserve_trade_ins as t
+                left join used_cars as uc on uc.id = t.used_car_id) as joinTradeIn
+            '), 
+            'joinTradeIn.reserveId', 
+            'wsm_reserve_new_cars.id'
+        );
         
         $subQuery->leftJoin('wsm_reserve_sales as wrs', 'wrs.reserve_id', 'wsm_reserve_new_cars.id');
 
         $subQuery->groupBy('wsm_reserve_new_car_contracts.id');
-      
+        
+        //dd($subQuery->first());
+
         $result = DB::table($subQuery)->select(
             DB::raw('count(*) as count'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, com_price))       as integer)    as e_com_price'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, opt_price))       as integer)    as e_opt_price'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, over_price))      as integer)    as e_over_price'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, tun_price))       as integer)    as e_tun_price'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, gift_price))      as integer)    as e_gift_price'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, discount_sum))    as integer)    as e_discount_sum'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, payment_sum))     as integer)    as e_payment_sum'),
-            DB::raw('cast(sum(if(closed_at = 1, 0, tradein_sum))     as integer)    as e_tradein_sum'),
-            DB::raw('cast(sum(if(saled_at = 1, 0, payment_sum))     as integer)    as c_payment_sum'),
-            DB::raw('cast(sum(if(saled_at = 1, 0, tradein_sum))     as integer)    as c_tradein_sum'),
+
+            // DB::raw('cast(sum(if(closed_at = 1, 0, com_price))       as integer)    as e_com_price'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, opt_price))       as integer)    as e_opt_price'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, over_price))      as integer)    as e_over_price'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, tun_price))       as integer)    as e_tun_price'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, gift_price))      as integer)    as e_gift_price'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, discount_sum))    as integer)    as e_discount_sum'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, payment_sum))     as integer)    as e_payment_sum'),
+            // DB::raw('cast(sum(if(closed_at = 1, 0, tradein_sum))     as integer)    as e_tradein_sum'),
+            
+            // DB::raw('cast(sum(if(saled_at = 1, 0, payment_sum))     as integer)    as c_payment_sum'),
+            // DB::raw('cast(sum(if(saled_at = 1, 0, tradein_sum))     as integer)    as c_tradein_sum'),
+            
             DB::raw('sum(if(closed_at = 1, 0, 1)) as debit_count'),
             DB::raw('sum(if(saled_at = 1, 0, 1)) as credit_count'),
+
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(cpprice,0))) as e_com_price'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(optprice, 0))) as e_opt_price'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(cfpover,0))) as e_over_price'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(cfptuning, 0))) as e_tun_price'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(cfpgift, 0))) as e_gift_price'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(dsamount, 0))) as e_discount_sum'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(payamount, 0))) as e_payment_sum'), 
+            // DB::raw('sum(if(closed_at = 1, 0, IFNULL(usedprice, 0))) as e_tradein_sum'), 
+
+            DB::raw('(
+                sum(if(closed_at = 1, 0, IFNULL(cpprice,0))) +
+                sum(if(closed_at = 1, 0, IFNULL(optprice, 0))) +
+                sum(if(closed_at = 1, 0, IFNULL(cfpover,0)))  +
+                sum(if(closed_at = 1, 0, IFNULL(cfptuning, 0))) -
+                sum(if(closed_at = 1, 0, IFNULL(cfpgift, 0))) -
+                sum(if(closed_at = 1, 0, IFNULL(dsamount, 0)))  -
+                sum(if(closed_at = 1, 0, IFNULL(payamount, 0))) -
+                sum(if(closed_at = 1, 0, IFNULL(usedprice, 0)))
+            ) as debit'),
+
+            DB::raw('(
+                sum(if(saled_at = 1, 0, IFNULL(payamount, 0))) +
+                sum(if(saled_at = 1, 0, IFNULL(usedprice, 0)))
+            ) as credit')
+
         )->first();
         
         return [
@@ -271,9 +305,20 @@ class ReserveContractRepository
                 'debit_count' => $result->debit_count ?? 0,
                 'credit_count' => $result->credit_count ?? 0,
             ],
-            'debit' => $result->e_com_price + $result->e_opt_price + $result->e_over_price + $result->e_tun_price -
-                        $result->e_gift_price - $result->e_discount_sum - $result->e_payment_sum - $result->e_tradein_sum,
-            'credit' => $result->c_payment_sum + $result->c_tradein_sum
+            'debit' => $result->debit,
+            'credit' => $result->credit,
+            // 'test' => [
+            //     'complect' => $result->e_com_price,
+            //     'option' => $result->e_opt_price,
+            //     'overprice' => $result->e_over_price,
+            //     'tuning' => $result->e_tun_price,
+            //     'gift' => $result->e_gift_price,
+            //     'discount' => $result->e_discount_sum,
+            //     'payment' => $result->e_payment_sum,
+            //     'tradein' => $result->e_tradein_sum,
+
+            //     'debit' => $result->debit
+            // ]
         ];
     }
 }
