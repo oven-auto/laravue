@@ -118,7 +118,7 @@ class ReserveContractRepository
                 Notice::setMessage('Данные успешно приняты.');
             });
         } catch (\Throwable $e) {
-            throw new \Exception($e->getMessage());
+            throw new ReserveException($e->getMessage());
         }
     }
 

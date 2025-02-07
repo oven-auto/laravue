@@ -83,7 +83,7 @@ class Handler extends ExceptionHandler
     public function render($request, Throwable $exception)
     {
         $this->sendTelegram($exception);
-
+        
         if(
             $exception instanceof ReserveException ||
             $exception instanceof RedemptionException ||
