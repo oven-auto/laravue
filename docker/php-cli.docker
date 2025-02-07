@@ -31,6 +31,8 @@ COPY docker/supervisor /etc/supervisor/conf.d
 
 CMD ["/usr/bin/supervisord", "-c", "/etc/supervisor/supervisord.conf"]
 
+RUN pecl install xdebug && docker-php-ext-enable xdebug
+
 WORKDIR /var/www
 
 

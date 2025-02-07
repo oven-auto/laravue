@@ -415,46 +415,112 @@ class HomeController extends Controller
 
 
 
+    public function puz(array $arr)
+    {
+        $count = count($arr);
+        $count_itr = $count - 1;
+
+        $masP = $arr;
+        $t = 0;
+
+        $time_start = microtime(true);
+        for($i = 0; $i < $count; $i++)
+            for($k = 0; $k < ($count_itr-$i); $k++)
+            {
+                if($masP[$k] > $masP[$k + 1])
+                    list($masP[$k], $masP[$k+1]) = [$masP[$k+1], $masP[$k]];
+                $t++;
+            }
+        $time_end = microtime(true);
+
+        $execution_time = ($time_end - $time_start);
+
+        dump('Пузырьковая сортировка: '.number_format((float) $execution_time, 10).' c');
+        dump('Кол-во итерраций: '.number_format($t,0,' ', ' '));
+        dump(implode(',',$masP));
+    }
+
+
+
+    public function coctail(array $arr)
+    {
+        $masS = $arr;
+        
+        $begin = 0;
+        $end = count($masS)-1;
+        $t = 0;   
+        $time_start = microtime(true);
+        while($end > $begin)
+        {
+            for($i=$begin; $i<$end; $i++)
+            {
+                $t++;
+                if($masS[$i] > $masS[$i+1])
+                    list($masS[$i], $masS[$i+1]) = [$masS[$i+1], $masS[$i]];
+            }
+            $end--;
+
+            for($i=$end; $i>$begin; $i--)
+            {
+                $t++;
+                if($masS[$i] < $masS[$i-1])
+                    list($masS[$i], $masS[$i-1]) = [$masS[$i-1], $masS[$i]];
+            }
+            $begin++;   
+        }
+
+        $time_end = microtime(true);
+
+        $execution_time = ($time_end - $time_start);
+        dump('Шейкер сортировка: '.number_format((float) $execution_time, 10).' c');
+        dump('Кол-во итерраций: '.number_format($t,0,' ', ' '));
+        dump(implode(',',$masS));
+    }
+
+
+
+    public function pastle(array $mas)
+    {
+        $arr = $mas;
+        $n = count($arr); 
+        $t = 0;
+        
+        $time_start = microtime(true);
+        for ($i = 1; $i < $n; $i++)
+        { 
+            $j = $i-1; 
+            $key = $arr[$i]; 
+            while ($j >= 0 && $arr[$j] > $key)
+            { 
+                $t++;
+                $arr[$j+1] = $arr[$j]; 
+                $j--; 
+            } 
+            $arr[$j+1] = $key; 
+        } 
+        $time_end= microtime(true);
+        
+        $execution_time = ($time_end - $time_start);
+        dump('Сортировка вставкой: '.number_format((float) $execution_time, 10).' c');
+        dump('Кол-во итерраций: '.number_format($t,0,' ', ' '));
+        dump(implode(',',$arr));
+    }
+
+
+
     public function test($id = 0)
     {
-        // $client = \App\Models\Client::find($id);
-        // $dnmClient = DNMClientService::saveClient($client);
+        $arr = array();
 
-        // $worksheet = Worksheet::find(5);
-        // $dnmWorksheet = DNMWorksheetService::setWorksheet($worksheet);
+        for($i = 0; $i < 10000; $i++)
+            array_push($arr, rand(0,100));
 
-        // $dnmWorksheet->setAppeal();
-        // $dnmWorksheet->event->reject();
-
-        //$reserve = \App\Models\WsmReserveNewCar::find(72);
-        //dd($reserve);
-        //ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
-        //$reserve->refresh();
-        //WorksheetCreateEvent::dispatch($reserve->worksheet);
-        // $reserve->refresh();
-        //ReserveCreateEvent::dispatch($reserve);
-        // $reserve->refresh();
-        //DNMVisitEvent::dispatch($reserve, 'internet');
-        //DNMVisitEvent::dispatch($reserve, 'visit');
-        //DNMVisitEvent::dispatch($reserve, 'call');
-        //DNMVisitEvent::dispatch($reserve, 'visit');
-        //DNMVisitEvent::dispatch($reserve, 'reject');
-        //DNMVisitEvent::dispatch($reserve, 'testdrive');
-        
-        //DNMVisitEvent::dispatch($reserve, 'offer');
-        //ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
-        
-        // ClientCreateOrUpdateEvent::dispatch($reserve->worksheet->client);
-
-        // WorksheetCreateEvent::dispatch($reserve->worksheet);
-
-        // ReserveCreateEvent::dispatch($reserve);
-        
-        // DNMVisitEvent::dispatch($reserve, 'visit');
-        
-        // DNMVisitEvent::dispatch($reserve, 'contract');
-        
-        // DNMVisitEvent::dispatch($reserve, 'reject');
+        dump('**************************');
+        $this->puz($arr);
+        dump('**************************');
+        $this->coctail($arr);
+        dump('**************************');
+        $this->pastle($arr);
     }
 
 

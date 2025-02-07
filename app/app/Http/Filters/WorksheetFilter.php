@@ -277,6 +277,8 @@ Class WorksheetFilter extends AbstractFilter
         $builder->whereIn('worksheets.status_id',$value);
     }
 
+
+
     public function executorIds(Builder $builder, $value)
     {
         $builder->leftJoin('worksheet_executors','worksheet_executors.worksheet_id','worksheets.id');
@@ -286,15 +288,21 @@ Class WorksheetFilter extends AbstractFilter
         });
     }
 
+
+
     public function salonIds(Builder $builder, $value)
     {
         $builder->whereIn('worksheets.company_id', $value);
     }
 
+
+
     public function structureIds(Builder $builder, $value)
     {
         $builder->whereIn('worksheets.structure_id', $value);
     }
+
+
 
     public function appealIds(Builder $builder, $value)
     {
@@ -304,6 +312,8 @@ Class WorksheetFilter extends AbstractFilter
             $builder->where('worksheets.appeal_id', $value);
     }
 
+
+
     public function clientType(Builder $builder, $value)
     {
         if(!$this->checkJoin($builder, 'clients'))
@@ -311,10 +321,14 @@ Class WorksheetFilter extends AbstractFilter
         $builder->where('clients.client_type_id', $value);
     }
 
+
+
     public function taskId(Builder $builder, $value)
     {
         $builder->where('worksheet_actions.task_id', $value);
     }
+
+    
 
     public function input(Builder $builder, $value)
     {
