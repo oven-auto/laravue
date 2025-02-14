@@ -22,10 +22,6 @@ class CarExcelController extends Controller
     public function index(Request $request)
     {
         $cars = $this->repo->get($request->all());
-
-        return view('export.cars', [
-            'trafics' => $cars
-        ]);
         
         $export = (new CarExport($cars));
 

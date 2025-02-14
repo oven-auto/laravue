@@ -26,10 +26,6 @@ class ReserveExcelController extends Controller
         $cars = $reserves->map(function($item){
             return $item->car;
         });
-        
-        return view('export.cars', [
-            'trafics' => $cars
-        ]);
 
         $export = (new CarExport($cars));
 
