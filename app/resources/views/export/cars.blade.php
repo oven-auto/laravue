@@ -38,8 +38,8 @@
         <th align="center">РРЦ</th>
 
         <th align="center">Дооценка</th>
-        <th align="center">Сумма всех скидок</th>
-        <th align="center">Сумма всех заявленных возмещений</th>
+        <th align="center">Сумма<br>скидок</th>
+        <th align="center">Сумма<br>возмещений</th>
         <th align="center">Скидка с признаком "Заказ-наряд"</th>
 
         <th align="center">Опции</th>
@@ -72,6 +72,29 @@
             <td align="left">{{$item->getSaleDate()}}</td>
             <td align="left">{{$item->getOffDate()}}</td>
             <td align="left">{{$item->getTradinVINString()}}</td>
+
+            <td align="left">{{$item->getInvoiceDate()}}</td>
+            
+            <td align="left">{{$item->getStockDate()}}</td>
+            <td align="left">{{$item->getTachnicName()}}</td>
+
+            <td align="left">{{$item->paid_date->date ?? ''}}</td>
+            <td align="left">{{$item->control_paid_date->date ?? ''}}</td>
+            <td align="left">{{$item->getRansomDate()}}</td>
+            <td align="left">{{$item->purchase->cost ?? ''}}</td>
+            <td align="left">{{$item->getComplectationPrice()}}</td>
+
+            <td align="left">{{$item->getOverPrice()}}</td>
+            <td align="left">{{$item->getReserveSale()}}</td>
+
+            <td align="left">{{$item->getSaleReparation()}}</td>
+            <td align="left">{{$item->id}}</td>
+
+            <td align="left">{{$item->getOptionPrice()}}</td>
+            <td align="left">{{$item->getTuningPrice()}}</td>
+
+            <td align="left">{{$item->getGiftPrice()}}</td>
+            <td align="left">{{$item->getPartPrice()}}</td>
         </tr>
     @endforeach
     </tbody>
