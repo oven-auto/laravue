@@ -143,10 +143,10 @@ class ReserveDiscountRepository
         {
             $res += match($key) {
                 'discount_type_id'  => count($discount->getChanges()) ? 1 : 0,
-                'sum'               => $discount->sum->amount != $item ? 1 : 0,
-                'reparation'        => $discount->reparation->amount != $item  ? 1 : 0,
-                'reparation_date'   => $discount->reparation_date->date_at->format('d.m.Y') != $item ? 1 : 0,
-                'base'              => $discount->base->base != $item ? 1 : 0,
+                'sum'               => $discount->sum && $discount->sum->amount != $item ? 1 : 0,
+                'reparation'        => $discount->reparation && $discount->reparation->amount != $item  ? 1 : 0,
+                'reparation_date'   => $discount->reparation_date && $discount->reparation_date->date_at->format('d.m.Y') != $item ? 1 : 0,
+                'base'              => $discount->base && $discount->base->base != $item ? 1 : 0,
                 'reserve_id'        => count($discount->getChanges()) ? 1 : 0,
                 default => 0,
             };
