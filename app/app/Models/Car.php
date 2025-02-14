@@ -1546,9 +1546,9 @@ class Car extends Model
     /**
      * Получить имя техника
      */
-    public function getTachnicName()
+    public function getTechnicName()
     {
-        return $this->technic ? $this->technic->cut_name : '';
+        return $this->technic ? $this->technic->user->cut_name : '';
     }
 
 

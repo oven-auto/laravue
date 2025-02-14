@@ -76,7 +76,7 @@
             <td align="left">{{$item->getInvoiceDate()}}</td>
             
             <td align="left">{{$item->getStockDate()}}</td>
-            <td align="left">{{$item->getTachnicName()}}</td>
+            <td align="left">{{$item->getTechnicName()}}</td>
 
             <td align="left">{{$item->paid_date->date ?? ''}}</td>
             <td align="left">{{$item->control_paid_date->date ?? ''}}</td>
@@ -88,7 +88,7 @@
             <td align="left">{{$item->getReserveSale()}}</td>
 
             <td align="left">{{$item->getSaleReparation()}}</td>
-            <td align="left">{{$item->id}}</td>
+            <td align="left"> - </td>
 
             <td align="left">{{$item->getOptionPrice()}}</td>
             <td align="left">{{$item->getTuningPrice()}}</td>

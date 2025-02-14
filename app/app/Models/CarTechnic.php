@@ -12,4 +12,13 @@ class CarTechnic extends Model
     protected $guarded = [];
 
     public $timestamps = false;
+
+    protected $with = ['user'];
+
+
+
+    public function user()
+    {
+        return $this->hasOne(\App\Models\User::class, 'id', 'technic_id')->withDefault();
+    }
 }
