@@ -23,6 +23,10 @@ class CarExcelController extends Controller
     {
         $cars = $this->repo->get($request->all());
 
+        return view('export.cars', [
+            'trafics' => $cars
+        ]);
+        
         $export = (new CarExport($cars));
 
         return Excel::download($export, 'cars.xlsx');

@@ -1498,7 +1498,7 @@ class Car extends Model
      */
     public function getSaleDate() : string
     {
-        return $this->isSaled() ? $this->reserve->getSaleDate()->format('d.m.Y') : '';
+        return $this->isSaled() ? $this->reserve->getSaleDate() : '';
     }
 
 
@@ -1549,5 +1549,15 @@ class Car extends Model
     public function getTachnicName()
     {
         return $this->technic ? $this->technic->cut_name : '';
+    }
+
+
+
+    /**
+     * Получить номер заказа
+     */
+    public function getOrderNumber()
+    {
+        return $this->order ? $this->order->order_number : '';
     }
 }

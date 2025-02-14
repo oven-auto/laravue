@@ -105,8 +105,9 @@ trait CarPaginatable
             },
 
             'reserve' => function ($builderReserve) {
-                $builderReserve->select('id','worksheet_id','car_id','created_at')
+                $builderReserve->select('id','worksheet_id','car_id','created_at', 'author_id')
                     ->with([
+                        'author',
                         'discounts',
                         'sale',
                         'issue',

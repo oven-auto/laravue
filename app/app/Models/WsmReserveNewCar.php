@@ -432,7 +432,7 @@ class WsmReserveNewCar extends Model implements CommentInterface
     /**
      * Получить имя автора рзерва
      */
-    public function getReserveAuthorName()
+    public function getReserveAuthorName()  : string
     {
         return $this->author->cut_name;
     }

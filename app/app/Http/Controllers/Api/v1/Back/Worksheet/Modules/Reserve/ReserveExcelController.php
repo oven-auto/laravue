@@ -27,6 +27,10 @@ class ReserveExcelController extends Controller
             return $item->car;
         });
         
+        return view('export.cars', [
+            'trafics' => $cars
+        ]);
+
         $export = (new CarExport($cars));
 
         return Excel::download($export, 'cars.xlsx');
