@@ -31,7 +31,16 @@ Class HistoryRepository
             $result = $comments->map(fn($item) => new RedemptionCommentData($item));
             return $result;
         }
+
+        elseif($model instanceof \App\Models\WsmReserveComment)
+        {
+            $comments = $this->getReserveComment($model, $data);
+            $result = $comments->map(fn($item) => new ReserveCommentData($item));
+            return $result;
+        }
     }
+
+
 
     private function getWorksheetActionComment($model, $param)
     {
@@ -45,6 +54,8 @@ Class HistoryRepository
         return $data;
     }
 
+
+
     private function getWorksheetSubActionComment($model, $param)
     {
         $data = $model->select('sub_action_comments.*')
@@ -56,6 +67,8 @@ Class HistoryRepository
         return $data;
     }
 
+    
+
     public function getRedemptionComment($model, $param)
     {
         $data = $model->select('wsm_redemption_comments.*')
@@ -65,6 +78,18 @@ Class HistoryRepository
             ->get();
 
         return $data;
+    }
 
+
+
+    public function getReserveComment($model, $param)
+    {
+        $data = $model->select('wsm_reserve_comments.*')
+            ->with('author')
+            ->leftJoin('wsm_reserve_new_cars', 'wsm_reserve_new_cars.id', 'wsm_reserve_comments.reserve_id')
+            ->where('wsm_reserve_new_cars.worksheet_id', $param['worksheet_id'])
+            ->get();
+
+        return $data;
     }
 }

@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WsmReserveNewCarContract extends Model
+class WsmReserveNewCarContract extends Model implements CommentInterface
 {
     use HasFactory, Filterable;
 
@@ -32,6 +33,13 @@ class WsmReserveNewCarContract extends Model
         3 => 'Исполнен',
         4 => 'Расторгнут'
     ];
+
+
+
+    public function writeComment(array $data)
+    {
+        WsmReserveComment::create($data);
+    }
 
 
 

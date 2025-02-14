@@ -36,6 +36,8 @@ use App\Models\Worksheet;
 use App\Models\WsmReserveNewCar;
 use App\Repositories\Car\Car\CarRepository;
 use App\Services\Car\CalculatePaidDate;
+use App\Services\Comment\NewComment\NewAbstactComment;
+use App\Services\Comment\NewComment\NewAbstractComment;
 use Carbon\Carbon;
 use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
@@ -51,6 +53,7 @@ use Illuminate\Support\Facades\Redis;
 use ReflectionClass;
 use SplQueue;
 use SplStack;
+use stdClass;
 use Telegram\Bot\Api;
 use Telegram\Bot\FileUpload\InputFile;
 use ZipArchive;
@@ -435,9 +438,12 @@ class HomeController extends Controller
 
         $execution_time = ($time_end - $time_start);
 
-        dump('Пузырьковая сортировка: '.number_format((float) $execution_time, 10).' c');
-        dump('Кол-во итерраций: '.number_format($t,0,' ', ' '));
-        dump(implode(',',$masP));
+        return([
+            'name' => 'Buble',
+            'time' => $execution_time,
+            'string' => implode(',',$masP),
+            'iteration' => $t,
+        ]);
     }
 
 
@@ -472,9 +478,12 @@ class HomeController extends Controller
         $time_end = microtime(true);
 
         $execution_time = ($time_end - $time_start);
-        dump('Шейкер сортировка: '.number_format((float) $execution_time, 10).' c');
-        dump('Кол-во итерраций: '.number_format($t,0,' ', ' '));
-        dump(implode(',',$masS));
+        return([
+            'name' => 'Coctail',
+            'time' => $execution_time,
+            'string' => implode(',',$masS),
+            'iteration' => $t,
+        ]);
     }
 
 
@@ -501,29 +510,117 @@ class HomeController extends Controller
         $time_end= microtime(true);
         
         $execution_time = ($time_end - $time_start);
-        dump('Сортировка вставкой: '.number_format((float) $execution_time, 10).' c');
-        dump('Кол-во итерраций: '.number_format($t,0,' ', ' '));
-        dump(implode(',',$arr));
+        return([
+            'name' => 'Insert',
+            'time' => $execution_time,
+            'string' => implode(',',$arr),
+            'iteration' => $t,
+        ]);
+    }
+
+
+
+
+    public function makeHeapTree(array &$arr, int $count, int $index, int &$t)
+    {
+        //корень
+        $root = $index;
+        // левыйРебенок = 2*i + 1
+        $leftChild      = 2*$index + 1; 
+        // правыйРебенок = 2*i + 2
+        $rightChild     = 2*$index + 2;
+
+        // Если левый дочерний элемент больше корня и не вышли за пределы массива
+        if ($leftChild < $count && $arr[$leftChild] > $arr[$root])
+            $root = $leftChild;
+
+        //Если правый дочерний элемент больше корня и не вышли за пределы массива
+        if ($rightChild < $count && $arr[$rightChild] > $arr[$root])
+            $root = $rightChild;
+
+        // Если самый большой не корень
+        if ($root != $index)
+        {
+            list($arr[$root], $arr[$index]) = [$arr[$index], $arr[$root]];
+            $t++;
+            //берем его как корень
+            $this->makeHeapTree($arr, $count, $root, $t);
+        }
+    }
+
+
+        
+    public function heapSort(array &$arr)
+    {
+        $count = count($arr);
+        $t = 0;
+        
+        $time_start = microtime(true);
+        for($i = intdiv($count, 2)-1; $i >= 0; $i--)
+        {
+            $t++;
+            $this->makeHeapTree($arr, $count, $i,$t);
+        }
+    
+        for($i = $count-1; $i > 0; $i--)
+        {
+            list($arr[0], $arr[$i]) = [$arr[$i], $arr[0]];
+            $t++;
+            $this->makeHeapTree($arr, $i, 0, $t);
+        }
+        $time_end = microtime(true);
+        $execution_time = ($time_end - $time_start);
+
+        return([
+            'name' => 'Heap',
+            'time' => $execution_time,
+            'string' => implode(',',$arr),
+            'iteration' => $t,
+        ]);
+    }
+
+
+
+    public function printRes(array $res)
+    {
+        dump([
+            'name' => $res['name'],
+            'time' => $res['time'],
+            'iteration' => $res['iteration'],
+            'string' => $res['string']
+        ]);
     }
 
 
 
     public function test($id = 0)
     {
+        $reserve = WsmReserveNewCar::first();
+
+
+    }
+
+
+    public function test1($id = 0)
+    {
         $arr = array();
 
         for($i = 0; $i < 10000; $i++)
             array_push($arr, rand(0,100));
 
-        dump('**************************');
-        $this->puz($arr);
-        dump('**************************');
-        $this->coctail($arr);
-        dump('**************************');
-        $this->pastle($arr);
+        dump(implode(',',$arr));
+        
+        $this->printRes($this->puz($arr));
+        
+        $this->printRes($this->coctail($arr));
+        
+        $this->printRes($this->pastle($arr));
+        
+        $this->printRes($this->heapSort($arr));
+
     }
 
-
+    
 
     public function rr()
     {

@@ -2,18 +2,26 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Discount extends Model
+class Discount extends Model implements CommentInterface
 {
     use HasFactory, Filterable;
 
     protected $guarded = [];
 
     protected $with = ['modulable', 'type', 'author', 'sum', 'reparation', 'reparation_date', 'base', 'check'];
+
+
+
+    public function writeComment(array $data)
+    {
+        WsmReserveComment::create($data);    
+    }
 
 
 

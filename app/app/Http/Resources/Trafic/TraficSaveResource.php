@@ -26,6 +26,7 @@ class TraficSaveResource extends JsonResource
                 'firstname' => $this->firstname,
                 'lastname' => $this->lastname,
                 'fathername' => $this->fathername,
+                'empty_phone' => $this->client->empty_phone,
                 'phone' => $this->phone,
                 'email' => $this->email,
                 'comment' => $this->comment,

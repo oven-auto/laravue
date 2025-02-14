@@ -188,7 +188,8 @@ class ClientRepository
         if ($client->wasRecentlyCreated) {
             if ($trafic->client->client_type_id == 1) {
                 $client->phones()->create([
-                    'phone' => $trafic->client->phone
+                    'phone' => $trafic->client->phone,
+                    'empty_phone' => $trafic->client->empty_phone,
                 ]);
                 $client->emails()->create([
                     'email' => $trafic->client->email

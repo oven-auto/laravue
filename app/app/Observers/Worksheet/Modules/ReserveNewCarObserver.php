@@ -36,5 +36,7 @@ class ReserveNewCarObserver
     {
         if($reserve->worksheet->isLada() && $reserve->worksheet->isSaleDepartment() && $reserve->worksheet->isSaleNewCar())
             DNMVisitEvent::dispatch($reserve, 'reject');
+
+        Comment::add($reserve, 'delete');
     }
 }

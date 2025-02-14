@@ -18,6 +18,7 @@ Class SaveTraficClient extends AbstractTraficSaveService
             'email' => $data['email'] ?? null,
             'trafic_sex_id' => $data['trafic_sex_id'] ?? NULL,
             'client_type_id' => isset($data['person_type_id']) ? $data['person_type_id'] : ($arr['client_type_id'] ?? null),
+            'empty_phone' => isset($data['empty_phone']) && $data['empty_phone'] ? 1 : 0,
         ];
         
         $count = 0;

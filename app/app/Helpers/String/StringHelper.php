@@ -83,4 +83,14 @@ class StringHelper
         else
             return 'дней';
     }
+
+
+
+    /**
+     * Array to string
+     */
+    public static function arrayToStr(array $arr)
+    {
+        return join(', ', $arr);
+    }
 }

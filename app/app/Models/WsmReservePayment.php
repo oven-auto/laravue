@@ -2,16 +2,26 @@
 
 namespace App\Models;
 
+use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class WsmReservePayment extends Model
+class WsmReservePayment extends Model implements CommentInterface
 {
     use HasFactory;
 
     protected $guarded = [];
 
     public $dates = ['date_at'];
+
+
+
+    public function writeComment(array $data)
+    {
+        return WsmReserveComment::create($data);
+    }
+
+
 
     /**
      * RELATIONS

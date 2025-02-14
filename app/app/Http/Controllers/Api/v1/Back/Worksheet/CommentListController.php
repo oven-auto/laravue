@@ -17,6 +17,8 @@ class CommentListController extends Controller
 
         $comments[] = $history->getWorksheetHistory(\App\Models\WSMRedemptionComment::class, $request->all());
 
+        $comments[] = $history->getWorksheetHistory(\App\Models\WsmReserveComment::class, $request->all());
+
         $collect = collect();
 
         foreach($comments as $item)

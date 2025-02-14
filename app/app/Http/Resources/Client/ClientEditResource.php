@@ -17,7 +17,10 @@ class ClientEditResource extends JsonResource
         $contacts = [];
 
         foreach($this->phones as $key => $item)
-            $contacts[$key]['phone'] = $item->phone_mask;
+            $contacts[$key]['phone'] = [
+                'number' => $item->phone_mask,
+                'empty_phone' => $item->empty_phone,
+            ];
 
         foreach($this->emails as $key => $item)
             $contacts[$key]['email'] = $item->email;

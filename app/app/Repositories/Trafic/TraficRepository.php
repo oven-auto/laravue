@@ -135,7 +135,7 @@ class TraficRepository
         ]);
 
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
-
+       
         $query->filter($filter)
             ->with([
                 'needs', 'zone', 'chanel.myparent',
@@ -150,7 +150,7 @@ class TraficRepository
             ->orderBy(DB::raw('if(trafics.trafic_status_id = 1, 0, 1)'), 'ASC')
             ->orderBy('trafics.created_at', 'DESC')
             ->groupBy('trafics.id');
-            
+       
         $result = $query->simplePaginate($paginate);
 
         return $result;

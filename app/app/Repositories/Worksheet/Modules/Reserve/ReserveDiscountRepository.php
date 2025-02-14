@@ -7,7 +7,9 @@ use App\Helpers\Date\DateHelper;
 use App\Models\Discount;
 use App\Models\WsmReserveCarSale;
 use App\Models\WsmReserveNewCar;
+use App\Services\Comment\Comment;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 
 class ReserveDiscountRepository
 {
@@ -60,6 +62,10 @@ class ReserveDiscountRepository
                     'author_id' => auth()->user()->id
                 ],
             );
+            // $discount->sum->fill([
+            //     'amount' => $amount,
+            //     'author_id' => auth()->user()->id
+            // ])->save();
     }
 
 
@@ -130,11 +136,34 @@ class ReserveDiscountRepository
 
 
 
+    public function isUpdate(Discount $discount, array $data) : bool
+    {
+        $res = 0;
+        foreach($data as $key => $item)
+        {
+            $res += match($key) {
+                'discount_type_id'  => count($discount->getChanges()) ? 1 : 0,
+                'sum'               => $discount->sum->amount != $item ? 1 : 0,
+                'reparation'        => $discount->reparation->amount != $item  ? 1 : 0,
+                'reparation_date'   => $discount->reparation_date->date_at->format('d.m.Y') != $item ? 1 : 0,
+                'base'              => $discount->base->base != $item ? 1 : 0,
+                'reserve_id'        => count($discount->getChanges()) ? 1 : 0,
+                default => 0,
+            };
+        }
+        
+        return $res ? 1 : 0;
+    }
+
+
+
     /**
      * ФАСАДНЫЙ МЕТОД СОХРАНЕНИЯ СКИДКИ
      */
     public function save(Discount $discount, array $data): void
     {
+        $isUpdate = $this->isUpdate($discount, $data);
+
         $this->saveDiscount($discount, $data);
 
         $this->saveSum($discount, $data['sum'] ?? null);
@@ -144,14 +173,19 @@ class ReserveDiscountRepository
         $this->saveReparationDate($discount, $data['reparation_date'] ?? null);
 
         $this->saveBase($discount, $data['base'] ?? null);
-
+        
         $discount->refresh();
+
+        if($isUpdate)
+            Comment::add($discount, $discount->wasRecentlyCreated ? 'store' : 'update');      
     }
 
 
 
     public function delete(Discount $sale): void
     {
+        Comment::add($sale, 'delete');
+
         $sale->delete();
 
         Notice::setMessage('Скидка удалена');

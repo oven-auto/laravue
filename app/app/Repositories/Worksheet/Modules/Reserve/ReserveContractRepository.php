@@ -8,6 +8,7 @@ use App\Exceptions\Reserve\ReserveException;
 use App\Http\Filters\ContractFilter;
 use App\Models\WsmReserveNewCar;
 use App\Models\WsmReserveNewCarContract;
+use App\Services\Comment\Comment;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -133,7 +134,6 @@ class ReserveContractRepository
         $client = $reserve->worksheet->client;
 
         if (!$client->checkContractFields())
-            //if(Auth::id() != 47)
                 throw new ReserveException('empty_client_data');
 
 
@@ -141,6 +141,8 @@ class ReserveContractRepository
             throw new ReserveException('has_contract');
 
         $this->save($contract, $data);
+
+        Comment::add($contract, 'store');
 
         DNMVisitEvent::dispatch($reserve, 'contract');
     }
@@ -159,6 +161,9 @@ class ReserveContractRepository
     public function update(WsmReserveNewCarContract $contract, array $data): void
     {
         $this->save($contract, $data);
+
+        if($contract->getChanges())
+            Comment::add($contract, 'update');
     }
 
 

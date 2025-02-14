@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Client;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Helpers\String\StringHelper;
 
 class ClientCartResource extends JsonResource
 {
@@ -15,7 +16,10 @@ class ClientCartResource extends JsonResource
     public function toArray($request)
     {
         $phones = $this->phones->map(function($item){
-            return \StrHelp::phoneMask($item->phone);
+            return [
+                'number' => StringHelper::phoneMask($item->phone),
+                'empty_phone' => $item->empty_phone,
+            ];
         });
 
         $emails = $this->emails->map(function($item){

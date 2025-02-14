@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Number\NumberHelper;
+use App\Helpers\String\StringHelper;
 use App\Models\Traits\CarPaginatable;
 use App\Repositories\Car\Car\DTO\LogisticDateDTO;
 use DateTime;
@@ -12,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\Filterable;
 use App\Services\Car\CarLogisticStateService;
 use Carbon\Carbon;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -1208,6 +1210,16 @@ class Car extends Model
 
 
     /**
+     * Получить репарации от скидок
+     */
+    public function getSaleReparation()
+    {
+        return $this->isReserved() ? $this->reserve->getSaleReparation() : 0;
+    }
+
+
+
+    /**
      * Итоговая стоимость резерва 
      */
     public function getTotalPrice()
@@ -1294,6 +1306,18 @@ class Car extends Model
     {
         if ($this->isFixed())
             return $this->reserve->getDKPDate();
+        return '';
+    }
+
+
+
+    /**
+     * Получить имя клиента
+     */
+    public function getClientName() : string
+    {
+        if($this->isReserved())
+            return $this->reserve->getClientName();
         return '';
     }
 
@@ -1389,7 +1413,19 @@ class Car extends Model
 
 
 
-    public function getStatusCarForDiscountList()
+    /**
+     * Получить дату приемки на склад
+     */
+    public function getStockDate()
+    {
+        $date = $this->getLogisticDates('stock_date');
+
+        return $date ? $date : '';
+    }
+
+
+
+    public function getStatusCarForDiscountList() : array
     {
         if($this->isSaled())
             return [
@@ -1414,10 +1450,104 @@ class Car extends Model
     /**
      * GET COLOR IMAGE
      */
-    public function getImageURLAttribute()
+    public function getImageURLAttribute() : string
     {   
         if($this->image->first())
             return $this->image->first()->url;
         return 0;
+    }
+
+
+
+    /**
+     * Получить сумму патежей клиента, если есть 
+     */
+    public function getPaymentSum() : int
+    {
+        if($this->isReserved())
+            return $this->reserve->getPaymentSum();
+        return 0;
+    }
+
+
+
+    /**
+     * Автор резерва, если есть
+     */
+    public function getReserveAuthorName() : string
+    {
+        if($this->isReserved())
+            return $this->reserve->getReserveAuthorName();
+        return '';
+    }
+
+
+
+    /**
+     * Получить менеджера который оформил продажу если есть
+     */
+    public function getSaleManager() : string
+    {
+        return $this->isSaled() ? $this->reserve->getSaleManager() : '';
+    }
+
+
+
+    /**
+     * Получить дату продажи
+     */
+    public function getSaleDate() : string
+    {
+        return $this->isSaled() ? $this->reserve->getSaleDate()->format('d.m.Y') : '';
+    }
+
+
+
+    /**
+     * Получить менеджера выдавшего автомобиль если есть
+     */
+    public function getIssueManager() : string
+    {
+        return $this->isIssued() ? $this->reserve->getIssueManager() : '';
+    }
+
+
+
+    /**
+     * Получить дату выдачи
+     */
+    public function getIssueDate() : string
+    {
+        return $this->isIssued() ? $this->reserve->getIssueDate()->format('d.m.Y') : '';
+    }
+
+
+
+    /**
+     * Получить вин номера трейдин машин
+     */
+    public function getTradinVIN() : array
+    {        
+        return $this->isReserved() ? $this->reserve->getTradeInVIN() : [];
+    }
+
+
+
+    /**
+     * Получить вин номера трейдин машин в виде строки через запятую
+     */
+    public function getTradinVINString() : string
+    {        
+        return $this->isReserved() ? StringHelper::arrayToStr($this->reserve->getTradeInVIN()) : '';
+    }
+
+
+
+    /**
+     * Получить имя техника
+     */
+    public function getTachnicName()
+    {
+        return $this->technic ? $this->technic->cut_name : '';
     }
 }

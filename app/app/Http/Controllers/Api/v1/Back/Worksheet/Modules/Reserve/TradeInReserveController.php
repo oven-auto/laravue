@@ -22,10 +22,27 @@ class TradeInReserveController extends Controller
     public function attach(WsmReserveNewCar $reserve, Request $request)
     {
         $validated = $request->validate([
-            'used_car_ids' => 'array',
+            'used_car_id' => 'numeric|required',
         ]);
 
-        $this->repo->attachTradeIn($reserve, $validated['used_car_ids']);
+        $this->repo->attachTradeIn($reserve, $validated['used_car_id']);
+
+        return response()->json([
+            'data' => UsedCarItemResource::collection($reserve->tradeins),
+            'success' => 1,
+            'message' => 'Скидка за автомобиль клиента учтена.'
+        ]);
+    }
+
+
+
+    public function detach(WsmReserveNewCar $reserve, Request $request)
+    {
+        $validated = $request->validate([
+            'used_car_id' => 'numeric|required',
+        ]);
+
+        $this->repo->detachTradeIn($reserve, $validated['used_car_id']);
 
         return response()->json([
             'data' => UsedCarItemResource::collection($reserve->tradeins),

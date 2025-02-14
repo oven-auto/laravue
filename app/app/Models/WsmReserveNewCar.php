@@ -46,13 +46,8 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
     public function tradeins()
     {
-        return $this->belongsToMany(
-            \App\Models\UsedCar::class,
-            'wsm_reserve_trade_ins',
-            'reserve_id',
-            'used_car_id',
-            'id'
-        );
+        return $this->belongsToMany(\App\Models\UsedCar::class, 'wsm_reserve_trade_ins', 'reserve_id')
+            ->using(WsmReserveTradIn::class);
     }
 
 
@@ -227,6 +222,16 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
 
     /**
+     * Получить все возмещения по скидке
+     */
+    public function getSaleReparation()
+    {
+        return $this->discounts->sum('reparation.amount') ?? 0;
+    }
+
+
+
+    /**
      * Получить сумму всех платежей 
      */
     public function getPaymentSum(): int
@@ -291,11 +296,31 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
 
     /**
+     * Получить автора выдачи автомобиля
+     */
+    public function getIssueManager()
+    {
+        return $this->isIssued() ? $this->issue->decorator->cut_name : '';
+    }
+
+
+
+    /**
      * Получить дату выдачи
      */
     public function getSaleDate(): string
     {
         return $this->isSaled() ? $this->sale->date_at->format('d.m.Y') : '';
+    }
+
+
+
+    /**
+     * Получить менеджера продажи
+     */
+    public function getSaleManager()
+    {
+        return $this->isSaled() ? $this->sale->decorator->cut_name : '';
     }
 
 
@@ -323,6 +348,16 @@ class WsmReserveNewCar extends Model implements CommentInterface
         //     2 => 'Желтый рапорт',
         // };
         return $this->car->getReportTypeString();
+    }
+
+
+
+    /**
+     * Получить Имя клиента
+     */
+    public function getClientName()
+    {
+        return $this->worksheet->client->full_name;
     }
 
 
@@ -390,5 +425,29 @@ class WsmReserveNewCar extends Model implements CommentInterface
         if($this->hasContract())
             return $this->contract->dkp_closed_at ? 1 : 0;
         return 0;
+    }
+
+
+
+    /**
+     * Получить имя автора рзерва
+     */
+    public function getReserveAuthorName()
+    {
+        return $this->author->cut_name;
+    }
+
+
+
+    /**
+     * Получить ВИН номера ТИ машин если есть
+     */
+    public function getTradeInVIN() : array
+    {
+        $numbers = $this->tradeins->map(function($item){
+            return $item->vin;
+        })->toArray();
+        
+        return $numbers;
     }
 }

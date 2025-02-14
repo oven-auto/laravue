@@ -56,6 +56,7 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\CarPartPrice::observe(\App\Observers\CarPartObserver::class);
         \App\Models\Client::observe(ClientObserver::class);
         \App\Models\WsmReserveNewCar::observe(ReserveNewCarObserver::class);
+        \App\Models\WsmReservePayment::observe(\App\Observers\PaymentObserver::class);
         
         Validator::excludeUnvalidatedArrayKeys();
     }

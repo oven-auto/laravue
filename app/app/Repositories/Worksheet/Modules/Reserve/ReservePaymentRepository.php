@@ -6,9 +6,13 @@ use App\Exceptions\Reserve\ReserveException;
 use App\Models\Payment;
 use App\Models\WsmReserveNewCar;
 use App\Models\WsmReservePayment;
+use App\Services\Comment\Comment;
 
 class ReservePaymentRepository
 {
+    /**
+     * Создать изменить оплату
+     */
     public function save(WsmReservePayment $pay, array $data): void
     {
         $reserve = WsmReserveNewCar::with('contract')->withTrashed()->find($data['reserve_id']);
@@ -20,17 +24,29 @@ class ReservePaymentRepository
 
         if ($payment->isSubZero())
             $data['amount'] *= (-1);
-
+        
         $pay->fill(array_merge(
             $data,
             ['author_id' => auth()->user()->id],
-        ))->save();
+        ));
+
+        $dirty = $pay->isDirty();
+        
+        $pay->save();
+
+        if($dirty)
+            Comment::add($pay, $pay->wasRecentlyCreated ? 'store' : 'update');
     }
 
 
 
+    /**
+     * Удалить оплату
+     */
     public function delete(WsmReservePayment $pay): void
     {
+        Comment::add($pay, 'delete');
+
         $pay->delete();
     }
 }

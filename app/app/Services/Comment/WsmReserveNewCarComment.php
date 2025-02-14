@@ -19,9 +19,25 @@ Class WsmReserveNewCarComment extends AbstractComment
 
     public function store(CommentInterface $model)
     {
+        $vin = $model->car->vin; 
+        $vin = $vin ? '('.$vin.')' : '';
+
         return array_merge($this->data, [
-            'text' => 'Создан новый резерв.',
+            'text' => 'Зарегистрирован резерв на новый автомобиль '.$vin.'.',
             'type' => 1,
         ]);
     }
+
+
+
+    public function delete(CommentInterface $model)
+    {
+        $vin = $model->car->vin; 
+        $vin = $vin ? '('.$vin.')' : '';
+
+        return array_merge($this->data, [
+            'text' => 'Резерв на новый автомобиль аннулирован '.$vin.'.',
+            'type' => 1,
+        ]);
+    }   
 }

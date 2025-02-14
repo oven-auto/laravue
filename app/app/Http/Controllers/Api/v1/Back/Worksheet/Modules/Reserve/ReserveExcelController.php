@@ -26,7 +26,7 @@ class ReserveExcelController extends Controller
         $cars = $reserves->map(function($item){
             return $item->car;
         });
-
+        
         $export = (new CarExport($cars));
 
         return Excel::download($export, 'cars.xlsx');

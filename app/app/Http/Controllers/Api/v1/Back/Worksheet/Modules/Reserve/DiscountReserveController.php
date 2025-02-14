@@ -25,7 +25,7 @@ class DiscountReserveController extends Controller
     public function index(ReserveSaleListRequest $request)
     {
         $discounts = $this->repo->getDiscountsByReserveId($request->reserve_id);
-
+        
         return response()->json([
             'data' => SaleReserveItemResource::collection($discounts),
             'success' => 1,
@@ -37,7 +37,7 @@ class DiscountReserveController extends Controller
     public function store(Discount $discount, SaleSaveRequest $request)
     {
         $this->repo->save($discount, $request->validated());
-
+        
         return (new SaleReserveResource($discount))->additional([
             'message' => 'Скидка добавлена.',
         ]);

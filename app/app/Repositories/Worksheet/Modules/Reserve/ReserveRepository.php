@@ -10,6 +10,7 @@ use App\Models\Car;
 use App\Models\DealerColorImage;
 use App\Models\WsmReserveNewCar;
 use App\Models\WsmReserveNewCarContract;
+use App\Services\Comment\Comment;
 use Illuminate\Support\Facades\DB;
 use Throwable;
 
@@ -55,6 +56,8 @@ class ReserveRepository
             throw new ReserveException('sale_error');
         $reserve->sale()->updateOrCreate(['reserve_id' => $reserve->id], $data);
 
+        Comment::add($reserve->sale, 'store');
+
         DNMVisitEvent::dispatch($reserve, 'issue');
     }
 
@@ -68,6 +71,8 @@ class ReserveRepository
         if(!$reserve->contract->dkp_offer_at || $reserve->contract->dkp_closed_at)
             throw new ReserveException('issue_error');
         $reserve->issue()->updateOrCreate(['reserve_id' => $reserve->id], $data);
+
+        Comment::add($reserve->issue, 'store');
     }
 
 
@@ -93,6 +98,9 @@ class ReserveRepository
     {
         if($reserve->worksheet->isClosing())
             throw new ReserveException('delete_sale');
+
+        Comment::add($reserve->sale, 'delete');
+
         $reserve->sale->delete();
     }
 
@@ -106,6 +114,8 @@ class ReserveRepository
         if($reserve->isSaled())
             throw new ReserveException('delete_issue');
         $reserve->issue->delete();
+
+        Comment::add($reserve->issue, 'delete');
     }
 
 
@@ -206,9 +216,28 @@ class ReserveRepository
     /**
      * Добавить трейдын в резерв
      */
-    public function attachTradeIn(WsmReserveNewCar $reserve, array $data)
+    public function attachTradeIn(WsmReserveNewCar $reserve, int $id)
     {
-        $reserve->tradeins()->sync($data);
+        if(!$reserve->tradeins->contains('id', $id))
+        {
+            $reserve->tradeins()->attach($id);
+
+            $reserve->load('tradeins');
+        }
+        
+        
+    }
+
+
+
+    /**
+     * Удалить трейдын в резерв
+     */
+    public function detachTradeIn(WsmReserveNewCar $reserve, int $id)
+    {
+        $reserve->tradeins()->detach($id);
+
+        $reserve->load('tradeins');
     }
 
 

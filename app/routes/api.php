@@ -29,6 +29,7 @@ use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
 use App\Http\Controllers\Api\v1\Back\Payment\PaymentController as CRUDPaymentController;
 use App\Http\Controllers\Api\v1\Back\TaskList\OverdueCountController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\CommentListController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveNewCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\RedemptionController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ContractController;
@@ -865,7 +866,7 @@ Route::middleware(['userfromtoken'])->group(function () {
         /**
          * КОММЕНТАРИИ РЛ
          */
-        Route::get('comments',                      'CommentListController@list');
+        Route::get('comments',                      [CommentListController::class, 'list']);
 
         /**
          * Добавить действие для рабочего листа
@@ -1031,8 +1032,9 @@ Route::middleware(['userfromtoken'])->group(function () {
                 });
 
                 Route::prefix('tradeins')->group(function () {
-                    Route::get('{reserve}', [TradeInReserveController::class, 'index']);
-                    Route::patch('{reserve}', [TradeInReserveController::class, 'attach']);
+                    Route::get('{reserve}',     [TradeInReserveController::class, 'index']);
+                    Route::patch('{reserve}',   [TradeInReserveController::class, 'attach']);
+                    Route::delete('{reserve}',  [TradeInReserveController::class, 'detach']);
                 });
             });
         });

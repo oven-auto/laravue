@@ -64,8 +64,8 @@ class TraficEditResource extends JsonResource
             //INDICATORS
             'links' =>  $this->links_count,
             'files' => $this->files_count,
-            //other
-            //'can_i_change' => $canIChange,
+
+            'empty_phone' => $this->client->empty_phone
         ];
     }
 }
