@@ -40,7 +40,7 @@
         <th align="center">Дооценка</th>
         <th align="center">Сумма<br>скидок</th>
         <th align="center">Сумма<br>возмещений</th>
-        <th align="center">Скидка с признаком "Заказ-наряд"</th>
+        <th align="center">Скидка "З/Н"</th>
 
         <th align="center">Опции</th>
         <th align="center">Тюнинг</th>
@@ -50,9 +50,9 @@
     </tr>
     </thead>
     <tbody>
-    @foreach($trafics as $item)
+    @foreach($trafics as $key => $item)
         <tr>
-            <td align="left">{{$item->id}}</td>
+            <td align="left">{{$key}}</td>
 
             <td align="left">{{$item->brand->name}}</td>
             <td align="left">{{$item->mark->name}}</td>
@@ -88,7 +88,7 @@
             <td align="left">{{$item->getReserveSale()}}</td>
 
             <td align="left">{{$item->getSaleReparation()}}</td>
-            <td align="left"> - </td>
+            <td align="left">{{$item->getExportedSaleSum()}}</td>
 
             <td align="left">{{$item->getOptionPrice()}}</td>
             <td align="left">{{$item->getTuningPrice()}}</td>

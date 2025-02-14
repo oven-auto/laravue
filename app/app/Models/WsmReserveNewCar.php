@@ -221,6 +221,19 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
 
 
+    public function getExportedSaleSum()
+    {
+        $res = $this->discounts->map(function($item){
+            if($item->type->exported == 1 && $item->sum)
+                return $item->sum->amount;
+            return 0;
+        })->sum();
+        
+        return $res;
+    }
+
+
+
     /**
      * Получить все возмещения по скидке
      */

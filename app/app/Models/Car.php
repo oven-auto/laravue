@@ -1538,7 +1538,7 @@ class Car extends Model
      */
     public function getTradinVINString() : string
     {        
-        return $this->isReserved() ? StringHelper::arrayToStr($this->reserve->getTradeInVIN()) : '';
+        return $this->isReserved() ? mb_strtoupper(StringHelper::arrayToStr($this->reserve->getTradeInVIN())) : '';
     }
 
 
@@ -1559,5 +1559,17 @@ class Car extends Model
     public function getOrderNumber()
     {
         return $this->order ? $this->order->order_number : '';
+    }
+
+
+
+    /**
+     * Вернуть сумму скидок только по виду скидки ЗН (discount_types.exported)
+     */
+    public function getExportedSaleSum()
+    {
+        if($this->isReserved())
+            return $this->reserve->getExportedSaleSum();
+        return 0;
     }
 }
