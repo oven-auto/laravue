@@ -198,7 +198,7 @@ class CarRepository
     /**
      * PAGINATE
      */
-    public function get(array $data = [], $limit = 3000)
+    public function get(array $data = [], $limit = 1000)
     {   
         $query = Car::query()->select('cars.*');
         

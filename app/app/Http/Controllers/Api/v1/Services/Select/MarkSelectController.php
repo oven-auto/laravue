@@ -97,7 +97,7 @@ class MarkSelectController extends Controller
     public function getaliases()
     {
         return response()->json([
-            'data' => MarkAlias::orderBy('name')->get()->map(function ($item) {
+            'data' => MarkAlias::orderBy('name')->where('status', 1)->get()->map(function ($item) {
                 return [
                     'id' => $item->id,
                     'name' => $item->name,

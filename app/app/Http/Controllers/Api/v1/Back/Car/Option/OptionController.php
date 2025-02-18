@@ -43,6 +43,7 @@ class OptionController extends Controller
                     'vehicle_type' => $car->complectation->vehicle->name,
                     'body' => $car->complectation->bodywork->name,
                 ] : [],
+                'test' => '1'
             ],
             'success' => 1
         ]);

@@ -1,7 +1,7 @@
 <table>
     <thead>
     <tr>
-        <td colspan="14" size="5" align="center">Экспорт автомобилей</td>
+        <td colspan="14" size="5" align="center">Экспорт автомобилей (ограничение = 1000 машин)</td>
     </tr>
 
     <tr>

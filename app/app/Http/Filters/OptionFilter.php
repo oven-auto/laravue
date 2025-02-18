@@ -75,6 +75,6 @@ class OptionFilter extends AbstractFilter
 
     public function trash(Builder $builder, string $value)
     {
-        $builder->withTrashed();
+        $builder->onlyTrashed();
     }
 }
