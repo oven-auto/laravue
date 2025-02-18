@@ -18,7 +18,7 @@ class ClientEditResource extends JsonResource
 
         foreach($this->phones as $key => $item)
             $contacts[$key]['phone'] = [
-                'number' => $item->phone_mask,
+                'number' => $item->phone,
                 'empty_phone' => $item->empty_phone,
             ];
 
@@ -41,7 +41,15 @@ class ClientEditResource extends JsonResource
                     'driving_license'           => $this->passport->driving_license,
                     'passport_issue_at'         => $this->passport->passport_issue_at ? $this->passport->passport_issue_at->format('d.m.Y') : null,
                     'serial_number'             => $this->passport->serial_number,
-                    'contacts'                  => $contacts,
+                    'phones'                    => $this->phones->map(function($item){
+                        return [
+                            'phone' => $item->phone_mask,
+                            'empty_phone' => $item->empty_phone
+                        ];
+                    }),
+                    'emails' =>                 $this->emails->map(function($item){
+                        return $item->email;
+                    }),
                     'company_name'              => $this->company_name,
                     'inn'                       => $this->inn->number,
                     'url'                       => $this->url,

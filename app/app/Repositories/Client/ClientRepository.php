@@ -94,13 +94,22 @@ class ClientRepository
         
         $client->emails()->delete();
 
-        foreach ($data['contacts'] as $itemRowContact) {
-            if (isset($itemRowContact['phone']))
-                $this->savePhone($client, $itemRowContact['phone']);
+        foreach($data['phones'] as $item)
+            if(!$client->phones->contains('phone', $item['phone']))
+                $this->savePhone($client, $item['phone'], $item['empty_phone']);
 
-            if (isset($itemRowContact['email']))
-                $this->saveEmail($client, $itemRowContact['email']);
-        }
+        if(isset($data['emails']))
+            foreach($data['emails'] as $item)
+                if(!$client->emails->contains('email', $item))
+                    $this->saveEmail($client, $item);
+
+        // foreach ($data['contacts'] as $itemRowContact) {
+        //     if (isset($itemRowContact['phone']))
+        //         $this->savePhone($client, $itemRowContact['phone']);
+
+        //     if (isset($itemRowContact['email']))
+        //         $this->saveEmail($client, $itemRowContact['email']);
+        // }
 
         $client->refresh();
 
@@ -118,14 +127,15 @@ class ClientRepository
 
 
 
-    private function savePhone(Client $client, string $phone)
+    private function savePhone(Client $client, string $phone, bool $empty)
     {
         $phone = preg_replace("/[^,.0-9]/", '', $phone);
 
         if(!$client->phones->contains('phone', $phone))
             $client->phones()->create([
                 'client_id' => $client->id, 
-                'phone' => $phone
+                'phone' => $phone,
+                'empty_phone' => $empty
             ]);
     }
 
