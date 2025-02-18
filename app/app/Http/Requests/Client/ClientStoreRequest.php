@@ -3,9 +3,9 @@
 namespace App\Http\Requests\Client;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Route;
 use Illuminate\Validation\Rule;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class ClientStoreRequest extends FormRequest
 {

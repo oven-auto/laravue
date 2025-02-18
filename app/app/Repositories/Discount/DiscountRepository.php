@@ -33,7 +33,7 @@ class DiscountRepository
 
     public function save(DiscountType $discount, array $data)
     {
-        if(!$discount->exported)
+        if($discount->exported)
             throw new \Exception('Это системный вид скидок. Редактирование запрещено.');
         
         $dto = (new DiscountCarDTO($data))->get();
