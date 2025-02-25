@@ -82,22 +82,22 @@ class Handler extends ExceptionHandler
 
     public function render($request, Throwable $exception)
     {
-        $this->sendTelegram($exception);
+        //$this->sendTelegram($exception);
         
-        if(
-            $exception instanceof ReserveException ||
-            $exception instanceof RedemptionException ||
-            $exception instanceof \App\Exceptions\Client\EventExcecutorAppendException ||
-            $exception instanceof \App\Exceptions\Client\EventExcecutorDetachException ||
-            $exception instanceof \App\Exceptions\Client\EventReporterAttachException ||
-            $exception instanceof \App\Exceptions\Client\EventReporterIsAuthorException ||
-            $exception instanceof \App\Exceptions\Client\EventReporterNotException ||
-            $exception instanceof \App\Exceptions\Client\EventCloseIsWorking ||
-            $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew
-        )
-        {
-            return $exception->render();
-        }
+        // if(
+        //     $exception instanceof ReserveException ||
+        //     $exception instanceof RedemptionException ||
+        //     $exception instanceof \App\Exceptions\Client\EventExcecutorAppendException ||
+        //     $exception instanceof \App\Exceptions\Client\EventExcecutorDetachException ||
+        //     $exception instanceof \App\Exceptions\Client\EventReporterAttachException ||
+        //     $exception instanceof \App\Exceptions\Client\EventReporterIsAuthorException ||
+        //     $exception instanceof \App\Exceptions\Client\EventReporterNotException ||
+        //     $exception instanceof \App\Exceptions\Client\EventCloseIsWorking ||
+        //     $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew
+        // )
+        // {
+        //     return $exception->render();
+        // }
 
         return response()->json([
             'message' => 'Level Base: '.$exception->getMessage().'----'.get_class($exception),

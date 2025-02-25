@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Builder;
 
 Class WorksheetFilter extends AbstractFilter
 {
-    //private $completedDateArray = ['begin_at' => '', 'end_at' => ''];
     public const INPUT = 'input';
     public const TASK_ID = 'task_id';//+++
     public const CLIENT_TYPE = 'client_type'; //+++
@@ -20,15 +19,9 @@ Class WorksheetFilter extends AbstractFilter
     public const INTERVAL = 'interval';
     public const BEGIN_AT = 'begin_at';//+++
     public const END_AT = 'end_at';//+++
-    // public const ACTION_STATUS = 'action_status';//---
-    // public const COMPLETED_BEGIN = 'completed_begin';//---
-    // public const COMPLETED_END = 'completed_end';//---
-    // public const COMPLETED_INTERVAL = 'completed_interval';//---
-    // public const ABORTED_OR_CONFIRMED = 'abortedOrConfirmed';//---
     public const CONTROL_DATE = 'control_date';
     public const SHOW    = 'show';
     public const DATE_FOR_CLOSING = 'date_for_closing';
-    //public const CLOSED = 'closed';
     public const CREATED_BEGIN = 'register_begin';
     public const CREATED_END = 'register_end';
     public const CREATED_MONTH = 'created_month';
@@ -37,6 +30,7 @@ Class WorksheetFilter extends AbstractFilter
     public const CLOSED_END = 'closed_end';
     public const REPORTER_IDS = 'reporter_ids';
     public const INSPECTOR_IDS = 'inspector_ids';
+    public const CHANEL_IDS = 'chanel_ids';
 
     protected function getCallbacks(): array
     {
@@ -54,15 +48,9 @@ Class WorksheetFilter extends AbstractFilter
             self::INTERVAL              => [$this, 'interval'],
             self::BEGIN_AT              => [$this, 'beginAt'],
             self::END_AT                => [$this, 'endAt'],
-            // self::ACTION_STATUS         => [$this, 'actionStatus'],
-            // self::COMPLETED_BEGIN       => [$this, 'completedBegin'],
-            // self::COMPLETED_END         => [$this, 'completedEnd'],
-            // self::COMPLETED_INTERVAL    => [$this, 'completedInterval'],
-            // self::ABORTED_OR_CONFIRMED  => [$this, 'abortedOrConfirmed'],
             self::CONTROL_DATE          => [$this, 'controlDate'],
             self::SHOW                  => [$this, 'show'],
             self::DATE_FOR_CLOSING      => [$this, 'dateForClosing'],
-            //self::CLOSED                => [$this, 'closed'],
             self::CREATED_BEGIN         => [$this, 'createdBegin'],
             self::CREATED_END           => [$this, 'createdEnd'],
             self::CLOSED_BEGIN          => [$this, 'closedBegin'],
@@ -71,13 +59,18 @@ Class WorksheetFilter extends AbstractFilter
             self::CLOSED_MONTH          => [$this, 'closedMonth'],
             self::REPORTER_IDS          => [$this, 'reporterIds'],
             self::INSPECTOR_IDS         => [$this, 'inspectorIds'],
+            self::CHANEL_IDS           => [$this, 'chanelIds'],
         ];
     }
+
+
 
     public function inspectorIds(Builder $builder, $value)
     {
         $builder->whereIn('inspector_id', $value);
     }
+
+
 
     public function reporterIds(Builder $builder, $value)
     {
@@ -88,9 +81,12 @@ Class WorksheetFilter extends AbstractFilter
         });
     }
 
+
+
     public function createdMonth(Builder $builder, $value)
     {
         $date = $this->formatDate($value);
+        
         $carbon =  Carbon::createFromFormat('Y-m-d', $date);
 
         $builder->where(function($query) use ($carbon) {
@@ -100,9 +96,21 @@ Class WorksheetFilter extends AbstractFilter
         });
     }
 
+
+
+    public function chanelIds(Builder $builder, array $value)
+    {
+        $builder->leftJoin('trafics', 'trafics.id', 'worksheets.trafic_id');
+
+        $builder->where('trafics.trafic_chanel_id', $value);
+    }
+
+
+
     public function closedMonth(Builder $builder, $value)
     {
         $date = $this->formatDate($value);
+
         $carbon =  Carbon::createFromFormat('Y-m-d', $date);
 
         $builder->where(function($query) use ($carbon) {
@@ -113,15 +121,21 @@ Class WorksheetFilter extends AbstractFilter
         });
     }
 
+
+
     public function createdBegin(Builder $builder, $value)
     {
         $builder->whereDate('worksheets.created_at', '>=', $this->formatDate($value));
     }
 
+
+
     public function createdEnd(Builder $builder, $value)
     {
         $builder->whereDate('worksheets.created_at', '<=', $this->formatDate($value));
     }
+
+
 
     public function closedBegin(Builder $builder, $value)
     {
@@ -129,11 +143,15 @@ Class WorksheetFilter extends AbstractFilter
             ->whereDate('worksheet_actions.created_at', '>=', $this->formatDate($value));
     }
 
+
+
     public function closedEnd(Builder $builder, $value)
     {
         $builder->whereIn('worksheet_actions.status', ['confirm','abort'])
             ->whereDate('worksheet_actions.created_at', '<=', $this->formatDate($value));
     }
+
+
 
     public function dateForClosing(Builder $builder, $value)
     {
@@ -141,6 +159,8 @@ Class WorksheetFilter extends AbstractFilter
 
         $builder->whereDate('worksheet_actions.begin_at', '=', $date);
     }
+
+
 
     public function show(Builder $builder, $value)
     {
@@ -150,6 +170,8 @@ Class WorksheetFilter extends AbstractFilter
         else if($value == 'closing')
             $builder->whereIn('worksheets.status_id', ['confirm','abort','check']);
     }
+
+
 
     public function controlDate(Builder $builder, $value)
     {
@@ -162,6 +184,8 @@ Class WorksheetFilter extends AbstractFilter
             $builder->whereDate('worksheet_actions.begin_at', '=', $date);
     }
 
+
+
     public function delWhere(Builder $builder, $where)
     {
         foreach($builder->getQuery()->wheres as $key => &$itemWhere) {
@@ -172,54 +196,6 @@ Class WorksheetFilter extends AbstractFilter
         }
     }
 
-    // public function abortedOrConfirmed(Builder $builder, $value)
-    // {
-    //     $builder->whereBetween('worksheets.close_at', [$this->formatDate($value[0]), $this->formatDate($value[1])]);
-    // }
-
-    // public function completedInterval(Builder $builder, $value)
-    // {
-    //     switch($value) {
-    //         case 'today':
-    //             $builder->whereDate('worksheets.close_at', now());
-    //             break;
-    //         case 'yesterday':
-    //             $builder->whereDate('worksheets.close_at', now()->subDay());
-    //             break;
-    //         case 'week':
-    //             $builder->whereBetween('worksheets.close_at', [now()->startOfWeek(), now()->endOfWeek()]);
-    //             break;
-    //         case 'month':
-    //             $builder->where(function($query)  {
-    //                 $query
-    //                     ->whereYear('worksheets.close_at', '=', now()->year)
-    //                     ->whereMonth('worksheets.close_at', '=', now()->month);
-    //             });
-    //             break;
-    //         case 'year':
-    //             $builder->whereYear('worksheets.close_at', now()->year);
-    //             break;
-    //     }
-    // }
-
-    // public function completedBegin(Builder $builder, $value)
-    // {
-
-    //     $builder->orWhereDate('worksheets.close_at','>=', $this->formatDate($value));
-    // }
-
-    // public function completedEnd(Builder $builder, $value)
-    // {
-
-    //     $builder->orWhereDate('worksheets.close_at','<=', $this->formatDate($value));
-    // }
-
-    // public function actionStatus(Builder $builder, $value)
-    // {
-    //     $builder->where('worksheet_actions.status', $value);
-    // }
-
-
 
 
     public function beginAt(Builder $builder, $value)
@@ -227,10 +203,14 @@ Class WorksheetFilter extends AbstractFilter
         $builder->whereDate('worksheet_actions.begin_at','>=', $this->formatDate($value));
     }
 
+
+
     public function endAt(Builder $builder, $value)
     {
         $builder->whereDate('worksheet_actions.begin_at','<=', $this->formatDate($value));
     }
+
+
 
     public function interval(Builder $builder, $value)
     {
@@ -258,10 +238,14 @@ Class WorksheetFilter extends AbstractFilter
         }
     }
 
+
+
     public function ids(Builder $builder, $value)
     {
         $builder->whereIn('worksheets.id', $value);
     }
+
+
 
     public function authorId(Builder $builder, $value)
     {
@@ -269,8 +253,9 @@ Class WorksheetFilter extends AbstractFilter
             $builder->whereIn('worksheets.author_id', $value);
         if(is_string($value))
             $builder->where('worksheets.author_id', $value);
-        //$builder->dd();
     }
+
+
 
     public function statusIds(Builder $builder, $value)
     {
@@ -352,8 +337,6 @@ Class WorksheetFilter extends AbstractFilter
         if(!$this->checkJoin($builder, 'client_emails'))
             $builder->leftJoin('client_emails', 'client_emails.client_id','clients.id');
 
-        //$builder->leftJoin('sub_actions', 'sub_actions.worksheet_id', 'worksheets.id');
-
         $builder->where(function($query) use ($value)
         {
             if(preg_match('/\s/',$value))
@@ -388,8 +371,6 @@ Class WorksheetFilter extends AbstractFilter
             $query->orWhere('client_inns.number', 'like', '%'. $value.'%');
 
             $query->orWhere('worksheets.id', $value);
-
-            //$query->orWhere('sub_actions.id', $value);
         });
     }
 }

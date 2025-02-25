@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Car\Car;
 
+use App\Classes\Car\CarPriority\CarPriority;
 use App\Classes\Notice\Notice;
 use App\Classes\Wait\Wait;
 use App\Models\Car;
@@ -185,6 +186,8 @@ class CarRepository
                 $car->refresh();
 
                 $this->setCarImage($car);
+
+                (new CarPriority($car))->checkPriority();
 
                 Notice::setMessage('Автомобиль изменен.');
             }, 3);

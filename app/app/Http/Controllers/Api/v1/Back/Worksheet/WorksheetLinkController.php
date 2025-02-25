@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Api\v1\Back\Worksheet;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Trafic\LinkResource as TraficLinkResource;
 use App\Http\Resources\Worksheet\Link\LinkCollection;
 use App\Http\Resources\Worksheet\Link\LinkResource;
+use App\Models\Interfaces\CommentInterface;
 use App\Models\Worksheet;
 use App\Models\WorksheetLink;
 use App\Services\GetShortCutFromURL\GetShortCutFromURL;
@@ -20,7 +22,15 @@ class WorksheetLinkController extends Controller
     {
         $links = $worksheet->links;
 
-        return new LinkCollection($links);
+        $trafics = $worksheet->trafic->links;
+
+        return response()->json([
+            'data' => [
+                'worksheet'     => LinkResource::collection($links),
+                'trafic'        => TraficLinkResource::collection($trafics),
+            ],
+            'success' => 1,
+        ]);
     }
 
 
@@ -36,7 +46,8 @@ class WorksheetLinkController extends Controller
             'url' => $request->url,
         ]);
 
-        Comment::add($link, 'create');
+        if($link instanceof CommentInterface)
+            Comment::add($link, 'create');
 
         return (new LinkResource($link))->additional([
             'success' => 1, 'message' => 'Ссылка добавлена'

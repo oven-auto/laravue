@@ -95,6 +95,13 @@ class Car extends Model
 
 
 
+    public function priority()
+    {
+        return $this->hasOne(\App\Models\CarSalePriority::class, 'car_id', 'id')->withDefault();
+    }
+
+
+
     public function paid_date()
     {
         return $this->hasOne(\App\Models\CarPaidDate::class, 'car_id', 'id');
@@ -1052,6 +1059,13 @@ class Car extends Model
 
 
 
+    public function hasRansom()
+    {
+        return $this->hasPTS();
+    }
+
+
+
     /**
      * Проверить есть ли резерв
      */
@@ -1421,6 +1435,15 @@ class Car extends Model
         $date = $this->getLogisticDates('stock_date');
 
         return $date ? $date : '';
+    }
+
+
+
+    public function stockDate() : Carbon
+    {
+        $date = $this->logistic_dates->where('logistic_system_name', 'stock_date')->first();
+
+        return $date->date_at;
     }
 
 

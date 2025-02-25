@@ -109,7 +109,15 @@ return [
         'telegram' => [
             'driver' => 'single',
             'path' => storage_path('logs/telegram.log'),
-        ]
+        ],
+        'dnm' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/dnm.log'),
+        ],
+        'car_sale_stock' => [
+            'driver' => 'single',
+            'path' => storage_path('logs/car-sale-stock.log'),
+        ],
     ],
 
 ];

@@ -61,8 +61,8 @@ class WorksheetSaveResource extends JsonResource
                         'author' => $this->last_action->last_user_comment->author->cut_name
                     ]
                 ],
-                'links' => $this->links_count,
-                'files' => $this->files_count,
+                'links' => $this->hasLinks(),
+                'files' => $this->hasFiles(),
                 'available_modules' => $this->modul_list(),
                 'reporters' => $this->reporters->map(fn($item) => [
                     'id' => $item->id,

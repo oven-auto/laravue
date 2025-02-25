@@ -2,19 +2,16 @@
 
 namespace App\Jobs;
 
-use App\Classes\LadaDNM\DNMAppealService;
-use App\Classes\LadaDNM\DNMClientService;
-use App\Classes\LadaDNM\DNMEvent;
-use App\Classes\LadaDNM\DNMWorksheetService;
-use App\Events\DNMVisitEvent;
+use App\Classes\LadaDNM\Services\DNMEvent;
+use App\Classes\LadaDNM\Services\NewDNMClientService;
+use App\Classes\LadaDNM\Services\NewDNMReserveService;
+use App\Classes\LadaDNM\Services\NewDNMWorksheetService;
 use App\Models\WsmReserveNewCar;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class CreateDNMEventJob implements ShouldQueue
 {
@@ -43,11 +40,11 @@ class CreateDNMEventJob implements ShouldQueue
      */
     public function handle()
     {
-        (new DNMClientService())->save($this->reserve);
+        (new NewDNMClientService())->save($this->reserve->worksheet->client, $this->reserve->worksheet);
 
-        (new DNMWorksheetService())->save($this->reserve->worksheet);
+        (new NewDNMWorksheetService())->save($this->reserve->worksheet);
 
-        (new DNMAppealService())->save($this->reserve);
+        (new NewDNMReserveService())->save($this->reserve);
 
         (new DNMEvent())->handler($this->reserve, $this->action);
     }

@@ -105,6 +105,13 @@ class ClientCar extends Model implements CommentInterface
 
 
 
+    public function dnm()
+    {
+        return $this->hasOne(\App\Models\DnmClientCar::class, 'client_car_id', 'id')->withDefault();
+    }
+
+
+
     /**
      * Пометить авто клиента как не актуальный
      */

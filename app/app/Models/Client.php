@@ -276,6 +276,7 @@ class Client extends Model implements PersonInterface, CommentInterface
 
     public function checkContractFields()
     {
+
         if ($this->isPerson())
             if (
                 $this->firstname && 
@@ -296,5 +297,21 @@ class Client extends Model implements PersonInterface, CommentInterface
             return 1;
 
         return 0;
+    }
+
+
+
+    public function getUnionClients()
+    {
+        $collect = collect();
+        $collect->merge($this->client->unionsChildren);
+        $collect->merge($this->client->unionsParent);
+    }
+
+
+
+    public function hasUnions() : bool
+    {
+        return $this->unions_children_count || $this->unions_parent_count;
     }
 }

@@ -25,16 +25,35 @@ class WorksheetFileController extends Controller
      */
     public function index(Worksheet $worksheet)
     {
+        $traficFiles = $worksheet->trafic->files->map(function($item){
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'file' => $item->getFile('filepath'),
+                'author' => $item->user->cut_name,
+                'created_at' => $item->created_at->format('d.m.Y (H:i)'),
+                'type' => 'trafic',
+            ];
+        });
+
+        $worksheetFiles = $worksheet->files->map(function($item){
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'file' => $item->getFile(),
+                'author' => $item->author->cut_name,
+                'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
+                'type' => 'worksheet'
+            ];
+        });
+        
+
         return response()->json([
-            'data' => $worksheet->files->map(function($item){
-                return [
-                    'id' => $item->id,
-                    'name' => $item->name,
-                    'file' => $item->getFile(),
-                    'author' => $item->author->cut_name,
-                    'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
-                ];
-            }),
+            'data' => [
+                'trafic' => $traficFiles,
+                'worksheet' => $worksheetFiles,
+            ],
+            'test' => 1,
             'success' => 1,
         ]);
     }

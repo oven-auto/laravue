@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\DNM;
 
-use App\Classes\LadaDNM\DNMClientService;
-use App\Classes\LadaDNM\DNMEvent;
+use App\Classes\LadaDNM\Services\DNMEvent;
+use App\Classes\LadaDNM\Services\NewDNMClientService;
 use App\Http\Controllers\Controller;
 use App\Models\WsmReserveNewCar;
 use Illuminate\Http\Request;
@@ -16,7 +16,7 @@ class DNMController extends Controller
             return 0;
 
         match($request->action) {
-            'client' => (new DNMClientService())->save($reserve),
+            'client' => (new NewDNMClientService())->save($reserve->worksheet->client, $reserve->worksheet),
             'visit' => (new DNMEvent())->handler($reserve, 'visit'),
             'contract' => (new DNMEvent())->handler($reserve, 'contract'),
             'issue' => (new DNMEvent())->handler($reserve, 'issue'),

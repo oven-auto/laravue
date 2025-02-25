@@ -11,6 +11,14 @@ use App\Classes\LadaDNM\DNMEvent;
 use App\Classes\LadaDNM\DNMFactory;
 use App\Classes\LadaDNM\DNMWorksheet;
 use App\Classes\LadaDNM\DNMWorksheetService;
+use App\Classes\LadaDNM\NewDNMClientService;
+use App\Classes\LadaDNM\NewDNMReserveService;
+use App\Classes\LadaDNM\NewDNMWorksheetService;
+use App\Classes\LadaDNM\Services\DNMEvent as ServicesDNMEvent;
+use App\Classes\LadaDNM\Services\DNMVehicleService;
+use App\Classes\LadaDNM\Services\NewDNMClientService as ServicesNewDNMClientService;
+use App\Classes\LadaDNM\Services\NewDNMReserveService as ServicesNewDNMReserveService;
+use App\Classes\LadaDNM\Services\NewDNMWorksheetService as ServicesNewDNMWorksheetService;
 use App\Classes\ORM\ORMConnection;
 use App\Classes\ORM\Trafc;
 use App\Classes\Vin\Vin;
@@ -23,28 +31,34 @@ use App\Jobs\CreateDNMReserveJob;
 use App\Jobs\TestJob;
 use App\Listeners\DNMReserveCreateListener;
 use App\Models\Car;
-use App\Models\Client as ModelsClient;
+use App\Models\Client;
+use App\Models\ClientCar;
 use App\Models\ClientFile;
 use App\Models\ClientUnion;
 use App\Models\DealerColorImage;
 use App\Models\DiscountModul;
+use App\Models\DNMBrand;
 use App\Models\MarkAlias;
-use App\Classes\ORM\Trafic;
+use App\Models\Trafic;
+use App\Models\DnmClient as ModelsDnmClient;
 use App\Models\Tuning;
 use App\Models\User;
 use App\Models\Worksheet;
 use App\Models\WsmReserveNewCar;
 use App\Repositories\Car\Car\CarRepository;
+use App\Repositories\Trafic\TraficRepository;
+use App\Repositories\Worksheet\Modules\Reserve\ReserveRepository;
+use App\Repositories\Worksheet\WorksheetRepository;
 use App\Services\Car\CalculatePaidDate;
 use App\Services\Comment\NewComment\NewAbstactComment;
 use App\Services\Comment\NewComment\NewAbstractComment;
 use Carbon\Carbon;
-use GuzzleHttp\Client;
 use GuzzleHttp\RequestOptions;
 use Icewind\SMB\BasicAuth;
 use Icewind\SMB\ServerFactory;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
@@ -593,12 +607,93 @@ class HomeController extends Controller
 
 
 
-    public function test($id = 0)
+    public function test()
     {
-        $reserve = WsmReserveNewCar::first();
+        $client = Client::withCount(['unionsChildren'])->first();
 
+        $clientCar = ClientCar::query()->where('brand_id', 1113)->find(550);
+        
+        $dnmClient = new ServicesNewDNMClientService();
 
+        $dnmClient->save($clientCar->client, new Worksheet());
+
+        $dnmVehicle = new DNMVehicleService();
+
+        $dnmVehicle->save($clientCar);
     }
+
+
+
+    public function test12(WorksheetRepository $repo, TraficRepository $traficRepo)
+    {
+        $res = collect((DNM::init())->getModels());
+
+        ($res->each(function($item){
+            if($item['is_recent']== 1)
+                dump($item['name']);
+        }));
+        
+        $trafic = new Trafic();
+
+        Auth::attempt([
+            'email' => 'oit@oven-auto.ru',
+            'password' => 'Jdty2019'
+        ]);
+
+        $trafic = $traficRepo->save($trafic, [
+            "begin_at"              => "18.02.2025 18:45",
+            "end_at"                => "18.02.2025 19:00",
+            "fathername"            => "Павлович",
+            "firstname"             => "Маким",
+            "lastname"              => "Устюжев",
+            "manager_id"            => 89,
+            "person_type_id"        => 1,
+            "phone"                 =>"+7 (999) 999-52-22",
+            "time"                  => "18.02.2025 18:43",
+            "trafic_appeal_id"      => 7,
+            "trafic_brand_id"       => 1,
+            "trafic_chanel_id"      =>  1,
+            "trafic_interval"       => 15,
+            "trafic_need_id"        => [],
+            "trafic_section_id"     => 2,
+            "trafic_sex_id"         => 2,
+            "trafic_zone_id"        => 2,
+        ]);
+
+        $worksheet = $repo->createFromTrafic($trafic->id);
+        
+        ModelsDnmClient::where('client_id', $worksheet->client->id)->delete();
+        
+        $dnmClient = new ServicesNewDNMClientService();
+
+        $dnmClient->save($worksheet->client, $worksheet);
+
+        $dnmWorksheet = new ServicesNewDNMWorksheetService();
+
+        $dnmWorksheet->save($worksheet);
+
+        $car = Car::query()
+            ->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id')
+            ->where('car_status_types.status', 'free')
+            ->inRandomOrder()
+            ->first();
+
+        $reserveRepository = new ReserveRepository();
+
+        $reserve = $reserveRepository->createReserve([
+            'car_id' => $car->id,
+            'worksheet_id' => $worksheet->id,
+        ]);
+
+        $dnmReserve = new ServicesNewDNMReserveService();
+
+        $dnmReserve->save($reserve);
+
+        $dnmEvent = new ServicesDNMEvent();
+        $dnmEvent->handler($reserve, 'visit');
+    }
+
+
 
 
     public function test1($id = 0)

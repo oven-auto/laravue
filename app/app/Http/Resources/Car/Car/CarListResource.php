@@ -18,6 +18,8 @@ class CarListResource extends JsonResource
         return [
             'id' => $this->id,
             
+            'stock_analysis' => 1,
+
             'state' => $this->getReserveStatus(),
 
             'trade_marker' => $this->trade_marker ? [

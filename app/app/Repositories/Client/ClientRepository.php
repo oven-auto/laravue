@@ -37,7 +37,8 @@ class ClientRepository
     public function paginate($data = [], $paginate = 10): \Illuminate\Contracts\Pagination\Paginator
     {
         $query = $this->filter($data);
-        $query->with(['latest_worksheet', 'phones', 'emails', 'cars', 'inn', 'zone', 'sex',]);
+        $query->with(['latest_worksheet', 'phones', 'emails', 'cars', 'inn', 'zone', 'sex']);
+        $query->withCount(['unionsChildren', 'unionsParent']);
         $query->groupBy('clients.id');
         $result = $query->simplePaginate($paginate);
         return $result;

@@ -36,4 +36,11 @@ class Mark extends Model implements SortInterface
     {
         return $this->hasMany(\App\Models\Car::class, 'mark_id', 'id');
     }
+
+
+
+    public function dnm()
+    {
+        return $this->hasOne(\App\Models\DnmModel::class, 'mark_id', 'id')->withDefault();
+    }
 }

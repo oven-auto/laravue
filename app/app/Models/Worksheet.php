@@ -299,4 +299,18 @@ class Worksheet extends Model
     {
         return $this->close_at ? $this->close_at->format('d.m.Y (H:i)') : '';
     }
+
+
+
+    public function hasFiles() : bool
+    {
+        return ($this->files_count ?? 0) || ($this->trafic->files()->count() ? 1 : 0);
+    }
+
+
+
+    public function hasLinks() : bool
+    {
+        return ($this->links_count ?? 0) || ($this->trafic->links()->count() ? 1 : 0);
+    }
 }

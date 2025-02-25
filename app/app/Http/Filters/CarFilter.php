@@ -213,6 +213,7 @@ class CarFilter extends AbstractFilter
      * @OA\Items())
      * */
     public const PAID_DATE = 'paid_dates';//Начало платного периода
+    public const HAS_PAID_DATE = 'has_paid_date';
 
     /**  @OA\Property(
      * format="array", 
@@ -224,6 +225,7 @@ class CarFilter extends AbstractFilter
      * example="[01.10.2024,22.10.2024]", 
      * @OA\Items())*/
     public const CONTROLL_PAID_DATE = 'control_paid_dates';//Контрольный срок оплаты
+    public const HAS_CONTROLL_PAID_DATE = 'has_controll_paid_date';
 
     /**  @OA\Property(
      * format="array", 
@@ -549,6 +551,16 @@ class CarFilter extends AbstractFilter
      */
     public const SORT = 'sort';
 
+    /**
+     * ONLY FREE CARS
+     */
+    public const ONLY_FREE = 'only_free';
+
+
+    /**
+     * CAR IN STOCK
+     */
+
     public const SALE_DATE = 'sale_date';
 
 
@@ -607,6 +619,9 @@ class CarFilter extends AbstractFilter
             self::POWER                 => [$this, 'power'],
             self::SORT                  => [$this, 'sort'],
             self::SALE_DATE             => [$this, 'saleDate'],
+            self::HAS_PAID_DATE         => [$this, 'hasPaidDate'],
+            self::CONTROLL_PAID_DATE    => [$this, 'hasControllPaidDate'],
+            self::ONLY_FREE             => [$this, 'onlyFree'],
         ];
     }
 
@@ -803,8 +818,38 @@ class CarFilter extends AbstractFilter
                     $join->on('discounts.modulable_id', 'reserve.id');
             });
 
+            $builder->leftJoin('car_sale_priorities', 'car_sale_priorities.car_id', 'cars.id');
+
         $builder            
             ->groupBy('cars.id');            
+    }
+
+
+
+    public function onlyFree(Builder $builder, $val)
+    {
+        if($val)
+            $builder->where('car_status_types.status', 'free');
+    }
+
+
+
+    public function hasPaidDate(Builder $builder, bool $val)
+    {
+        if($val)
+            $builder->whereNotNull('car_paid_dates.date_at');
+        else
+            $builder->whereNull('car_paid_dates.date_at');
+    }
+
+
+
+    public function hasControllPaidDate(Builder $builder, bool $val)
+    {
+        if($val)
+            $builder->whereNotNull('car_controll_paid_dates.date_at');
+        else
+            $builder->whereNull('car_controll_paid_dates.date_at');
     }
 
 

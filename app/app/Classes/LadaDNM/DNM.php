@@ -77,59 +77,144 @@ class DNM
 
 
 
+    /**
+     * Рекрсивное получение даннх из апишек ДНМ
+     */
+    public function recoursive(string $url, int $page = 1, array &$data = [])
+    {
+        $response = $this->service->get($this->concatUrl($url.'?page='.$page));
+        
+        $count = $response->header('X-Pagination-Page-Count');
+
+        $data = array_merge($data, $response->json());
+        
+        if($page < $count)
+            $this->recoursive($url, ++$page, $data);
+        
+        return $data;
+    }
+
+
+
+    /**
+     * Получить бренды из ДНМ
+     */
     public function getBrands()
     {
-        return $this->service->get($this->concatUrl('api/brand'))->json();
+        return $this->recoursive('api/brand');
     }
 
 
 
+    /**
+     * Получить список моделей
+     */
+    public function getModels()
+    {
+        return $this->recoursive('api/model');
+    }
+
+
+
+    /**
+     * Получить синонимы моделей
+     */
     public function getModelAliases()
     {
-        $arr1 = $this->service->get($this->concatUrl('api/model-alias?page=1'))->json();
-        $arr2 = $this->service->get($this->concatUrl('api/model-alias?page=2'))->json();
-        return array_merge($arr1,$arr2);
+        return $this->recoursive('api/model-alias');
     }
 
 
 
+    /**
+     * Получить начало года выпуска
+     */
     public function getModelYears()
     {
-        return $this->service->get($this->concatUrl('api/model-year'))->json();
+        return $this->recoursive('api/model-year');
     }
 
 
 
+    /**
+     * Получить доступные должности ДНМ
+     */
     public function getPositions()
     {
-        return $this->service->get($this->concatUrl('api/position'))->json();
+        return $this->recoursive('api/position');
     }
 
 
 
+    /**
+     * Получить список пользователей
+     */
     public function getManagers()
     {
-        return $this->service->get($this->concatUrl('/api/manager'))->json();
+        return $this->recoursive('/api/manager');
     }
 
 
 
+    /**
+     * Получить каналы трафика
+     */
     public function getSources()
     {
-        return $this->service->get($this->concatUrl('/api/source'))->json();
+        return $this->recoursive('/api/source');
     }
 
 
 
+    /**
+     * Получить список типов событий
+     */
     public function getEvents()
     {
-        return $this->service->get($this->concatUrl('api/event-type'))->json();
+        return $this->recoursive('/api/event-type');
     }
 
 
 
+    /**
+     * Получить список типов отказа от покупки
+     */
     public function getResults()
     {
-        return $this->service->get($this->concatUrl('/api/lms/result'))->json();
+        return $this->recoursive('/api/lms/result');
+    }
+
+
+
+    //СЕРВИС
+
+
+
+    /**
+     * Получить справочник цехов
+     */
+    public function getWorkshop()
+    {
+        return $this->recoursive('/api/purchase-type');
+    }
+
+
+
+    /**
+     * Получить типы оплаты
+     */
+    public function getPayment()
+    {
+        return $this->recoursive('/api/purchase-group');
+    }
+
+
+
+    /**
+     * Получить справочник видов ремонта
+     */
+    public function getRepairsType()
+    {
+        return $this->recoursive('/api/purchase-tag');
     }
 }

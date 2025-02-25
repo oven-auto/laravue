@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Classes\LadaDNM;
+namespace App\Classes\LadaDNM\Services;
 
-use App\Models\DnmWorksheetAppeal;
+use App\Classes\LadaDNM\DNM;
 use App\Models\DnmWorksheetEvent;
 use App\Models\WsmReserveNewCar;
-use App\Models\WsmReserveSale;
 use Illuminate\Support\Facades\Log;
 
 class DNMEvent
@@ -21,7 +20,7 @@ class DNMEvent
 
     public function handler(WsmReserveNewCar $reserve, string $type)
     {
-        Log::alert('Пробую создать событие в DNM "'.strtoupper($type).'" для резерва '.$reserve->id.'.');
+        Log::channel('dnm')->alert('Пробую создать событие в DNM "'.strtoupper($type).'" для резерва '.$reserve->id.'.');
 
         match ($type) {
             'visit'         => $this->visit($reserve),
@@ -74,7 +73,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие ВИЗИТ в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие ВИЗИТ в ЛадаДНМ.', $response->json());
     }
 
 
@@ -101,7 +100,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие ОТКАЗ в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие ОТКАЗ в ЛадаДНМ.', $response->json());
     }
 
 
@@ -127,7 +126,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие ЗВОНОК в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие ЗВОНОК в ЛадаДНМ.', $response->json());
     }
 
 
@@ -155,7 +154,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие ИНТЕРНЕТ-ОБРАЩЕНИЕ в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие ИНТЕРНЕТ-ОБРАЩЕНИЕ в ЛадаДНМ.', $response->json());
     }
 
 
@@ -181,7 +180,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие TEST-DRIVE в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие TEST-DRIVE в ЛадаДНМ.', $response->json());
     }
 
 
@@ -207,7 +206,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие OFFER в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие OFFER в ЛадаДНМ.', $response->json());
     }
 
 
@@ -233,7 +232,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие CONTRACT в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие CONTRACT в ЛадаДНМ.', $response->json());
     }
 
 
@@ -257,7 +256,7 @@ class DNMEvent
             return;
         }
 
-        Log::emergency('Не получилось создать событие ISSUE в ЛадаДНМ.', $response->json());
+        Log::channel('dnm')->emergency('Не получилось создать событие ISSUE в ЛадаДНМ.', $response->json());
     }
 
 

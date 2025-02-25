@@ -20,4 +20,11 @@ class Brand extends Model
     }
 
 
+
+    public function dnm()
+    {
+        return $this->hasOne(\App\Models\DnmBrand::class, 'brand_id', 'id')->withDefault();
+    }
+
+
 }

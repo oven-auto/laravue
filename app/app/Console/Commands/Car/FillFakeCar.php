@@ -9,6 +9,7 @@ use App\Models\Option;
 use App\Models\OrderType;
 use App\Models\Payment;
 use App\Models\TradeMarker;
+use App\Models\TraficZone;
 use App\Models\Worksheet;
 use App\Models\WsmReserveNewCarContract;
 use App\Models\WsmReservePayment;
@@ -71,7 +72,7 @@ class FillFakeCar extends Command
      */
     public function handle()
     {
-        $carCount = 10000;
+        $carCount = 1000;
 
         $progressBar = $this->output->createProgressBar($carCount);
         $progressBar->start();
@@ -155,9 +156,29 @@ class FillFakeCar extends Command
             $isReserved = rand(0,3);
             if($car->isOnStock() || $isReserved == 3)
             {
+                $worksheet = Worksheet::query()->inRandomOrder()->first();
+
+                $worksheet->client->fill([
+                    'firstname' => 'Олег',
+                    'lastname' => 'Олегов',
+                    'fathername' => 'Олегович',
+                    'trafic_zone_id' => TraficZone::query()->inRandomOrder()->first()->id,
+                    'client_type_id' => 1,
+                    'trafic_sex_id' => 2,
+                ])->save();
+
+                $worksheet->client->passport->fill([
+                    'birthday_at' => '1990-01-01',
+                    'address' => 'Test'
+                ])->save();
+
+                $worksheet->load('client');
+                $worksheet->refresh();
+
+
                 $this->reserveRepo->createReserve([
                     'car_id' => $car->id,
-                    'worksheet_id' => Worksheet::query()->inRandomOrder()->first()->id,
+                    'worksheet_id' => $worksheet->id,
                 ]);
             }
             
