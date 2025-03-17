@@ -25,4 +25,18 @@ class Audit extends Model
     {
         return $this->hasOne(\App\Models\Appeal::class, 'id', 'appeal_id');
     }
+
+
+
+    public function chanels()
+    {
+        return $this->belongsToMany(\App\Models\TraficChanel::class, 'audit_chanels', 'chanel_id', 'audit_id');
+    }
+
+
+
+    public function author()
+    {
+        return $this->hasOne(\App\MOdels\User::class, 'id', 'author_id');
+    }
 }

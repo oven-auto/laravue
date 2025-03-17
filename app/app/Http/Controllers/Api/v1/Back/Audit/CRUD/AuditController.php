@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api\v1\Back\Audit\CRUD;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Audit\AuditListRequest;
 use App\Http\Requests\Audit\AuditSaveRequest;
+use App\Http\Resources\Audit\AuditCollection;
+use App\Http\Resources\Audit\AuditEditResource;
 use App\Repositories\Audit\AuditRepository;
 
 class AuditController extends Controller
@@ -35,12 +37,9 @@ class AuditController extends Controller
      */
     public function index(AuditListRequest $request)
     {
-        $result = $this->repo->getOnlyNames($request->validated());
+        $result = $this->repo->getAll($request->validated());
 
-        return response()->json([
-            'data' => $result,
-            'success' => 1
-        ]);
+        return new AuditCollection($result);
     }
 
     
@@ -51,7 +50,7 @@ class AuditController extends Controller
      *      operationId="storeAuditList",
      *      tags={"Аудит стандартов"},
      *      summary="Создать аудит",
-     *      description="Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+     *      description="Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array )",
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -62,10 +61,7 @@ class AuditController extends Controller
     {
         $audit = $this->repo->create($request->validated());
 
-        return response()->json([
-            'data' => $audit,
-            'success' => 1,
-        ]);
+        return new AuditEditResource($audit);
     }
 
 
@@ -76,7 +72,7 @@ class AuditController extends Controller
      *      operationId="updateAuditList",
      *      tags={"Аудит стандартов"},
      *      summary="Изменить аудит",
-     *      description="Изменить аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+     *      description="Изменить аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array )",
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",
@@ -87,10 +83,7 @@ class AuditController extends Controller
     {
         $audit = $this->repo->update($id, $request->validated());
 
-        return response()->json([
-            'data' => $audit,
-            'success' => 1,
-        ]);
+        return new AuditEditResource($audit);
     }
 
 
@@ -112,10 +105,7 @@ class AuditController extends Controller
     {
         $audit = $this->repo->getById($id);
 
-        return response()->json([
-            'data' => $audit,
-            'success' => 1,
-        ]);
+        return new AuditEditResource($audit);
     }
 
 

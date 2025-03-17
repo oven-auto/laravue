@@ -4,13 +4,15 @@ Namespace App\Repositories\Audit;
 
 use App\Models\Audit\Audit;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 
 Class AuditRepository
 {
     /**
      * Получить список аудитов по шаблону [id, name]
      */
-    public function getOnlyNames(array $data) : Collection
+    public function getAll(array $data) : Collection
     {
         $query = Audit::query();
 
@@ -29,10 +31,16 @@ Class AuditRepository
      */
     public function create(array $data) : Audit
     {
-        $data['author_id'] = auth()->user()->id;
+        $audit = DB::transaction(function() use($data){
+            $data['author_id'] = auth()->user()->id;
         
-        $audit = Audit::create($data);
+            $audit = Audit::create(Arr::except($data, 'chanels'));
 
+            $audit->chanels()->sync($data['chanels']);
+
+            return $audit;
+        }, 3);
+        
         return $audit;
     }
 
@@ -43,13 +51,19 @@ Class AuditRepository
      */
     public function update(int $id, array $data) : Audit
     {
-        $audit = Audit::findOrFail($id);
+        $audit = DB::transaction(function() use($id, $data){
+            $audit = Audit::findOrFail($id);
 
-        $audit->fill($data);
+            $audit->fill($data);
 
-        if($audit->isDirty())
-            $audit->save();
+            if($audit->isDirty())
+                $audit->save();
 
+            $audit->chanels()->sync($data['chanels']);
+
+            return $audit;
+        }, 3);
+        
         return $audit;
     }
 
@@ -60,7 +74,7 @@ Class AuditRepository
      */
     public function getById(int $id) : Audit
     {
-        $audit = Audit::findOrFail($id);
+        $audit = Audit::with('chanels')->findOrFail($id);
 
         return $audit;
     }
@@ -72,12 +86,16 @@ Class AuditRepository
      */
     public function delete(int $id) : Audit
     {
-        $audit = Audit::findOrFail($id);
+        $res = DB::transaction(function() use ($id){
+            $audit = Audit::findOrFail($id);
 
-        $res = $audit->replicate();
+            $res = $audit->replicate();
+            
+            $audit->delete();
+
+            return $res;
+        }, 3);
         
-        $audit->delete();
-
         return $res;
     }
 

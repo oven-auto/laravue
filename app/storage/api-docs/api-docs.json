@@ -33,7 +33,7 @@
                     "Аудит стандартов"
                 ],
                 "summary": "Создать аудит",
-                "description": "Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+                "description": "Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array )",
                 "operationId": "storeAuditList",
                 "responses": {
                     "200": {
@@ -74,7 +74,7 @@
                     "Аудит стандартов"
                 ],
                 "summary": "Изменить аудит",
-                "description": "Изменить аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+                "description": "Изменить аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array )",
                 "operationId": "updateAuditList",
                 "responses": {
                     "200": {
@@ -490,6 +490,34 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/owners/{carId}": {
+            "post": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Списать автомобиль на клиента",
+                "description": "Списать автомобиль на клиента (client_id)",
+                "operationId": "storeOwnerCar",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Удалить списание автомобиль на клиента",
+                "description": "Удалить списание автомобиль на клиента",
+                "operationId": "deleteOwnerCar",
                 "responses": {
                     "200": {
                         "description": "OK"

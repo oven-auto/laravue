@@ -27,6 +27,8 @@ class AuditSaveRequest extends FormRequest
             'complete'      =>      'required',
             'bonus'         =>      'required',
             'malus'         =>      'required',
+            'chanels'       =>      'required|array',
+            'chanels.*'     =>      'required|numeric',
         ];
     }
 }
