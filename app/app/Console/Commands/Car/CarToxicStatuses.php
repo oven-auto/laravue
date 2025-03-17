@@ -35,7 +35,7 @@ class CarToxicStatuses extends Command
 
     ];
 
-    protected $signature = 'car:toxic1';
+    protected $signature = 'car:toxic';
 
     protected $description = 'Command description';
 
