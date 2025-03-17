@@ -1,0 +1,674 @@
+<?xml version='1.0' encoding='utf-8'?>
+<project name="/home/it/www/laravue/laravue.clpprj">
+ <settings>
+  <PM_URL><![CDATA[http://localhost/laravue]]></PM_URL>
+  <PM_HOME_URL><![CDATA[http://localhost/laravue]]></PM_HOME_URL>
+  <PM_LIBS><![CDATA[]]></PM_LIBS>
+  <PM_FTP_CONNECTION><![CDATA[]]></PM_FTP_CONNECTION>
+  <PM_FTP_DIR><![CDATA[]]></PM_FTP_DIR>
+  <PM_FTP_UPLOAD_ON_SAVE><![CDATA[INT:0]]></PM_FTP_UPLOAD_ON_SAVE>
+  <PM_LANGUAGE><![CDATA[]]></PM_LANGUAGE>
+ </settings>
+ <removed value=";"/>
+ <added value=""/>
+ <lastopfiles>
+  <file name="/home/it/www/laravue/app/app/Http/Controllers/Api/v1/Back/Audit/CRUD/AuditController.php"/>
+  <file name="/home/it/www/laravue/app/app/Http/Controllers/Api/v1/Back/Audit/CRUD/QuestionController.php"/>
+  <file name="/home/it/www/laravue/app/app/Http/Middleware/Audit/AuditMessageMiddleware.php"/>
+  <file name="/home/it/www/laravue/app/app/Http/Kernel.php"/>
+  <file name="/home/it/www/laravue/app/routes/api.php"/>
+  <lastactivefile name=""/>
+ </lastopfiles>
+ <errors version="1.12.0"/>
+ <cakedata/>
+ <dplmenupath/>
+ <laravael/>
+ <smartyassings/>
+ <twigtemplate/>
+ <yiidata/>
+ <todoblock>
+  <todofile name="/home/it/www/laravue/app/vendor/cboden/ratchet/tests/unit/Wamp/WampServerTest.php">
+   <todo name="todo: could expand on this" pos="9;35"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/composer/semver/src/Constraint/MultiConstraint.php">
+   <todo name="TODO: Here's the place to put more optimizations" pos="9;294"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dflydev/dot-access-data/src/Data.php">
+   <todo name="TODO: Is this really what we want to do" pos="13;66"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/doctrine/dbal/src/Platforms/DB2Platform.php">
+   <todo name="todo blob(n) with $column['length'];" pos="9;119"/>
+   <todo name="todo clob(n) with $column['length'];" pos="9;208"/>
+   <todo name="Todo OVER() needs ORDER BY data!" pos="9;908"/>
+   <todo name="TODO: We have to investigate how to get DB2 up and running with savepoints." pos="2;1008"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/doctrine/dbal/src/Platforms/MariaDb1043Platform.php">
+   <todo name="todo 4.0 - call getColumnTypeSQLSnippet() instead" pos="10;43"/>
+   <todo name="@todo 4.0 - call getColumnTypeSQLSnippet() instead" pos="9;43"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/doctrine/dbal/src/Platforms/SQLServerPlatform.php">
+   <todo name="todo does other code breaks because of this" pos="10;313"/>
+   <todo name="@todo does other code breaks because of this" pos="9;313"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/doctrine/dbal/src/Schema/MySQLSchemaManager.php">
+   <todo name="todo 4.0 - call getColumnTypeSQLSnippet() instead" pos="10;439"/>
+   <todo name="@todo 4.0 - call getColumnTypeSQLSnippet() instead" pos="9;439"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/doctrine/dbal/src/Schema/SQLServerSchemaManager.php">
+   <todo name="todo" pos="10;318"/>
+   <todo name="@todo" pos="9;318"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/doctrine/dbal/src/Types/ArrayType.php">
+   <todo name="todo 3.0 - $value === null check to save real NULL in database" pos="10;37"/>
+   <todo name="@todo 3.0 - $value === null check to save real NULL in database" pos="9;37"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/lib/Cpdf.php">
+   <todo name="todo is it still needed" pos="14;5867"/>
+   <todo name="@todo is it still needed" pos="13;5867"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Adapter/GD.php">
+   <todo name="todo" pos="10;500"/>
+   <todo name="@todo" pos="9;500"/>
+   <todo name="todo" pos="10;505"/>
+   <todo name="@todo" pos="9;505"/>
+   <todo name="todo" pos="10;510"/>
+   <todo name="@todo" pos="9;510"/>
+   <todo name="todo" pos="10;515"/>
+   <todo name="@todo" pos="9;515"/>
+   <todo name="todo" pos="10;530"/>
+   <todo name="@todo" pos="9;530"/>
+   <todo name="todo" pos="10;535"/>
+   <todo name="@todo" pos="9;535"/>
+   <todo name="todo" pos="10;540"/>
+   <todo name="@todo" pos="9;540"/>
+   <todo name="todo" pos="10;545"/>
+   <todo name="@todo" pos="9;545"/>
+   <todo name="todo" pos="10;550"/>
+   <todo name="@todo" pos="9;550"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Adapter/PDFLib.php">
+   <todo name="TODO: we should check the current PDF stroke color" pos="9;580"/>
+   <todo name="TODO: we should check the current PDF fill color" pos="9;617"/>
+   <todo name="TODO" pos="9;699"/>
+   <todo name="TODO: add PDFLib7 support" pos="13;900"/>
+   <todo name="TODO: should do something with the error message" pos="17;1079"/>
+   <todo name="TODO: PDFLib::create_action does not permit non-HTTP links for URI actions" pos="13;1141"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Css/AttributeTranslator.php">
+   <todo name="TODO: translate more form element attributes" pos="9;90"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Css/Style.php">
+   <todo name="TODO: we should be using the calculated prop rather than perform the entire family parsing operation" pos="9;1586"/>
+   <todo name="TODO: One font weight heavier than the parent element (among the available weights of the font)." pos="13;2650"/>
+   <todo name="TODO: One font weight lighter than the parent element (among the available weights of the font)." pos="13;2653"/>
+   <todo name="TODO: should be handled in setter (lengths set to absolute)" pos="9;3444"/>
+   <todo name="TODO: should be handled in setter" pos="9;3571"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Css/Stylesheet.php">
+   <todo name="TODO: `*:first-of-type`, `*:nth-of-type` etc." pos="25;600"/>
+   <todo name="TODO: bit of a hack attempt at matches support, currently only matches against elements" pos="25;636"/>
+   <todo name="TODO" pos="29;683"/>
+   <todo name="TODO: If we use a context node can we remove the leading dot" pos="13;921"/>
+   <todo name="TODO: When the media query logic is fully developed we should not apply the Style when any of the me" pos="29;1086"/>
+   <todo name="Todo:Reason is unknown" pos="25;1295"/>
+   <todo name="Todo: As above, do we need to replace php or file to an empty protocol for local files" pos="13;1424"/>
+   <todo name="todo: fix the regex so that it works every time" pos="14;1500"/>
+   <todo name="@todo: fix the regex so that it works every time" pos="13;1500"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Dompdf.php">
+   <todo name="todo Take the quirksmode into account" pos="14;471"/>
+   <todo name="@todo Take the quirksmode into account" pos="13;471"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FontMetrics.php">
+   <todo name="todo Make sure this cache is efficient before enabling it" pos="10;300"/>
+   <todo name="@todo Make sure this cache is efficient before enabling it" pos="9;300"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FrameDecorator/AbstractFrameDecorator.php">
+   <todo name="TODO: What version is the best : this one or the one in ListBullet ?" pos="2;847"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FrameDecorator/ListBullet.php">
+   <todo name="TODO: This is a copy of `FrameDecorator\Text::get_margin_height()`" pos="9;108"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FrameReflower/AbstractFrameReflower.php">
+   <todo name="TODO: Use typographically appropriate quotes for the current" pos="13;519"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FrameReflower/Block.php">
+   <todo name="TODO: This is the in-flow inline position. Use the in-flow" pos="17;98"/>
+   <todo name="TODO: This is the in-flow inline position. Use the in-flow" pos="17;341"/>
+   <todo name="TODO: Need to also take min/max height into account for absolute" pos="9;416"/>
+   <todo name="TODO: this is a WIP for handling clear/float frames that are in between inline frames" pos="13;696"/>
+   <todo name="TODO handle when floating elements don't fit" pos="17;763"/>
+   <todo name="TODO: While the containing block is not set yet on the frame, it can" pos="9;922"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FrameReflower/Image.php">
+   <todo name="TODO: While the containing block is not set yet on the frame, it can" pos="9;60"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/FrameReflower/Text.php">
+   <todo name="todo support &lt;wbr>" pos="10;179"/>
+   <todo name="@todo support &lt;wbr>" pos="9;179"/>
+   <todo name="TODO: Would probably be better to move just below the current" pos="13;316"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Positioner/Absolute.php">
+   <todo name="TODO: Resolve dimensions, margins, and offsets similar to the" pos="13;34"/>
+   <todo name="TODO change width" pos="29;86"/>
+   <todo name="TODO change height" pos="29;115"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/dompdf/dompdf/src/Positioner/Fixed.php">
+   <todo name="TODO: Resolve dimensions, margins, and offsets similar to the" pos="13;26"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier.php">
+   <todo name="TODO: make the config merge in, instead of replace" pos="10;147"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/AttrDef/CSS/ImportantDecorator.php">
+   <todo name="TODO: optimization: test directly for !important and ! important" pos="10;38"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/CSSDefinition.php">
+   <todo name="TODO: support SLASH syntax" pos="9;460"/>
+   <todo name="TODO: Is this htmlspecialchars() call really necessary" pos="18;547"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/ChildDef/List.php">
+   <todo name="ToDo: Make this more robust in the case of not ol/ul" pos="17;70"/>
+   <todo name="ToDo" pos="93;80"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/ChildDef/Required.php">
+   <todo name="ToDo: Make configurable" pos="17;95"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/HTMLModule/Scripting.php">
+   <todo name="TODO: create custom child-definition for noscript that" pos="9;42"/>
+   <todo name="TODO: convert this to new syntax, main problem is getting" pos="9;48"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/HTMLModuleManager.php">
+   <todo name="TODO:" pos="18;421"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/Printer/ConfigForm.php">
+   <todo name="TODO does this need a break" pos="21;327"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/Strategy/FixNesting.php">
+   <todo name="ToDo: I don't think it matters if it's def or" pos="25;121"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/ezyang/htmlpurifier/library/HTMLPurifier/Zipper.php">
+   <todo name="ToDo: Maybe it's more user friendly" pos="34;13"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/fakerphp/faker/src/Faker/ORM/CakePHP/EntityPopulator.php">
+   <todo name="TODO check if TreeBehavior attached to modify lft/rgt cols" pos="9;121"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/fakerphp/faker/src/Faker/Provider/Base.php">
+   <todo name="TODO: remove in v2" pos="9;643"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/fakerphp/faker/src/Faker/Provider/kk_KZ/Address.php">
+   <todo name="TODO list all country names in the world" pos="5;15"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/filp/whoops/src/Whoops/Exception/Frame.php">
+   <todo name="todo: This can be made more reliable by checking if we've entered" pos="10;51"/>
+   <todo name="@todo: This can be made more reliable by checking if we've entered" pos="9;51"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/filp/whoops/src/Whoops/Handler/PrettyPageHandler.php">
+   <todo name="todo: Make this more robust" pos="14;188"/>
+   <todo name="@todo: Make this more robust" pos="13;188"/>
+   <todo name="todo: Asset compiler" pos="14;227"/>
+   <todo name="@todo: Asset compiler" pos="13;227"/>
+   <todo name="todo: Consolidate addDataTable and addDataTableCallback" pos="10;284"/>
+   <todo name="@todo: Consolidate addDataTable and addDataTableCallback" pos="9;284"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/filp/whoops/src/Whoops/Run.php">
+   <todo name="todo Might be able to clean this up a bit better" pos="14;420"/>
+   <todo name="@todo Might be able to clean this up a bit better" pos="13;420"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/guzzlehttp/guzzle/src/Client.php">
+   <todo name="todo: Do not rely on curl" pos="22;410"/>
+   <todo name="@todo: Do not rely on curl" pos="21;410"/>
+   <todo name="TODO: Add more sink validation" pos="13;435"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/hamcrest/hamcrest-php/hamcrest/Hamcrest/Arrays/IsArray.php">
+   <todo name="TODO: Allow this to take matchers or values within the array" pos="1;10"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/irazasyed/telegram-bot-sdk/src/Methods/Message.php">
+   <todo name="TODO Check this return type." pos="33;338"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/irazasyed/telegram-bot-sdk/src/Objects/BaseObject.php">
+   <todo name="todo array type can be used in v4" pos="10;108"/>
+   <todo name="@todo array type can be used in v4" pos="9;108"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/irazasyed/telegram-bot-sdk/src/Objects/CallbackQuery.php">
+   <todo name="TODO - Check if message and inline_message_id are exclusive to each other" pos="9;34"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/league/commonmark/src/Delimiter/DelimiterStack.php">
+   <todo name="TODO: Remove the line below once PHP 7.4 support is dropped, as WeakMap won't hold onto the referen" pos="9;146"/>
+   <todo name="TODO: Remove this conditional check in 3.0. It only exists to prevent behavioral BC breaks in 2.x." pos="17;281"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/league/commonmark/src/Extension/CommonMark/Node/Block/ListBlock.php">
+   <todo name="TODO Make lists tight by default in v3" pos="36;29"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/league/commonmark/src/Extension/CommonMark/Parser/Block/ListBlockStartParser.php">
+   <todo name="TODO for 3.0: Just make them tight by default in the block so we can remove this call" pos="13;60"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/league/commonmark/src/Parser/Block/DocumentBlockParser.php">
+   <todo name="TODO for v3: It would be great if we could find an alternate way to identify such paragraphs." pos="13;66"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/maatwebsite/excel/src/Imports/Persistence/CascadePersistManager.php">
+   <todo name="todo" pos="5;10"/>
+   <todo name="@todo" pos="4;10"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/maennchen/zipstream-php/src/PackField.php">
+   <todo name="TODO: Make class readonly when requiring PHP 8.2 exclusively" pos="2;10"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/maennchen/zipstream-php/test/Zs/ExtendedInformationExtraFieldTest.php">
+   <todo name="TODO: Document" pos="29;18"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/masterminds/html5/src/HTML5/Parser/DOMTreeBuilder.php">
+   <todo name="TODO: Need to handle case where comment appears outside of the HTML tag." pos="9;561"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/masterminds/html5/src/HTML5/Parser/InputStream.php">
+   <todo name="TODO: Move this to the scanner." pos="2;20"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/masterminds/html5/src/HTML5/Parser/Tokenizer.php">
+   <todo name="TODO is this necessary" pos="17;146"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/masterminds/html5/src/HTML5/Parser/UTF8Utils.php">
+   <todo name="todo Get iconv running in at least some environments if that is possible." pos="10;105"/>
+   <todo name="@todo Get iconv running in at least some environments if that is possible." pos="9;105"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/masterminds/html5/src/HTML5/Serializer/OutputRules.php">
+   <todo name="TODO: Currently, this always writes name=&quot;value&quot;, and does not do" pos="9;347"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/mockery/mockery/docs/conf.py">
+   <todo name="todoc) are in another directory," pos="47;17"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/Carbon.php">
+   <todo name="todoc generated by `composer phpdoc`>" pos="5;24"/>
+   <todo name="todoc>" pos="6;507"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/CarbonImmutable.php">
+   <todo name="todoc generated by `composer phpdoc`>" pos="5;24"/>
+   <todo name="todoc>" pos="6;507"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/CarbonInterface.php">
+   <todo name="todoc generated by `composer phpdoc`>" pos="5;36"/>
+   <todo name="todoc>" pos="6;517"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/Factory.php">
+   <todo name="todoc generated by `composer phpdoc`>" pos="5;20"/>
+   <todo name="todoc>" pos="6;239"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/FactoryImmutable.php">
+   <todo name="todoc generated by `composer phpdoc`>" pos="5;21"/>
+   <todo name="todoc>" pos="6;239"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/Lang/ar_Shakl.php">
+   <todo name="TODO add shakl to months" pos="6;19"/>
+   <todo name="@TODO add shakl to months" pos="5;19"/>
+   <todo name="TODO add shakl to translations below" pos="6;54"/>
+   <todo name="@TODO add shakl to translations below" pos="5;54"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nesbot/carbon/src/Carbon/Traits/Date.php">
+   <todo name="todoc generated by `composer phpdoc`>" pos="5;43"/>
+   <todo name="todoc>" pos="6;524"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nikic/php-parser/lib/PhpParser/Comment.php">
+   <todo name="TODO: Rename these to include &quot;start&quot;." pos="13;199"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nikic/php-parser/lib/PhpParser/Internal/TokenStream.php">
+   <todo name="TODO Handle non-space indentation" pos="17;232"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nikic/php-parser/lib/PhpParser/Lexer/TokenEmulator/AttributeEmulator.php">
+   <todo name="TODO" pos="9;34"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/nikic/php-parser/lib/PhpParser/PrettyPrinterAbstract.php">
+   <todo name="TODO Add &lt;" pos="13;576"/>
+   <todo name="TODO: Try to preserve formatting" pos="17;807"/>
+   <todo name="TODO: Preserve formatting." pos="25;858"/>
+   <todo name="TODO: Preserve formatting." pos="25;968"/>
+   <todo name="TODO: Support removing single node." pos="13;991"/>
+   <todo name="TODO: &quot;yield&quot; where both key and value are inserted doesn't work" pos="9;1458"/>
+   <todo name="TODO" pos="86;1487"/>
+   <todo name="TODO These need to be treated more carefully" pos="47;1505"/>
+   <todo name="TODO Insertion into empty statement lists." pos="9;1608"/>
+   <todo name="TODO" pos="14;1656"/>
+   <todo name="TODO" pos="77;1683"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-font-lib/src/FontLib/EOT/File.php">
+   <todo name="TODO Read font data ..." pos="5;60"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-font-lib/src/FontLib/Table/Type/post.php">
+   <todo name="TODO" pos="9;68"/>
+   <todo name="TODO" pos="9;76"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-font-lib/src/FontLib/TrueType/File.php">
+   <todo name="todo" pos="24;336"/>
+   <todo name="@todo" pos="23;336"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-svg-lib/src/Svg/Surface/CPdf.php">
+   <todo name="todo is it still needed" pos="14;5811"/>
+   <todo name="@todo is it still needed" pos="13;5811"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-svg-lib/src/Svg/Surface/SurfaceCpdf.php">
+   <todo name="TODO: Implement beginPath() method." pos="9;115"/>
+   <todo name="todo use cache for BMP and GIF" pos="18;219"/>
+   <todo name="@todo use cache for BMP and GIF" pos="17;219"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-svg-lib/src/Svg/Surface/SurfacePDFLib.php">
+   <todo name="TODO: Implement beginPath() method." pos="9;113"/>
+   <todo name="TODO: Implement drawImage() method." pos="9;148"/>
+   <todo name="TODO: Implement setFont() method." pos="9;427"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-svg-lib/src/Svg/Tag/Path.php">
+   <todo name="TODO: optimize this" pos="21;402"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phenx/php-svg-lib/src/Svg/Tag/UseTag.php">
+   <todo name="TODO: log circular reference error state" pos="13;25"/>
+   <todo name="TODO: log circular reference error state" pos="13;67"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Calculation/Financial/Depreciation.php">
+   <todo name="TODO Handle period value between 0 and 1 (e.g. 0.5)" pos="9;65"/>
+   <todo name="TODO Handling for fractional $period values" pos="9;127"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Calculation/LookupRef/Matrix.php">
+   <todo name="TODO Provide support for area_num, currently not supported" pos="2;72"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Calculation/Statistical/Distributions/Binomial.php">
+   <todo name="TODO Add support for the cumulative flag not present for NEGBINOMDIST, but introduced for NEG" pos="2;140"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Cell/DataType.php">
+   <todo name="TODO: Sanitize Rich-Text string (max. character count is 32,767)" pos="13;58"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Reader/Html.php">
+   <todo name="TODO" pos="13;320"/>
+   <todo name="TODO" pos="21;655"/>
+   <todo name="TODO :" pos="2;872"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Reader/Ods.php">
+   <todo name="TODO :: Figure this out. This is only a partial implementation I guess." pos="31;379"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Reader/Xls.php">
+   <todo name="TODO: Why is there no BSE Index" pos="29;1148"/>
+   <todo name="TODO Provide support for named values" pos="21;1317"/>
+   <todo name="todo: what if string is very long" pos="13;4221"/>
+   <todo name="todo: implement" pos="21;4747"/>
+   <todo name="TODO: Investigate structure for .xls SHEETLAYOUT record as saved by MS Office Excel 2007" pos="21;4956"/>
+   <todo name="todo: if cell range is just a single cell, should this funciton" pos="9;7184"/>
+   <todo name="TODO: if cell range is just a single cell, should this funciton" pos="9;7241"/>
+   <todo name="todo: check if we have identified the whole set of special characters" pos="21;7406"/>
+   <todo name="TODO: external sheet support" pos="21;7415"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Reader/Xlsx.php">
+   <todo name="TODO: Autoshapes from twoCellAnchors!" pos="29;1312"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/ReferenceHelper.php">
+   <todo name="TODO Can we work out a method to identify Named Ranges that cease to be valid, so tha" pos="2;920"/>
+   <todo name="TODO Can we work out a method to identify Named Ranges that cease to be valid, so tha" pos="2;939"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Html.php">
+   <todo name="TODO: Same for columns" pos="13;1795"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Ods/Cell/Style.php">
+   <todo name="TODO :: To be implemented" pos="19;73"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xls/Escher.php">
+   <todo name="todo" pos="53;181"/>
+   <todo name="todo" pos="31;187"/>
+   <todo name="todo" pos="62;222"/>
+   <todo name="todo" pos="38;225"/>
+   <todo name="todo" pos="62;249"/>
+   <todo name="todo" pos="38;252"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xls/Parser.php">
+   <todo name="TODO: use real error codes" pos="9;559"/>
+   <todo name="TODO: possible class value 0,1,2 check Formula.pm" pos="9;635"/>
+   <todo name="TODO: use real error codes" pos="13;640"/>
+   <todo name="TODO: use real error codes" pos="13;655"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xls/Style/ColorMap.php">
+   <todo name="TODO Try and map RGB value to nearest colour within the define pallette" pos="1;77"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xls/Workbook.php">
+   <todo name="TODO: store external SUPBOOK records and XCT and CRN records" pos="10;447"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpoffice/phpspreadsheet/src/PhpSpreadsheet/Writer/Xls/Worksheet.php">
+   <todo name="TODO writeCFRule() => $blockLineStyle => Index Color for left line" pos="13;3103"/>
+   <todo name="TODO writeCFRule() => $blockLineStyle => Index Color for right line" pos="13;3104"/>
+   <todo name="TODO writeCFRule() => $blockLineStyle => Top-left to bottom-right on/off" pos="13;3105"/>
+   <todo name="TODO writeCFRule() => $blockLineStyle => Bottom-left to top-right on/off" pos="13;3106"/>
+   <todo name="TODO writeCFRule() => $blockColor => Index Color for top line" pos="13;3108"/>
+   <todo name="TODO writeCFRule() => $blockColor => Index Color for bottom line" pos="13;3109"/>
+   <todo name="TODO writeCFRule() => $blockColor => Index Color for diagonal line" pos="13;3110"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/phpunit/php-code-coverage/src/StaticAnalysis/CodeUnitFindingVisitor.php">
+   <todo name="todo Handle default values" pos="15;179"/>
+   <todo name="@todo Handle default values" pos="14;179"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner.php">
+   <todo name="todo Pass visitors directly to once we drop support for PHP-Parser 4.x" pos="14;177"/>
+   <todo name="@todo Pass visitors directly to once we drop support for PHP-Parser 4.x" pos="13;177"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/CalledClassPass.php">
+   <todo name="todo switch this to actually validate args when we get context-aware code cleaner passes." pos="14;55"/>
+   <todo name="@todo switch this to actually validate args when we get context-aware code cleaner passes." pos="13;55"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/ListPass.php">
+   <todo name="todo Drop PhpParser\Node\Expr\ArrayItem once we drop support for PHP-Parser 4.x" pos="2;17"/>
+   <todo name="@todo Drop PhpParser\Node\Expr\ArrayItem once we drop support for PHP-Parser 4.x" pos="1;17"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/LoopContextPass.php">
+   <todo name="todo Remove LNumber and DNumber once we drop support for PHP-Parser 4.x" pos="18;74"/>
+   <todo name="@todo Remove LNumber and DNumber once we drop support for PHP-Parser 4.x" pos="17;74"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/PassableByReferencePass.php">
+   <todo name="todo support MethodCall and StaticCall as well." pos="10;42"/>
+   <todo name="@todo support MethodCall and StaticCall as well." pos="9;42"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/RequirePass.php">
+   <todo name="todo Remove LNumber once we drop support for PHP-Parser 4.x" pos="10;52"/>
+   <todo name="@todo Remove LNumber once we drop support for PHP-Parser 4.x" pos="9;52"/>
+   <todo name="todo Shell::handleError would be better here, because we could" pos="14;88"/>
+   <todo name="@todo Shell::handleError would be better here, because we could" pos="13;88"/>
+   <todo name="todo trigger an error as fallback" pos="14;94"/>
+   <todo name="@todo trigger an error as fallback" pos="13;94"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/StrictTypesPass.php">
+   <todo name="todo Remove LNumber once we drop support for PHP-Parser 4.x" pos="26;66"/>
+   <todo name="@todo Remove LNumber once we drop support for PHP-Parser 4.x" pos="25;66"/>
+   <todo name="todo Switch to PhpParser\Node\DeclareItem once we drop support for PHP-Parser 4.x" pos="18;80"/>
+   <todo name="@todo Switch to PhpParser\Node\DeclareItem once we drop support for PHP-Parser 4.x" pos="17;80"/>
+   <todo name="todo Remove LNumber once we drop support for PHP-Parser 4.x" pos="18;81"/>
+   <todo name="@todo Remove LNumber once we drop support for PHP-Parser 4.x" pos="17;81"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/UseStatementPass.php">
+   <todo name="todo Rename to Node_Visitor::REMOVE_NODE once we drop support for PHP-Parser 4.x" pos="14;79"/>
+   <todo name="@todo Rename to Node_Visitor::REMOVE_NODE once we drop support for PHP-Parser 4.x" pos="13;79"/>
+   <todo name="todo Rename to Node_Visitor::REMOVE_NODE once we drop support for PHP-Parser 4.x" pos="14;92"/>
+   <todo name="@todo Rename to Node_Visitor::REMOVE_NODE once we drop support for PHP-Parser 4.x" pos="13;92"/>
+   <todo name="todo Remove UseUse once we drop support for PHP-Parser 4.x" pos="10;106"/>
+   <todo name="@todo Remove UseUse once we drop support for PHP-Parser 4.x" pos="9;106"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/CodeCleaner/ValidFunctionNamePass.php">
+   <todo name="todo add an &quot;else&quot; here which adds a runtime check for instances where we can't tell" pos="14;49"/>
+   <todo name="@todo add an &quot;else&quot; here which adds a runtime check for instances where we can't tell" pos="13;49"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Command/DocCommand.php">
+   <todo name="todo this is going to collide with ReflectionMethod ids" pos="18;147"/>
+   <todo name="@todo this is going to collide with ReflectionMethod ids" pos="17;147"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Command/ListCommand.php">
+   <todo name="todo something cleaner than this :-/" pos="10;129"/>
+   <todo name="@todo something cleaner than this :-/" pos="9;129"/>
+   <todo name="todo ensure that 'functions', 'classes', 'interfaces', 'traits' only accept namespace target" pos="14;261"/>
+   <todo name="@todo ensure that 'functions', 'classes', 'interfaces', 'traits' only accept namespace target" pos="13;261"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Command/ListCommand/ClassConstantEnumerator.php">
+   <todo name="todo handle ReflectionExtension as well" pos="14;32"/>
+   <todo name="@todo handle ReflectionExtension as well" pos="13;32"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Command/ReflectingCommand.php">
+   <todo name="todo Pass visitor directly to once we drop support for PHP-Parser 4.x" pos="10;47"/>
+   <todo name="@todo Pass visitor directly to once we drop support for PHP-Parser 4.x" pos="9;47"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Command/SudoCommand.php">
+   <todo name="todo Pass visitor directly to once we drop support for PHP-Parser 4.x" pos="10;38"/>
+   <todo name="@todo Pass visitor directly to once we drop support for PHP-Parser 4.x" pos="9;38"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Command/TimeitCommand.php">
+   <todo name="todo Pass visitor directly to once we drop support for PHP-Parser 4.x" pos="10;44"/>
+   <todo name="@todo Pass visitor directly to once we drop support for PHP-Parser 4.x" pos="9;44"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Configuration.php">
+   <todo name="todo support raw output with interactive input" pos="10;213"/>
+   <todo name="@todo support raw output with interactive input" pos="9;213"/>
+   <todo name="todo mebbe turn this on by default some day" pos="10;883"/>
+   <todo name="@todo mebbe turn this on by default some day" pos="9;883"/>
+   <todo name="todo detect `chsh` != 65001 on Windows and return false" pos="10;1018"/>
+   <todo name="@todo detect `chsh` != 65001 on Windows and return false" pos="9;1018"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Formatter/CodeFormatter.php">
+   <todo name="todo something better here" pos="10;71"/>
+   <todo name="@todo something better here" pos="9;71"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Output/ShellOutput.php">
+   <todo name="todo Update OutputPager interface to require doWrite" pos="10;154"/>
+   <todo name="@todo Update OutputPager interface to require doWrite" pos="9;154"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Readline/GNUReadline.php">
+   <todo name="todo better type for this" pos="6;25"/>
+   <todo name="@todo better type for this" pos="5;25"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Readline/Hoa/File.php">
+   <todo name="todo manage $callable as a filter" pos="10;187"/>
+   <todo name="@todo manage $callable as a filter" pos="9;187"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/Shell.php">
+   <todo name="todo should it be possible to have raw output in an interactive run" pos="14;356"/>
+   <todo name="@todo should it be possible to have raw output in an interactive run" pos="13;356"/>
+   <todo name="todo overrides via environment variables (or should these happen in config" pos="10;444"/>
+   <todo name="@todo overrides via environment variables (or should these happen in config" pos="9;444"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/psy/psysh/src/functions.php">
+   <todo name="todo come up with a better way of doing this which doesn't involve injecting input :-P" pos="10;101"/>
+   <todo name="@todo come up with a better way of doing this which doesn't involve injecting input :-P" pos="9;101"/>
+   <todo name="todo show styles (but only if they're different than default" pos="10;235"/>
+   <todo name="@todo show styles (but only if they're different than default" pos="9;235"/>
+   <todo name="todo Show Presenter / custom casters." pos="10;332"/>
+   <todo name="@todo Show Presenter / custom casters." pos="9;332"/>
+   <todo name="todo this triggers the &quot;exited unexpectedly&quot; logic in the" pos="18;469"/>
+   <todo name="@todo this triggers the &quot;exited unexpectedly&quot; logic in the" pos="17;469"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/react/socket/src/StreamEncryption.php">
+   <todo name="TODO: add write() event to make sure we're not sending any excessive data" pos="9;65"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/sabberworm/php-css-parser/src/Property/Selector.php">
+   <todo name="todo should exclude \# as well as &quot;#&quot;" pos="16;134"/>
+   <todo name="@todo should exclude \# as well as &quot;#&quot;" pos="15;134"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/spatie/error-solutions/src/Support/Laravel/Composer/ComposerClassMap.php">
+   <todo name="TODO: This is incorrect. Doesnt list all fqcns. Need to parse namespace" pos="9;52"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/spatie/ignition/src/ErrorPage/ErrorPageViewModel.php">
+   <todo name="TODO: Should be based on Ignition config" pos="9;116"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/components/examples-select.jsx">
+   <todo name="TODO: clean this up" pos="5;66"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/components/layout-utils.jsx">
+   <todo name="TODO: this puts us in a weird area btwn un/controlled selection... review" pos="5;184"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/components/online-validator-badge.jsx">
+   <todo name="TODO: test this behavior by stubbing `window.location` in an Enzyme/JSDom env" pos="7;25"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/components/parameter-row.jsx">
+   <todo name="todo: could check if schema here; if not, do not call. impact?" pos="5;61"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/config/defaults.js">
+   <todo name="TODO rename this, or refactor - we don't need presets _and_ plugins. Its j" pos="28;67"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/config/merge.js">
+   <todo name="TODO(vladimir.gorej" pos="2;12"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/config/sources/query.js">
+   <todo name="TODO(oliwia.rogala@smartbear.com): drop support for `config` in the next major release" pos="5;15"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/oauth2-authorize.js">
+   <todo name="todo move to parser" pos="3;45"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/auth/selectors.js">
+   <todo name="todo refactor" pos="7;16"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/deep-linking/layout.js">
+   <todo name="TODO: remove this in v4.0, it is deprecated" pos="7;86"/>
+   <todo name="TODO: remove this in v4.0, it is deprecated" pos="5;96"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/err/error-transformers/hook.js">
+   <todo name="TODO: re-resolve line number if we've transformed it away" pos="9;32"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/err/error-transformers/transformers/parameter-oneof.js">
+   <todo name="TODO: finish implementing, fix flattening problem" pos="3;5"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/layout/reducers.js">
+   <todo name="TODO: use json-pointer serilization instead of fromJS(...), for performance" pos="5;17"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/oas3/components/request-body-editor.jsx">
+   <todo name="TODO: achieve this in a selector instead" pos="5;31"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/plugins/spec/actions.js">
+   <todo name="TODO: push error to state" pos="5;68"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/src/core/utils/index.js">
+   <todo name="TODO: expose the system of presets.apis in docs, so w" pos="47;663"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/test/e2e-cypress/support/helpers/multiple-examples.js">
+   <todo name="TODO: use an interceptor instead of curl" pos="7;208"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;234"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;257"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;323"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;349"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;488"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;508"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;530"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;552"/>
+   <todo name="TODO: use an interceptor instead of curl" pos="7;570"/>
+   <todo name="TODO: Try-It-Out + Try-It-Out media type changes" pos="3;577"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/test/unit/components/online-validator-badge.jsx">
+   <todo name="TODO: mock `window`" pos="5;50"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/swagger-api/swagger-ui/test/unit/core/system/system.jsx">
+   <todo name="TODO: fix existing action error catcher that creates THROWN ERR actions" pos="9;781"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/symfony/css-selector/XPath/Extension/FunctionExtension.php">
+   <todo name="todo: handle an+b, odd, even" pos="9;93"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/symfony/css-selector/XPath/Extension/HtmlExtension.php">
+   <todo name="todo: in the second half, add &quot;and is not a descendant of that fieldset element's first legend elem" pos="9;96"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/symfony/http-kernel/HttpCache/Store.php">
+   <todo name="TODO the metaStore referenced an entity that doesn't exist in" pos="9;168"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/symfony/mime/Header/ParameterizedHeader.php">
+   <todo name="TODO: text, or something else" pos="13;117"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/symfony/translation/Loader/PoFileLoader.php">
+   <todo name="TODO: this fails when comments or contexts are added" pos="17;87"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/zircote/swagger-php/src/Analysers/TokenAnalyser.php">
+   <todo name="todo detect end-of-class and reset $schemaContext" pos="18;178"/>
+   <todo name="@todo detect end-of-class and reset $schemaContext" pos="17;178"/>
+   <todo name="todo detect end-of-interface and reset $schemaContext" pos="18;219"/>
+   <todo name="@todo detect end-of-interface and reset $schemaContext" pos="17;219"/>
+   <todo name="todo detect end-of-trait and reset $schemaContext" pos="18;252"/>
+   <todo name="@todo detect end-of-trait and reset $schemaContext" pos="17;252"/>
+   <todo name="todo detect end-of-trait and reset $schemaContext" pos="18;285"/>
+   <todo name="@todo detect end-of-trait and reset $schemaContext" pos="17;285"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/zircote/swagger-php/src/Annotations/Items.php">
+   <todo name="todo Additional validation when used inside a Header or Parameter context." pos="10;57"/>
+   <todo name="@todo Additional validation when used inside a Header or Parameter context." pos="9;57"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/zircote/swagger-php/src/Annotations/OpenApi.php">
+   <todo name="todo Add support for external (http) refs" pos="14;200"/>
+   <todo name="@todo Add support for external (http) refs" pos="13;200"/>
+  </todofile>
+  <todofile name="/home/it/www/laravue/app/vendor/zircote/swagger-php/src/Context.php">
+   <todo name="todo extract namespaces and use statements" pos="10;246"/>
+   <todo name="@todo extract namespaces and use statements" pos="9;246"/>
+  </todofile>
+ </todoblock>
+ <dbgurls/>
+ <lasttime value="1741692525"/>
+</project>
