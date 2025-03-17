@@ -599,6 +599,15 @@ class CarFilter extends AbstractFilter
      * */
     public const PRIORITY_IDS = 'priority_ids';
 
+    /**
+     * @OA\Property(
+     *  format="bool", 
+     *  description="Приортиет 1 - есть, 0 - нет", 
+     *  property="has_priority", 
+     *  type="bool"
+     * )
+     */
+    public const HAS_PRIORITY = 'has_priority';
 
     public const LOGISTIC_DATES = 'logistic_dates';
 
@@ -658,6 +667,7 @@ class CarFilter extends AbstractFilter
             self::CONTROLL_PAID_DATE    => [$this, 'hasControllPaidDate'],
             self::ONLY_FREE             => [$this, 'onlyFree'],
             self::PRIORITY_IDS          => [$this, 'priorityIds'],
+            self::HAS_PRIORITY          => [$this, 'hasPriority'],
             self::HAS_STOCK_DATE        => [$this, 'hasStockDate']
         ];
     }
@@ -868,6 +878,17 @@ class CarFilter extends AbstractFilter
     public function priorityIds(Builder $builder, array $arr)
     {
         $builder->whereIn('car_sale_priorities.priority_id', $arr);
+    }
+
+
+
+    public function hasPriority(Builder $builder, bool $val)
+    {
+        match($val){
+            true => $builder->whereNotNull('car_sale_priorities.priority_id'),
+            false => $builder->whereNull('car_sale_priorities.priority_id'),
+            default => null,
+        };
     }
 
 

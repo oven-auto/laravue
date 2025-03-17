@@ -3417,6 +3417,14 @@
                         "enum": [
                             "priority_ids"
                         ]
+                    },
+                    "has_priority": {
+                        "description": "Приортиет 1 - есть, 0 - нет",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_priority"
+                        ]
                     }
                 },
                 "type": "object"
