@@ -14,10 +14,10 @@ class Worksheet extends Model
 
     protected $guarded = [];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'close_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'close_at' => 'datetime',
     ];
 
     private const WORKING_STATUSES = [

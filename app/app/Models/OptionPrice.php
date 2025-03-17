@@ -11,7 +11,12 @@ class OptionPrice extends Model
 
     protected $guarded = [];
 
-    public $dates = ['created_at', 'updated_at', 'begin_at', 'deleted_at'];
+    public $casts = [
+        'created_at' => 'date', 
+        'updated_at' => 'date', 
+        'begin_at' => 'date', 
+        'deleted_at' => 'date'
+    ];
 
 
 

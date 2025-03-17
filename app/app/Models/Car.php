@@ -1357,7 +1357,14 @@ class Car extends Model
         if(!$this->owner)
             return 0;
         
-        if($this->isReserved() && $this->owner->client_id == $this->reserve->worksheet->client_id)
+        $ownerId = $this->owner->client_id;
+
+        $isReserve = $this->isReserved();
+        
+        $isOwnerClient = $isReserve && ($ownerId == $this->reserve->worksheet->client_id);
+        $isOwnerLisinger = $isReserve && ($ownerId == ($this->reserve->lisinger->first()->id ?? null));
+        
+        if($isOwnerClient || $isOwnerLisinger)
             return 1;
 
         return 2;
@@ -1390,7 +1397,7 @@ class Car extends Model
 
 
     /**
-     * Получить себестоимость доставки
+     * Получить себестоимость доставки//$this->owner->client_id == $this->reserve->worksheet->client_id)
      */
     public function getDeliveryCost()
     {
@@ -1439,11 +1446,11 @@ class Car extends Model
 
 
 
-    public function stockDate() : Carbon
+    public function stockDate() : Carbon|null
     {
         $date = $this->logistic_dates->where('logistic_system_name', 'stock_date')->first();
 
-        return $date->date_at;
+        return $date ? $date->date_at : null;
     }
 
 

@@ -12,6 +12,36 @@ use App\Services\Comment\Comment;
 class Trafic extends Model implements CommentInterface
 {
     use HasFactory, Filterable, SoftDeletes;
+    
+    protected $with = ['author'];
+
+    public const NOTICES = [
+        'open'   => 'Трафик открыт',
+        'create' => 'Трафик создан',
+        'update' => 'Трафик изменен',
+        'close' =>  'Трафик упущен',
+        'delete' => 'Трафик удален',
+        'file_load' => 'Загружены фаилы',
+        'file_delete' => 'Удален фаил',
+        'audit_load' => 'Загружен аудит',
+        'audit_update' => 'Изменен аудит',
+        'clone' => 'Трафик удален, тк клиент уже имел открытый рабочий лист с той же целью обращения.'
+    ];
+
+    private const CONTROL_OVERDUE = 1;
+    private const CONTROL_ACTUAL = 2;
+    private const CONTROL_COMMING = 3;
+
+    protected $guarded = [];
+
+    protected $casts = [
+        'created_at'    => 'datetime',
+        'updated_at'    => 'datetime',
+        'processing_at' => 'datetime',
+        'deleted_at'    => 'datetime',
+    ];
+
+
 
     public static function boot()
     {
@@ -36,33 +66,7 @@ class Trafic extends Model implements CommentInterface
         });
     }
 
-    protected $with = ['author'];
 
-    public const NOTICES = [
-        'open'   => 'Трафик открыт',
-        'create' => 'Трафик создан',
-        'update' => 'Трафик изменен',
-        'close' =>  'Трафик упущен',
-        'delete' => 'Трафик удален',
-        'file_load' => 'Загружены фаилы',
-        'file_delete' => 'Удален фаил',
-        'audit_load' => 'Загружен аудит',
-        'audit_update' => 'Изменен аудит',
-        'clone' => 'Трафик удален, тк клиент уже имел открытый рабочий лист с той же целью обращения.'
-    ];
-
-    private const CONTROL_OVERDUE = 1;
-    private const CONTROL_ACTUAL = 2;
-    private const CONTROL_COMMING = 3;
-
-    protected $guarded = [];
-
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'processing_at',
-        'deleted_at'
-    ];
 
     public function usersIdByTraficAppeal($notMe = 0)
     {

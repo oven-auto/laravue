@@ -29,11 +29,13 @@ class CounterController extends Controller
         $filterWorkSheet    = app()->make(WorksheetAnalyticFilter::class, $queryParams);
         $filterRedemptionControl   = app()->make(WSMRedemptionCarFilter::class, ['queryParams' => ['status' => 'control']]);
         $filterRedemptionWait   = app()->make(WSMRedemptionCarFilter::class, ['queryParams' => ['status' => 'wait']]);
-
+        
         $trafic = Trafic::select('trafics.id')->whereIn('trafics.trafic_status_id', [1, 2])->filter($filterTrafic)->pluck('id');
         $worksheetOverdue = Worksheet::select('worksheets.id')->overdue()->filter($filterWorkSheet)->pluck('id');
         $worksheetCheck = Worksheet::select(['worksheets.id'])->check()->filter($filterWorkSheet)->pluck('id');
         $redemptionControl = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemptionControl)->pluck('id');
+
+
         $redemptionWait = \App\Models\WSMRedemptionCar::select('wsm_redemption_cars.id')->filter($filterRedemptionWait)->pluck('id');
 
         $counter = [

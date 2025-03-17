@@ -26,6 +26,7 @@ class ReserveException extends Exception
         'change_car_with_dkp_out_pdkp'  => 'Пометьте ДКП расторгнутым и снимите резерв',
         'create_contract_empty_data'    => 'Данных для создания контракта не достаточно.',
         'closed_contract'               => 'На автомобиле, который хотите снять с резерва, зарегестрировано расторжение.',
+        'contract_on_not_stock'         => 'ПДКП нельзя оформить на автомобиль со склада.'
     ];
 
     public function render()

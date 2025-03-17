@@ -12,7 +12,12 @@ class ComplectationPrice extends Model
 
     protected $guarded = [];
 
-    public $dates = ['created_at', 'updated_at', 'begin_at', 'deleted_at'];
+    public $casts = [
+        'created_at' => 'datetime', 
+        'updated_at' => 'datetime', 
+        'begin_at' => 'datetime', 
+        'deleted_at' => 'datetime'
+    ];
 
 
 

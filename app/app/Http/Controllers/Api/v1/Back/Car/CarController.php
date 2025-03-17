@@ -14,13 +14,13 @@ use App\Repositories\Car\Car\CarRepository;
 
 class CarController extends Controller
 {
-    private $repo;
-
-    public function __construct(CarRepository $repo)
+    public function __construct(
+        private CarRepository $repo,
+        public $subject = 'Автомобиль',
+        public $genus = 'male')
     {
-        $this->repo = $repo;
-        
         $this->middleware('carfilter')->only('index');
+        $this->middleware('notice.message')->only(['store', 'update',]);
     }
 
 
@@ -53,13 +53,30 @@ class CarController extends Controller
 
 
 
-
+    /**
+     * @OA\Post(
+     *      path="/cars",
+     *      operationId="storeCar",
+     *      tags={"Новый автомобиль"},
+     *      summary="Создать новый автомобиль",
+     *      description="Создать новый автомобиль",
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(
+     *              type="object",
+     *              ref="#/components/schemas/CarCreateRequest",
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      )
+     * )
+     */
     public function store(CarCreateRequest $request)
     {
         $car = $this->repo->store($request->validated());
 
-        return (new CarItemResource($car))
-            ->additional(['message' => Notice::getMessages()]);
+        return (new CarItemResource($car));
     }
 
 
@@ -73,7 +90,7 @@ class CarController extends Controller
      *      description="Изменить новый автомобиль",
      *      @OA\Parameter(
      *          name="id",
-     *          description="Идентификатор кузова",
+     *          description="Идентификатор машины",
      *          required=true,
      *          in="path",
      *          @OA\Schema(
@@ -96,8 +113,7 @@ class CarController extends Controller
     {
         $this->repo->update($car, $request->validated());
 
-        return (new CarItemResource($car))
-            ->additional(['message' => Notice::getMessages()]);
+        return (new CarItemResource($car));
     }
 
 

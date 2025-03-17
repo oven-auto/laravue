@@ -13,11 +13,13 @@ use Illuminate\Http\Request;
 
 class ReserveNewCarController extends Controller
 {
-    private $repo;
-
-    public function __construct(ReserveRepository $repo)
+    public function __construct(
+        private ReserveRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Резерв',
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'destroy',]);
     }
 
 
@@ -41,7 +43,6 @@ class ReserveNewCarController extends Controller
         return response()->json([
             'data' =>  new ReserveSaveResource($reserve),
             'success' => 1,
-            'message' => 'Резерв создан',
         ]);
     }
 
@@ -54,7 +55,6 @@ class ReserveNewCarController extends Controller
         return response()->json([
             'data' =>  new ReserveSaveResource($reserve),
             'success' => 1,
-            'message' => 'Резерв изменен',
         ]);
     }
 
@@ -65,7 +65,6 @@ class ReserveNewCarController extends Controller
         $this->repo->deleteReserve($reserve);
 
         return response()->json([
-            'message' =>  'Резерв снят',
             'success' => 1
         ]);
     }
@@ -75,17 +74,17 @@ class ReserveNewCarController extends Controller
     public function setdate(WsmReserveNewCar $reserve, Request $request)
     {
         $validated = $request->validate([
-            'date_at' => 'required|date_format:d.m.Y',
-            'type' => 'required|in:sale,issue',
-            'decorator_id' => 'required'
+            'date_at'       => 'required|date_format:d.m.Y',
+            'type'          => 'required|in:sale,issue',
+            'decorator_id'  => 'required'
         ]);
 
         $this->repo->saveDealDate($reserve, $validated);
 
         return response()->json([
-            'data' =>  new ReserveSaveResource($reserve),
-            'message' => 'Данные успешно добавлены',
-            'success' => 1
+            'data'      =>  new ReserveSaveResource($reserve),
+            'message'   => 'Данные успешно добавлены',
+            'success'   => 1
         ]);
     }
 

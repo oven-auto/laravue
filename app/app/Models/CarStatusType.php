@@ -17,25 +17,28 @@ class CarStatusType extends Model
         'free'      => 'free',
         'reserved'   => 'reserved',
         'client'    => 'client',
+        'issued'    => 'issued',
         'saled'     => 'saled'
     ];
 
 
 
     public const STATES = [
-        'free'      => 'Свободный',
-        'reserved'   => 'Резерв',
-        'client'    => 'Клиентский',
-        'saled'     => 'Продан'
+        'free'          => 'Свободный',
+        'reserved'      => 'Резерв',
+        'client'        => 'Клиентский',
+        'issued'        => 'Выдан',
+        'saled'         => 'Продан'
     ];
 
 
 
     public const DATA = [
-        'free'      => ['title'=>self::STATES['free'], 'color' => 0],
-        'reserved'  => ['title'=>self::STATES['reserved'], 'color' => 2],
-        'client'    => ['title'=>self::STATES['client'], 'color' => 1],
-        'saled'     => ['title'=>self::STATES['saled'], 'color' => 4],
+        'free'      => ['title'=>self::STATES['free'],      'color' => 0],
+        'reserved'  => ['title'=>self::STATES['reserved'],  'color' => 2],
+        'client'    => ['title'=>self::STATES['client'],    'color' => 1],
+        'issued'    => ['title'=>self::STATES['issued'],    'color' => 5],
+        'saled'     => ['title'=>self::STATES['saled'],     'color' => 4],
     ];
 
 

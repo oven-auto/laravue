@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Worksheet\Reserve;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Car\CarPriorityResource;
 
 class CarReserveResource extends JsonResource
 {
@@ -15,6 +16,7 @@ class CarReserveResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'stock_analysis' => $this->priority->id ? new CarPriorityResource($this->priority->sale_priority) : null,
             'id'            => $this->id,
             'year'                  => $this->year,
             'brand'                 => $this->brand->name,

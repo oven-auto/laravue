@@ -3,86 +3,85 @@
 namespace App\Http\Controllers\Api\v1\Back\Car\Option;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Car\Option\OptionPriceCreateRequest;
+use App\Http\Requests\Car\Option\OptionPriceIndexRequest;
+use App\Http\Resources\Car\Option\OptionPriceEditResource;
+use App\Http\Resources\Car\Option\OptionPriceResource;
 use App\Models\OptionPrice;
 use App\Repositories\Car\Option\PriceOptionRepository;
-use Illuminate\Http\Request;
 
 class PriceOptionController extends Controller
 {
-    private $repo;
-
-    public function __construct(PriceOptionRepository $repo)
+    public function __construct(
+        private PriceOptionRepository $repo,
+        public $genus = 'female',
+        public $subject = 'Цена опции'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update']);
     }
 
 
 
-    public function index(Request $request)
+    /**
+     * @OA\Get(
+     *  path="/cars/options/prices",
+     *  operationId="optionsPriceList",
+     *  tags={"Опции автомобиля"},
+     *  summary="Список цен опций",
+     *  description="Список цен опций(option_id, ?car_id)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
+    public function index(OptionPriceIndexRequest $request)
     {
-        $validated = $request->validate([
-            'option_id' => 'required|numeric',
-            'car_id'    => 'sometimes|numeric'
-        ]);
-
-        if (!$validated)
-            throw new \Exception('Не указан параметр.');
-
-        $result = $this->repo->get($validated);
-
-        return response()->json([
-            'data' => $result,
-            'success' => 1,
-        ]);
+        $prices = $this->repo->get($request->validated());
+        
+        return new OptionPriceResource($prices);
     }
 
 
 
-    public function store(OptionPrice $optionPrice, Request $request)
+    /**
+     * @OA\Post(
+     *  path="/cars/options/prices",
+     *  operationId="optionsPriceStore",
+     *  tags={"Опции автомобиля"},
+     *  summary="Добавить цен опций",
+     *  description="Добавить цен опций(option_id, begin_at, price)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
+    public function store(OptionPrice $optionPrice, OptionPriceCreateRequest $request)
     {
-        $validated = $request->validate([
-            'option_id'     => 'required',
-            'price'         => 'required',
-            'begin_at'      => 'required'
-        ]);
+        $this->repo->save($optionPrice, $request->validated());
 
-        $this->repo->save($optionPrice, $validated);
-
-        return response()->json([
-            'data' => [
-                'id'            => $optionPrice->id,
-                'price'         => $optionPrice->price,
-                'begin_at'      => $optionPrice->begin_at->format('d.m.Y'),
-                'author'        => $optionPrice->author->cut_name,
-                'created_at'    => $optionPrice->created_at->format('d.m.Y'),
-            ],
-            'success' => 1,
-        ]);
+        return new OptionPriceEditResource($optionPrice);
     }
 
 
 
-    public function update(OptionPrice $optionPrice, Request $request)
-    {
-        return response()->json([
-            'message' => 'Изменение опции не допустимо',
-            'success' => 0,
-        ]);
-    }
-
-
-
+    /**
+     * @OA\Get(
+     *  path="/cars/options/prices/{priceId}",
+     *  operationId="optionsPriceShow",
+     *  tags={"Опции автомобиля"},
+     *  summary="Открыт цен опций",
+     *  description="Открытб цен опций",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function show(OptionPrice $optionPrice)
     {
-        return response()->json([
-            'data' => [
-                'id'            => $optionPrice->id,
-                'price'         => $optionPrice->price,
-                'begin_at'      => $optionPrice->begin_at->format('d.m.Y'),
-                'author'        => $optionPrice->author->cut_name,
-                'created_at'    => $optionPrice->created_at->format('d.m.Y'),
-            ],
-            'success' => 1,
-        ]);
+        return new OptionPriceEditResource($optionPrice);
     }
 }

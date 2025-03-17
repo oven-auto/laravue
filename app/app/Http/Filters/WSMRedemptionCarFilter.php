@@ -2,9 +2,7 @@
 
 namespace App\Http\Filters;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Support\Facades\DB;
 
 class WSMRedemptionCarFilter extends AbstractFilter
 {
@@ -29,6 +27,8 @@ class WSMRedemptionCarFilter extends AbstractFilter
         parent::__construct($queryParams);
     }
 
+
+
     protected function getCallbacks(): array
     {
         return [
@@ -49,9 +49,10 @@ class WSMRedemptionCarFilter extends AbstractFilter
         ];
     }
 
+
+
     public function init(Builder $builder)
     {
-        //$builder->select('wsm_redemption_cars.*');
         $builder->leftJoin('worksheets', 'worksheets.id', 'wsm_redemption_cars.worksheet_id');
         $builder->leftJoin('wsm_redemption_calculations', 'wsm_redemption_calculations.wsm_redemption_car_id', 'wsm_redemption_cars.id');
         $builder->leftJoin('wsm_redemption_offers',     'wsm_redemption_offers.wsm_redemption_car_id', 'wsm_redemption_cars.id');
@@ -60,7 +61,6 @@ class WSMRedemptionCarFilter extends AbstractFilter
         $builder->leftJoin('client_cars', 'client_cars.id', 'wsm_redemption_cars.client_car_id');
         $builder->leftJoin('clients', 'clients.id', 'wsm_redemption_cars.client_id');
         $builder->leftJoin('client_phones', 'client_phones.client_id', 'clients.id');
-        //$builder->leftJoin('worksheets', 'worksheets.id', 'wsm_redemption_cars.worksheet_id');
 
         $builder->groupBy('wsm_redemption_cars.id');
     }
@@ -177,17 +177,15 @@ class WSMRedemptionCarFilter extends AbstractFilter
                 break;
             case 'wait':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 1)
-                    //->whereIn('worksheets.status_id', ['work', 'check'])
-                    ->havingRaw(DB::raw('COUNT(wsm_redemption_calculations.id) < 1'))
-                    ->havingRaw(DB::raw('COUNT(wsm_redemption_offers.id) < 1'))
-                    ->havingRaw(DB::raw('COUNT(wsm_redemption_purchases.id) < 1'));
+                    ->havingRaw(('COUNT(wsm_redemption_calculations.id) < 1'))
+                    ->havingRaw(('COUNT(wsm_redemption_offers.id) < 1'))
+                    ->havingRaw(('COUNT(wsm_redemption_purchases.id) < 1'));
                 break;
             case 'work':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 1)
-                    //->whereIn('worksheets.status_id', ['work', 'check'])
-                    ->orHavingRaw(DB::raw('COUNT(wsm_redemption_calculations.id) > 0'))
-                    ->orHavingRaw(DB::raw('COUNT(wsm_redemption_offers.id) > 0'))
-                    ->orHavingRaw(DB::raw('COUNT(wsm_redemption_purchases.id) > 0'));
+                    ->orHavingRaw(('COUNT(wsm_redemption_calculations.id) > 0'))
+                    ->orHavingRaw(('COUNT(wsm_redemption_offers.id) > 0'))
+                    ->orHavingRaw(('COUNT(wsm_redemption_purchases.id) > 0'));
                 break;
             case 'close':
                 $builder->where('wsm_redemption_cars.redemption_status_id', 3);

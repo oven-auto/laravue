@@ -10,26 +10,33 @@ use App\Http\Resources\Car\Color\ColorCollection;
 use App\Http\Resources\Car\Color\ColorEditResource;
 use App\Http\Resources\Car\Color\ColorListResource;
 use App\Models\DealerColor;
-use App\Models\DealerColorImage;
 use App\Repositories\Car\Color\ColorRepository;
-use App\Services\Download\ColorFileLoad;
-use Illuminate\Http\Request;
 
 class ColorController extends Controller
 {
-    private $repo;
-
-    public function __construct(ColorRepository $repo)
+    public function __construct(
+        private ColorRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Цвет'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'destroy', 'restore']);
     }
 
 
 
     /**
-     * GET COLORS
-     * @param ColorIndexRequest $request [mark_id | trash | name]
-     * @return ColorCollection
+     * @OA\Get(
+     *      path="/cars/colors/",
+     *      operationId="getDealerColorList",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Палитра цветов",
+     *      description="Палитра цветов (?trash, ?brand_id, ?mark_id, ?name)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function index(ColorIndexRequest $request) : ColorCollection
     {
@@ -41,54 +48,83 @@ class ColorController extends Controller
 
 
     /**
-     * LIST
-     * @param ColorListRequest $request [mark_id]
-     * @return \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+     * @OA\Get(
+     *      path="/cars/colors/list",
+     *      operationId="getColorSelectList",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Палитра цветов в виде (id, name) для select`ов",
+     *      description="Палитра цветов в виде (id, name) для select`ов (mark_id)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function list(ColorListRequest $request) : \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $list = $this->repo->list($request->mark_id);
 
-        return (ColorListResource::collection($list))
-            ->additional(['success' => 1]);
+        return (ColorListResource::collection($list))->additional(['success' => 1]);
     }
 
 
 
     /**
-     * STORE
-     * @param ColorCreateRequest $request [brand_id, mark_id, base_id, name]
-     * @return ColorEditResource
+     * @OA\Post(
+     *      path="/cars/colors",
+     *      operationId="storeDealerColor",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Создать цвет",
+     *      description="Создать цвет (mark_id, name, base_id, brand_id)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function store(ColorCreateRequest $request) : ColorEditResource
     {
         $dealercolor = $this->repo->store($request->all());
 
-        return (new ColorEditResource($dealercolor))
-            ->additional(['message' => 'Цвет создан']);
+        return (new ColorEditResource($dealercolor));
     }
 
 
 
     /**
-     * UPDATE
-     * @param DealerColor $dealercolor
-     * @param ColorCreateRequest $request [brand_id, mark_id, base_id, name]
+     * @OA\Patch(
+     *      path="/cars/colors/{dealerColorId}",
+     *      operationId="updateDealerColor",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Изменить цвет",
+     *      description="Изменить цвет (mark_id, name, base_id, brand_id)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function update(DealerColor $dealercolor, ColorCreateRequest $request)
     {
         $this->repo->update($dealercolor, $request->all());
 
-        return (new ColorEditResource($dealercolor))
-            ->additional(['message' => 'Цвет изменен']);
+        return (new ColorEditResource($dealercolor));
     }
 
 
 
     /**
-     * SHOW
-     * @param DealerColor $dealercolor
-     * @return ColorEditResource
+     * @OA\Get(
+     *      path="/cars/colors/{dealerColorId}",
+     *      operationId="showDealerColor",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Открыть цвет",
+     *      description="Открыть цвет (mark_id, name, base_id, brand_id)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function show(DealerColor $dealercolor) : ColorEditResource
     {
@@ -98,29 +134,44 @@ class ColorController extends Controller
 
 
     /**
-     * DELETE
-     * @param DealerColor $dealercolor
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *      path="/cars/colors/{dealerColorId}",
+     *      operationId="deleteDealerColor",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Удалить цвет",
+     *      description="Удалить цвет (mark_id, name, base_id, brand_id)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function delete(DealerColor $dealercolor) : \Illuminate\Http\JsonResponse
     {
         $this->repo->delete($dealercolor);
 
-        return response()->json(['message' => 'Цвет удален', 'success' => 1]);
+        return response()->json(['success' => 1]);
     }
 
 
 
-    /**
-     * RESTORE
-     * @param DealerColor $dealercolor
-     * @return ColorEditResource
+     /**
+     * @OA\Delete(
+     *      path="/cars/colors/{dealerColorId}/restore",
+     *      operationId="restoreDealerColor",
+     *      tags={"CRUD Палитра дилерских цветов"},
+     *      summary="Востановиать цвет",
+     *      description="Востановиать цвет (mark_id, name, base_id, brand_id)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *       ),
+     *     )
      */
     public function restore(DealerColor $dealercolor) : ColorEditResource
     {
         $this->repo->restore($dealercolor);
 
-        return (new ColorEditResource($dealercolor))
-            ->additional(['message' => 'Цвет актуален']);
+        return (new ColorEditResource($dealercolor));
     }
 }

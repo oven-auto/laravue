@@ -5,7 +5,7 @@ namespace App\Models;
 use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Storage;
+use Illuminate\Support\Facades\Storage;
 
 class TraficProcessing extends Model implements CommentInterface
 {
@@ -14,8 +14,8 @@ class TraficProcessing extends Model implements CommentInterface
     protected $guarded = [];
 
     protected $dates = [
-        'created_at',
-        'updated_at',
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     public function writeComment(array $data)

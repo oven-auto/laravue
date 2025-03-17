@@ -1,0 +1,168 @@
+<?php
+
+namespace App\Http\Controllers\Api\v1\Back\Audit\CRUD;
+
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Audit\AuditListRequest;
+use App\Http\Requests\Audit\AuditSaveRequest;
+use App\Repositories\Audit\AuditRepository;
+
+class AuditController extends Controller
+{
+    public function __construct(
+        private AuditRepository $repo,
+        public $subject = 'Аудит',
+        public $genus = 'male'
+    )
+    {
+		$this->middleware('notice.message')->only(['store', 'update', 'destroy', 'restore']);
+    }
+
+
+
+    /**
+     * @OA\Get(
+     *      path="/audits/audits",
+     *      operationId="getAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Список аудитов",
+     *      description="Список аудитов (?trash = 1)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     * )
+     */
+    public function index(AuditListRequest $request)
+    {
+        $result = $this->repo->getOnlyNames($request->validated());
+
+        return response()->json([
+            'data' => $result,
+            'success' => 1
+        ]);
+    }
+
+    
+
+    /**
+     * @OA\Post(
+     *      path="/audits/audits",
+     *      operationId="storeAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Создать аудит",
+     *      description="Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     * )
+     */
+    public function store(AuditSaveRequest $request)
+    {
+        $audit = $this->repo->create($request->validated());
+
+        return response()->json([
+            'data' => $audit,
+            'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * @OA\Patch(
+     *      path="/audits/audits/{auditId}",
+     *      operationId="updateAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Изменить аудит",
+     *      description="Изменить аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     * )
+     */
+    public function update(int $id, AuditSaveRequest $request)
+    {
+        $audit = $this->repo->update($id, $request->validated());
+
+        return response()->json([
+            'data' => $audit,
+            'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * @OA\Get(
+     *      path="/audits/audits/{auditId}",
+     *      operationId="showAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Открыть аудит",
+     *      description="Открыть аудит",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     * )
+     */
+    public function show(int $id)
+    {
+        $audit = $this->repo->getById($id);
+
+        return response()->json([
+            'data' => $audit,
+            'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * @OA\Delete(
+     *      path="/audits/audits/{auditId}",
+     *      operationId="delAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Удалить аудит",
+     *      description="Удалить аудит",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     * )
+     */
+    public function destroy(int $id)
+    {
+        $audit = $this->repo->delete($id);
+
+        return response()->json([
+            'success' => 1,
+        ]);
+    }
+
+
+
+    /**
+     * @OA\Put(
+     *      path="/audits/audits/{auditId}/restore",
+     *      operationId="restoreAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Востановить аудит",
+     *      description="Востановить аудит",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ), 
+     * )
+     */
+    public function restore(int $id)
+	{
+        $audit = $this->repo->restore($id);
+
+        return response()->json([
+            'success' => 1,
+        ]);
+    }
+}

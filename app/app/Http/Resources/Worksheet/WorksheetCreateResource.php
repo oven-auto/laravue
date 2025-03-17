@@ -19,7 +19,6 @@ class WorksheetCreateResource extends JsonResource
                 'worksheet' => $this->attributesToArray(),
                 'trafic' => ['status' => $this->trafic->status->attributesToArray()]
             ],
-            'message' => 'Рабочий лист создан',
             'success' => 1
         ];
     }

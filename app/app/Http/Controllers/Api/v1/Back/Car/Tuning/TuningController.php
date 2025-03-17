@@ -12,15 +12,30 @@ use App\Repositories\Car\Tuning\TuningRepository;
 
 class TuningController extends Controller
 {
-    private $repo;
-
-    public function __construct(TuningRepository $repo)
+    public function __construct(
+        private TuningRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Тюнинг'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
+    /**
+     * @OA\Get(
+     *  path="/cars/tunings",
+     *  operationId="tuningsList",
+     *  tags={"Тюнинг"},
+     *  summary="Список Тюнинга",
+     *  description="Список Тюнинга(?trash)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function index(Request $request)
     {
         $tunings = $this->repo->get($request->all());
@@ -30,26 +45,63 @@ class TuningController extends Controller
 
 
 
+    /**
+     * @OA\Post(
+     *  path="/cars/tunings",
+     *  operationId="tuningsStore",
+     *  tags={"Тюнинг"},
+     *  summary="Создать Тюнинга",
+     *  description="Создать Тюнинга(name)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function store(Tuning $tuning, TuningSaveRequest $request)
     {
         $this->repo->save($tuning, $request->validated());
 
-        return (new TuningItemResource($tuning))
-            ->additional(['message' => 'Тюнинг создан']);
+        return (new TuningItemResource($tuning));
     }
 
 
 
+    /**
+     * @OA\Patch(
+     *  path="/cars/tunings/{tuningId}",
+     *  operationId="tuningsUpdate",
+     *  tags={"Тюнинг"},
+     *  summary="Изменить Тюнинга",
+     *  description="Изменить Тюнинга(name)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function update(Tuning $tuning, TuningSaveRequest $request)
     {
         $this->repo->save($tuning, $request->validated());
 
-        return (new TuningItemResource($tuning))
-            ->additional(['message' => 'Тюнинг изменен']);
+        return (new TuningItemResource($tuning));
     }
 
 
 
+    /**
+     * @OA\Get(
+     *  path="/cars/tunings/{tuningId}",
+     *  operationId="tuningsShow",
+     *  tags={"Тюнинг"},
+     *  summary="Открыть Тюнинга",
+     *  description="Открыть Тюнинга",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function show(Tuning $tuning)
     {
         return (new TuningItemResource($tuning));
@@ -57,25 +109,45 @@ class TuningController extends Controller
 
 
 
+    /**
+     * @OA\Delete(
+     *  path="/cars/tunings/{tuningId}",
+     *  operationId="tuningsDelete",
+     *  tags={"Тюнинг"},
+     *  summary="Удалить Тюнинга",
+     *  description="Удалить Тюнинга",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function destroy(Tuning $tuning)
     {
         $this->repo->destroy($tuning);
 
-        return response()->json([
-            'success' => 1,
-            'message' => 'Тюнинг удален'
-        ]);
+        return response()->json([ 'success' => 1,]);
     }
 
 
 
+    /**
+     * @OA\Patch(
+     *  path="/cars/tunings/{tuningId}/restore",
+     *  operationId="tuningsRestore",
+     *  tags={"Тюнинг"},
+     *  summary="Востановить Тюнинга",
+     *  description="Востановить Тюнинга",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function restore(Tuning $tuning)
     {
         $this->repo->restore($tuning);
 
-        return response()->json([
-            'success' => 1,
-            'message' => 'Тюнинг актуален'
-        ]);
+        return response()->json(['success' => 1,]);
     }
 }

@@ -31,7 +31,7 @@ class ContractListController extends Controller
     public function index(Request $request, ReserveContractRepository $repo)
     {
         $contracts = $repo->paginate($request->all());
-
+        
         return new ContractListCollection($contracts);
     }
 

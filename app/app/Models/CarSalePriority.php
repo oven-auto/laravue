@@ -22,6 +22,6 @@ class CarSalePriority extends Model
 
     public function sale_priority()
     {
-        return $this->hasOne(\App\Models\SalePriority::class, 'id', 'priotity_id')->withDefault();
+        return $this->hasOne(\App\Models\SalePriority::class, 'id', 'priority_id')->withDefault();
     }
 }

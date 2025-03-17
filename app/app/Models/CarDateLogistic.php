@@ -17,7 +17,11 @@ class CarDateLogistic extends Model
 
     protected $with = ['state'];
 
-    public $dates = ['created_at', 'updated_at', 'date_at'];
+    public $casts = [
+        'created_at'    => 'datetime', 
+        'updated_at'    => 'datetime', 
+        'date_at'       => 'datetime'
+    ];
 
     /**RELATIONS */
 

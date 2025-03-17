@@ -3,6 +3,7 @@
 namespace App\Helpers\Date;
 
 use Carbon\Carbon;
+use Symfony\Component\Mime\Header\DateHeader;
 
 class DateHelper
 {
@@ -68,4 +69,25 @@ class DateHelper
             return NULL;
         return Carbon::createFromFormat($in, $date)->format($out);
     }
+    
+    
+    
+    public static function isIntervalCurrentMonth($date_1, $date_2) 
+    {
+        $firstDayOfMonth = now()->startOfMonth();
+        $lastDayOdMonth = now()->endOfMonth();
+        
+        $date_1 = DateHelper::createFromString($date_1);
+        $date_2 = DateHelper::createFromString($date_2);
+        
+        if($firstDayOfMonth->diff($date_1)->days == 0 && $lastDayOdMonth->diff($date_2)->days == 0)
+            return  1;
+        return 0;
+    }
 }
+
+
+
+
+
+

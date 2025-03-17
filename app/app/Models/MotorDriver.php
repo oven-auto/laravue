@@ -14,8 +14,8 @@ class MotorDriver extends Model
 
     public $timestamps = false;
 
-    public function type()
-    {
-    	return $this->hasOne(\App\Models\DriverType::class, 'id', 'driver_type_id');
-    }
+    // public function type()
+    // {
+    // 	return $this->hasOne(\App\Models\DriverType::class, 'id', 'driver_type_id');
+    // }
 }

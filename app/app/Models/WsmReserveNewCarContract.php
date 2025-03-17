@@ -16,12 +16,12 @@ class WsmReserveNewCarContract extends Model implements CommentInterface
     ];
 
     protected $casts = [
-        'pdkp_offer_at'         => 'datetime:d.m.Y',
-        'pdkp_delivery_at'      => 'datetime:d.m.Y',
-        'pdkp_closed_at'        => 'datetime:d.m.Y',
-        'dkp_offer_at'          => 'datetime:d.m.Y',
-        'dkp_closed_at'         => 'datetime:d.m.Y',
-        'updated_at'            => 'datetime:d.m.Y',
+        'pdkp_offer_at'         => 'date',
+        'pdkp_delivery_at'      => 'date',
+        'pdkp_closed_at'        => 'date',
+        'dkp_offer_at'          => 'date',
+        'dkp_closed_at'         => 'date',
+        'updated_at'            => 'datetime',
     ];
 
     protected $guarded = [];

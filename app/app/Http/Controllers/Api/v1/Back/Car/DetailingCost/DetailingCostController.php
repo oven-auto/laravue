@@ -12,48 +12,96 @@ use Illuminate\Http\Request;
 
 class DetailingCostController extends Controller
 {
-    private $repo;
-
-    public function __construct(DetailingCostRepository $repo)
+    public function __construct(
+        private DetailingCostRepository $repo,
+        public $genus = 'female',
+        public $subject = 'Детализация цены'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
+    /**
+     * @OA\Get(
+     *  path="/cars/detailingcosts",
+     *  operationId="detailingcostsList",
+     *  tags={"Детализация цены автомобиля"},
+     *  summary="Список",
+     *  description="Список (?trash)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function index(Request $request)
     {
-        $validated = $request->validate([
-            'trash' => 'sometimes'
-        ]);
-
-        $costs = $this->repo->get($validated);
+        $costs = $this->repo->get($request->all());
 
         return new DetailingCostCollection($costs);
     }   
     
     
 
+    /**
+     * @OA\Post(
+     *  path="/cars/detailingcosts",
+     *  operationId="detailingcostsStore",
+     *  tags={"Детализация цены автомобиля"},
+     *  summary="Создать детализацию",
+     *  description="Создать детализацию (name)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function store(DetailingCost $detailingcost, DetailingCostRequest $request)
     {
         $this->repo->save($detailingcost, $request->validated());
 
-        return (new DetailingCostItemResource($detailingcost))
-            ->additional(['message' => 'Детализация цены создана']);
+        return (new DetailingCostItemResource($detailingcost));
     }
 
 
 
+    /**
+     * @OA\Patch(
+     *  path="/cars/detailingcosts/{detailingCostId}",
+     *  operationId="detailingcostsUpdate",
+     *  tags={"Детализация цены автомобиля"},
+     *  summary="Изменит детализацию",
+     *  description="Изменит детализацию (name)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function update(DetailingCost $detailingcost, DetailingCostRequest $request)
     {
         $this->repo->save($detailingcost, $request->validated());
 
-        return (new DetailingCostItemResource($detailingcost))
-            ->additional(['message' => 'Детализация цены изменена']);
+        return (new DetailingCostItemResource($detailingcost));
     }
 
 
 
+    /**
+     * @OA\Get(
+     *  path="/cars/detailingcosts/{detailingCostId}",
+     *  operationId="detailingcostsShow",
+     *  tags={"Детализация цены автомобиля"},
+     *  summary="Открыть детализацию",
+     *  description="Открыть детализацию",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function show(DetailingCost $detailingcost)
     {
         return (new DetailingCostItemResource($detailingcost));
@@ -61,24 +109,48 @@ class DetailingCostController extends Controller
 
 
 
+    /**
+     * @OA\Delete(
+     *  path="/cars/detailingcosts/{detailingCostId}",
+     *  operationId="detailingcostsDelete",
+     *  tags={"Детализация цены автомобиля"},
+     *  summary="Удалить детализацию",
+     *  description="Удалить детализацию",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function delete(DetailingCost $detailingcost)
     {
         $this->repo->delete($detailingcost);
 
         return response()->json([
-            'data' => 'Детализация цены удалена',
             'success' => 1,
         ]);
     }
 
 
 
+    /**
+     * @OA\Patch(
+     *  path="/cars/detailingcosts/{detailingCostId}/restore",
+     *  operationId="detailingcostsRestore",
+     *  tags={"Детализация цены автомобиля"},
+     *  summary="Востановить детализацию",
+     *  description="Востановить детализацию",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function restore(DetailingCost $detailingcost)
     {
         $this->repo->restore($detailingcost);
 
         return response()->json([
-            'data' => 'Детализация цены востановлена',
             'success' => 1,
         ]);
     }

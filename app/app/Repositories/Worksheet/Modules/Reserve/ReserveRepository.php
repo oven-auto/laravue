@@ -2,6 +2,7 @@
 
 namespace App\Repositories\Worksheet\Modules\Reserve;
 
+use App\Classes\Car\CarPriority\CarPriority;
 use App\Classes\Wait\Wait;
 use App\Events\DNMVisitEvent;
 use App\Exceptions\Reserve\ReserveException;
@@ -133,6 +134,8 @@ class ReserveRepository
             ['author_id' => auth()->user()->id]
         ));
 
+        CarPriority::make($reserve->car)->checkPriority();
+
         return $reserve;
     }
 
@@ -188,8 +191,14 @@ class ReserveRepository
 
         if($reserve->isClosedContract())
             throw new ReserveException('closed_contract');
+        
+        DB::transaction(function() use ($reserve, $data){
+            $current = $reserve->car;
 
-        $this->changeCar($reserve, $data);
+            $this->changeCar($reserve, $data);
+
+            CarPriority::make($current)->checkPriority();
+        }, 3);        
     }
 
 
@@ -208,7 +217,11 @@ class ReserveRepository
         if($reserve->issue)
             throw new ReserveException('has_issue');
 
-        $reserve->delete();
+        DB::transaction(function() use ($reserve){
+            $reserve->delete();
+
+            CarPriority::make($reserve->car)->checkPriority();
+        }, 3);        
     }
 
 
@@ -300,8 +313,20 @@ class ReserveRepository
 
                 'car_owners.id as owner_count',
                 DB::raw('IF(cars.disable_off, cars.disable_off, 0) as _disable'),
-                DB::raw('IF(car_owners.client_id = IF(worksheets.client_id IS NULL, 0, worksheets.client_id) and car_owners.id IS NOT NULL, 1, 0) as green_report'),
-                DB::raw('IF(car_owners.client_id <> IF(worksheets.client_id IS NULL, 0, worksheets.client_id)  and car_owners.id IS NOT NULL, 1, 0) as yellow_report'),
+                
+                DB::raw('IF(
+                        (
+                            car_owners.client_id = wsm_reserve_lisings.client_id OR
+                            car_owners.client_id = worksheets.client_id
+                        ) and  car_owners.id IS NOT NULL, 1, 0
+                ) as green_report'),
+                
+                DB::raw('IF(
+                    (
+                        car_owners.client_id <> worksheets.client_id AND 
+                        car_owners.client_id <> wsm_reserve_lisings.client_id
+                    ) and car_owners.id IS NOT NULL, 1, 0
+                ) as yellow_report'),
                
                 DB::raw('IF(ransom_cars.car_id, 1, 0) as ransom_date'),
                 DB::raw('IF(ransom_cars.car_id, _purchase.cost, 0) as ransom_sum'),
@@ -313,7 +338,8 @@ class ReserveRepository
                 DB::raw('IF(_purchase.id, sum(car_detailing_costs.price), 0) as factoring_detailing'),
                 DB::raw('IF(_purchase.id, IF(car_collectors.id IS NOT NULL, 1, 0), 0) as factoring_collector'),
             );
-
+     
+            
         $query->leftJoin(DB::raw('(
                 SELECT sum(_ds.amount) as _dsum, _d.modulable_id as _dreserve FROM discounts as _d 
                 LEFT JOIN discount_sums as _ds on _ds.discount_id = _d.id group by _d.modulable_id

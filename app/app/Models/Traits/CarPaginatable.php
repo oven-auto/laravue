@@ -11,6 +11,7 @@ trait CarPaginatable
     {
         if($this::class === Car::class)
         $builder->with([
+            'priority.sale_priority',
             'brand' => function($q) {
                 $q->select('id', 'name');
             },
@@ -107,6 +108,7 @@ trait CarPaginatable
             'reserve' => function ($builderReserve) {
                 $builderReserve->select('id','worksheet_id','car_id','created_at', 'author_id')
                     ->with([
+                        'lisinger',
                         'author',
                         'discounts',
                         'sale',

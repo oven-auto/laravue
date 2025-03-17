@@ -8,20 +8,6 @@ use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Facades\Validator;
 
-/**
- * @OA\Info(
- *  title="API",
- *  version="1.0.0"
- * )
- * @OA\Tag(
- *  name="Get",
- *  description="Get methods"
- * )
- * @OA\Server(
- *  description="Сервер",
- *  url="http://192.168.1.98:8280/api"
- * )
- */
 class AppServiceProvider extends ServiceProvider
 {
     /**

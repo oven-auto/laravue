@@ -2,18 +2,24 @@
 
 namespace App\Repositories\Car\Color;
 
+use App\Http\Filters\DealerColorFilter;
 use App\Models\DealerColor;
 use App\Models\DealerColorImage;
 use App\Repositories\Car\Color\DTO\ColorDTO;
 use App\Services\Download\ColorFileLoad;
+use \Illuminate\Database\Eloquent\Collection;
 
 Class ColorRepository
 {
-    /**
-     * STORE
-     * @param array $data
-     * @return DealerColor
-     */
+    public function getById(int $id) : DealerColor
+    {
+        $dealerColor = DealerColor::findOrFail($id);
+
+        return $dealerColor;
+    }
+
+
+
     public function store(array $data) : DealerColor
     {
         $color = DealerColor::create(array_merge(
@@ -26,27 +32,18 @@ Class ColorRepository
 
 
 
-    /**
-     * UPDATE
-     * @param DealerColor $dealerColor
-     * @param array $data
-     * @return void
-     */
-    public function update(DealerColor $dealerColor, array $data) : void
+    public function update(DealerColor $dealerColor, array $data) : DealerColor
     {
         $dealerColor->fill(array_merge(
             (new ColorDTO($data))->get(),
             ['author_id' => auth()->user()->id],
         ))->save();
+
+        return $dealerColor;
     }
 
 
 
-    /**
-     * DELETE
-     * @param DealerColor $dealerColor
-     * @return void
-     */
     public function delete(DealerColor $dealerColor) : void
     {
         $dealerColor->delete();
@@ -54,11 +51,6 @@ Class ColorRepository
 
 
 
-    /**
-     * RESTORE
-     * @param DealerColor $dealerColor
-     * @return void
-     */
     public function restore(DealerColor $dealerColor) : void
     {
         $dealerColor->restore();
@@ -66,25 +58,13 @@ Class ColorRepository
 
 
 
-    /**
-     * GET
-     * @param array $data [trash | mark_id | name]
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function get(array $data) : \Illuminate\Database\Eloquent\Collection
+    public function get(array $data) : Collection
     {
-        count($data) ?: throw new \Exception('Необходимо указать хотя бы один параметр');
-
         $query = DealerColor::select('dealer_colors.*')->with(['mark', 'brand', 'base', 'author']);
 
-        if(isset($data['mark_id']))
-            $query->where('mark_id', $data['mark_id']);
-
-        if(isset($data['trash']) && $data['trash'])
-            $query->onlyTrashed();
-
-        if(isset($data['name']))
-            $query->where('name', 'LIKE', '%'.$data['name'].'%');
+        $filter = app()->make(DealerColorFilter::class, ['queryParams' => $data]);
+        
+        $query->filter($filter);
 
         $colors = $query->get();
 
@@ -93,12 +73,7 @@ Class ColorRepository
 
 
 
-    /**
-     * LIST
-     * @param string $markId
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function list(int $markId) : \Illuminate\Database\Eloquent\Collection
+    public function list(int $markId) : Collection
     {
         $query = DealerColor::select('dealer_colors.id', 'dealer_colors.name');
 
@@ -107,6 +82,20 @@ Class ColorRepository
         $list = $query->get();
 
         return $list;
+    }
+
+
+
+    public function getColorImages(array $data)
+    {
+        $query = DealerColorImage::query();
+
+        if(isset($data['color_id']))
+            $query->where('dealer_color_id', $data['color_id']);
+
+        $images = $query->get();
+
+        return $images;
     }
 
 

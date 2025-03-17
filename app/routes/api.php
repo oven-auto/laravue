@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Back\Audit\CRUD\AuditController;
+use App\Http\Controllers\Api\v1\Back\Audit\CRUD\QuestionController;
 use App\Http\Controllers\Api\v1\Back\Bodywork\BodyworkController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCloneController;
 use Illuminate\Support\Facades\Route;
@@ -52,11 +54,13 @@ use App\Http\Controllers\Api\v1\Services\Select\ModuleListController;
 use App\Http\Controllers\Api\v1\Services\Select\OrderController;
 use App\Http\Controllers\Api\v1\Services\Select\PaymentController;
 use App\Http\Controllers\Api\v1\Services\Select\ReasonRefusalController;
+use App\Http\Controllers\Api\v1\Services\Select\SalePriorityController;
 use App\Http\Controllers\Api\v1\Services\Select\TuningController as SelectTuningController;
 use App\Http\Controllers\Api\v1\Services\Select\UserSelectController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Integration\PotokBit\PotokBitController;
 use App\Models\Role;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveLisingerController;
 
 Route::get('test', [HomeController::class, 'test']);
 
@@ -122,6 +126,16 @@ Route::prefix('auth')->namespace('\App\Http\Controllers\Api\v1\Auth')->group(fun
 
 Route::middleware(['userfromtoken'])->group(function () {
 
+    Route::prefix('audits')->group(function(){
+        Route::apiResource('audits', AuditController::class)->except(['edit', 'create']);
+        Route::put('audits/{audit}/restore', [AuditController::class, 'restore']);
+
+        Route::apiResource('questions', QuestionController::class)->except(['edit', 'create']);
+        Route::put('questions/{question}/restore', [QuestionController::class, 'restore']);
+    });
+
+
+
     Route::get('colors',                        [App\Http\Controllers\Api\v1\Services\Select\ColorController::class, 'index']); //базовые цвета
     Route::get('motortransmissions',            [App\Http\Controllers\Api\v1\Services\Select\MotorTransmissionSelectController::class, 'index']); //трансмиссии (автомат, вариатор итд)
     Route::get('motordrivers',                  [App\Http\Controllers\Api\v1\Services\Select\MotorDriverSelectController::class, 'index']); //привода (передний задний и тд)
@@ -139,6 +153,8 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::prefix('services')->group(function () {
         Route::prefix('html')->group(function () { //МАРШРУТЫ ПОЛУЧЕНИЯ СПИСКОВ ДЛЯ HTML
             Route::prefix('select')->group(function () {
+                Route::get('salepriorities', [SalePriorityController::class, 'index']);
+
                 //all form owner
                 Route::get('formowners',            [FormOwnerController::class, 'index']);
 
@@ -463,7 +479,7 @@ Route::middleware(['userfromtoken'])->group(function () {
             Route::patch('/{collector}',          [CollectorController::class, 'update'])->withTrashed();
             Route::get('/{collector}',            [CollectorController::class, 'show'])->withTrashed();
             Route::delete('/{collector}',         [CollectorController::class, 'destroy']);
-            Route::patch('{collector}/restore',    [CollectorController::class, 'revert'])->withTrashed();
+            Route::patch('{collector}/restore',   [CollectorController::class, 'revert'])->withTrashed();
         });
 
 
@@ -489,32 +505,15 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('/',                         [PriceComplectationController::class, 'index']);
                 Route::get('/{complectationprice}',     [PriceComplectationController::class, 'show']);
                 Route::post('/',                        [PriceComplectationController::class, 'store']);
-                Route::patch('/{complectationprice}',   [PriceComplectationController::class, 'update']);
             });
 
-            Route::get('', [ComplectationController::class, 'index'])
-                ->middleware('permission.complectation.list');
-
-            Route::get('search', [ComplectationController::class, 'search'])
-                ->middleware('permission.complectation.list');
-
-            Route::post('', [ComplectationController::class, 'store'])
-                ->middleware('permission.complectation.store');
-
-            Route::get('{complectation}', [ComplectationController::class, 'show'])
-                ->withTrashed()
-                ->middleware('permission.complectation.show');
-
-            Route::patch('{complectation}', [ComplectationController::class, 'update'])
-                ->withTrashed()
-                ->middleware('permission.complectation.edit');
-
-            Route::delete('{complectation}', [ComplectationController::class, 'delete'])
-                ->middleware('permission.complectation.delete');
-
-            Route::patch('{complectation}/restore', [ComplectationController::class, 'restore'])
-                ->withTrashed()
-                ->middleware('permission.complectation.restore');
+            Route::get('', [ComplectationController::class, 'index'])->middleware('permission.complectation.list');
+            Route::get('search', [ComplectationController::class, 'search'])->middleware('permission.complectation.list');
+            Route::post('', [ComplectationController::class, 'store'])->middleware('permission.complectation.store');
+            Route::get('{complectation}', [ComplectationController::class, 'show'])->withTrashed()->middleware('permission.complectation.show');
+            Route::patch('{complectation}', [ComplectationController::class, 'update'])->withTrashed()->middleware('permission.complectation.edit');
+            Route::delete('{complectation}', [ComplectationController::class, 'delete'])->middleware('permission.complectation.delete');
+            Route::patch('{complectation}/restore', [ComplectationController::class, 'restore'])->withTrashed()->middleware('permission.complectation.restore');
         });
 
 
@@ -619,7 +618,6 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('/',                  [PriceOptionController::class, 'index']);
                 Route::get('/{optionPrice}',     [PriceOptionController::class, 'show']);
                 Route::post('/',                 [PriceOptionController::class, 'store']);
-                Route::patch('/{optionPrice}',   [PriceOptionController::class, 'update']);
             });
 
             Route::get('',                      [OptionController::class, 'index']);
@@ -997,12 +995,18 @@ Route::middleware(['userfromtoken'])->group(function () {
              * RESERVE NEW CAR MODEULE
              */
             Route::prefix('reserves')->group(function () {
+                
+                Route::prefix('lising')->group(function(){
+                    Route::post('/', [ReserveLisingerController::class, 'append']);
+                    Route::delete('/', [ReserveLisingerController::class, 'detach']);
+                });
+                
                 Route::get('/', [ReserveNewCarController::class, 'index']);
                 Route::post('/', [ReserveNewCarController::class, 'store']);
                 Route::patch('setdates/{reserve}', [ReserveNewCarController::class, 'setdate']);
                 Route::delete('setdates/{reserve}', [ReserveNewCarController::class, 'deletedate']);
                 Route::patch('{reserve}', [ReserveNewCarController::class, 'update']);
-                Route::delete('{reserve}', [ReserveNewCarController::class, 'destroy']);
+                Route::delete('{reserve}', [ReserveNewCarController::class, 'destroy']);                                         
 
 
                 Route::prefix('contracts')->group(function () {

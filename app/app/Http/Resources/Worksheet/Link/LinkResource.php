@@ -19,7 +19,8 @@ class LinkResource extends JsonResource
             'text' => $this->url,
             'icon' => $this->icon,
             'author' => $this->author->cut_name,
-            'created_at' => $this->created_at->format('d.m.Y (H:i)')
+            'created_at' => $this->created_at->format('d.m.Y (H:i)'),
+            'type' => 'worksheet'
         ];
     }
 }

@@ -15,8 +15,9 @@ class Kernel extends HttpKernel
      */
     protected $middleware = [
         \App\Http\Middleware\TrustHosts::class,
-        \App\Http\Middleware\TrustProxies::class,
-        \Fruitcake\Cors\HandleCors::class,
+        //\App\Http\Middleware\TrustProxies::class,
+        //\Fruitcake\Cors\HandleCors::class,
+        \Illuminate\Http\Middleware\HandleCors::class,
         \App\Http\Middleware\PreventRequestsDuringMaintenance::class,
         \Illuminate\Foundation\Http\Middleware\ValidatePostSize::class,
         \App\Http\Middleware\TrimStrings::class,
@@ -76,6 +77,7 @@ class Kernel extends HttpKernel
         'userfromtoken' => \App\Http\Middleware\UserWithTokenMiddleware::class,
         'corsing' => \App\Http\Middleware\CorsMiddleware::class,
         'robot' => \App\Http\Middleware\RobotMiddleware::class,
+        'notice.message' => \App\Http\Middleware\Notice\NoticeMessageMiddleware::class,
 
         'worksheet.create.base' => \App\Http\Middleware\Permissions\Worksheet\WorksheetBasePerm::class,
 

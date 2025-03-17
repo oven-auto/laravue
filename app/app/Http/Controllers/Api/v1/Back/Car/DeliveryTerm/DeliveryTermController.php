@@ -11,11 +11,13 @@ use Illuminate\Http\Request;
 
 class DeliveryTermController extends Controller
 {
-    private $repo;
-
-    public function __construct(DeliveryTermRepository $repo)
+    public function __construct(
+        private DeliveryTermRepository $repo,
+        public $subject = 'Условие доставки',
+        public $genus = 'neuter'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
@@ -83,7 +85,6 @@ class DeliveryTermController extends Controller
 
         return (new DeliveryTermResource($deliveryterm))
             ->additional([
-                'message' => 'Условие доставки создано', 
                 'success' => 1
             ]);
     }
@@ -124,7 +125,6 @@ class DeliveryTermController extends Controller
         
         return (new DeliveryTermResource($deliveryterm))
             ->additional([
-                'message' => 'Условие доставки изменено', 
                 'success' => 1
             ]);
     }
@@ -188,7 +188,6 @@ class DeliveryTermController extends Controller
         $this->repo->delete($deliveryterm);
 
         return response()->json([
-            'message' => 'Условие доставки удалено',
             'success' => 1,
         ]);
     }
@@ -222,7 +221,6 @@ class DeliveryTermController extends Controller
         $this->repo->restore($deliveryterm);
 
         return response()->json([
-            'message' => 'Условие доставки востановлено',
             'success' => 1,
         ]);
     }

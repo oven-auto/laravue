@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1\Back\Car\Option;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Car\Option\OptionCreateRequest;
 use App\Http\Requests\Car\Option\OptionIndexRequest;
+use App\Http\Resources\Car\Option\OptionIndexResource;
 use App\Http\Resources\Car\Option\OptionItemResource;
 use App\Models\Car;
 use App\Repositories\Car\Option\OptionRepository;
@@ -13,81 +14,99 @@ use App\Services\Car\Option\List\OptionListService;
 
 class OptionController extends Controller
 {
-    private $repo;
-
-    public function __construct(OptionRepository $repo)
+    public function __construct(
+        private OptionRepository $repo,
+        public $genus = 'female',
+        public $subject = 'Опция'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
     /**
-     * INDEX
-     * @param OptionIndexRequest $request [trash, mark_id, name, code]
-     *
+     * @OA\Get(
+     *  path="/cars/options",
+     *  operationId="optionsList",
+     *  tags={"Опции автомобиля"},
+     *  summary="Список опций",
+     *  description="Список опций(?trash, ?car_id, ?name, ?code, ?mark_id)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function index(OptionIndexRequest $request, OptionListService $service)
     {
-        $car = $request->has('car_id') ? Car::findOrFail($request->car_id) : null;
+        $car = isset($data['car_id']) ? Car::findOrFail($data['car_id']) : null;
 
-        $res = $service->getList($request->all(), $car);
+        $res = $service->getList($request->all());
 
-        return response()->json([
-            'data' => [
-                'options' => $res,
-                'car' => $car ? [
-                    'vin' => $car->vin ?? '',
-                    'brand' => $car->brand->name,
-                    'mark' => $car->mark->name,
-                    'vehicle_type' => $car->complectation->vehicle->name,
-                    'body' => $car->complectation->bodywork->name,
-                ] : [],
-                'test' => '1'
-            ],
-            'success' => 1
-        ]);
+        return new OptionIndexResource(['res' => $res, 'car' => $car]);
     }
 
 
 
     /**
-     * STORE
-     * @param OptionCreateRequest $request ['name', 'code', 'price', 'brand_id', 'mark_id']
-     * @return OptionItemResource
+     * @OA\Post(
+     *  path="/cars/options",
+     *  operationId="optionsStore",
+     *  tags={"Опции автомобиля"},
+     *  summary="Создать опций",
+     *  description="Создать опций(brand_id, name, code, mark_id)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function store(OptionCreateRequest $request): OptionItemResource
+    public function store(OptionCreateRequest $request)
     {
         $option = $this->repo->store($request->all());
 
-        return (new OptionItemResource($option))
-            ->additional(['message' => 'Опция добавлена']);
+        return (new OptionItemResource($option));
     }
 
 
 
     /**
-     * UPDATE
-     * @param Option $option
-     * @param OptionCreateRequest $request ['name', 'code', 'price', 'brand_id', 'mark_id']
-     * @return OptionItemResource
+     * @OA\Patch(
+     *  path="/cars/options/{optionId}",
+     *  operationId="optionsUpdate",
+     *  tags={"Опции автомобиля"},
+     *  summary="Изменит опций",
+     *  description="Изменит опций(brand_id, name, code, mark_id)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function update(Option $option, OptionCreateRequest $request): OptionItemResource
+    public function update(Option $option, OptionCreateRequest $request)
     {
         $this->repo->update($option, $request->all());
 
-        return (new OptionItemResource($option))
-            ->additional(['message' => 'Опция изменена']);
+        return (new OptionItemResource($option));
     }
 
 
 
     /**
-     * SHOW
-     * @param Option $option
-     * @return OptionItemResource
+     * @OA\Get(
+     *  path="/cars/options/{optionId}",
+     *  operationId="optionsShow",
+     *  tags={"Опции автомобиля"},
+     *  summary="Открыт опций",
+     *  description="Открыт опций",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function show(Option $option): OptionItemResource
+    public function show(Option $option)
     {
         return (new OptionItemResource($option));
     }
@@ -95,29 +114,44 @@ class OptionController extends Controller
 
 
     /**
-     * DELETE
-     * @param Option $option
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *  path="/cars/options/{optionId}",
+     *  operationId="optionsDelete",
+     *  tags={"Опции автомобиля"},
+     *  summary="Удалитб опций",
+     *  description="Удалитб опций",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function delete(Option $option): \Illuminate\Http\JsonResponse
+    public function delete(Option $option)
     {
         $this->repo->delete($option);
 
-        return response()->json(['message' => 'Опция удалена', 'success' => 1]);
+        return response()->json(['success' => 1]);
     }
 
 
 
     /**
-     * RESTORE
-     * @param Option $option
-     * @return OptionItemResource
+     * @OA\Patch(
+     *  path="/cars/options/{optionId}/restore",
+     *  operationId="optionsRestore",
+     *  tags={"Опции автомобиля"},
+     *  summary="Востановить опций",
+     *  description="Востановить опций",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function restore(Option $option): OptionItemResource
+    public function restore(Option $option)
     {
         $this->repo->restore($option);
 
-        return (new OptionItemResource($option))
-            ->additional(['message' => 'Опция актуальна']);;
+        return (new OptionItemResource($option));
     }
 }

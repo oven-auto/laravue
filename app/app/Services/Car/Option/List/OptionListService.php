@@ -18,7 +18,7 @@ class OptionListService
 
 
     //Вернуть список опций
-    public function getList(array $data, Car $car = null): \Illuminate\Support\Collection
+    public function getList(array $data, Car|null $car = null): \Illuminate\Support\Collection
     {
         $carOptionPrices = collect();
 

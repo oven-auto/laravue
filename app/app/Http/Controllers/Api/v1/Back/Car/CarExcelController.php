@@ -19,6 +19,25 @@ class CarExcelController extends Controller
 
 
 
+    /**
+     * @OA\Get(
+     *      path="/export/cars",
+     *      operationId="exportCars",
+     *      tags={"Новый автомобиль", "Экспорт"},
+     *      summary="Экспорт новых автомобилей Excel",
+     *      description="Экспорт новых автомобилейв Excel",
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(
+     *              type="object",
+     *              ref="#/components/schemas/CarFilter",
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
+     */
     public function index(Request $request)
     {
         $cars = $this->repo->get($request->all());

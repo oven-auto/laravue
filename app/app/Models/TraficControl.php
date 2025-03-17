@@ -11,9 +11,9 @@ class TraficControl extends Model implements CommentInterface
 {
     use HasFactory;
 
-    protected $dates = [
-        'begin_at',
-        'end_at',
+    protected $casts = [
+        'begin_at' => 'datetime',
+        'end_at' => 'datetime',
     ];
 
     protected $guarded = ['id'];

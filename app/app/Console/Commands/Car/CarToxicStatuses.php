@@ -54,7 +54,6 @@ class CarToxicStatuses extends Command
                 $this->exec();
             sleep(60*60);
         }
-        //$this->exec();
     }
 
 
@@ -125,7 +124,7 @@ class CarToxicStatuses extends Command
         
         foreach($cars as $car)
             if($car instanceof \App\Models\Car)
-                (new CarPriority($car))->checkPriority();
+                CarPriority::make($car)->checkPriority();
     }
 
 
@@ -145,7 +144,7 @@ class CarToxicStatuses extends Command
 
         foreach($cars as $car)
             if($car instanceof \App\Models\Car)
-                (new CarPriority($car))->checkPriority();
+                CarPriority::make($car)->checkPriority();
     }
 
 
@@ -165,7 +164,7 @@ class CarToxicStatuses extends Command
 
         foreach($cars as $car)
             if($car instanceof \App\Models\Car)
-                (new CarPriority($car))->checkPriority();
+                CarPriority::make($car)->checkPriority();
     }
 
 
@@ -184,7 +183,7 @@ class CarToxicStatuses extends Command
 
         foreach($cars as $car)
             if($car instanceof \App\Models\Car)
-                (new CarPriority($car))->checkPriority();
+                CarPriority::make($car)->checkPriority();
     }
 
 
@@ -205,6 +204,6 @@ class CarToxicStatuses extends Command
 
         foreach($cars as $car)
             if($car instanceof \App\Models\Car)
-                (new CarPriority($car))->checkPriority();
+                CarPriority::make($car)->checkPriority();
     }
 }

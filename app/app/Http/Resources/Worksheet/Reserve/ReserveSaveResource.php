@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Worksheet\Reserve;
 
+use App\Http\Resources\Client\NameIdResource;
 use App\Http\Resources\UsedCar\UsedCarItemResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -16,6 +17,7 @@ class ReserveSaveResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'lising'                    => $this->hasLisinger() ? new NameIdResource($this->getLisinger()) : [],
             'id'                        => $this->id,
             'created_at'                => $this->created_at->format('d.m.Y'),
             'worksheet_id'              => $this->worksheet_id,
@@ -34,8 +36,8 @@ class ReserveSaveResource extends JsonResource
                 'created_at'            => $this->last_comment->created_at ? $this->last_comment->created_at->format('d.m.Y (H:i)') : '',
             ] : [],
             'price'                     => $this->getFullCost(),
-            'payments' => PaymentSaveResource::collection($this->payments),
-            'tradeins' => UsedCarItemResource::collection($this->tradeins),
+            'payments'                  => PaymentSaveResource::collection($this->payments),
+            'tradeins'                  => UsedCarItemResource::collection($this->tradeins),
 
             'issue_date' => $this->issue()->exists() ? [
                 'author' => [

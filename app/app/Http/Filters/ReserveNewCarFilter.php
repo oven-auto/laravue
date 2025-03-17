@@ -564,7 +564,9 @@ class ReserveNewCarFilter extends AbstractFilter
         $builder->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id');
 
         $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
-
+        
+        $builder->leftJoin('wsm_reserve_lisings', 'wsm_reserve_lisings.reserve_id', 'wsm_reserve_new_cars.id');
+    
         $builder->groupBy('wsm_reserve_new_cars.id');
     }
 

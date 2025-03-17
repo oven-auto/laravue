@@ -2,7 +2,7 @@
     "openapi": "3.0.0",
     "info": {
         "title": "API",
-        "version": "1.0.0"
+        "version": "1.0"
     },
     "servers": [
         {
@@ -14,6 +14,90 @@
         }
     ],
     "paths": {
+        "/audits/audits": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Список аудитов",
+                "description": "Список аудитов (?trash = 1)",
+                "operationId": "getAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать аудит",
+                "description": "Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+                "operationId": "storeAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/audits/{auditId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Открыть аудит",
+                "description": "Открыть аудит",
+                "operationId": "showAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Удалить аудит",
+                "description": "Удалить аудит",
+                "operationId": "delAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить аудит",
+                "description": "Изменить аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int )",
+                "operationId": "updateAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/audits/{auditId}/restore": {
+            "put": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Востановить аудит",
+                "description": "Востановить аудит",
+                "operationId": "restoreAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
         "/bodyworks": {
             "get": {
                 "tags": [
@@ -158,6 +242,28 @@
                         "description": "OK"
                     }
                 }
+            },
+            "post": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Создать новый автомобиль",
+                "description": "Создать новый автомобиль",
+                "operationId": "storeCar",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CarCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
             }
         },
         "/cars/{id}": {
@@ -196,7 +302,7 @@
                     {
                         "name": "id",
                         "in": "path",
-                        "description": "Идентификатор кузова",
+                        "description": "Идентификатор машины",
                         "required": true,
                         "schema": {
                             "type": "integer"
@@ -342,10 +448,245 @@
                 }
             }
         },
+        "/cars/count": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Счетчик новых автомобилей",
+                "description": "Счетчик новых автомобилейв",
+                "operationId": "carsListCount",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CarFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/export/cars": {
+            "get": {
+                "tags": [
+                    "Новый автомобиль",
+                    "Экспорт"
+                ],
+                "summary": "Экспорт новых автомобилей Excel",
+                "description": "Экспорт новых автомобилейв Excel",
+                "operationId": "exportCars",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CarFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/collectors/": {
+            "get": {
+                "tags": [
+                    "CRUD Держатель залога"
+                ],
+                "summary": "Список держателей залога",
+                "description": "Список держателей залога",
+                "operationId": "getCollectorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "CRUD Держатель залога"
+                ],
+                "summary": "Создать держателя залога",
+                "description": "Создать держателя залога (name = string)",
+                "operationId": "storeCollectorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/collectors/{collectorId}": {
+            "get": {
+                "tags": [
+                    "CRUD Держатель залога"
+                ],
+                "summary": "Открыть держателя залога",
+                "description": "Открыть держателя залога",
+                "operationId": "showCollectorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "CRUD Держатель залога"
+                ],
+                "summary": "Удалить держателя залога",
+                "description": "Удалить держателя залога",
+                "operationId": "deleteCollectorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "CRUD Держатель залога"
+                ],
+                "summary": "Изменить держателя залога",
+                "description": "Изменить держателя залога (name = string)",
+                "operationId": "updateCollectorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/collectors/{collectorId}/restore": {
+            "patch": {
+                "tags": [
+                    "CRUD Держатель залога"
+                ],
+                "summary": "Востановить держателя залога",
+                "description": "Востановить держателя залога",
+                "operationId": "restoreCollectorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/colors/": {
+            "get": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Палитра цветов",
+                "description": "Палитра цветов (?trash, ?brand_id, ?mark_id, ?name)",
+                "operationId": "getDealerColorList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/colors/list": {
+            "get": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Палитра цветов в виде (id, name) для select`ов",
+                "description": "Палитра цветов в виде (id, name) для select`ов (mark_id)",
+                "operationId": "getColorSelectList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/colors": {
+            "post": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Создать цвет",
+                "description": "Создать цвет (mark_id, name, base_id, brand_id)",
+                "operationId": "storeDealerColor",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/colors/{dealerColorId}": {
+            "get": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Открыть цвет",
+                "description": "Открыть цвет (mark_id, name, base_id, brand_id)",
+                "operationId": "showDealerColor",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Удалить цвет",
+                "description": "Удалить цвет (mark_id, name, base_id, brand_id)",
+                "operationId": "deleteDealerColor",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Изменить цвет",
+                "description": "Изменить цвет (mark_id, name, base_id, brand_id)",
+                "operationId": "updateDealerColor",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/cars/colors/{dealerColorId}/restore": {
+            "delete": {
+                "tags": [
+                    "CRUD Палитра дилерских цветов"
+                ],
+                "summary": "Востановиать цвет",
+                "description": "Востановиать цвет (mark_id, name, base_id, brand_id)",
+                "operationId": "restoreDealerColor",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
         "/cars/colors/images": {
             "get": {
                 "tags": [
-                    "Цвет (картинки)"
+                    "CRUD Палитра дилерских цветов",
+                    "Изображение цвета"
                 ],
                 "summary": "Список картинок цвета",
                 "description": "Список картинок цвета",
@@ -374,7 +715,8 @@
             },
             "post": {
                 "tags": [
-                    "Цвет (картинки)"
+                    "CRUD Палитра дилерских цветов",
+                    "Изображение цвета"
                 ],
                 "summary": "Добавить",
                 "description": "Добавить",
@@ -415,7 +757,8 @@
         "/cars/colors/images/{imageId}": {
             "delete": {
                 "tags": [
-                    "Цвет (картинки)"
+                    "CRUD Палитра дилерских цветов",
+                    "Изображение цвета"
                 ],
                 "summary": "Удалить",
                 "description": "Удалить",
@@ -428,7 +771,8 @@
             },
             "patch": {
                 "tags": [
-                    "Цвет (картинки)"
+                    "CRUD Палитра дилерских цветов",
+                    "Изображение цвета"
                 ],
                 "summary": "Изменить",
                 "description": "Изменить",
@@ -466,10 +810,118 @@
                 }
             }
         },
+        "/cars/complectations": {
+            "get": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Список комплектаций",
+                "description": "complectations",
+                "operationId": "complectation_list",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ComplectationFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Создать комплектацию",
+                "description": "Создать комплектацию(\n     *      code,name, mark_id, vehicle_type_id,  body_work_id, factory_id, motor_driver_id,\n     *      motor_transmission_id, motor_type_id, power, size, ?file, brand_id, alias_id,\n     *  )",
+                "operationId": "complectationStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/complectations/search": {
+            "post": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Поиск комплектаций по коду",
+                "description": "Поиск комплектаций по коду",
+                "operationId": "complectationSearch",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/complectations/{complectationId}": {
+            "get": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Открыть комплектацию",
+                "description": "Открыть комплектацию",
+                "operationId": "complectationShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Изменить комплектацию",
+                "description": "Изменить комплектацию (\n     *      code,name, mark_id, vehicle_type_id,  body_work_id, factory_id, motor_driver_id,\n     *      motor_transmission_id, motor_type_id, power, size, ?file, brand_id, alias_id,\n     *  )",
+                "operationId": "complectationUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Удалить комплектацию",
+                "description": "Удалить комплектацию",
+                "operationId": "complectationDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/complectations/{complectationId}/restore": {
+            "patch": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Востановить комплектацию",
+                "description": "Востановить комплектацию",
+                "operationId": "complectationRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/complectationlist": {
             "get": {
                 "tags": [
-                    "Журнал комплектации"
+                    "Комплектации новых автомобилей"
                 ],
                 "summary": "Журнал комплектации",
                 "description": "Журнал комплектации",
@@ -483,6 +935,73 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/complectationlist/count": {
+            "get": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Счетчик журнала комплектации",
+                "description": "Счетчик журнала комплектации",
+                "operationId": "getcomplectationlistCount",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ComplectationListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/complectations/prices": {
+            "get": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Список цен комплектации",
+                "description": "Список цен комплектации (?complectation_id, ?car_id)",
+                "operationId": "complectationPricesList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Создать цену комплектации",
+                "description": "Создать цену комплектации (complectation_id, price, begin_at)",
+                "operationId": "complectationPricesListStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/complectations/prices/{priceId}": {
+            "get": {
+                "tags": [
+                    "Комплектации новых автомобилей"
+                ],
+                "summary": "Открыть цену комплектации",
+                "description": "Открыть цену комплектации",
+                "operationId": "complectationPricesListShow",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -653,6 +1172,637 @@
                 }
             }
         },
+        "/cars/detailingcosts": {
+            "get": {
+                "tags": [
+                    "Детализация цены автомобиля"
+                ],
+                "summary": "Список",
+                "description": "Список (?trash)",
+                "operationId": "detailingcostsList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Детализация цены автомобиля"
+                ],
+                "summary": "Создать детализацию",
+                "description": "Создать детализацию (name)",
+                "operationId": "detailingcostsStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/detailingcosts/{detailingCostId}": {
+            "get": {
+                "tags": [
+                    "Детализация цены автомобиля"
+                ],
+                "summary": "Открыть детализацию",
+                "description": "Открыть детализацию",
+                "operationId": "detailingcostsShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Детализация цены автомобиля"
+                ],
+                "summary": "Удалить детализацию",
+                "description": "Удалить детализацию",
+                "operationId": "detailingcostsDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Детализация цены автомобиля"
+                ],
+                "summary": "Изменит детализацию",
+                "description": "Изменит детализацию (name)",
+                "operationId": "detailingcostsUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/detailingcosts/{detailingCostId}/restore": {
+            "patch": {
+                "tags": [
+                    "Детализация цены автомобиля"
+                ],
+                "summary": "Востановить детализацию",
+                "description": "Востановить детализацию",
+                "operationId": "detailingcostsRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/factories": {
+            "get": {
+                "tags": [
+                    "Фабрика производства"
+                ],
+                "summary": "Список фабрик",
+                "description": "Список фабрик(?trash)",
+                "operationId": "factoriesList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Фабрика производства"
+                ],
+                "summary": "Создать фабрик",
+                "description": "Создать фабрик(city, country)",
+                "operationId": "factoriesStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/factories/{factoryId}": {
+            "get": {
+                "tags": [
+                    "Фабрика производства"
+                ],
+                "summary": "Открыть фабрик",
+                "description": "Открыть фабрик",
+                "operationId": "factoriesShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Фабрика производства"
+                ],
+                "summary": "Удалить фабрик",
+                "description": "Удалить фабрик",
+                "operationId": "factoriesDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Фабрика производства"
+                ],
+                "summary": "Изменить фабрик",
+                "description": "Изменить фабрик(city, country)",
+                "operationId": "factoriesUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/factories/{factoryId}/restore": {
+            "delete": {
+                "tags": [
+                    "Фабрика производства"
+                ],
+                "summary": "Востановить фабрик",
+                "description": "Востановить фабрик",
+                "operationId": "factoriesRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/markers": {
+            "get": {
+                "tags": [
+                    "Маркер товарный признак"
+                ],
+                "summary": "Список признаков",
+                "description": "Список признаков(?trash)",
+                "operationId": "markersList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Маркер товарный признак"
+                ],
+                "summary": "Создать признаков",
+                "description": "Создать признаков(name, text_color, body_color, description)",
+                "operationId": "markersStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/markers/{markerId}": {
+            "get": {
+                "tags": [
+                    "Маркер товарный признак"
+                ],
+                "summary": "Отрыт признаков",
+                "description": "Отрыт признаков",
+                "operationId": "markersShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Маркер товарный признак"
+                ],
+                "summary": "Удалить признаков",
+                "description": "Удалить признаков",
+                "operationId": "markersDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Маркер товарный признак"
+                ],
+                "summary": "Изменит признаков",
+                "description": "Изменит признаков(name, text_color, body_color, description)",
+                "operationId": "markersUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/markers/{markerId}/restore": {
+            "patch": {
+                "tags": [
+                    "Маркер товарный признак"
+                ],
+                "summary": "Востановитт признаков",
+                "description": "Востановитт признаков",
+                "operationId": "markersRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/options": {
+            "get": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Список опций",
+                "description": "Список опций(?trash, ?car_id, ?name, ?code, ?mark_id)",
+                "operationId": "optionsList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Создать опций",
+                "description": "Создать опций(brand_id, name, code, mark_id)",
+                "operationId": "optionsStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/options/{optionId}": {
+            "get": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Открыт опций",
+                "description": "Открыт опций",
+                "operationId": "optionsShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Удалитб опций",
+                "description": "Удалитб опций",
+                "operationId": "optionsDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Изменит опций",
+                "description": "Изменит опций(brand_id, name, code, mark_id)",
+                "operationId": "optionsUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/options/{optionId}/restore": {
+            "patch": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Востановить опций",
+                "description": "Востановить опций",
+                "operationId": "optionsRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/options/prices": {
+            "get": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Список цен опций",
+                "description": "Список цен опций(option_id, ?car_id)",
+                "operationId": "optionsPriceList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Добавить цен опций",
+                "description": "Добавить цен опций(option_id, begin_at, price)",
+                "operationId": "optionsPriceStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/options/prices/{priceId}": {
+            "get": {
+                "tags": [
+                    "Опции автомобиля"
+                ],
+                "summary": "Открыт цен опций",
+                "description": "Открытб цен опций",
+                "operationId": "optionsPriceShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/ordertypes": {
+            "get": {
+                "tags": [
+                    "Типы заказа автомобиля"
+                ],
+                "summary": "Список Типы заказа автомобиля",
+                "description": "Список Типы заказа автомобиля(?trash)",
+                "operationId": "ordertypesList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Типы заказа автомобиля"
+                ],
+                "summary": "создать Типы заказа автомобиля",
+                "description": "создать Типы заказа автомобиля(name, text_color, description)",
+                "operationId": "ordertypesStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/ordertypes/{orderId}": {
+            "get": {
+                "tags": [
+                    "Типы заказа автомобиля"
+                ],
+                "summary": "Отркыть Типы заказа автомобиля",
+                "description": "Отркыть Типы заказа автомобиля",
+                "operationId": "ordertypesShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Типы заказа автомобиля"
+                ],
+                "summary": "Удалить Типы заказа автомобиля",
+                "description": "Удалить Типы заказа автомобиля",
+                "operationId": "ordertypesDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Типы заказа автомобиля"
+                ],
+                "summary": "Изменить Типы заказа автомобиля",
+                "description": "Изменить Типы заказа автомобиля(name, text_color, description)",
+                "operationId": "ordertypesUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/ordertypes/{orderId}/restore": {
+            "patch": {
+                "tags": [
+                    "Типы заказа автомобиля"
+                ],
+                "summary": "Востановитв Типы заказа автомобиля",
+                "description": "Востановитв Типы заказа автомобиля",
+                "operationId": "ordertypesRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/trademarkers": {
+            "get": {
+                "tags": [
+                    "Контрмарка"
+                ],
+                "summary": "Список контрмарок",
+                "description": "Список контрмарок(?trash)",
+                "operationId": "trademarkersList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Контрмарка"
+                ],
+                "summary": "Создать контрмарок",
+                "description": "Создать контрмарок(name, text_color, ?description)",
+                "operationId": "trademarkersStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/trademarkers/{tradeMarkerId}": {
+            "get": {
+                "tags": [
+                    "Контрмарка"
+                ],
+                "summary": "Открыть контрмарок",
+                "description": "Открыть контрмарок",
+                "operationId": "trademarkersShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Контрмарка"
+                ],
+                "summary": "Удалить контрмарок",
+                "description": "Удалить контрмарок",
+                "operationId": "trademarkersDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Контрмарка"
+                ],
+                "summary": "Изменить контрмарок",
+                "description": "Изменить контрмарок(name, text_color, ?description)",
+                "operationId": "trademarkersUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/trademarkers/{tradeMarkerId}/restore": {
+            "patch": {
+                "tags": [
+                    "Контрмарка"
+                ],
+                "summary": "Востановить контрмарок",
+                "description": "Востановить контрмарок",
+                "operationId": "trademarkersRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/tunings": {
+            "get": {
+                "tags": [
+                    "Тюнинг"
+                ],
+                "summary": "Список Тюнинга",
+                "description": "Список Тюнинга(?trash)",
+                "operationId": "tuningsList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Тюнинг"
+                ],
+                "summary": "Создать Тюнинга",
+                "description": "Создать Тюнинга(name)",
+                "operationId": "tuningsStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/tunings/{tuningId}": {
+            "get": {
+                "tags": [
+                    "Тюнинг"
+                ],
+                "summary": "Открыть Тюнинга",
+                "description": "Открыть Тюнинга",
+                "operationId": "tuningsShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Тюнинг"
+                ],
+                "summary": "Удалить Тюнинга",
+                "description": "Удалить Тюнинга",
+                "operationId": "tuningsDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Тюнинг"
+                ],
+                "summary": "Изменить Тюнинга",
+                "description": "Изменить Тюнинга(name)",
+                "operationId": "tuningsUpdate",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/cars/tunings/{tuningId}/restore": {
+            "patch": {
+                "tags": [
+                    "Тюнинг"
+                ],
+                "summary": "Востановить Тюнинга",
+                "description": "Востановить Тюнинга",
+                "operationId": "tuningsRestore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/client/car/{id}/owner": {
             "patch": {
                 "tags": [
@@ -693,6 +1843,165 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/car/list/{clientId}": {
+            "get": {
+                "tags": [
+                    "Автомобиль клиента"
+                ],
+                "summary": "Список автомобиль клиента",
+                "description": "Список автомобиль клиента",
+                "operationId": "getClientCarList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/car/{clientId}": {
+            "post": {
+                "tags": [
+                    "Автомобиль клиента"
+                ],
+                "summary": "Добавить автомобиль клиента",
+                "description": "Добавить автомобиль клиента",
+                "operationId": "storeClientCarList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/car/{carId}": {
+            "delete": {
+                "tags": [
+                    "Автомобиль клиента"
+                ],
+                "summary": "Удалить автомобиль клиента",
+                "description": "Удалить автомобиль клиента",
+                "operationId": "deleteClientCarList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Автомобиль клиента"
+                ],
+                "summary": "Изменить автомобиль клиента",
+                "description": "Изменить автомобиль клиента",
+                "operationId": "updateClientCarList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/car/amount/{clientId}": {
+            "get": {
+                "tags": [
+                    "Количество Автомобиль клиента"
+                ],
+                "summary": "Количество автомобиль клиента",
+                "description": "Количество автомобиль клиента",
+                "operationId": "amountClientCarList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/list": {
+            "get": {
+                "tags": [
+                    "Клиент"
+                ],
+                "summary": "Список клиентов",
+                "description": "Список клиентов (\n     *      параметры для фильтрации: lastname, firstname, fathername, phone, email, client_type_id, trafic_sex_id\n     *      trafic_zone_id, has_worksheet, input, register_interval, register_start, register_end, action_interval, \n     *      action_start, action_end, ids, personal\n     *  )",
+                "operationId": "getClientList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/show/{clientId}": {
+            "get": {
+                "tags": [
+                    "Клиент"
+                ],
+                "summary": "Предпоказ клиента",
+                "description": "Предпоказ клиента",
+                "operationId": "showClient",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/{clientId}": {
+            "get": {
+                "tags": [
+                    "Клиент"
+                ],
+                "summary": "Открыть клиента",
+                "description": "Открыть клиента",
+                "operationId": "editClient",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Клиент"
+                ],
+                "summary": "Удалить клиента",
+                "description": "Удалить клиента",
+                "operationId": "deleteClient",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Клиент"
+                ],
+                "summary": "Изменить клиента",
+                "description": "Изменить клиента (\n     *          firstname,lastname,fathername,client_type_id,trafic_sex_id,trafic_zone_id,birthday_at,driver_license_issue_at,\n     *          passport_issue_at,address,driving_license,serial_number,form_owner_id,phones,emails,url,inn,company_name,\n     *      )",
+                "operationId": "updateClient",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/client/create": {
+            "post": {
+                "tags": [
+                    "Клиент"
+                ],
+                "summary": "Создать клиента",
+                "description": "Создать клиента (\n     *          firstname,lastname,fathername,client_type_id,trafic_sex_id,trafic_zone_id,birthday_at,driver_license_issue_at,\n     *          passport_issue_at,address,driving_license,serial_number,form_owner_id,phones,emails,url,inn,company_name,\n     *      )",
+                "operationId": "storeClient",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -995,6 +2304,52 @@
                 }
             }
         },
+        "/worksheet/modules/reserves/lising": {
+            "post": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Добавить лизингодателя",
+                "description": "Добавить лизингодателя",
+                "operationId": "appendLisingToreserve",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LisingerCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Удалить лизингодателя",
+                "description": "Удалить лизингодателя",
+                "operationId": "deleteLisingToreserve",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LisingerCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/reserves": {
             "get": {
                 "tags": [
@@ -1097,6 +2452,51 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheets/{worksheetId}": {
+            "get": {
+                "tags": [
+                    "Рабочий лист"
+                ],
+                "summary": "открыть РЛ",
+                "description": "Открыть РЛ",
+                "operationId": "showWorksheet",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/close/{worksheetId}": {
+            "get": {
+                "tags": [
+                    "Рабочий лист"
+                ],
+                "summary": "Закрыть РЛ",
+                "description": "Закрыть РЛ",
+                "operationId": "closeWorksheet",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/revert/{worksheetId}": {
+            "get": {
+                "tags": [
+                    "Рабочий лист"
+                ],
+                "summary": "Востановить РЛ",
+                "description": "Востановить РЛ",
+                "operationId": "revertWorksheet",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -1407,6 +2807,21 @@
                 }
             }
         },
+        "/services/html/select/salepriorities": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список приоритетов продажи",
+                "description": "Список приоритетов продажи",
+                "operationId": "getSalePriorityList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/services/html/select/tunings": {
             "get": {
                 "tags": [
@@ -1637,6 +3052,15 @@
                             "paid_dates"
                         ]
                     },
+                    "has_paid_date": {
+                        "description": "Наличие начало платного периода .",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_paid_date"
+                        ]
+                    },
                     "control_paid_dates": {
                         "description": "Массив содержащий интервал дат контроля срока оплаты от - до, параметр ДО необязателен, \n     * отсутствие второго параметра, будет означать, что используется не интервал, \n     * соответственно сравнение будет строго по одному параметру",
                         "type": "array",
@@ -1645,6 +3069,15 @@
                         "example": "[01.10.2024,22.10.2024]",
                         "enum": [
                             "control_paid_dates"
+                        ]
+                    },
+                    "has_controll_paid_date": {
+                        "description": "Наличие контроля срока оплаты .",
+                        "type": "boolean",
+                        "format": "bool",
+                        "example": "1",
+                        "enum": [
+                            "has_controll_paid_date"
                         ]
                     },
                     "collectors": {
@@ -1927,6 +3360,133 @@
                         "format": "string",
                         "enum": [
                             "sort"
+                        ]
+                    },
+                    "only_free": {
+                        "description": "Только свободные",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "only_free"
+                        ]
+                    },
+                    "sale_date": {
+                        "description": "Массив содержащий интервал даты этапа продажа от - до, параметр ДО необязателен, \n     *      отсутствие второго параметра, будет означать, что используется не интервал, \n     *      соответственно сравнение будет строго по одному параметру",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024]",
+                        "enum": [
+                            "sale_date"
+                        ]
+                    },
+                    "priority_ids": {
+                        "description": "Массив содержащий идентификаторы приоритетов",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "priority_ids"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
+            "ComplectationFilter": {
+                "description": "Параметры фильтрации комплектаций",
+                "properties": {
+                    "brands": {
+                        "description": "Массив содержащий идентификаторы бренда",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "brand_id"
+                        ]
+                    },
+                    "name": {
+                        "description": "Полнотекстовый поиск, названия комплектации.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "name"
+                        ]
+                    },
+                    "code": {
+                        "description": "Полнотекстовый поиск, кода комплектации.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "code"
+                        ]
+                    },
+                    "mark_id": {
+                        "description": "Массив содержащий идентификаторы выбранных моделей",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "mark_id"
+                        ]
+                    },
+                    "status": {
+                        "description": "Поиск комплектаций по статусу активности <all|trash|active>.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "status"
+                        ]
+                    },
+                    "ids": {
+                        "description": "Массив содержащий идентификаторы выбранных комплектаций",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "ids"
+                        ]
+                    },
+                    "trash": {
+                        "description": "Поиск только удаленных комплектаций.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "trash"
+                        ]
+                    },
+                    "insale": {
+                        "description": "Поиск комплектаций по статусу наличия машин в продаже <sold|sale>.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "insale"
+                        ]
+                    },
+                    "action": {
+                        "description": "Поиск комплектаций по статусу проверки <totrash|towork|tochange>.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "action"
+                        ]
+                    },
+                    "input": {
+                        "description": "Полнотекстовый поиск, кода или названия комплектации.",
+                        "type": "string",
+                        "format": "string",
+                        "example": "1122",
+                        "enum": [
+                            "input"
                         ]
                     }
                 },
@@ -2710,6 +4270,25 @@
                 },
                 "type": "object"
             },
+            "LisingerCreateRequest": {
+                "required": [
+                    "reserve_id",
+                    "client_id"
+                ],
+                "properties": {
+                    "reserve_id": {
+                        "description": "Reserve ID",
+                        "type": "string",
+                        "format": "integer"
+                    },
+                    "client_id": {
+                        "description": "Client ID",
+                        "type": "integer",
+                        "format": "integer"
+                    }
+                },
+                "type": "object"
+            },
             "WorksheetStoreRequest": {
                 "required": [
                     "trafic_id"
@@ -2727,6 +4306,10 @@
     },
     "tags": [
         {
+            "name": "Аудит стандартов",
+            "description": "Аудит стандартов"
+        },
+        {
             "name": "Кузов",
             "description": "Кузов"
         },
@@ -2735,20 +4318,72 @@
             "description": "Новый автомобиль"
         },
         {
-            "name": "Цвет (картинки)",
-            "description": "Цвет (картинки)"
+            "name": "Экспорт",
+            "description": "Экспорт"
         },
         {
-            "name": "Журнал комплектации",
-            "description": "Журнал комплектации"
+            "name": "CRUD Держатель залога",
+            "description": "CRUD Держатель залога"
+        },
+        {
+            "name": "CRUD Палитра дилерских цветов",
+            "description": "CRUD Палитра дилерских цветов"
+        },
+        {
+            "name": "Изображение цвета",
+            "description": "Изображение цвета"
+        },
+        {
+            "name": "Комплектации новых автомобилей",
+            "description": "Комплектации новых автомобилей"
         },
         {
             "name": "CRUD Условия отгрузки",
             "description": "CRUD Условия отгрузки"
         },
         {
+            "name": "Детализация цены автомобиля",
+            "description": "Детализация цены автомобиля"
+        },
+        {
+            "name": "Фабрика производства",
+            "description": "Фабрика производства"
+        },
+        {
+            "name": "Маркер товарный признак",
+            "description": "Маркер товарный признак"
+        },
+        {
+            "name": "Опции автомобиля",
+            "description": "Опции автомобиля"
+        },
+        {
+            "name": "Типы заказа автомобиля",
+            "description": "Типы заказа автомобиля"
+        },
+        {
+            "name": "Контрмарка",
+            "description": "Контрмарка"
+        },
+        {
+            "name": "Тюнинг",
+            "description": "Тюнинг"
+        },
+        {
             "name": "Клиенты",
             "description": "Клиенты"
+        },
+        {
+            "name": "Автомобиль клиента",
+            "description": "Автомобиль клиента"
+        },
+        {
+            "name": "Количество Автомобиль клиента",
+            "description": "Количество Автомобиль клиента"
+        },
+        {
+            "name": "Клиент",
+            "description": "Клиент"
         },
         {
             "name": "Журнал скидок",

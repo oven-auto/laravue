@@ -12,9 +12,9 @@ class ClientCar extends Model implements CommentInterface
 
     protected $guarded = [];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
     ];
 
     protected $with = ['color', 'brand', 'mark', 'transmission', 'drive', 'type', 'bodywork', ];

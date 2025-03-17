@@ -213,6 +213,14 @@ class CarFilter extends AbstractFilter
      * @OA\Items())
      * */
     public const PAID_DATE = 'paid_dates';//Начало платного периода
+
+    /**  @OA\Property(
+     *      format="bool", 
+     *      description="Наличие начало платного периода .", 
+     *      property="has_paid_date", 
+     *      type="bool", 
+     *      example="1")
+     * */
     public const HAS_PAID_DATE = 'has_paid_date';
 
     /**  @OA\Property(
@@ -225,6 +233,14 @@ class CarFilter extends AbstractFilter
      * example="[01.10.2024,22.10.2024]", 
      * @OA\Items())*/
     public const CONTROLL_PAID_DATE = 'control_paid_dates';//Контрольный срок оплаты
+
+    /**  @OA\Property(
+     *      format="bool", 
+     *      description="Наличие контроля срока оплаты .", 
+     *      property="has_controll_paid_date", 
+     *      type="bool", 
+     *      example="1")
+     * */
     public const HAS_CONTROLL_PAID_DATE = 'has_controll_paid_date';
 
     /**  @OA\Property(
@@ -248,8 +264,6 @@ class CarFilter extends AbstractFilter
      * @OA\Items())
      * */
     public const PRICES = 'prices';
-
-
 
     /**  @OA\Property(
      * format="array", 
@@ -347,6 +361,8 @@ class CarFilter extends AbstractFilter
      * */
     public const STOCK_DATE = 'stock_date';//Все логистические даты(используется мидлвар)
 
+    public const HAS_STOCK_DATE = 'has_stock_date';
+
      /**  @OA\Property(
      * format="array", 
      * description="Массив содержащий интервал даты этапа приходная накладная от - до, параметр ДО необязателен, 
@@ -396,8 +412,6 @@ class CarFilter extends AbstractFilter
      * */
     public const PRESALE_DATE = 'presale_date';//Все логистические даты(используется мидлвар)
 
-
-    
     /**  @OA\Property(
      *      format="bool", 
      *      description="Наличие переоценки, 1 - есть, 0 нет.", 
@@ -551,18 +565,39 @@ class CarFilter extends AbstractFilter
      */
     public const SORT = 'sort';
 
-    /**
-     * ONLY FREE CARS
+        /**
+     * @OA\Property(
+     *  format="bool", 
+     *  description="Только свободные", 
+     *  property="only_free", 
+     *  type="bool"
+     * )
      */
     public const ONLY_FREE = 'only_free';
 
 
-    /**
-     * CAR IN STOCK
-     */
-
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты этапа продажа от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="sale_date", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
     public const SALE_DATE = 'sale_date';
 
+    /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы приоритетов", 
+     * property="priority_ids", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const PRIORITY_IDS = 'priority_ids';
 
 
     public const LOGISTIC_DATES = 'logistic_dates';
@@ -622,6 +657,8 @@ class CarFilter extends AbstractFilter
             self::HAS_PAID_DATE         => [$this, 'hasPaidDate'],
             self::CONTROLL_PAID_DATE    => [$this, 'hasControllPaidDate'],
             self::ONLY_FREE             => [$this, 'onlyFree'],
+            self::PRIORITY_IDS          => [$this, 'priorityIds'],
+            self::HAS_STOCK_DATE        => [$this, 'hasStockDate']
         ];
     }
 
@@ -819,9 +856,18 @@ class CarFilter extends AbstractFilter
             });
 
             $builder->leftJoin('car_sale_priorities', 'car_sale_priorities.car_id', 'cars.id');
+            
+            $builder->leftJoin('wsm_reserve_lisings', 'wsm_reserve_lisings.reserve_id', 'reserve.id');
 
         $builder            
             ->groupBy('cars.id');            
+    }
+
+
+
+    public function priorityIds(Builder $builder, array $arr)
+    {
+        $builder->whereIn('car_sale_priorities.priority_id', $arr);
     }
 
 
@@ -850,6 +896,17 @@ class CarFilter extends AbstractFilter
             $builder->whereNotNull('car_controll_paid_dates.date_at');
         else
             $builder->whereNull('car_controll_paid_dates.date_at');
+    }
+
+
+
+    public function hasStockDate(Builder $builder, bool $val)
+    {
+        // $builder->where(function($query){
+        //     $query->where('car_date_logistics.logistic_system_name', 'stock_date')
+        //         ->whereNotNull('car_date_logistics.date_at');
+        // });
+        $builder->where('cars.status', 'in_stock');
     }
 
 

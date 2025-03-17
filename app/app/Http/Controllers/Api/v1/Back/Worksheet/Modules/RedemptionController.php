@@ -31,7 +31,7 @@ class RedemptionController extends Controller
      * @param Request $request
      * @return mixed \Illuminate\Http\Resources\Json\AnonymousResourceCollection
      */
-    public function list(Request $request ) : \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    public function list(Request $request ) 
     {
         $redemptions = $this->repo->paginate($request->all());
         

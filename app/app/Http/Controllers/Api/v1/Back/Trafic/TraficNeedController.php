@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api\v1\Back\Trafic;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TraficAppeal;
-use DB;
 use App\Models\TraficProduct;
 use App\Http\Resources\Trafic\TraficProductCollection;
 
@@ -24,12 +23,7 @@ class TraficNeedController extends Controller
 
     public function appealneed($trafic_appeal_id = '')
     {
-        //$traficAppeal = TraficAppeal::find($trafic_appeal_id);
-
         $query = TraficProduct::select('number', 'name');
-
-        //if($traficAppeal)
-        //$query->where('appeal_id', $traficAppeal->appeal_id);
 
         $data = $query->orderBy('number')
             ->where('appeal_id', '<>', 12)

@@ -39,13 +39,24 @@ class SQL_VIEW_CAR_STATUS_TYPE extends Command
      */
     public function handle()
     {
+        /**
+         * Спускаемся с конца, то есть еси машина продана, то остальные статусты проставлять смысла нет, 
+         * так как продажа последний статус
+         * если есть продажа не пустота, то статус SALED
+         * иначе если выдача не пустота, то статус ISSUED
+         * иначе если резерв не пусто и есть оплата, то статус CLIENT
+         * иначе если есть резерв, то статус RESERVED
+         * иначе статус FREE
+        */
+
         $query = "CREATE OR REPLACE VIEW car_status_types AS
             SELECT cars.id as car_id,
-            IF(
-                sale.id  is not null, '".CarStatusType::VALUES['saled']."', IF(
-                    reserves.id IS NOT NULL and 
-                    SUM(pay.id) IS NOT NULL, '".CarStatusType::VALUES['client']."', IF(
-                        reserves.id , '".CarStatusType::VALUES['reserved']."', '".CarStatusType::VALUES['free']."'
+            IF(sale.id  is not null, '".CarStatusType::VALUES['saled']."', 
+                    IF(issue.id is not null, '".CarStatusType::VALUES['issued']."', 
+                        IF (reserves.id IS NOT NULL and 
+                        SUM(pay.id) IS NOT NULL, '".CarStatusType::VALUES['client']."', IF(
+                            reserves.id , '".CarStatusType::VALUES['reserved']."', '".CarStatusType::VALUES['free']."'
+                        )
                     )
                 )
             ) as status
@@ -54,6 +65,8 @@ class SQL_VIEW_CAR_STATUS_TYPE extends Command
                     on reserves.car_id = cars.id and reserves.deleted_at is NULL
                 LEFT JOIN wsm_reserve_new_car_contracts as contracts
                     on contracts.reserve_id = reserves.id
+                LEFT JOIN wsm_reserve_issues as issue
+                    on issue.reserve_id = reserves.id
                 LEFT JOIN wsm_reserve_sales as sale
                     on sale.reserve_id = reserves.id
                 LEFT JOIN wsm_reserve_payments as pay

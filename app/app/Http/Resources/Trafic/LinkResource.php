@@ -21,6 +21,7 @@ class LinkResource extends JsonResource
             'trafic_id' => $this->trafic_id,
             'id' => $this->id,
             'created_at' => $this->created_at->format('d.m.Y (H:i)'),
+            'type' => 'trafic',
         ];
     }
 }

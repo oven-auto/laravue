@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Car\TradeMarker;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Car\Marker\MarkerCreateRequest;
+use App\Http\Requests\Car\Trademarker\TradeMarkerCreateRequest;
 use App\Http\Resources\Car\Marker\MarkerCollection;
 use App\Http\Resources\Car\Marker\MarkerItemResource;
 use App\Models\TradeMarker;
@@ -12,26 +12,33 @@ use Illuminate\Http\Request;
 
 class TradeMarkerController extends Controller
 {
-    private $repo;
-
-    public function __construct(TradeMarkerRepository $repo)
+    public function __construct(
+        private TradeMarkerRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Контрмарка',
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
     /**
-     * GET
-     * @return MarkerCollection
+     * @OA\Get(
+     *  path="/cars/trademarkers",
+     *  operationId="trademarkersList",
+     *  tags={"Контрмарка"},
+     *  summary="Список контрмарок",
+     *  description="Список контрмарок(?trash)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function index(Request $request): MarkerCollection
     {
-        $validated = $request->validate([
-            'trash' => 'sometimes|numeric'
-        ]);
-
-        $markers = $this->repo->get($validated);
+        $markers = $this->repo->get($request->all());
 
         return new MarkerCollection($markers);
     }
@@ -39,51 +46,61 @@ class TradeMarkerController extends Controller
 
 
     /**
-     * STORE
-     * @param MarkerCreateRequest $request ['name', 'text_color', 'body_color', 'description']
-     * @return MarkerItemResource
+     * @OA\Post(
+     *  path="/cars/trademarkers",
+     *  operationId="trademarkersStore",
+     *  tags={"Контрмарка"},
+     *  summary="Создать контрмарок",
+     *  description="Создать контрмарок(name, text_color, ?description)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function store(TradeMarker $marker, Request $request): MarkerItemResource
+    public function store(TradeMarker $marker, TradeMarkerCreateRequest $request)
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'text_color' => 'required',
-            'description' => 'sometimes'
-        ]);
-
-        $this->repo->save($marker, $validated);
+        $this->repo->save($marker, $request->validated());
         
-        return (new MarkerItemResource($marker))
-            ->additional(['message' => 'Маркер добавлен']);
+        return (new MarkerItemResource($marker));
     }
 
 
 
     /**
-     * UPDATE
-     * @param TradeMarker $marker
-     * @param MarkerCreateRequest $request ['name', 'text_color', 'body_color', 'description']
-     * @return MarkerItemResource
+     * @OA\Patch(
+     *  path="/cars/trademarkers/{tradeMarkerId}",
+     *  operationId="trademarkersUpdate",
+     *  tags={"Контрмарка"},
+     *  summary="Изменить контрмарок",
+     *  description="Изменить контрмарок(name, text_color, ?description)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function update(TradeMarker $marker, Request $request): MarkerItemResource
     {
-        $validated = $request->validate([
-            'name' => 'required',
-            'text_color' => 'required',
-            'description' => 'sometimes'
-        ]);
-
-        $this->repo->save($marker, $validated);
+        $this->repo->save($marker, $request->validated());
         
-        return (new MarkerItemResource($marker))
-            ->additional(['message' => 'Маркер изменен']);
+        return (new MarkerItemResource($marker));
     }
 
 
 
     /**
-     * SHOW
-     * @return MarkerItemResource
+     * @OA\Get(
+     *  path="/cars/trademarkers/{tradeMarkerId}",
+     *  operationId="trademarkersShow",
+     *  tags={"Контрмарка"},
+     *  summary="Открыть контрмарок",
+     *  description="Открыть контрмарок",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function show(TradeMarker $marker): MarkerItemResource
     {
@@ -93,29 +110,44 @@ class TradeMarkerController extends Controller
 
 
     /**
-     * DELETE
-     * @param TradeMarker $marker
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *  path="/cars/trademarkers/{tradeMarkerId}",
+     *  operationId="trademarkersDelete",
+     *  tags={"Контрмарка"},
+     *  summary="Удалить контрмарок",
+     *  description="Удалить контрмарок",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function delete(TradeMarker $marker): \Illuminate\Http\JsonResponse
     {
         $this->repo->delete($marker);
 
-        return response()->json(['message' => 'Маркер удален', 'success' => 1]);
+        return response()->json(['success' => 1]);
     }
 
 
 
     /**
-     * RESTORE
-     * @param TradeMarker $marker
-     * @return MarkerItemResource
+     * @OA\Patch(
+     *  path="/cars/trademarkers/{tradeMarkerId}/restore",
+     *  operationId="trademarkersRestore",
+     *  tags={"Контрмарка"},
+     *  summary="Востановить контрмарок",
+     *  description="Востановить контрмарок",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function restore(TradeMarker $marker): MarkerItemResource
     {
         $this->repo->restore($marker);
 
-        return (new MarkerItemResource($marker))
-            ->additional(['message' => 'Маркер актуален']);
+        return (new MarkerItemResource($marker));
     }
 }

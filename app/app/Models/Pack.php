@@ -23,10 +23,10 @@ class Pack extends Model implements HasPriceInterface
         return $this->hasOne(\App\Models\Brand::class, 'id', 'brand_id')->withDefault();
     }
 
-    public function devices()
-    {
-        return $this->belongsToMany(\App\Models\Device::class, 'pack_devices');
-    }
+    // public function devices()
+    // {
+    //     return $this->belongsToMany(\App\Models\Device::class, 'pack_devices');
+    // }
 
     public function marks()
     {

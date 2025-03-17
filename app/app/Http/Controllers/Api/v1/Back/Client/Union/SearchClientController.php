@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Car;
 use App\Repositories\Client\ClientRepository;
 use Illuminate\Http\Request;
+use App\Helpers\String\StringHelper;
 
 class SearchClientController extends Controller
 {
@@ -30,7 +31,7 @@ class SearchClientController extends Controller
                 'name' => $item->full_name,
                 'worksheet' => 1,
                 'attribute' => $item->client_type_id == 1 ? $item->phones->map(function ($item) {
-                    return \StrHelp::phoneMask($item->phone);
+                return StringHelper::phoneMask($item->phone);
                 }) : [$item->inn->number],
             ];
         });
@@ -41,7 +42,7 @@ class SearchClientController extends Controller
                 'name' => $item->full_name,
                 'worksheet' => 0,
                 'attribute' => $item->client_type_id == 1 ? $item->phones->map(function ($item) {
-                    return \StrHelp::phoneMask($item->phone);
+                    return StringHelper::phoneMask($item->phone);
                 }) : [$item->inn->number],
             ];
         });

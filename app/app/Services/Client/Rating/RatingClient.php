@@ -3,13 +3,10 @@
 namespace App\Services\Client\Rating;
 
 use App\Models\Client;
-use Illuminate\Support\Facades\DB;
 
-Class RatingService
+Class RatingClient
 {
-    /**
-     * Получить самых активных клиентов
-     */
+    
     public function getMostActive(int $limit = 10)
     {
         $clients = Client::query()

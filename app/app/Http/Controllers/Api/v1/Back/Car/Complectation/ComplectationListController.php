@@ -13,16 +13,19 @@ use Illuminate\Support\Facades\DB;
 
 class ComplectationListController extends Controller
 {
-    private $repo;
-
-    public function __construct(ComplectationRepository $repo)
+    public function __construct(
+        private ComplectationRepository $repo
+    )
     {
-        $this->repo = $repo;
+        
     }
+
+
+
     /**
      * @OA\Get(
      *  path="/complectationlist",
-     *  tags={"Журнал комплектации"},
+     *  tags={"Комплектации новых автомобилей"},
      *  operationId="getcomplectationlist",
      *  summary="Журнал комплектации",
      *  description="Журнал комплектации",
@@ -53,6 +56,25 @@ class ComplectationListController extends Controller
 
 
 
+    /**
+     * @OA\Get(
+     *  path="/complectationlist/count",
+     *  tags={"Комплектации новых автомобилей"},
+     *  operationId="getcomplectationlistCount",
+     *  summary="Счетчик журнала комплектации",
+     *  description="Счетчик журнала комплектации",
+     *  @OA\RequestBody(
+     *     @OA\JsonContent(
+     *         type="object",
+     *         ref="#/components/schemas/ComplectationListRequest",
+     *     )
+     *  ),
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
+     */
     public function count(Request $request)
     {
         $count = $this->repo->count($request->all());

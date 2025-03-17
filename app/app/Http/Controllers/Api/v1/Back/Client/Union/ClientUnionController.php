@@ -11,12 +11,16 @@ use Illuminate\Http\Request;
 
 class ClientUnionController extends Controller
 {
-    private $repo;
-
-    public function __construct(ClientUnionRepository $repo)
+    public function __construct(
+        private ClientUnionRepository $repo,
+        public $genus = 'female',
+        public $subject = 'Связь' 
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'destroy']);
     }
+
+
 
     public function show(Client $client, Request $request)
     {
@@ -24,22 +28,25 @@ class ClientUnionController extends Controller
         return new UnionCollection($data);
     }
 
+
+
     public function store(Client $client, Request $request)
     {
         $this->repo->addUnion($client, $request->get('client_id'));
 
-        return (new UnionCollection($this->repo->getAllUnion($client)))
-            ->additional(['message' => 'Связь добавлена']);
+        return (new UnionCollection($this->repo->getAllUnion($client)));
     }
+
+
 
     public function destroy(Client $client, Request $request)
     {
         $this->repo->delUnion($client, $request->get('client_id'));
-        $data = $this->repo->getAllUnion($client);
 
-        return (new UnionCollection($data))
-            ->additional(['message' => 'Связь удалена']);
+        return (new UnionCollection($this->repo->getAllUnion($client)));
     }
+
+
 
     public function amount($client_id)
     {

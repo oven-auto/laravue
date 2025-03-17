@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Car\Car;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\Car\CarPriorityResource;
 
 class CarSupportResource extends JsonResource
 {
@@ -16,7 +17,7 @@ class CarSupportResource extends JsonResource
     {
         $support = [
             'complectation' => new CarComplectationResource($this),
-
+            'stock_analysis' => $this->priority->id ? new CarPriorityResource($this->priority->sale_priority) : null,
             'status' => $this->currentCarState(),
 
             'brand' => $this->brand->name,

@@ -11,6 +11,7 @@ Trait ReservePaginatable
     {
         if($this::class === WsmReserveNewCar::class)
         $builder->with([
+            'lisinger',
             'author', 
             'contract' => function($qc){
                 $qc->with([
@@ -36,6 +37,7 @@ Trait ReservePaginatable
             },
             'car' => function ($builderCar) {
                 $builderCar->with([
+                    'priority.sale_priority',
                     'brand' => function($q) {
                         $q->select('id', 'name');
                     },

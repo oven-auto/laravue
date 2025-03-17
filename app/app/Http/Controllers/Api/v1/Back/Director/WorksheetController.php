@@ -5,8 +5,12 @@ namespace App\Http\Controllers\Api\v1\Back\Director;
 use App\Http\Controllers\Controller;
 use App\Models\Structure;
 use App\Repositories\Worksheet\WorksheetRepository;
-use App\Services\Analytic\AnalyticWorksheet;
+use App\Services\Analytic\Worksheet\AnalyticWorksheet;
 use Illuminate\Http\Request;
+use App\Services\Analytic\Worksheet\WorksheetAuthor;
+use App\Services\Analytic\Worksheet\ResultWorksheetAnalytic;
+use App\Services\Analytic\Worksheet\ClosedWorksheetAnalytic;
+use App\Services\Analytic\Worksheet\CreatedWorksheetAnalytic;
 
 class WorksheetController extends Controller
 {
@@ -30,11 +34,11 @@ class WorksheetController extends Controller
 
         return response()->json([
             'data' => [
-                'author'    => \App\Services\Analytic\WorksheetAuthor::getCountAnalyticByAuthor($nonIntervalArray),
-                'created'   => $analytic->fasade($request->all(), new \App\Services\Analytic\CreatedWorksheetAnalytic()),
-                'closed'    => $analytic->fasade($request->all(), new \App\Services\Analytic\ClosedWorksheetAnalytic()),
-                'results'   => $analytic->fasade($request->all(), new \App\Services\Analytic\ResultWorksheetAnalytic()),
-                'work'      => \App\Services\Analytic\WorksheetAuthor::getCount($nonIntervalArray),
+                'author'    => WorksheetAuthor::getCountAnalyticByAuthor($nonIntervalArray),
+                'created'   => $analytic->fasade($request->all(), new CreatedWorksheetAnalytic()),
+                'closed'    => $analytic->fasade($request->all(), new ClosedWorksheetAnalytic()),
+                'results'   => $analytic->fasade($request->all(), new ResultWorksheetAnalytic()),
+                'work'      => WorksheetAuthor::getCount($nonIntervalArray),
             ],
             'success' => 1,
         ]);

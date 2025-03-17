@@ -9,47 +9,78 @@ use App\Http\Resources\Client\Car\ClientCarCollection;
 use App\Http\Resources\Client\Car\ClientCarEditResource;
 use \App\Models\ClientCar;
 use App\Services\Comment\Comment;
+use \App\Repositories\Client\ClientCarRepository;
+use Illuminate\Http\JsonResponse;
 
 class ClientCarController extends Controller
 {
-    private $repo;
-
-    public function __construct(\App\Repositories\Client\ClientCarRepository $repo)
+    public function __construct(
+        private ClientCarRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Автомобиль клиента' 
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'destroy', 'update', ]);
     }
 
+   
+
     /**
-     * Метод на получение всех машин клиента
-     * @param Client $client Client
-     * @return ClientCarCollection
+     * @OA\Get(
+     *  path="/client/car/list/{clientId}",
+     *  tags={"Автомобиль клиента"},
+     *  operationId="getClientCarList",
+     *  summary="Список автомобиль клиента",
+     *  description="Список автомобиль клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
     public function index(Client $client) : ClientCarCollection
     {
         return new ClientCarCollection($client->cars);
     }
 
+    
+    
     /**
-     * Метод на создание машины клиента
-     * @param Client $client Client
-     * @param ClientCarRequest $request данные о машине
-     * @return ClientCarCollection
+     * @OA\Post(
+     *  path="/client/car/{clientId}",
+     *  tags={"Автомобиль клиента"},
+     *  operationId="storeClientCarList",
+     *  summary="Добавить автомобиль клиента",
+     *  description="Добавить автомобиль клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
-    public function store(Client $client, ClientCarRequest $request) //: ClientCarCollection
+    public function store(Client $client, ClientCarRequest $request) : ClientCarCollection
     {
         $clientcar = $this->repo->store($client, $request->input());
 
         Comment::add($clientcar, 'create');
 
-        return (new ClientCarCollection($client->cars))
-            ->additional(['message' => 'Машина добавлена']);
+        return (new ClientCarCollection($client->cars));
     }
 
+   
+    
     /**
-     * Метод на изменение машины клиента
-     * @param ClientCar $car ClientCar
-     * @param ClientCarRequest $request данные о машине
-     * @return ClientCarCollection
+     * @OA\Patch(
+     *  path="/client/car/{carId}",
+     *  tags={"Автомобиль клиента"},
+     *  operationId="updateClientCarList",
+     *  summary="Изменить автомобиль клиента",
+     *  description="Изменить автомобиль клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
     public function update(ClientCar $car, ClientCarRequest $request) : ClientCarCollection
     {
@@ -57,14 +88,23 @@ class ClientCarController extends Controller
 
         Comment::add($car, 'update');
 
-        return (new ClientCarCollection($car->client->cars))
-            ->additional(['message' => 'Машина изменена']);
+        return (new ClientCarCollection($car->client->cars));
     }
 
+    
+    
     /**
-     * Метод на изменение актуальности машины клиента, делает машину более не актуальной
-     * @param ClientCar $car ClientCar
-     * @return ClientCarCollection
+     * @OA\Delete(
+     *  path="/client/car/{carId}",
+     *  tags={"Автомобиль клиента"},
+     *  operationId="deleteClientCarList",
+     *  summary="Удалить автомобиль клиента",
+     *  description="Удалить автомобиль клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
     public function destroy(ClientCar $car) : ClientCarCollection
     {
@@ -72,16 +112,25 @@ class ClientCarController extends Controller
 
         $this->repo->hide($car);
 
-        return (new ClientCarCollection($car->client->cars))
-            ->additional(['message' => 'Машина более не является актуальной']);
+        return (new ClientCarCollection($car->client->cars));
     }
 
+   
+    
     /**
-     * Метод на изменение машины клиента
-     * @param Client $client Client
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Get(
+     *  path="/client/car/amount/{clientId}",
+     *  tags={"Количество Автомобиль клиента"},
+     *  operationId="amountClientCarList",
+     *  summary="Количество автомобиль клиента",
+     *  description="Количество автомобиль клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
-    public function amount(Client $client) : \Illuminate\Http\JsonResponse
+    public function amount(Client $client) : JsonResponse
     {
         return response()->json([
             'data' => $this->repo->amountClientCar($client),
@@ -89,11 +138,8 @@ class ClientCarController extends Controller
         ]);
     }
 
-    /**
-     * Метод получения конкретной машины клиента
-     * @param ClientCar $car ClientCar
-     * @return ClientCarEditResource
-     */
+    
+    
     public function show(ClientCar $car) : ClientCarEditResource
     {
         return new ClientCarEditResource($car);

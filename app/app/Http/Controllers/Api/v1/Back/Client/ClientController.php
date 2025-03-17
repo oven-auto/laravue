@@ -3,48 +3,44 @@
 namespace App\Http\Controllers\Api\v1\Back\Client;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Client\ClientListResource;
 use App\Repositories\Client\ClientRepository;
 use App\Http\Resources\Client\ClientListCollection;
 use App\Http\Resources\Client\ClientEditResource;
 use App\Models\Client;
 use Illuminate\Http\Request;
 use App\Http\Requests\Client\ClientStoreRequest;
+use App\Http\Resources\Client\ClientCartResource;
 use App\Services\Comment\Comment;
 
-/**
- * Контролер упраления клиентами
- * @var ClientRepository repo ClientRepository
- */
 class ClientController extends Controller
 {
-    /**
-     * Свойство ссылка на репозиторий
-     * @var ClientRepository repo ClientRepository
-     */
-    private $repo;
-
-    private const EVENT_STATUS = [
-        'open'   => 'Клиент открыт',
-        'create' => 'Клиент создан',
-        'update' => 'Клиент изменен',
-        'close' =>  'Клиент упущен',
-        'delete' => 'Клиент удален'
-    ];
-
-    /**
-     * В конструкторе получить класс репозитория из сервиспровайдера, и присвоить его переменой repo
-     * @param ClientRepository $repo  ClientRepository
-     */
-    public function __construct(ClientRepository $repo)
+    public function __construct(
+        private ClientRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Клиент'    
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'destroy']);
     }
 
+
+    
     /**
-     * Список всех клиентов, через пагинацию
-     * @param Request $request  Request
-     * @return ClientListCollection
+     * @OA\Get(
+     *  path="/client/list",
+     *  tags={"Клиент"},
+     *  operationId="getClientList",
+     *  summary="Список клиентов",
+     *  description="Список клиентов (
+     *      параметры для фильтрации: lastname, firstname, fathername, phone, email, client_type_id, trafic_sex_id
+     *      trafic_zone_id, has_worksheet, input, register_interval, register_start, register_end, action_interval, 
+     *      action_start, action_end, ids, personal
+     *  )",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
     public function index(Request $request) : ClientListCollection
     {
@@ -55,17 +51,38 @@ class ClientController extends Controller
 
 
 
+    /**
+     * @OA\Get(
+     *  path="/client/show/{clientId}",
+     *  tags={"Клиент"},
+     *  operationId="showClient",
+     *  summary="Предпоказ клиента",
+     *  description="Предпоказ клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
+     */
     public function show(Client $client)
     {
-        return new \App\Http\Resources\Client\ClientCartResource($client);
+        return new ClientCartResource($client);
     }
 
 
 
     /**
-     * Получить данные клиента, по указанному id, id превратится в модель Client в middleware
-     * @param Client $client  Client
-     * @return ClientEditResource
+     * @OA\Get(
+     *  path="/client/{clientId}",
+     *  tags={"Клиент"},
+     *  operationId="editClient",
+     *  summary="Открыть клиента",
+     *  description="Открыть клиента",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  )
+     * )
      */
     public function edit($client) : ClientEditResource
     {
@@ -79,10 +96,21 @@ class ClientController extends Controller
 
 
     /**
-     * Создать клиента из полученного request
-     * @param Client $client  Client
-     * @param Request $request  Request
-     * @return ClientEditResource
+     * @OA\Post(
+     *      path="/client/create",
+     *      operationId="storeClient",
+     *      tags={"Клиент"},
+     *      summary="Создать клиента",
+     *      description="Создать клиента (
+     *          firstname,lastname,fathername,client_type_id,trafic_sex_id,trafic_zone_id,birthday_at,driver_license_issue_at,
+     *          passport_issue_at,address,driving_license,serial_number,form_owner_id,phones,emails,url,inn,company_name,
+     *      )",
+     *      
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
      */
     public function store(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
@@ -90,17 +118,27 @@ class ClientController extends Controller
         
         Comment::add($client, 'create');
 
-        return (new ClientEditResource($client))
-            ->additional(['message' => 'Клиент создан']);
+        return (new ClientEditResource($client));
     }
 
 
 
     /**
-     * Изменить клиента, по полученому id, данные взять из полученного request
-     * @param Client $client  Client
-     * @param ClientStoreRequest $request  ClientStoreRequest
-     * @return ClientEditResource
+     * @OA\Patch(
+     *      path="/client/{clientId}",
+     *      operationId="updateClient",
+     *      tags={"Клиент"},
+     *      summary="Изменить клиента",
+     *      description="Изменить клиента (
+     *          firstname,lastname,fathername,client_type_id,trafic_sex_id,trafic_zone_id,birthday_at,driver_license_issue_at,
+     *          passport_issue_at,address,driving_license,serial_number,form_owner_id,phones,emails,url,inn,company_name,
+     *      )",
+     *      
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
      */
     public function update(Client $client, ClientStoreRequest $request) : ClientEditResource
     {
@@ -108,18 +146,23 @@ class ClientController extends Controller
 
         Comment::add($client, 'update');
 
-        return (new ClientEditResource($client))
-            ->additional([
-                'message' => 'Клиент изменен',
-            ]);
+        return (new ClientEditResource($client));
     }
 
 
     
     /**
-     * Удаление клиента
-     * @param Client $client Client
-     * @return ClientEditResource
+     * @OA\Delete(
+     *      path="/client/{clientId}",
+     *      operationId="deleteClient",
+     *      tags={"Клиент"},
+     *      summary="Удалить клиента",
+     *      description="Удалить клиента",
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
      */
     public function destroy(Client $client) : ClientEditResource
     {
@@ -127,7 +170,6 @@ class ClientController extends Controller
 
         Comment::add($client, 'delete');
 
-        return (new ClientEditResource($client))
-            ->additional(['message' => 'Клиент удален', 'result' => 1]);
+        return (new ClientEditResource($client))->additional(['result' => 1]);
     }
 }

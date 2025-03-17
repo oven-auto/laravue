@@ -34,8 +34,11 @@ class WorksheetAction extends Model implements CommentInterface
 
     // }
 
-    public $dates = [
-        'begin_at', 'end_at', 'created_at', 'updated_at'
+    public $casts = [
+        'begin_at'      => 'datetime', 
+        'end_at'        => 'datetime', 
+        'created_at'    => 'datetime', 
+        'updated_at'    => 'datetime'
     ];
 
     protected $guarded = [];

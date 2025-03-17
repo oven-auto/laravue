@@ -29,7 +29,7 @@ class FillFakeCar extends Command
      *
      * @var string
      */
-    protected $signature = 'car:fake';
+    protected $signature = 'app:fake-car';
 
     /**
      * The console command description.
@@ -72,7 +72,7 @@ class FillFakeCar extends Command
      */
     public function handle()
     {
-        $carCount = 1000;
+        $carCount = 100;
 
         $progressBar = $this->output->createProgressBar($carCount);
         $progressBar->start();

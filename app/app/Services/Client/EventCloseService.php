@@ -9,6 +9,7 @@ use App\Exceptions\Client\EventCloseIsWorking;
 use App\Exceptions\Client\EventCloseNotWhileIsNew;
 use App\Helpers\Array\ArrayHelper;
 use Illuminate\Support\Facades\Auth;
+use App\Helpers\Date\DateHelper;
 
 Class EventCloseService
 {
@@ -40,22 +41,22 @@ Class EventCloseService
     {
         switch ($eventStatus->event->type->slug) {
             case 'everyyear': //если каждый год, то + 1 год
-                $data = \DateHelp::addYear($eventStatus->date_at);
+                $data = DateHelper::addYear($eventStatus->date_at);
                 break;
             case 'everymonth'://если каждый месяц то +1 месяц
-                $data = \DateHelp::addMonth($eventStatus->date_at);
+                $data = DateHelper::addMonth($eventStatus->date_at);
                 break;
             case 'everyweek'://если каждую неделю то + 1 неделя
-                $data = \DateHelp::addWeek($eventStatus->date_at);
+                $data = DateHelper::addWeek($eventStatus->date_at);
                 break;
             case 'everyday'://если каждый день то +1 день
-                $data = \DateHelp::addDay($eventStatus->date_at);
+                $data = DateHelper::addDay($eventStatus->date_at);
                 break;
             case 'quarterly'://если каждый квартал то + 3 месяца
-                $data = \DateHelp::addMonth($eventStatus->date_at, 3);
+                $data = DateHelper::addMonth($eventStatus->date_at, 3);
                 break;
             case 'halfyear'://если каждые пол года то + 6 месяцев
-                $data = \DateHelp::addMonth($eventStatus->date_at, 6);
+                $data = DateHelper::addMonth($eventStatus->date_at, 6);
                 break;
             default:
                 $data = '';

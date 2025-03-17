@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Classes\LadaDNM;
+namespace App\Classes\LadaDNM\_OLD;
 
+use App\Classes\LadaDNM\DNM;
 use App\Models\DnmWorksheetAppeal;
 use App\Models\MarkAlias;
 use App\Models\WsmReserveNewCar;

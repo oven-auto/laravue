@@ -11,8 +11,8 @@ class CarPaidDate extends Model
 
     protected $guarded = [];
 
-    public $dates = [
-        'date_at'
+    public $casts = [
+        'date_at' => 'datetime'
     ];
 
 

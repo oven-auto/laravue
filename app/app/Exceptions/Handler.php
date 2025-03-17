@@ -84,9 +84,9 @@ class Handler extends ExceptionHandler
     {
         //$this->sendTelegram($exception);
         
-        // if(
-        //     $exception instanceof ReserveException ||
-        //     $exception instanceof RedemptionException ||
+        if(
+            $exception instanceof ReserveException ||
+            $exception instanceof RedemptionException
         //     $exception instanceof \App\Exceptions\Client\EventExcecutorAppendException ||
         //     $exception instanceof \App\Exceptions\Client\EventExcecutorDetachException ||
         //     $exception instanceof \App\Exceptions\Client\EventReporterAttachException ||
@@ -94,10 +94,10 @@ class Handler extends ExceptionHandler
         //     $exception instanceof \App\Exceptions\Client\EventReporterNotException ||
         //     $exception instanceof \App\Exceptions\Client\EventCloseIsWorking ||
         //     $exception instanceof \App\Exceptions\Client\EventCloseNotWhileIsNew
-        // )
-        // {
-        //     return $exception->render();
-        // }
+        )
+        {
+            return $exception->render();
+        }
 
         return response()->json([
             'message' => 'Level Base: '.$exception->getMessage().'----'.get_class($exception),

@@ -19,7 +19,7 @@ class PriceComplectationRepository
 
 
 
-    public function get(array $data = null)
+    public function get(array $data = [])
     {
         $strategy           = FactoryPriceListStrategy::getStrategy($data);
         $priceListService   = new ComplectationPriceList($strategy);

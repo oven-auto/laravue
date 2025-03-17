@@ -4,7 +4,6 @@ namespace App\Classes\Telegram;
 
 use Telegram\Bot\Api;
 use App\Models\TelegramLongpollingOffset;
-use Illuminate\Support\Facades\Http;
 
 class Telegram
 {

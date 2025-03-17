@@ -30,7 +30,6 @@ class ComplectationRequest extends FormRequest
             'vehicle_type_id' => 'required',
             'body_work_id' => 'required',
             'factory_id' => 'required',
-            //'price' => 'required',
             'motor_driver_id' => 'required',
             'motor_transmission_id' => 'required',
             'motor_type_id' => 'required',

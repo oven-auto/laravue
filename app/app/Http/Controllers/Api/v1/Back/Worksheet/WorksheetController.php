@@ -8,16 +8,19 @@ use App\Http\Resources\Worksheet\WorksheetListCollection;
 use App\Models\Worksheet;
 use App\Repositories\Worksheet\WorksheetRepository;
 use App\Http\Resources\Worksheet\WorksheetCreateResource;
+use App\Http\Resources\Worksheet\WorksheetSaveResource;
 use Illuminate\Http\Request;
 use App\Services\Comment\Comment;
 
 class WorksheetController extends Controller
 {
-    private $service;
-
-    public function __construct(WorksheetRepository $service)
+    public function __construct(
+        private WorksheetRepository $repo,
+        public $subject = 'Рабочий лист',
+        public $genus = 'male'
+    )
     {
-        $this->service = $service;
+        $this->middleware('notice.message')->only(['store', 'close', 'revert']);
     }
 
 
@@ -35,9 +38,9 @@ class WorksheetController extends Controller
      *  ),
      * )
      */
-    public function index(Request $request, WorksheetRepository $repo)
+    public function index(Request $request)
     {
-        $worksheets = $repo->paginate($request->all(), 20);
+        $worksheets = $this->repo->paginate($request->all(), 20);
 
         return new WorksheetListCollection($worksheets);
     }
@@ -65,7 +68,7 @@ class WorksheetController extends Controller
      */
     public function store(WorksheetStoreRequest $request)
     {
-        $worksheet = $this->service->createFromTrafic($request->trafic_id);
+        $worksheet = $this->repo->createFromTrafic($request->trafic_id);
 
         Comment::add($worksheet->last_action, 'create');
 
@@ -75,7 +78,17 @@ class WorksheetController extends Controller
 
 
     /**
-     * ОТКРЫТЬ РЛ
+     * @OA\Get(
+     *  path="/worksheets/{worksheetId}",
+     *  operationId="showWorksheet",
+     *  tags={"Рабочий лист"},
+     *  summary="открыть РЛ",
+     *  description="Открыть РЛ",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK",
+     *  ),
+     * )
      */
     public function show($worksheet)
     {
@@ -83,38 +96,54 @@ class WorksheetController extends Controller
 
         Comment::add($worksheet->last_action, 'show');
 
-        return new \App\Http\Resources\Worksheet\WorksheetSaveResource($worksheet);
+        return new WorksheetSaveResource($worksheet);
     }
 
 
 
     /**
-     * ПОМЕТИТЬ РЛ КАК ЗАКРЫТЫЙ
+     * @OA\Get(
+     *  path="/worksheet/close/{worksheetId}",
+     *  operationId="closeWorksheet",
+     *  tags={"Рабочий лист"},
+     *  summary="Закрыть РЛ",
+     *  description="Закрыть РЛ",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK",
+     *  ),
+     * )
      */
     public function close(Worksheet $worksheet)
     {
-        $this->service->close($worksheet);
+        $this->repo->close($worksheet);
 
         return response()->json([
-            'success' => 1,
-            'message' => 'Рабочий лист ' . $worksheet->status->name,
-            'status' => $worksheet->status->name,
-            'status_id' => $worksheet->status->id,
+            'success'       => 1,
+            'status'        => $worksheet->status->name,
+            'status_id'     => $worksheet->status->id,
         ]);
     }
 
 
 
     /**
-     * ВЕРНУТЬ РЛ В РАБОТУ
+     * @OA\Get(
+     *  path="/worksheet/revert/{worksheetId}",
+     *  operationId="revertWorksheet",
+     *  tags={"Рабочий лист"},
+     *  summary="Востановить РЛ",
+     *  description="Востановить РЛ",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK",
+     *  ),
+     * )
      */
     public function revert(Worksheet $worksheet)
     {
-        $this->service->revert($worksheet);
+        $this->repo->revert($worksheet);
 
-        return response()->json([
-            'success' => 1,
-            'message' => 'Рабочий лист ' . $worksheet->status->name,
-        ]);
+        return response()->json(['success' => 1,]);
     }
 }

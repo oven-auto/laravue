@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api\v1\Back\Client;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\Models\EventGroup;
-use Str;
+use \Illuminate\Support\Str;
 
 class EventGroupController extends Controller
 {

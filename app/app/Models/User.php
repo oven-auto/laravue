@@ -10,6 +10,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Interfaces\GiveDataForCommentInterface;
+use Illuminate\Support\Facades\DB;
 
 class User extends Authenticatable implements PersonInterface, GiveDataForCommentInterface
 {
@@ -115,8 +116,8 @@ class User extends Authenticatable implements PersonInterface, GiveDataForCommen
     {
         $query->select(
             'users.id','users.name','users.lastname',
-            \DB::raw('sum(case when date(trafics.created_at) = curdate() then 1 else 0 end) as d_count'),
-            \DB::raw('sum(
+            DB::raw('sum(case when date(trafics.created_at) = curdate() then 1 else 0 end) as d_count'),
+            DB::raw('sum(
                     case when
                         year(trafics.created_at) = year(now()) and
                         month(trafics.created_at) = month(now())

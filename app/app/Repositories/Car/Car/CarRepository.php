@@ -187,7 +187,7 @@ class CarRepository
 
                 $this->setCarImage($car);
 
-                (new CarPriority($car))->checkPriority();
+                CarPriority::make($car)->checkPriority();
 
                 Notice::setMessage('Автомобиль изменен.');
             }, 3);
@@ -230,7 +230,7 @@ class CarRepository
     /**
      * PAGINATE
      */
-    public function paginate(array $data = [], $paginate = 15)
+    public function paginate(array $data = [], $paginate = 25)
     {   
         $query = Car::query()->select('cars.*');
         
@@ -271,9 +271,21 @@ class CarRepository
 
                 'car_owners.id as owner_count',
                 DB::raw('IF(cars.disable_off, cars.disable_off, 0) as _disable'),
-                DB::raw('IF(car_owners.client_id = IF(worksheets.client_id IS NULL, 0, worksheets.client_id) and car_owners.id IS NOT NULL, 1, 0) as green_report'),
-                DB::raw('IF(car_owners.client_id <> IF(worksheets.client_id IS NULL, 0, worksheets.client_id)  and car_owners.id IS NOT NULL, 1, 0) as yellow_report'),
-               
+                
+                DB::raw('IF(
+                        (
+                            car_owners.client_id = wsm_reserve_lisings.client_id OR
+                            car_owners.client_id = worksheets.client_id
+                        ) and  car_owners.id IS NOT NULL, 1, 0
+                ) as green_report'),
+                
+                DB::raw('IF(
+                    (
+                        car_owners.client_id <> worksheets.client_id AND
+                        car_owners.client_id <> wsm_reserve_lisings.client_id
+                    ) and car_owners.id IS NOT NULL, 1, 0
+                ) as yellow_report'),
+                
                 DB::raw('IF(ransom_cars.car_id, 1, 0) as ransom_date'),
                 DB::raw('IF(ransom_cars.car_id, _purchase.cost, 0) as ransom_sum'),
                 DB::raw('IF(ransom_cars.car_id, sum(car_detailing_costs.price), 0) as ransom_detailing'),

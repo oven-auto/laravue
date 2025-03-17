@@ -4,7 +4,8 @@ namespace App\Http\Controllers\Api\v1\Listing;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Auth;
+use Illuminate\Support\Facades\Auth;
+
 
 class UserController extends Controller
 {

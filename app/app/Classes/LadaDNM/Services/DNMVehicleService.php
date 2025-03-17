@@ -131,3 +131,5 @@ Class DNMVehicleService implements LogInterface
         $this->log($result);
     }
 }
+
+

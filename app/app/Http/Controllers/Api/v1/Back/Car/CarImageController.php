@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\v1\Back\Car;
 
 use App\Http\Controllers\Controller;
 use App\Models\Car;
-use Illuminate\Http\Request;
 
 class CarImageController extends Controller
 {

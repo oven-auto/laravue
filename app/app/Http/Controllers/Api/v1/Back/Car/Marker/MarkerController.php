@@ -12,26 +12,33 @@ use App\Models\Marker;
 
 class MarkerController extends Controller
 {
-    private $repo;
-
-    public function __construct(MarkerRepository $repo)
+    public function __construct(
+        private MarkerRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Маркер (Товарный признак)'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
     /**
-     * GET
-     * @return MarkerCollection
+     * @OA\Get(
+     *  path="/cars/markers",
+     *  operationId="markersList",
+     *  tags={"Маркер товарный признак"},
+     *  summary="Список признаков",
+     *  description="Список признаков(?trash)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function index(Request $request) : MarkerCollection
+    public function index(Request $request) 
     {
-        $validated = $request->validate([
-            'trash' => 'sometimes|numeric'
-        ]);
-
-        $markers = $this->repo->get($validated);
+        $markers = $this->repo->get($request->all());
 
         return new MarkerCollection($markers);
     }
@@ -39,41 +46,63 @@ class MarkerController extends Controller
 
 
     /**
-     * STORE
-     * @param MarkerCreateRequest $request ['name', 'text_color', 'body_color', 'description']
-     * @return MarkerItemResource
+     * @OA\Post(
+     *  path="/cars/markers",
+     *  operationId="markersStore",
+     *  tags={"Маркер товарный признак"},
+     *  summary="Создать признаков",
+     *  description="Создать признаков(name, text_color, body_color, description)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function store(MarkerCreateRequest $request) : MarkerItemResource
+    public function store(MarkerCreateRequest $request)
     {
         $marker = $this->repo->store($request->validated());
 
-        return (new MarkerItemResource($marker))
-            ->additional(['message' => 'Маркер добавлен']);
+        return (new MarkerItemResource($marker));
     }
 
 
 
     /**
-     * UPDATE
-     * @param Marker $marker
-     * @param MarkerCreateRequest $request ['name', 'text_color', 'body_color', 'description']
-     * @return MarkerItemResource
+     * @OA\Patch(
+     *  path="/cars/markers/{markerId}",
+     *  operationId="markersUpdate",
+     *  tags={"Маркер товарный признак"},
+     *  summary="Изменит признаков",
+     *  description="Изменит признаков(name, text_color, body_color, description)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function update(Marker $marker, MarkerCreateRequest $request) : MarkerItemResource
+    public function update(Marker $marker, MarkerCreateRequest $request) 
     {
         $this->repo->update($marker, $request->validated());
         
-        return (new MarkerItemResource($marker))
-            ->additional(['message' => 'Маркер изменен']);
+        return (new MarkerItemResource($marker));
     }
 
 
 
     /**
-     * SHOW
-     * @return MarkerItemResource
+     * @OA\Get(
+     *  path="/cars/markers/{markerId}",
+     *  operationId="markersShow",
+     *  tags={"Маркер товарный признак"},
+     *  summary="Отрыт признаков",
+     *  description="Отрыт признаков",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function show(Marker $marker) : MarkerItemResource
+    public function show(Marker $marker) 
     {
         return (new MarkerItemResource($marker));
     }
@@ -81,29 +110,44 @@ class MarkerController extends Controller
 
 
     /**
-     * DELETE
-     * @param Marker $marker
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *  path="/cars/markers/{markerId}",
+     *  operationId="markersDelete",
+     *  tags={"Маркер товарный признак"},
+     *  summary="Удалить признаков",
+     *  description="Удалить признаков",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function delete(Marker $marker) : \Illuminate\Http\JsonResponse
+    public function delete(Marker $marker) 
     {
         $this->repo->delete($marker);
 
-        return response()->json(['message' => 'Маркер удален', 'success' => 1]);
+        return response()->json(['success' => 1]);
     }
 
 
 
     /**
-     * RESTORE
-     * @param Marker $marker
-     * @return MarkerItemResource
+     * @OA\Patch(
+     *  path="/cars/markers/{markerId}/restore",
+     *  operationId="markersRestore",
+     *  tags={"Маркер товарный признак"},
+     *  summary="Востановитт признаков",
+     *  description="Востановитт признаков",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
-    public function restore(Marker $marker) : MarkerItemResource
+    public function restore(Marker $marker) 
     {
         $this->repo->restore($marker);
 
-        return (new MarkerItemResource($marker))
-            ->additional(['message' => 'Маркер актуален']);
+        return new MarkerItemResource($marker);
     }
 }

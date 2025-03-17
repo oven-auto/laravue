@@ -27,6 +27,10 @@ class WsmReserveNewCar extends Model implements CommentInterface
     /**
      * RELATIONS
      */
+    public function lisinger()
+    {
+        return $this->belongsToMany(\App\Models\Client::class, 'wsm_reserve_lisings', 'reserve_id');
+    }
 
 
 
@@ -89,7 +93,7 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
     public function last_comment()
     {
-        return $this->hasOne(\App\Models\WsmReserveComment::class, 'reserve_id', 'id')->orderBy('id', 'DESC')->withDefault();
+        return $this->hasOne(\App\Models\WsmReserveComment::class, 'reserve_id', 'id')->where('type', 0)->orderBy('id', 'DESC')->withDefault();
     }
 
 
@@ -206,7 +210,8 @@ class WsmReserveNewCar extends Model implements CommentInterface
      */
     public function getStatus()
     {
-        return $this->car->getReserveStatus();
+        if($this->car)
+            return $this->car->getReserveStatus();
     }
 
 
@@ -463,4 +468,36 @@ class WsmReserveNewCar extends Model implements CommentInterface
         
         return $numbers;
     }
+    
+    
+    
+    public function hasLisinger() :bool
+    {
+        return isset($this->lisinger->first()->id) ? 1 : 0;
+    }
+
+
+
+    public function getLisinger()
+    {
+        return $this->lisinger->first();
+    }
+
+
+
+    public function getLisingerId() :string
+    {
+        return $this->lisinger->first()->id ?? '';
+    }
+    
+    
+    
+    public function getLisingerName() :string
+    {
+        return $this->lisinger->first()->full_name ?? '';
+    }
 }
+
+
+
+

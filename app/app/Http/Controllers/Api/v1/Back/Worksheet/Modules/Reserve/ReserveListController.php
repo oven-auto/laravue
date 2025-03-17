@@ -38,7 +38,7 @@ class ReserveListController extends Controller
     public function index(ReserveRepository $repo, Request $request)
     {
         $reserves = $repo->paginate($request->all());
-
+        
         return new ReserveCollection($reserves);
     }
 

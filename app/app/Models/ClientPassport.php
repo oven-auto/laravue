@@ -9,10 +9,10 @@ class ClientPassport extends Model
 {
     use HasFactory;
 
-    protected $dates = [
-        'birthday_at',
-        'driver_license_issue_at',
-        'passport_issue_at',
+    protected $casts = [
+        'birthday_at' => 'datetime',
+        'driver_license_issue_at' => 'datetime',
+        'passport_issue_at' => 'datetime',
     ];
 
     protected $guarded = [];

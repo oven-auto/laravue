@@ -4,6 +4,7 @@ namespace App\Http\Filters;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Predis\Command\Traits\LeftRight;
 
 Class TraficAnalyticFilter extends AbstractFilter
 {
@@ -48,8 +49,14 @@ Class TraficAnalyticFilter extends AbstractFilter
 
     public function init(Builder $builder)
     {
-        $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id')
-            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id');
+        $builder
+            ->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id')
+            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
+            ->leftJoin('trafic_chanels', 'trafic_chanels.id', 'trafics.trafic_chanel_id')
+            ->leftJoin('client_types', 'client_types.id', 'trafic_clients.client_type_id')
+            ->leftJoin('users', 'users.id', 'trafics.author_id')
+            ->leftJoin('users as managers', 'managers.id', 'trafics.manager_id')
+            ->LeftJoin('trafic_statuses', 'trafic_statuses.id', 'trafics.trafic_status_id');
     }
 
 

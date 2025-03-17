@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Car\Car;
 
+use App\Http\Resources\Car\CarPriorityResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 use App\Http\Resources\Worksheet\Reserve\ReserveList\CarResource;
 
@@ -18,15 +19,15 @@ class CarListResource extends JsonResource
         return [
             'id' => $this->id,
             
-            'stock_analysis' => 1,
+            'stock_analysis' => $this->priority->id ? new CarPriorityResource($this->priority->sale_priority) : null,
 
             'state' => $this->getReserveStatus(),
 
             'trade_marker' => $this->trade_marker ? [
-                'name' => $this->trade_marker->marker->name,
-                'text_color' => $this->trade_marker->marker->text_color,
-                'body_color' => $this->trade_marker->marker->body_color,
-                'description' => $this->trade_marker->marker->description,
+                'name'          => $this->trade_marker->marker->name,
+                'text_color'    => $this->trade_marker->marker->text_color,
+                'body_color'    => $this->trade_marker->marker->body_color,
+                'description'   => $this->trade_marker->marker->description,
             ] : [],
 
             'car' => new CarResource($this),
@@ -44,7 +45,6 @@ class CarListResource extends JsonResource
                 'over'                  => $this->getOverPrice(),//переоценка
                 'tuning'                => $this->getTuningPrice(),//тюнинг
                 'gift'                  => $this->getGiftPrice(),//gift
-                //'full'                  => $this->getCarPrice(),//прайс
                 'full'                  => $this->getCarPrice(),
                 'sale_sum'              => $this->getReserveSale(),//скидка
             ],

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Car;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Car\CarCountResource;
 use App\Repositories\Car\Car\CarRepository;
 use Illuminate\Http\Request;
 
@@ -15,50 +16,29 @@ class CarCountController extends Controller
 
 
 
+    /**
+     * @OA\Get(
+     *      path="/cars/count",
+     *      operationId="carsListCount",
+     *      tags={"Новый автомобиль"},
+     *      summary="Счетчик новых автомобилей",
+     *      description="Счетчик новых автомобилейв",
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(
+     *              type="object",
+     *              ref="#/components/schemas/CarFilter",
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
+     */
     public function count(Request $request, CarRepository $repo)
     {
         $res = $repo->count($request->all());
         
-        return response()->json([
-            'data' => [
-                'general' => [
-                    'count'     => $res->count       ?? 0,
-                    'base'      => $res->base        ?? 0,
-                    'option'    => $res->option      ?? 0,
-                    'over'      => $res->overprice   ?? 0,
-                    'tuning'    => $res->tuning      ?? 0,
-                    'gift'      => $res->giftprice   ?? 0,
-                    'discount'  => $res->discount    ?? 0,
-                    'full'      => array_sum([
-                        $res->base, 
-                        $res->option, 
-                        $res->overprice, 
-                        $res->tuning]
-                    ) - $res->discount - $res->giftprice
-                ],
-                'report' => [
-                    'count'     => $res->count       ?? 0,
-                    'disable'   => $res->disable     ?? 0,
-                    'owner'     => $res->owner       ?? 0,
-                    'green'     => $res->green       ?? 0,
-                    'yellow'    => $res->yellow      ?? 0,
-                ],
-                'factoring' => [
-                    'count'         => $res->factoring_count,
-                    'sum'           => $res->factoring_sum,
-                    'detailing'     => $res->factoring_detailing,
-                    'full'          => $res->factoring_sum + $res->factoring_detailing,
-                    'collector'     => $res->factoring_collector,
-                ],
-                'ransom' => [
-                    'count'         => $res->ransom_count,
-                    'sum'           => $res->ransom_sum,
-                    'detailing'     => $res->ransom_detailing,
-                    'full'          => $res->ransom_sum + $res->ransom_detailing,
-                    'collector'     => $res->ransom_collector,
-                ]
-            ],
-            'success' => 1
-        ]);
+        return new CarCountResource($res);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace App\Http\Filters;
 
-use App\Models\SubAction;
 use Illuminate\Database\Eloquent\Builder;
 
 Class WorksheetSubActionFilter extends AbstractFilter
@@ -14,11 +13,15 @@ Class WorksheetSubActionFilter extends AbstractFilter
 
     public const INIT = 'init';
 
+
+
     public function __construct(array $queryParams)
     {
         $queryParams['init'] = 'init';
         parent::__construct($queryParams);
     }
+
+
 
     protected function getCallbacks(): array
     {
@@ -31,11 +34,15 @@ Class WorksheetSubActionFilter extends AbstractFilter
         ];
     }
 
+
+
     public function init(Builder $builder)
     {
         $builder
             ->orderBy('sub_actions.id');
     }
+
+
 
     public function dateForClosing(Builder $builder, $value)
     {
@@ -43,6 +50,8 @@ Class WorksheetSubActionFilter extends AbstractFilter
 
         $builder->whereDate('sub_actions.closed_at', '=', $date);
     }
+
+
 
     public function show(Builder $builder, $value)
     {
@@ -57,6 +66,8 @@ Class WorksheetSubActionFilter extends AbstractFilter
         }
     }
 
+
+
     public function controlDate(Builder $builder, $value)
     {
         $date = $this->formatDate($value);
@@ -66,6 +77,8 @@ Class WorksheetSubActionFilter extends AbstractFilter
         else
             $builder->whereDate('sub_actions.created_at', '=', $date);
     }
+
+
 
     public function executorIds(Builder $builder, $value)
     {

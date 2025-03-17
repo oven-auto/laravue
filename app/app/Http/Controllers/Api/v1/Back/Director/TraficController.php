@@ -8,9 +8,19 @@ use App\Http\Filters\TraficAnalyticFilter;
 use App\Models\Trafic;
 use App\Models\User;
 use App\Repositories\Trafic\TraficRepository;
-use App\Services\Analytic\AnalyticTrafic;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use App\Services\Analytic\Trafic\AnalyticTrafic;
+use App\Services\Analytic\Trafic\TargetTotalTraficAnalytic;
+use App\Services\Analytic\Trafic\TargetTraficAnalytic;
+use App\Services\Analytic\Trafic\TotalTraficAnalytic;
+use App\Services\Analytic\Trafic\DeleteTraficAnalytic;
+use App\Services\Analytic\Trafic\GeneralTraficAnalytic;
+use App\Services\Analytic\Trafic\AuthorTraficAnalytic;
+use App\Services\Analytic\Trafic\PersonalTraficAnalytic;
+use App\Services\Analytic\Trafic\ChanelTraficAnalytic;
+use App\Services\Analytic\Trafic\TargetPlanTraficAnalytic;
+
 
 class TraficController extends Controller
 {
@@ -19,21 +29,21 @@ class TraficController extends Controller
         return response()->json([
 
             'data' => [
-                'total'     => $analytic->fasade($request->all(), new \App\Services\Analytic\TotalTraficAnalytic()),
+                'target_total'  => $analytic->analytics($request->all(), new TargetTotalTraficAnalytic()),
+                
+                'target'    	=> $analytic->analytics($request->all(), new TargetTraficAnalytic()),
+                
+                'total'     	=> $analytic->analytics($request->all(), new TotalTraficAnalytic()),
 
-                'deleted'   => $analytic->fasade($request->all(), new \App\Services\Analytic\DeleteTraficAnalytic()),
+                'deleted'   	=> $analytic->analytics($request->all(), new DeleteTraficAnalytic()),
 
-                'general'   => $analytic->fasade($request->all(), new \App\Services\Analytic\GeneralTraficAnalytic()),
-
-                'target_total' => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTotalTraficAnalytic()),
-
-                'target'    => $analytic->fasade($request->all(), new \App\Services\Analytic\TargetTraficAnalytic()),
-
-                'author'    => $analytic->fasade($request->all(), new \App\Services\Analytic\AuthorTraficAnalytic()),
- 
-                'personal'  => $analytic->fasade($request->all(), new \App\Services\Analytic\PersonalTraficAnalytic()),
-
-                'chanel'    => $analytic->fasade($request->all(), new \App\Services\Analytic\ChanelTraficAnalytic()),
+                'general'   	=> $analytic->analytics($request->all(), new GeneralTraficAnalytic()),
+                
+                'author'    	=> $analytic->analytics($request->all(), new AuthorTraficAnalytic()),
+                
+                'personal'  	=> $analytic->analytics($request->all(), new PersonalTraficAnalytic()),
+                
+                'chanel'    	=> $analytic->analytics($request->all(), new ChanelTraficAnalytic()),                              
             ],
 
             'success' => 1,

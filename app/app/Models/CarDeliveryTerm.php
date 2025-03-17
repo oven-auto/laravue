@@ -13,7 +13,9 @@ class CarDeliveryTerm extends Model
 
     protected $with = ['term'];
 
-    protected $dates = ['date_at'];
+    protected $casts = [
+        'date_at' => 'datetime'
+    ];
 
     /**
      * RELATION

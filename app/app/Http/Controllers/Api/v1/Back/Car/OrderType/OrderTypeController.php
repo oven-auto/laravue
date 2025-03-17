@@ -12,25 +12,33 @@ use Illuminate\Http\Request;
 
 class OrderTypeController extends Controller
 {
-    private $repo;
-
-    public function __construct(OrderTypeRepository $repo)
+    public function __construct(
+        private OrderTypeRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Типы заказа автомобиля'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
     /**
-     * ПОЛУЧИТЬ ВСЕ ТИПЫ ЗАКАЗА
+     * @OA\Get(
+     *  path="/cars/ordertypes",
+     *  operationId="ordertypesList",
+     *  tags={"Типы заказа автомобиля"},
+     *  summary="Список Типы заказа автомобиля",
+     *  description="Список Типы заказа автомобиля(?trash)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function index(Request $request)
     {
-        $validated = $request->validate([
-            'trash' => 'sometimes'
-        ]);
-
-        $orderTypes = $this->repo->get($validated);
+        $orderTypes = $this->repo->get($request->validated());
 
         return new OrderTypeCollection($orderTypes);
     }
@@ -38,33 +46,61 @@ class OrderTypeController extends Controller
 
 
     /**
-     * СОЗДАТЬ ТИП ЗАКАЗА
+     * @OA\Post(
+     *  path="/cars/ordertypes",
+     *  operationId="ordertypesStore",
+     *  tags={"Типы заказа автомобиля"},
+     *  summary="создать Типы заказа автомобиля",
+     *  description="создать Типы заказа автомобиля(name, text_color, description)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function store(OrderType $ordertype, OrderTypeRequest $request)
     {
         $this->repo->save($ordertype, $request->validated());
 
-        return (new OrderTypeItemResource($ordertype))
-            ->additional(['message' => 'Тип заказа создан']);
+        return (new OrderTypeItemResource($ordertype));
     }
 
 
     
-    /** 
-     * ИЗМЕНИТЬ ТИП ЗАКАЗА
-    */
+    /**
+     * @OA\Patch(
+     *  path="/cars/ordertypes/{orderId}",
+     *  operationId="ordertypesUpdate",
+     *  tags={"Типы заказа автомобиля"},
+     *  summary="Изменить Типы заказа автомобиля",
+     *  description="Изменить Типы заказа автомобиля(name, text_color, description)",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
+     */
     public function update(OrderType $ordertype, OrderTypeRequest $request)
     {
         $this->repo->save($ordertype, $request->validated());
 
-        return (new OrderTypeItemResource($ordertype))
-            ->additional(['message' => 'Тип заказа изменен']);
+        return (new OrderTypeItemResource($ordertype));
     }
 
 
 
     /**
-     * ПОЛУЧИТЬ ТИП ЗАКАЗА
+     * @OA\Get(
+     *  path="/cars/ordertypes/{orderId}",
+     *  operationId="ordertypesShow",
+     *  tags={"Типы заказа автомобиля"},
+     *  summary="Отркыть Типы заказа автомобиля",
+     *  description="Отркыть Типы заказа автомобиля",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function show(OrderType $ordertype)
     {
@@ -74,30 +110,44 @@ class OrderTypeController extends Controller
 
 
     /**
-     * УДАЛИТЬ ТИП ЗАКАЗА
+     * @OA\Delete(
+     *  path="/cars/ordertypes/{orderId}",
+     *  operationId="ordertypesDelete",
+     *  tags={"Типы заказа автомобиля"},
+     *  summary="Удалить Типы заказа автомобиля",
+     *  description="Удалить Типы заказа автомобиля",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function delete(OrderType $ordertype)
     {
         $this->repo->delete($ordertype);
 
-        return response()->json([
-            'message' => 'Тип заказа удален',
-            'success' => 1,
-        ]);
+        return response()->json(['success' => 1,]);
     }
 
 
 
     /**
-     * ВОСТАНОВИТЬ ТИП ЗАКАЗА
+     * @OA\Patch(
+     *  path="/cars/ordertypes/{orderId}/restore",
+     *  operationId="ordertypesRestore",
+     *  tags={"Типы заказа автомобиля"},
+     *  summary="Востановитв Типы заказа автомобиля",
+     *  description="Востановитв Типы заказа автомобиля",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function restore(OrderType $ordertype)
     {
         $this->repo->restore($ordertype);
 
-        return response()->json([
-            'message' => 'Тип заказа востановлен',
-            'success' => 1,
-        ]);
+        return response()->json(['success' => 1,]);
     }
 }

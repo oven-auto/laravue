@@ -12,7 +12,9 @@ class WsmReserveSale extends Model implements CommentInterface
 
     protected $guarded;
 
-    public $dates = ['date_at'];
+    public $casts = [
+        'date_at' => 'date'
+    ];
 
 
 

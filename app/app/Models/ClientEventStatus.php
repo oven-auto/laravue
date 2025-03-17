@@ -16,11 +16,11 @@ class ClientEventStatus extends Model implements CommentInterface
 
     protected $guarded = [];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'processed_at',
-        'date_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'processed_at' => 'datetime',
+        'date_at' => 'datetime',
     ];
 
 

@@ -14,19 +14,35 @@ use App\Repositories\Car\Complectation\ComplectationRepository;
 
 class ComplectationController extends Controller
 {
-    private $repo;
-
-    public function __construct(ComplectationRepository $repo)
+    public function __construct(
+        private ComplectationRepository $repo,
+        public $subject = 'Комплектация',
+        public $genus = 'female'
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'restore']);
     }
 
 
 
     /**
-     * INDEX
-     * @param ComplectationGetRequest $request [mark_id | trash]
-     * @return ComplectationCollection
+     * @OA\Get(
+     *  path="/cars/complectations",
+     *  operationId="complectation_list",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Список комплектаций",
+     *  description="complectations",
+     *  @OA\RequestBody(
+     *     @OA\JsonContent(
+     *          type="object",
+     *          ref="#/components/schemas/ComplectationFilter",
+     *     )
+     *  ),
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function index(ComplectationGetRequest $request)
     {
@@ -36,11 +52,19 @@ class ComplectationController extends Controller
     }
 
 
-
+    
     /**
-     * SEARCH
-     * @param ComplectationSearchRequest $request [code | mark_id]
-     * @return ComplectationSearchResource|\Illuminate\Http\JsonResponse
+     * @OA\Post(
+     *  path="/cars/complectations/search",
+     *  operationId="complectationSearch",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Поиск комплектаций по коду",
+     *  description="Поиск комплектаций по коду",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function search(ComplectationSearchRequest $request) : ComplectationSearchResource | \Illuminate\Http\JsonResponse
     {
@@ -55,44 +79,67 @@ class ComplectationController extends Controller
 
 
     /**
-     * STORE NEW COMPLECTATION
-     * @param ComplectationRequest $request [
-     * 'code', 'name', 'mark_id', 'vehicle_type_id', 'body_work_id', 'factory_id', 'price', 'motor_id',
-     * 'motor_transmission_id', 'motor_driver_id', 'motor_type_id', 'power', 'size', 'brand_id'
-     * ]
-     * @return ComplectationItemResource
+     * @OA\Post(
+     *  path="/cars/complectations",
+     *  operationId="complectationStore",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Создать комплектацию",
+     *  description="Создать комплектацию(
+     *      code,name, mark_id, vehicle_type_id,  body_work_id, factory_id, motor_driver_id,
+     *      motor_transmission_id, motor_type_id, power, size, ?file, brand_id, alias_id,
+     *  )",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function store(ComplectationRequest $request) : ComplectationItemResource
     {
         $complectation = $this->repo->create($request->validated());
 
-        return (new ComplectationItemResource($complectation))
-            ->additional(['message' => 'Комплектация создана']);
+        return (new ComplectationItemResource($complectation));
     }
 
 
 
     /**
-     * UPDATE
-     * @param ComplectationRequest $request [
-     * 'code', 'name', 'mark_id', 'vehicle_type_id', 'body_work_id', 'factory_id', 'price', 'motor_id',
-     * 'motor_transmission_id', 'motor_driver_id', 'motor_type_id', 'power', 'size', 'brand_id'
-     * @return ComplectationItemResource
+     * @OA\Post(
+     *  path="/cars/complectations/{complectationId}",
+     *  operationId="complectationUpdate",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Изменить комплектацию",
+     *  description="Изменить комплектацию (
+     *      code,name, mark_id, vehicle_type_id,  body_work_id, factory_id, motor_driver_id,
+     *      motor_transmission_id, motor_type_id, power, size, ?file, brand_id, alias_id,
+     *  )",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function update(Complectation $complectation, ComplectationRequest $request) : ComplectationItemResource
     {
         $this->repo->update($complectation, $request->validated());
 
-        return (new ComplectationItemResource($complectation))
-            ->additional(['message' => 'Комплектация изменена']);
+        return (new ComplectationItemResource($complectation));
     }
 
 
 
     /**
-     * SHOW
-     * @param Complectation $complectation
-     * @return ComplectationItemResource
+     * @OA\Get(
+     *  path="/cars/complectations/{complectationId}",
+     *  operationId="complectationShow",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Открыть комплектацию",
+     *  description="Открыть комплектацию",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function show(Complectation $complectation) : ComplectationItemResource
     {
@@ -102,29 +149,44 @@ class ComplectationController extends Controller
 
 
     /**
-     * DELETE
-     * @param Complectation $complectation
-     * @return \Illuminate\Http\JsonResponse
+     * @OA\Delete(
+     *  path="/cars/complectations/{complectationId}",
+     *  operationId="complectationDelete",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Удалить комплектацию",
+     *  description="Удалить комплектацию",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function delete(Complectation $complectation) : \Illuminate\Http\JsonResponse
     {
         $this->repo->delete($complectation);
 
-        return response()->json(['message' => 'Комплектация удалена', 'success' => 1]);
+        return response()->json(['success' => 1]);
     }
 
 
 
     /**
-     * RESTORE
-     * @param Complectation $complectation
-     * @return ComplectationItemResource
+     * @OA\Patch(
+     *  path="/cars/complectations/{complectationId}/restore",
+     *  operationId="complectationRestore",
+     *  tags={"Комплектации новых автомобилей"},
+     *  summary="Востановить комплектацию",
+     *  description="Востановить комплектацию",
+     *  @OA\Response(
+     *      response=200,
+     *      description="OK"
+     *  ),
+     * )
      */
     public function restore(Complectation $complectation) : ComplectationItemResource
     {
         $this->repo->restore($complectation);
 
-        return (new ComplectationItemResource($complectation))
-            ->additional(['message' => 'Комплектация актуальна']);
+        return (new ComplectationItemResource($complectation));
     }
 }

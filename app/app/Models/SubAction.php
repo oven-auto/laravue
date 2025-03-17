@@ -13,10 +13,10 @@ class SubAction extends Model implements CommentInterface
 
     protected $guarded = [];
 
-    protected $dates = [
-        'created_at',
-        'updated_at',
-        'closed_at',
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'closed_at' => 'datetime',
     ];
 
     public const STATUSES = [

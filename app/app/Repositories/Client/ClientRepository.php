@@ -28,6 +28,8 @@ class ClientRepository
             ->filter($filter);
     }
 
+
+
     /**
      * Метод возращает постраничную коллекию клиентов, прошедших фильтрацию
      * @param array $data данные для фильтра
@@ -74,6 +76,8 @@ class ClientRepository
         $result = $query->get();
         return $result;
     }
+
+
 
     /**
      * Метод сохранения клиента в бд,используется как для создания, так и для изменения
@@ -218,11 +222,15 @@ class ClientRepository
         return $client;
     }
 
+
+
     public static function getClientFromTrafic(Trafic $trafic)
     {
         $me = new self;
         return $me->findOrCreate($trafic);
     }
+
+
 
     /**
      * Удалить мягко клиента
@@ -238,6 +246,8 @@ class ClientRepository
         $client->delete();
     }
 
+
+    
     /**
      * Метод возращает количество клиентов, удовлетворяющих условию фильтра
      * @param array $data данные для фильтра

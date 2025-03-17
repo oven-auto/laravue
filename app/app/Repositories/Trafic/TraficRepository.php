@@ -98,19 +98,39 @@ class TraficRepository
     /**
      * КОЛ-ВО ТРАФИКОВ УДОВЛЕТВОРЯЮЩИХ УСЛОВИЯМ ФИЛЬТРАЦИИ
      * @param array $data данные для фильтра
-     * @return int $result int
+     * @return array $result array
      */
-    public function counter($data = []): int
+    public function counter($data = [])
     {
+        $query = Trafic::query();
+
         $filter = app()->make(TraficFilter::class, ['queryParams' => array_filter($data)]);
 
-        $query = Trafic::select(DB::raw('count(trafics.id)'))
+        $query->select([
+            DB::raw('count(trafics.id) as count'),
+            DB::raw('trafic_statuses.id as id'),
+            DB::raw('trafic_statuses.description as name')
+        ])
             ->withTrashed()
             ->filter($filter)
-            ->groupBy('trafics.id')
+            ->groupBy('trafic_statuses.id')
             ->where('trafics.trafic_status_id', '<>', 6);
-        
-        $result = DB::table($query)->count();
+
+        $result = $query->get()->map(function($item){
+            return[
+                'id' => $item->id,
+                'name' => $item->name,
+                'count' => $item->count,
+            ];
+        });
+
+        $total = collect([[
+            'id' => 0,
+            'count' => $result->sum('count'),
+            'name' => 'Всего',
+        ]]);
+
+        $result = $total->merge($result);
         
         return $result;
     }

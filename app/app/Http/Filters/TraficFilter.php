@@ -107,6 +107,8 @@ class TraficFilter extends AbstractFilter
 
         if(isset($queryParams['section_ids']))
             $builder->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
+
+        $builder->leftJoin('trafic_statuses', 'trafic_statuses.id', 'trafics.trafic_status_id');
     }
 
 

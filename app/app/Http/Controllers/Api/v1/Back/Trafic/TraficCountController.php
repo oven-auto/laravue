@@ -8,19 +8,20 @@ use App\Repositories\Trafic\TraficRepository;
 
 class TraficCountController extends Controller
 {
-    public $service;
+    public $repo;
 
-    public function __construct(TraficRepository $service)
+    public function __construct(TraficRepository $repo)
     {
-        $this->service = $service;
+        $this->repo = $repo;
     }
 
     public function index(Request $request)
     {   
-        $count = $this->service->counter($request->all());
+        $count = $this->repo->counter($request->all());
 
         return response()->json([
-            'data' => $count,
+            'data' => $count[0]['count'],
+            'count' => $count,
             'success' => 1,
             'message' => ''
         ]);

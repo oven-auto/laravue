@@ -5,14 +5,14 @@ namespace App\Http\Controllers\Api\v1\Back\Trafic;
 use App\Http\Controllers\Controller;
 use App\Services\Comment\Comment;
 use Illuminate\Http\Request;
-use PDF;
+use \Barryvdh\DomPDF\Facade\PDF;
 use App\Models\Trafic;
 
 class TraficPDFController extends Controller
 {
     public function __invoke(Trafic $trafic)
     {
-        $pdf = PDF::loadView('pdf.trafic', [
+        $pdf = Pdf::loadView('pdf.trafic', [
             'trafic' =>$trafic
         ]);
 

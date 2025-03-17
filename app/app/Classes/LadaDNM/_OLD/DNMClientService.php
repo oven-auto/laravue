@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Classes\LadaDNM;
+namespace App\Classes\LadaDNM\_OLD;
 
+use App\Classes\LadaDNM\DNM;
 use App\Models\Client;
 use App\Models\DnmClient;
 use App\Models\WsmReserveNewCar;
