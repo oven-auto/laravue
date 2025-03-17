@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Brand;
 use App\Models\Mark;
+use Illuminate\Support\Str;
 
 class CME_BRANDMARK extends Command
 {
@@ -67,7 +68,7 @@ class CME_BRANDMARK extends Command
                 Brand::create([
                     'uid' => $item['id'],
                     'name' => $item['text'],
-                    'slug' => \Str::slug($item['text'])
+                    'slug' => Str::slug($item['text'])
                 ]);
 
                 $appendedCount++;
@@ -91,7 +92,7 @@ class CME_BRANDMARK extends Command
                     Mark::create([
                         'uid' => $itemModel['id'],
                         'name' => $itemModel['text'],
-                        'slug' => \Str::slug($itemModel['text']),
+                        'slug' => Str::slug($itemModel['text']),
                         'brand_id' => $brand->id,
                         'brand_uid' => $brand->uid,
                         'status' => 0
