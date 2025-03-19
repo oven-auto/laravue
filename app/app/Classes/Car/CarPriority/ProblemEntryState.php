@@ -12,7 +12,7 @@ class ProblemEntryState extends AbstractState implements PriorityStateInterface
     {
         static::$status = $status;
 
-        $now = now()->subDays(90);
+        $now = now()->subDays(180);
 
         if($context->hasRansom())
             if($now <= $context->car->stockDate())

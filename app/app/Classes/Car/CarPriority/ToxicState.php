@@ -10,7 +10,7 @@ class ToxicState extends AbstractState implements PriorityStateInterface
     
     public static function check(PrioritySetter $context, string $status) : void
     {
-        $now = now()->subDays(90);
+        $now = now()->subDays(180);
 
         static::$status = $status;
 

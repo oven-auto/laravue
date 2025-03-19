@@ -4,13 +4,12 @@ namespace App\Models\Audit;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class AuditAnswer extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
-    protected $fillable = ['question_id', 'author_id', 'type'];
+    public $timestamps = false;
 
-    public const ANSWER_TYPES = ['positive', 'negative', 'neutral'];
+    protected $fillable = ['question_id', 'positive', 'negative', 'neutral'];
 }

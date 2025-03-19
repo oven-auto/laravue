@@ -28,7 +28,7 @@ class AuditController extends Controller
      *      operationId="getAuditList",
      *      tags={"Аудит стандартов"},
      *      summary="Список аудитов",
-     *      description="Список аудитов (?trash = 1)",
+     *      description="Список аудитов (?trash = 1, ?ids = [], ?appeals = [], ?chanels = [])",
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",

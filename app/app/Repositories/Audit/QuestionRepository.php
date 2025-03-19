@@ -12,8 +12,8 @@ Class QuestionRepository
 {
     public function get(array $data) : Collection
     {
-        $query = AuditQuestion::query();
-
+        $query = AuditQuestion::query()->select('audit_questions.*')->with(['audit']);
+            
         if(isset($data['audit_id']))
             $query->where('audit_id', $data['audit_id']);
 
@@ -21,7 +21,7 @@ Class QuestionRepository
             $query->onlyTrashed();
 
         $questions = $query->get();
-
+        
         return $questions;
     }
 
@@ -30,7 +30,7 @@ Class QuestionRepository
     public function getById(int $id) : AuditQuestion
     {
         $question = AuditQuestion::findOrFail($id);
-
+        
         return $question;
     }
 
@@ -45,15 +45,10 @@ Class QuestionRepository
             
             $question = AuditQuestion::create(Arr::except($data, ['answers']));
            
-            foreach($data['answers'] as $key => $item)
-            {   
-                if(in_array($key, AuditAnswer::ANSWER_TYPES) && $item != '')
-                    $question->answers()->create([
-                        'question_id' => $question->id,
-                        'author_id' => auth()->user()->id,
-                        'type' => $key,
-                    ]);
-            }
+            $question->answers()->updateOrCreate(
+                ['question_id' => $question->id],
+                $data['answers']
+            );
 
             return $question;
         }, 3);
@@ -65,13 +60,22 @@ Class QuestionRepository
 
     public function update(int $id, array $data) : AuditQuestion
     {
-        $question = AuditQuestion::findOrFail($id);
+        $question = DB::transaction(function() use($data, $id){
+            $question = AuditQuestion::findOrFail($id);
 
-        $question->fill($data);
+            $question->fill($data);
 
-        if($question->isDirty())
-            $question->save();
+            if($question->isDirty())
+                $question->save();
 
+            $question->answers()->updateOrCreate(
+                ['question_id' => $question->id],
+                $data['answers']
+            );
+
+            return $question;
+        }); 
+        
         return $question;
     }
 
@@ -80,7 +84,7 @@ Class QuestionRepository
     public function delete(int $id) : AuditQuestion
     {
         $question = AuditQuestion::findOrFail($id);
-
+       
         $res = $question->replicate();
 
         $question->delete();

@@ -20,7 +20,7 @@
                     "Аудит стандартов"
                 ],
                 "summary": "Список аудитов",
-                "description": "Список аудитов (?trash = 1)",
+                "description": "Список аудитов (?trash = 1, ?ids = [], ?appeals = [], ?chanels = [])",
                 "operationId": "getAuditList",
                 "responses": {
                     "200": {
@@ -91,6 +91,90 @@
                 "summary": "Востановить аудит",
                 "description": "Востановить аудит",
                 "operationId": "restoreAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/questions": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Список ответов аудита",
+                "description": "Список ответов аудита (audit_id = 1, ?trash = 1)",
+                "operationId": "getAuditQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать вопрос аудит",
+                "description": "Создать вопрос аудит (audit_id, name, text, weight, is_stoped, answers[positive = bool, negative = bool, neutral = bool])",
+                "operationId": "storeAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/questions/{questionId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Открыть ответов аудита",
+                "description": "Открыть ответ аудита",
+                "operationId": "getAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Удалить ответов аудита",
+                "description": "Удалить ответ аудита",
+                "operationId": "deleteAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить вопрос аудит",
+                "description": "Изменить вопрос аудит (audit_id, name, text, weight, is_stoped, answers[positive = bool, negative = bool, neutral = bool])",
+                "operationId": "updateAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/questions/{questionId}/restore": {
+            "put": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Востановить ответов аудита",
+                "description": "Востановить ответ аудита",
+                "operationId": "restoreAuditQuestion",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -2402,6 +2486,30 @@
                 }
             }
         },
+        "/reserves/count": {
+            "get": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Счетчик Резервов новых автомобилей",
+                "description": "Счетчик Резервов новых автомобилейв",
+                "operationId": "reserveListCount",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ReserveNewCarFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/worksheet/modules/reserves/setdates/{id}": {
             "delete": {
                 "tags": [
@@ -4023,6 +4131,24 @@
                         "example": "1122",
                         "enum": [
                             "search"
+                        ]
+                    },
+                    "priority_ids": {
+                        "description": "Массив содержащий идентификаторы приоритетов",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "priority_ids"
+                        ]
+                    },
+                    "has_priority": {
+                        "description": "Приортиет 1 - есть, 0 - нет",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "has_priority"
                         ]
                     }
                 },

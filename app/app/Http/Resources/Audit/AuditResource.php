@@ -19,19 +19,13 @@ class AuditResource extends JsonResource
             'id' => $this->id,
                 'name' => $this->name,
                 'author' => new UserSmallResource($this->author),
-                'appeal' => [
-                    'id' => $this->appeal->id,
-                    'name' => $this->appeal->name,
-                ],
+                'appeal' => $this->appeal->id,
                 'bonus' => $this->bonus,
                 'malus' => $this->malus,
                 'complete' => $this->complete,
                 'created_at' => $this->created_at->format('d.m.Y'),
                 'chanels' => $this->chanels->map(function($item){
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                    ];
+                    return $item->id;
                 }),
                 'trash' => $this->deleted_at ? 1 : 0,
                 'deleted_at' => $this->deleted_at,

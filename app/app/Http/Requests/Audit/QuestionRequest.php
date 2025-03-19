@@ -25,7 +25,6 @@ class QuestionRequest extends FormRequest
             'audit_id'              =>       'required',
             'name'                  =>       'required',
             'text'                  =>       'required',
-            'audit_id'              =>       'required',
             'weight'                =>       'sometimes|numeric',
             'is_stoped'             =>       'sometimes|numeric',
             'answers'               =>       'array|required',

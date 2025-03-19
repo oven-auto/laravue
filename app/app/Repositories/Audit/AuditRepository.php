@@ -2,6 +2,7 @@
 
 Namespace App\Repositories\Audit;
 
+use App\Http\Filters\AuditFilter;
 use App\Models\Audit\Audit;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
@@ -10,14 +11,15 @@ use Illuminate\Support\Facades\DB;
 Class AuditRepository
 {
     /**
-     * Получить список аудитов по шаблону [id, name]
+     * Получить список аудитов по шаблону 
      */
     public function getAll(array $data) : Collection
     {
-        $query = Audit::query();
-
-        if(isset($data['trash']))
-            $query->onlyTrashed();
+        $query = Audit::query()->select('audits.*');
+        
+        $filter = app()->make(AuditFilter::class, ['queryParams' => $data]);
+        
+        $query->filter($filter);
 
         $audits = $query->get();
         
@@ -33,6 +35,7 @@ Class AuditRepository
     {
         $audit = DB::transaction(function() use($data){
             $data['author_id'] = auth()->user()->id;
+            $data['editor_id'] = auth()->user()->id;
         
             $audit = Audit::create(Arr::except($data, 'chanels'));
 
@@ -57,7 +60,10 @@ Class AuditRepository
             $audit->fill($data);
 
             if($audit->isDirty())
+            {
+                $audit->editor_id = auth()->user()->id;
                 $audit->save();
+            }
 
             $audit->chanels()->sync($data['chanels']);
 

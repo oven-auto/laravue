@@ -379,6 +379,26 @@ class ReserveNewCarFilter extends AbstractFilter
      * */
     public const SEARCH = 'search';//Полнотекстовы поиск
 
+        /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы приоритетов", 
+     * property="priority_ids", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const PRIORITY_IDS = 'priority_ids';
+
+    /**
+     * @OA\Property(
+     *  format="bool", 
+     *  description="Приортиет 1 - есть, 0 - нет", 
+     *  property="has_priority", 
+     *  type="bool"
+     * )
+     */
+    public const HAS_PRIORITY = 'has_priority';
+
     public const LOGISTIC_DATES = 'logistic_dates';
 
     public const SORT = 'sort';
@@ -392,6 +412,9 @@ class ReserveNewCarFilter extends AbstractFilter
     protected function getCallbacks(): array
     {
         return [
+            self::PRIORITY_IDS                      => [$this, 'priorityIds'],
+            self::HAS_PRIORITY                      => [$this, 'hasPriority'],
+
             self::SEARCH                            => [$this, 'search'],
             self::INIT                              => [$this, 'init'],
             self::IDS                               => [$this, 'ids'],
@@ -463,7 +486,8 @@ class ReserveNewCarFilter extends AbstractFilter
             ->leftJoin('worksheets', 'worksheets.id', 'wsm_reserve_new_cars.worksheet_id') //РЛ
             ->leftJoin('worksheet_executors', 'worksheet_executors.worksheet_id', 'worksheets.id') //Участники РЛ
             ->leftJoin('clients', 'clients.id', 'worksheets.client_id') //Клиент
-            ->leftJoin('wsm_reserve_new_car_contracts as contract', 'contract.reserve_id', 'wsm_reserve_new_cars.id'); //Контракт
+            ->leftJoin('wsm_reserve_new_car_contracts as contract', 'contract.reserve_id', 'wsm_reserve_new_cars.id')
+            ->leftJoin('car_sale_priorities', 'car_sale_priorities.car_id', 'cars.id'); 
         
         $this->setJoinToSearch($builder, $params);
 
@@ -568,6 +592,24 @@ class ReserveNewCarFilter extends AbstractFilter
         $builder->leftJoin('wsm_reserve_lisings', 'wsm_reserve_lisings.reserve_id', 'wsm_reserve_new_cars.id');
     
         $builder->groupBy('wsm_reserve_new_cars.id');
+    }
+
+
+
+    public function hasPriority(Builder $builder, bool $val)
+    {
+        match($val){
+            true => $builder->whereNotNull('car_sale_priorities.priority_id'),
+            false => $builder->whereNull('car_sale_priorities.priority_id'),
+            default => null,
+        };
+    }
+
+
+
+    public function priorityIds(Builder $builder, array $arr)
+    {
+        $builder->whereIn('car_sale_priorities.priority_id', $arr);
     }
 
 

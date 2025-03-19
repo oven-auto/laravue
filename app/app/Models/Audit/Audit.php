@@ -2,13 +2,14 @@
 
 namespace App\Models\Audit;
 
+use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Audit extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, Filterable;
 
     protected $fillable = ['name', 'author_id', 'appeal_id', 'bonus', 'malus', 'complete'];
 
@@ -38,5 +39,12 @@ class Audit extends Model
     public function author()
     {
         return $this->hasOne(\App\MOdels\User::class, 'id', 'author_id');
+    }
+
+
+
+    public function editor()
+    {
+        return $this->hasOne(\App\Models\User::class, 'id', 'editor_id');
     }
 }

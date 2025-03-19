@@ -100,7 +100,7 @@ class Handler extends ExceptionHandler
         }
 
         return response()->json([
-            'message' => 'Level Base: '.$exception->getMessage().'----'.get_class($exception),
+            'message' => 'Ошибка: '.$exception->getMessage(),
             'success' => 0,
             'error' => implode(', ', [
                 'Фаил где поймал исключение: '.$exception->getFile(),

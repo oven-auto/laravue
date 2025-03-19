@@ -44,6 +44,25 @@ class ReserveListController extends Controller
 
 
 
+    /**
+     * @OA\Get(
+     *      path="/reserves/count",
+     *      operationId="reserveListCount",
+     *      tags={"Резерв"},
+     *      summary="Счетчик Резервов новых автомобилей",
+     *      description="Счетчик Резервов новых автомобилейв",
+     *      @OA\RequestBody(
+     *         @OA\JsonContent(
+     *              type="object",
+     *              ref="#/components/schemas/ReserveNewCarFilter",
+     *         )
+     *     ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK"
+     *      ),
+     * )
+     */
     public function count(ReserveRepository $repo, Request $request)
     {
         $res = $repo->counter($request->all());
