@@ -28,6 +28,15 @@ class ReserveNewCarFilter extends AbstractFilter
     public const VIN                        = 'vin';
     public const INIT                       = 'init';
     public const COMPLECTATION_CODE         = 'complectation_code';
+
+    /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы участников РЛ", 
+     * property="executors", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
     public const EXECUTORS                  = 'executors';
 
     /**  @OA\Property(
@@ -399,6 +408,83 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public const HAS_PRIORITY = 'has_priority';
 
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы авторов РЛ", 
+     * property="ws_authors", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const WS_AUTHORS = 'ws_authors';
+
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы авторов резерва", 
+     * property="reserve_authors", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const RESERVE_AUTHORS = 'reserve_authors';
+
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы оформителей ПДКП", 
+     * property="pdkp_decorators", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const PDKP_DECORATORS = 'pdkp_decorators';
+
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы оформителей ДКП", 
+     * property="dkp_decorators", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const DKP_DECORATORS = 'dkp_decorators';
+
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы оформителей выдачи", 
+     * property="issue_managers", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const ISSUE_MANAGERS = 'issue_managers';
+
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы оформителей продажи", 
+     * property="sale_managers", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const SALE_MANAGERS = 'sale_managers';
+
+    /**  
+     * @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы принимающий техник", 
+     * property="technics", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const TECHNICS = 'technics';
+
     public const LOGISTIC_DATES = 'logistic_dates';
 
     public const SORT = 'sort';
@@ -414,17 +500,14 @@ class ReserveNewCarFilter extends AbstractFilter
         return [
             self::PRIORITY_IDS                      => [$this, 'priorityIds'],
             self::HAS_PRIORITY                      => [$this, 'hasPriority'],
-
             self::SEARCH                            => [$this, 'search'],
             self::INIT                              => [$this, 'init'],
             self::IDS                               => [$this, 'ids'],
             self::TRASH                             => [$this, 'trash'],
             self::VIN                               => [$this, 'vin'],
-
             self::BRAND                             => [$this, 'brand'],
             self::MARK                              => [$this, 'mark'],
-            self::COMPLECTATION_CODE                => [$this, 'complectationCode'],
-            self::EXECUTORS                         => [$this, 'executors'],
+            self::COMPLECTATION_CODE                => [$this, 'complectationCode'],          
             self::PRICES                            => [$this, 'price'],
             self::YEAR                              => [$this, 'year'],
             self::MOTOR_TYPE                        => [$this, 'motorTypes'],
@@ -432,7 +515,6 @@ class ReserveNewCarFilter extends AbstractFilter
             self::TRANSMISSION                      => [$this, 'transmission'],
             self::DRIVER                            => [$this, 'drivers'],
             self::COLOR                             => [$this, 'colors'],
-
             self::HAS_OPTIONS                       => [$this, 'hasOptions'],
             self::HAS_OVERPRICE                     => [$this, 'hasOverprice'],
             self::HAS_TUNING                        => [$this, 'hasTuning'],
@@ -440,8 +522,7 @@ class ReserveNewCarFilter extends AbstractFilter
             self::HAS_GIFT                          => [$this, 'hasGift'],
             self::HAS_DISCOUNT                      => [$this, 'hasDiscount'],
             self::HAS_RANSOM                        => [$this, 'hasRansom'],
-            self::HAS_DETAILING_COST                => [$this, 'hasDetailingCost'],
-            
+            self::HAS_DETAILING_COST                => [$this, 'hasDetailingCost'],           
             self::STATE_STATUS                      => [$this, 'stateStatus'],
             self::TRADE_MARKER_ID                   => [$this, 'tradeMarkerId'],
             self::MARKER_ID                         => [$this, 'markerId'],
@@ -450,7 +531,6 @@ class ReserveNewCarFilter extends AbstractFilter
             self::CONTRACT_DATE                     => [$this, 'contractDate'],
             self::DKP_DATE                          => [$this, 'dkpDate'],
             self::PDKP_DATE                         => [$this, 'pdkpDate'],
-
             self::HAS_CLIENT_PAY                    => [$this, 'hasClientPay'],
             self::HAS_ISSUE                         => [$this, 'hasIssue'],
             self::HAS_SALE                          => [$this, 'hasSale'],
@@ -460,11 +540,74 @@ class ReserveNewCarFilter extends AbstractFilter
             self::HAS_PLAN                          => [$this, 'hasPlan'],
             self::LOGISTIC_DATES                    => [$this, 'logisticDates'],
             self::POWER                             => [$this, 'power'],
-            self::HAS_TRADEIN                        => [$this, 'has_tradein'],
-
+            self::HAS_TRADEIN                       => [$this, 'has_tradein'],
             self::SORT                              => [$this, 'sort'],
             self::TYPE_STATUS                       => [$this, 'typeStatuses'],
+            self::WS_AUTHORS                        => [$this, 'wsAuthors'],
+            self::RESERVE_AUTHORS                   => [$this, 'reserveAuthors'],
+            self::DKP_DECORATORS                    => [$this, 'dkpDecorators'],
+            self::PDKP_DECORATORS                   => [$this, 'pdkpDecorators'],
+            self::ISSUE_MANAGERS                    => [$this, 'issueManagers'],
+            self::SALE_MANAGERS                     => [$this, 'saleManager'],
+            self::EXECUTORS                         => [$this, 'executors'],
+            self::TECHNICS                          => [$this, 'technics'],
         ];
+    }
+
+
+
+    public function executors(Builder $builder, array $array)
+    {
+        $builder->whereIn('worksheet_executors.user_id', $array);
+    }
+
+
+
+    public function wsAuthors(Builder $builder, array $arr)
+    {
+        $builder->whereIn('worksheets.author_id', $arr);
+    }
+
+
+
+    public function reserveAuthors(Builder $builder, array $arr)
+    {
+        $builder->whereIn('wsm_reserve_new_cars.author_id', $arr);
+    }
+
+
+
+    public function dkpDecorators(Builder $builder, array $arr)
+    {
+        $builder->whereIn('contract.dkp_decorator_id', $arr);
+    }
+
+
+
+    public function pdkpDecorators(Builder $builder, array $arr)
+    {
+        $builder->whereIn('contract.pdkp_decorator_id', $arr);
+    }
+
+
+
+    public function issueManagers(Builder $builder, array $arr)
+    {
+        $builder->whereIn('wsm_reserve_issues.decorator_id', $arr);
+    }
+
+
+
+    public function saleManager(Builder $builder, array $arr)
+    {
+        $builder->whereIn('wsm_reserve_sales.decorator_id', $arr);
+    }
+
+
+
+    public function technics(Builder $builder, array $arr)
+    {
+        $builder->whereIn('car_technics.technic_id', $arr);
     }
 
 
@@ -472,6 +615,7 @@ class ReserveNewCarFilter extends AbstractFilter
     public function __construct(array $queryParams)
     {   
         $queryParams['init'] = $queryParams;
+
         parent::__construct($queryParams);
     }
 
@@ -499,87 +643,81 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public function setJoinToSearch(Builder $builder, array $params)
     {
-        //if(isset($params['prices']))
-            $builder ->leftJoin('car_full_prices as cfp', 'cfp.car_id', 'cars.id')//представление хранящее актуальную цену авто по прайсу
-                ->leftJoin('wsm_reserve_complectation_prices as wrcp','wrcp.contract_id', 'contract.id')//сохраненая в контракте цена
-                ->leftJoin('complectation_prices as cp', 'cp.id', 'wrcp.complectation_price_id')//цены комплектации
-                ->leftJoin('wsm_reserve_option_prices as wrop', 'wrop.contract_id', 'contract.id')//сохраненные в контракте опции
-                ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
-                    left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
-                    left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
-                    left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
-                    where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
-                    GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
-                )
-                ->addSelect([
-                    'joinOptionPrice.sum_option as _sum_option',
-                    'cp.price                   as _cp_price', 
-                    'cp.id                      as _cp_id', 
-                ]);
-        
-        //if(isset($params['prices']) || isset($params['has_gift']))
-            $builder->leftJoin('car_gift_prices as gift', 'gift.car_id', 'cars.id')//gift
-                ->addSelect([
-                    'gift.price as _gift_price', 
-                ]);
-        
-        //if(isset($params['prices']) || isset($params['has_overprice']))
-            $builder->leftJoin('car_over_prices as overprice', 'overprice.car_id', 'cars.id')//overprice
-                ->addSelect([
-                    'overprice.price as _over_price',
-                ]);
+        $builder ->leftJoin('car_full_prices as cfp', 'cfp.car_id', 'cars.id')//представление хранящее актуальную цену авто по прайсу
+            ->leftJoin('wsm_reserve_complectation_prices as wrcp','wrcp.contract_id', 'contract.id')//сохраненая в контракте цена
+            ->leftJoin('complectation_prices as cp', 'cp.id', 'wrcp.complectation_price_id')//цены комплектации
+            ->leftJoin('wsm_reserve_option_prices as wrop', 'wrop.contract_id', 'contract.id')//сохраненные в контракте опции
+            ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
+                left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
+                left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
+                left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
+                where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
+                GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
+            )
+            ->addSelect([
+                'joinOptionPrice.sum_option as _sum_option',
+                'cp.price                   as _cp_price', 
+                'cp.id                      as _cp_id', 
+            ]);
+    
+        $builder->leftJoin('car_gift_prices as gift', 'gift.car_id', 'cars.id')//gift
+            ->addSelect([
+                'gift.price as _gift_price', 
+            ]);
+    
+        $builder->leftJoin('car_over_prices as overprice', 'overprice.car_id', 'cars.id')//overprice
+            ->addSelect([
+                'overprice.price as _over_price',
+            ]);
 
-        //if(isset($params['prices']) || isset($params['has_tuning']))
-            $builder->leftJoin('car_tuning_prices as tuning', 'tuning.car_id', 'cars.id')//цена тюнинга
-                ->addSelect([
-                    'tuning.price as _tuning_price',
-                ]);
+        $builder->leftJoin('car_tuning_prices as tuning', 'tuning.car_id', 'cars.id')//цена тюнинга
+            ->addSelect([
+                'tuning.price as _tuning_price',
+            ]);
 
-        //if(isset($params['has_options']))//has_option
-            $builder->leftJoin('car_options', 'car_options.car_id', 'cars.id');
+        $builder->leftJoin('car_options', 'car_options.car_id', 'cars.id');
 
         //if(isset($params['has_devices']))//has_devices
-            $builder->leftJoin('car_tunings', 'car_tunings.car_id', 'cars.id');
+        $builder->leftJoin('car_tunings', 'car_tunings.car_id', 'cars.id');
 
         //if(isset($params['has_discount']))
-            $builder->leftJoin('discounts', function($join){
-                $join->on('discounts.worksheet_id', '=', 'worksheets.id')
-                    ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
-                    ->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
-            });
+        $builder->leftJoin('discounts', function($join){
+            $join->on('discounts.worksheet_id', '=', 'worksheets.id')
+                ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
+                ->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
+        });
 
         //if(isset($params['has_ransom']))//has_ransom
-            $builder->leftJoin('ransom_cars', 'ransom_cars.car_id', 'cars.id'); 
+        $builder->leftJoin('ransom_cars', 'ransom_cars.car_id', 'cars.id'); 
 
         //if(isset($params['has_detailing_cost']))//has_detailing_cost
-            $builder->leftJoin('car_detailing_costs', 'car_detailing_costs.car_id', 'cars.id');
+        $builder->leftJoin('car_detailing_costs', 'car_detailing_costs.car_id', 'cars.id');
 
         //if(isset($params['trade_markers']))//trade_marker
-            $builder->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id');
+        $builder->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id');
 
         //if(isset($params['markers']))//markers
-            $builder->leftJoin('car_markers', 'car_markers.car_id', 'cars.id');
+        $builder->leftJoin('car_markers', 'car_markers.car_id', 'cars.id');
 
         //if(isset($params['has_client_pay']))
-            $builder->leftJoin('wsm_reserve_payments', 'wsm_reserve_payments.reserve_id', 'wsm_reserve_new_cars.id');
+        $builder->leftJoin('wsm_reserve_payments', 'wsm_reserve_payments.reserve_id', 'wsm_reserve_new_cars.id');
 
         //if(isset($params['has_issue']))
-            $builder->leftJoin('wsm_reserve_issues', 'wsm_reserve_issues.reserve_id', 'wsm_reserve_new_cars.id');
+        $builder->leftJoin('wsm_reserve_issues', 'wsm_reserve_issues.reserve_id', 'wsm_reserve_new_cars.id');
 
         //if(isset($params['has_sale']) || (isset($params['sale_date'])))
-            $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id');
+        $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id');
 
         //if(
         //    isset($params['has_off']) || //has_off
         //    isset($params['report_type']) //report_type
         //)
-            $builder->leftJoin('car_owners', 'car_owners.car_id', 'cars.id');
+        $builder->leftJoin('car_owners', 'car_owners.car_id', 'cars.id');
         
         //if(isset($params['logistic_dates']) && count($params['logistic_dates']))//логистика
-            $builder->leftJoin('car_date_logistics', 'car_date_logistics.car_id', 'cars.id');
+        $builder->leftJoin('car_date_logistics', 'car_date_logistics.car_id', 'cars.id');
 
-        //if(isset($params['colors']))
-            $builder->leftJoin('dealer_colors', 'dealer_colors.id', 'cars.color_id');
+        $builder->leftJoin('dealer_colors', 'dealer_colors.id', 'cars.color_id');
 
         $builder->leftJoin('marks', 'marks.id', 'cars.mark_id');
 
@@ -590,6 +728,8 @@ class ReserveNewCarFilter extends AbstractFilter
         $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
         
         $builder->leftJoin('wsm_reserve_lisings', 'wsm_reserve_lisings.reserve_id', 'wsm_reserve_new_cars.id');
+
+        $builder->leftJoin('car_technics', 'car_technics.car_id', 'cars.id');
     
         $builder->groupBy('wsm_reserve_new_cars.id');
     }
@@ -647,23 +787,12 @@ class ReserveNewCarFilter extends AbstractFilter
     public function sort(Builder $builder, string $val)
     {
         match($val){
-            // 'price_low'     => $builder
-            //     ->orderBy('cfp.complectationprice', 'ASC'),
-            // 'price_high'    => $builder
-            //     ->orderBy('cfp.complectationprice', 'DESC'),
             'sale_old'      => $builder
                 ->orderBy(DB::raw('IF(wsm_reserve_sales.id IS NOT NULL, 0, 1)'))
                 ->orderBy('wsm_reserve_sales.date_at', 'ASC'),
             'sale_new'      => $builder
                 ->orderBy(DB::raw('IF(wsm_reserve_sales.id IS NOT NULL, 0, 1)'))
-                ->orderBy('wsm_reserve_sales.date_at', 'DESC'),
-            // 'stock_old'     => $builder
-            //     ->orderBy(DB::raw('IF(stocking_date IS NOT NULL, 0, 1)'))
-            //     ->orderBy('stocking_date', 'ASC'),
-            // 'stock_new'     => $builder
-            //     ->orderBy(DB::raw('IF(stocking_date IS NOT NULL, 0, 1)'))
-            //     ->orderBy('stocking_date', 'DESC'),
-            
+                ->orderBy('wsm_reserve_sales.date_at', 'DESC'),            
             'name_asc' => $builder
                 ->orderBy('brands.name', 'ASC')
                 ->orderBy('marks.name', 'ASC'),
@@ -672,16 +801,6 @@ class ReserveNewCarFilter extends AbstractFilter
                 ->orderBy('marks.name', 'DESC'),
             default => '',
         };
-    }
-
-
-
-    /**
-     * Участники РЛ
-     */
-    public function executors(Builder $builder, array $array)
-    {
-        $builder->whereIn('worksheet_executors.user_id', $array);
     }
 
 

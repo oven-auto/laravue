@@ -2,7 +2,9 @@
 
 namespace App\Models\Audit;
 
+use App\Models\Builders\AuditQuestionBuilder;
 use App\Models\Scopes\Audit\Scopes\QuestionDefaultValueScope;
+use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,10 +15,17 @@ class AuditQuestion extends Model
 
     protected $fillable = ['text', 'audit_id', 'author_id', 'sort', 'name', 'weigth'];
 
-    protected static function boot()
+    // protected static function boot()
+    // {
+    //     parent::boot();
+    //     static::addGlobalScope(new QuestionDefaultValueScope());
+    // }
+
+
+
+    public function newEloquentBuilder($query)
     {
-        parent::boot();
-        static::addGlobalScope(new QuestionDefaultValueScope());
+        return new AuditQuestionBuilder($query);
     }
 
 

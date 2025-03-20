@@ -3816,6 +3816,16 @@
                             "ids"
                         ]
                     },
+                    "executors": {
+                        "description": "Массив содержащий идентификаторы участников РЛ",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "executors"
+                        ]
+                    },
                     "brands": {
                         "description": "Массив содержащий идентификаторы бренда",
                         "type": "array",
@@ -4149,6 +4159,76 @@
                         "format": "bool",
                         "enum": [
                             "has_priority"
+                        ]
+                    },
+                    "ws_authors": {
+                        "description": "Массив содержащий идентификаторы авторов РЛ",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "ws_authors"
+                        ]
+                    },
+                    "reserve_authors": {
+                        "description": "Массив содержащий идентификаторы авторов резерва",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "reserve_authors"
+                        ]
+                    },
+                    "pdkp_decorators": {
+                        "description": "Массив содержащий идентификаторы оформителей ПДКП",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "pdkp_decorators"
+                        ]
+                    },
+                    "dkp_decorators": {
+                        "description": "Массив содержащий идентификаторы оформителей ДКП",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "dkp_decorators"
+                        ]
+                    },
+                    "issue_managers": {
+                        "description": "Массив содержащий идентификаторы оформителей выдачи",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "issue_managers"
+                        ]
+                    },
+                    "sale_managers": {
+                        "description": "Массив содержащий идентификаторы оформителей продажи",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "sale_managers"
+                        ]
+                    },
+                    "technics": {
+                        "description": "Массив содержащий идентификаторы принимающий техник",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "technics"
                         ]
                     }
                 },

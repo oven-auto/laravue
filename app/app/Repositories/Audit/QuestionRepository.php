@@ -12,7 +12,7 @@ Class QuestionRepository
 {
     public function get(array $data) : Collection
     {
-        $query = AuditQuestion::query()->select('audit_questions.*')->with(['audit']);
+        $query = AuditQuestion::query()->with(['audit']);
             
         if(isset($data['audit_id']))
             $query->where('audit_id', $data['audit_id']);
