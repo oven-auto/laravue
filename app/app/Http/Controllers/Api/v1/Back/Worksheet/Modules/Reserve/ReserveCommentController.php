@@ -3,46 +3,38 @@
 namespace App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve;
 
 use App\Http\Controllers\Controller;
-use App\Models\WsmReserveComment;
-use Illuminate\Http\Request;
+use App\Http\Requests\Worksheet\Reserve\ReserveCommentCreateRequest;
+use App\Http\Requests\Worksheet\Reserve\ReserveCommentRequest;
+use App\Http\Resources\Worksheet\Reserve\Comment\CommentCollection;
+use App\Repositories\Worksheet\Modules\Reserve\ReserveCommentRepository;
 
 class ReserveCommentController extends Controller
 {
-    public function index(Request $request)
+    public function __construct(
+        private ReserveCommentRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Комментарий'
+    )
     {
-        $validated = $request->validate([
-            'reserve_id' => 'required',
-        ]);
-
-        $comments = WsmReserveComment::where('reserve_id', $validated['reserve_id'])->get();
-
-        return response()->json([
-            'data' => $comments->map(fn ($item) => [
-                'text' => $item->text,
-                'id' => $item->id,
-                'author' => $item->author->cut_name,
-                'created_at' => $item->created_at->format('d.m.Y (H:i)'),
-            ]),
-            'success' => 1,
-        ]);
+        $this->middleware('notice.message')->only(['store', ]);
     }
 
 
 
-    public function store(Request $request)
+    public function index(ReserveCommentRequest $request)
     {
-        $validated = $request->validate([
-            'reserve_id' => 'required',
-            'text' => 'required'
-        ]);
+        $comments = $this->repo->getWithOutSystem($request->validated());
+        
+        return new CommentCollection($comments);
+    }
 
-        $comment = WsmReserveComment::create(array_merge(
-            $validated,
-            ['author_id' => auth()->user()->id],
-        ));
+
+
+    public function store(ReserveCommentCreateRequest $request)
+    {
+        $this->repo->create($request->validated());
 
         return response()->json([
-            'message' => 'Комментарий добавлен',
             'success' => 1,
         ]);
     }

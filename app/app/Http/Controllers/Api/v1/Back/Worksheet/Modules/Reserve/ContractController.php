@@ -11,11 +11,13 @@ use App\Repositories\Worksheet\Modules\Reserve\ReserveContractRepository;
 
 class ContractController extends Controller
 {
-    private $repo;
-
-    public function __construct(ReserveContractRepository $repo)
+    public function __construct(
+        private ReserveContractRepository $repo,
+        public $genus = 'male',
+        public $subject = 'Договор',
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update']);
     }
 
 
@@ -24,9 +26,7 @@ class ContractController extends Controller
     {
         $this->repo->create($contract, $request->validated());
 
-        return (new ContractResource($contract))->additional([
-            'message' => 'Договор создан.'
-        ]);
+        return (new ContractResource($contract));
     }
 
 
@@ -35,7 +35,7 @@ class ContractController extends Controller
     {
         $this->repo->update($contract, $request->validated());
 
-        return (new ContractResource($contract))->additional(['message' => Notice::getMessages()]);
+        return (new ContractResource($contract));
     }
 
 

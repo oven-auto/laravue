@@ -595,17 +595,17 @@ class HomeController extends Controller
 
     public function test()
     {
-        $client = Client::withCount(['unionsChildren'])->first();
+        // $client = Client::withCount(['unionsChildren'])->first();
 
-        $clientCar = ClientCar::query()->where('brand_id', 1113)->find(550);
+        // $clientCar = ClientCar::query()->where('brand_id', 1113)->find(550);
         
-        $dnmClient = new ServicesNewDNMClientService();
+        // $dnmClient = new ServicesNewDNMClientService();
 
-        $dnmClient->save($clientCar->client, new Worksheet());
+        // $dnmClient->save($clientCar->client, new Worksheet());
 
-        $dnmVehicle = new DNMVehicleService();
+        // $dnmVehicle = new DNMVehicleService();
 
-        $dnmVehicle->save($clientCar);
+        // $dnmVehicle->save($clientCar);
     }
 
 
