@@ -1045,9 +1045,9 @@ class CarFilter extends AbstractFilter
     public function hasPlan(Builder $builder, bool $value)
     {
         if($value)
-            $builder->where('cars.disable_off', 1);
+            $builder->where('cars.disable_off', 0);
         else   
-            $builder->where('cars.disable_off', 0); 
+            $builder->where('cars.disable_off', 1); 
     }
 
 

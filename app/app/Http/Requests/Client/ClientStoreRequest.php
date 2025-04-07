@@ -118,11 +118,9 @@ class ClientStoreRequest extends FormRequest
             'lastname.string' => 'Фамилия может состоять только из букв',
             'fathername.alpha' => 'Отчество может состоять только из букв',
             'trafic_sex_id.required' => 'Не указан тип клиента (Физ./Юр. лицо)',
-
             'birthday_at.date' => 'Формат даты дня рождения DD.MM.YYYY',
             'driver_license_issue_at.date' => 'Формат даты выдачи вод. уд DD.MM.YYYY',
             'passport_issue_at.date' => 'Формат даты выдачи паспорта DD.MM.YYYY',
-
             'driving_license.regex' => 'Формат серии и номера вод. уд. XXXX XXXXXX',
             'serial_number.regex' => 'Формат серии и номера паспорта XXXX XXXXXX',
         ];

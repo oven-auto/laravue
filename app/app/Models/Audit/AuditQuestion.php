@@ -2,30 +2,31 @@
 
 namespace App\Models\Audit;
 
-use App\Models\Builders\AuditQuestionBuilder;
-use App\Models\Scopes\Audit\Scopes\QuestionDefaultValueScope;
-use Illuminate\Contracts\Database\Query\Builder;
+use App\Repositories\Audit\Interfaces\AuditSortInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class AuditQuestion extends Model
+class AuditQuestion extends Model implements AuditSortInterface
 {
     use HasFactory, SoftDeletes;
 
-    protected $fillable = ['text', 'audit_id', 'author_id', 'sort', 'name', 'weigth'];
+    protected $fillable = ['text', 'audit_id', 'author_id', 'sort', 'name', 'weight'];
 
-    // protected static function boot()
-    // {
-    //     parent::boot();
-    //     static::addGlobalScope(new QuestionDefaultValueScope());
-    // }
+    protected $with = ['calcweight'];
 
 
 
-    public function newEloquentBuilder($query)
+    public function calcweight()
     {
-        return new AuditQuestionBuilder($query);
+        return $this->hasOne(\App\Models\Audit\AuditWeights::class, 'audit_id', 'audit_id');
+    }
+
+
+
+    public function author()
+    {
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
     }
 
 
@@ -44,8 +45,8 @@ class AuditQuestion extends Model
 
 
 
-    public function getWeigth()
+    public function getWeight()
     {
-        return $this->weigth ?? (100 - $this->physic_weigth) / ($this->count_out_weigth == 0 ? 1 : $this->count_out_weigth);
+        return $this->weight ?? ($this->calcweight->weight ?? 0);
     }
 }

@@ -7,6 +7,21 @@ use App\Models\Client;
 
 Class ClientCarRepository
 {
+    public function find(array $data)
+    {
+        $query = ClientCar::query()
+            ->leftJoin('client_phones', 'client_phones.client_id', 'client_cars.client_id');
+        
+        if(isset($data['phone']))
+            $query->where('client_phones.phone', $data['phone']);
+
+        $cars = $query->get();
+
+        return $cars;
+    }
+
+
+
     /**
      * Создать машину клиента
      * @param Client $client App\Models\Client

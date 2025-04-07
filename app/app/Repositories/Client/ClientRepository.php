@@ -30,6 +30,25 @@ class ClientRepository
 
 
 
+    public function find(array $data)
+    {
+        $data['phone'] = 7 . mb_substr($data['phone'], 1);
+
+        $query = Client::select('clients.*');
+
+        $filter = app()->make(ClientFilter::class, ['queryParams' => array_filter($data)]);
+
+        $query->filter($filter);
+
+        $query->with(['latest_worksheet', 'phones', 'emails', 'cars', 'inn', 'zone', 'sex']);
+
+        $client = $query->firstOrFail();
+
+        return $client;
+    }
+
+
+
     /**
      * Метод возращает постраничную коллекию клиентов, прошедших фильтрацию
      * @param array $data данные для фильтра

@@ -26,4 +26,13 @@ class QuestionListRequest extends FormRequest
             'trash' => 'sometimes'
         ];
     }
+
+
+
+    public function messages()
+    {
+        return [
+            'audit_id.required' => 'Поле "Идентификатор аудита" не указан.',
+        ];
+    }
 }

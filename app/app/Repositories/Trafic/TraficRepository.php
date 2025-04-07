@@ -161,12 +161,12 @@ class TraficRepository
                 'needs', 'zone', 'chanel.myparent',
                 'salon', 'structure', 'appeal', 'manager',
                 'author', 'worksheet', 'processing', 'files', 
-                'client.person', 'control', 'message', 'status'
+                'client.person', 'control', 'message', 'status',
+                'auditmaster'
             ])
             ->withTrashed()
             ->withCount(['links', 'files'])
             ->where('trafics.trafic_status_id', '<>', 6)
-            //->orderBy(DB::raw('trafics.manager_id IS NULL'), 'DESC')
             ->orderBy(DB::raw('if(trafics.trafic_status_id = 1, 0, 1)'), 'ASC')
             ->orderBy('trafics.created_at', 'DESC')
             ->groupBy('trafics.id');

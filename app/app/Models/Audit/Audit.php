@@ -17,7 +17,7 @@ class Audit extends Model
 
     public function questions()
     {
-        return $this->hasOne(\App\Models\Audit\AuditQuestion::class, 'audit_id', 'id');
+        return $this->hasMany(\App\Models\Audit\AuditQuestion::class, 'audit_id', 'id');
     }
 
 
@@ -31,7 +31,7 @@ class Audit extends Model
 
     public function chanels()
     {
-        return $this->belongsToMany(\App\Models\TraficChanel::class, 'audit_chanels', 'chanel_id', 'audit_id');
+        return $this->belongsToMany(\App\Models\TraficChanel::class, 'audit_chanels', 'audit_id', 'chanel_id');
     }
 
 

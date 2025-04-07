@@ -17,6 +17,8 @@ Class TraficAuditRepository
         $this->loadService = new TraficFileLoad();
     }
 
+
+    
     public function updateTraficAudit(TraficProcessing $traficProcessing, $data = [], $files = [])
     {
         $arr = [];
@@ -29,6 +31,8 @@ Class TraficAuditRepository
         $arr['status'] = AuditStandart::find($traficProcessing->audit_standart_id)->target <= $arr['result'] ? true : false;
         $traficProcessing->update($arr);
     }
+
+
 
     public function saveTraficAudit(Trafic $trafic, $data = [], $files)
     {

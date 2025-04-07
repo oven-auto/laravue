@@ -19,11 +19,10 @@ class QuestionEditResource extends JsonResource
             'data' => [
                 'id' => $this->id,
                 'audit_id' => $this->audit_id,
-                'sort' => $this->sort,
                 'name' => $this->name,
                 'text' => $this->text,
                 'is_stoped' => $this->is_stoped,
-                'weight' => $this->wheght,
+                'weight' => $this->weight,
                 'created_at' => $this->created_at->format('d.m.Y'),
                 'author' => new UserSmallResource($this->author),
                 'deleted_at' => $this->deleted_at,

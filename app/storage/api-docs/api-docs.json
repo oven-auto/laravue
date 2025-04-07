@@ -14,6 +14,54 @@
         }
     ],
     "paths": {
+        "/audits": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Журнал",
+                "description": "Журнал",
+                "operationId": "getAuditMasterJournal",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuditMasterFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/count": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Счетчик журнала",
+                "description": "Счетчик журнала",
+                "operationId": "countAuditMasterJournal",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/AuditMasterFilter"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
         "/audits/audits": {
             "get": {
                 "tags": [
@@ -175,6 +223,422 @@
                 "summary": "Востановить ответов аудита",
                 "description": "Востановить ответ аудита",
                 "operationId": "restoreAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/questions/sort": {
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Помнять сортировку ответов аудита",
+                "description": "Помнять сортировку ответ аудита (questions.first = questionIdfirst, questions.second = questionIdSecond)",
+                "operationId": "sortAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/subanswers": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Список ответов на подвопрос стандарта",
+                "description": "Список подвопросов стандарта (sub_id = 1,)",
+                "operationId": "getsubanswersQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать ответ на подвопрос стандарта",
+                "description": "Создать  стандарта (sub_id = 1, text = efef)",
+                "operationId": "postsubanswersQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/subanswers/{subanswerId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Открыть ответ на подвопрос стандарта",
+                "description": "Открыть ответ на подвопрос стандарта",
+                "operationId": "showSubAnswer",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Удалить ответ на подвопрос стандарта",
+                "description": "Удалить  стандарта",
+                "operationId": "delsubanswersQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить ответ на подвопрос стандарта",
+                "description": "Изменить  стандарта (sub_id = 1, text = efef)",
+                "operationId": "patchsubanswersQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/subanswers/sort": {
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Помнять сортировку ответов подвопроса аудита",
+                "description": "Помнять сортировку ответов подвопроса аудита \n     *      (answers.first = answerId, answers.second = answerId)",
+                "operationId": "sortSubAnswerAudit",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/subquestions": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Список подвопросов стандарта",
+                "description": "Список подвопросов стандарта (question_id = 1,)",
+                "operationId": "getSubAuditQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать подвопрос стандарта",
+                "description": "Создать подвопрос стандарта (question_id = 1, text = укцк, multiple = bool)",
+                "operationId": "postSubAuditQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/subquestions/{subQuestionId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Открыть подвопрос стандарта",
+                "description": "Открыть подвопрос стандарта ",
+                "operationId": "showSubAuditQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Удалить подвопрос стандарта",
+                "description": "Удалить подвопрос стандарта ",
+                "operationId": "DelSubAuditQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить подвопрос стандарта",
+                "description": "Изменить подвопрос стандарта (question_id = 1, text = укцк, multiple = bool)",
+                "operationId": "updateSubAuditQuestionList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/subquestions/sort": {
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Помнять сортировку подвопросов аудита",
+                "description": "Помнять сортировку подвопросов аудита (questions.first = questionIdfirst, questions.second = questionIdSecond)",
+                "operationId": "sortSubAuditQuestion",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/assistant": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Список открытых ассистентов в трафике",
+                "description": "Список открытых ассистентов в трафике (trafic_id = 1)",
+                "operationId": "getAuditassistantList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать ассистента в трафике",
+                "description": "Создать ассистента в трафике (trafic_id = 1, audit_id = 1, result = strjson)",
+                "operationId": "postAuditassistantList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/assistant/{assistantId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Получить данные ассистента",
+                "description": "Получить данные ассистента",
+                "operationId": "getAuditassistant",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить ассистента в трафике",
+                "description": "Изменить ассистента в трафике (trafic_id = 1, audit_id = 1, result = strjson)",
+                "operationId": "patchAuditassistantList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/master": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Список открытых для проверки аудитов в трафике",
+                "description": "Список открытых для проверки аудитов в трафике (trafic_id = 1)",
+                "operationId": "getAuditMasterList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/master/{masterId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Получить данные открытой проверки аудита",
+                "description": "Получить данные открытой проверки аудита",
+                "operationId": "getAuditMaster",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить данные открытой проверки аудита",
+                "description": "Изменить данные открытой проверки аудита \n     *      (trafic_id, audit_id, result = {positive = [questionId, ..], negative = [questionId, ..], neutral = [questionId, ..]})",
+                "operationId": "patchAuditMaster",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/master}": {
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать данные открытой проверки аудита",
+                "description": "Создать данные открытой проверки аудита \n     *      (trafic_id, audit_id, result = {positive = [questionId, ..], negative = [questionId, ..], neutral = [questionId, ..]})",
+                "operationId": "postAuditMaster",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/master/check": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Проверить кол-во балов в аудите",
+                "description": "Проверить кол-во балов в аудите\n     *      result = {positive = [questionId, ..], negative = [questionId, ..], neutral = [questionId, ..]}",
+                "operationId": "getAuditMasterCheck",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/master/{auditID}/arbitr": {
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Перевести мастер-аудит в состояние аппеляция.",
+                "description": "Перевести мастер-аудит в состояние аппеляция.",
+                "operationId": "patchAuditMasterArbitr",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/master/{auditID}": {
+            "delete": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Удалить мастер-аудит .",
+                "description": "Удалить мастер-аудит .",
+                "operationId": "delAuditMaster",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/record": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Получить ИД записи выбранного мастера",
+                "description": "Получить ИД записи выбранного мастера (master_id = 1)",
+                "operationId": "getAuditRecordList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Создать фаил записи",
+                "description": "Создать фаил записи (master_id = id, file = *.wav)",
+                "operationId": "PostAuditRecordList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/{recordId}": {
+            "get": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Получить фаил записи",
+                "description": "Получить фаил записи",
+                "operationId": "getAuditRecord",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/audits/record/{recordId}": {
+            "delete": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Удалить фаил записи",
+                "description": "Удалить фаил записи",
+                "operationId": "DeleteAuditRecordList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Изменить фаил записи",
+                "description": "Изменить фаил записи (master_id = id, file = *.wav)",
+                "operationId": "PatchAuditRecordList",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -2991,6 +3455,91 @@
     },
     "components": {
         "schemas": {
+            "AuditMasterFilter": {
+                "description": "Параметры фильтрации аудитов",
+                "properties": {
+                    "ids": {
+                        "description": "Массив содержащий идентификаторы мастер-аудитов",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "ids"
+                        ]
+                    },
+                    "authors": {
+                        "description": "Массив содержащий идентификаторы авторов/аудиторов.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "authors"
+                        ]
+                    },
+                    "audits": {
+                        "description": "Массив содержащий идентификаторы чек-листа.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "audits"
+                        ]
+                    },
+                    "managers": {
+                        "description": "Массив содержащий идентификаторы менеджеров.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "managers"
+                        ]
+                    },
+                    "salons": {
+                        "description": "Массив содержащий идентификаторы салонов.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "salons"
+                        ]
+                    },
+                    "structures": {
+                        "description": "Массив содержащий идентификаторы подразделения.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "structures"
+                        ]
+                    },
+                    "statuses": {
+                        "description": "Массив содержащий идентификаторы статусов.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "['wait', 'arbitr', 'close']",
+                        "enum": [
+                            "statuses"
+                        ]
+                    },
+                    "create_interval": {
+                        "description": "Массив содержащий название интервала создания мастера-аудита (month,week,today,yesterday).",
+                        "type": "string",
+                        "format": "string",
+                        "example": "today",
+                        "enum": [
+                            "create_interval"
+                        ]
+                    }
+                },
+                "type": "object"
+            },
             "CarFilter": {
                 "description": "Параметры фильтрации автосклада",
                 "properties": {
@@ -4543,6 +5092,11 @@
                     }
                 },
                 "type": "object"
+            }
+        },
+        "responses": {
+            "200": {
+                "description": "Successful operation"
             }
         }
     },

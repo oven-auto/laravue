@@ -1,7 +1,13 @@
 <?php
 
+use App\Http\Controllers\Api\v1\Back\Audit\AuditListController;
 use App\Http\Controllers\Api\v1\Back\Audit\CRUD\AuditController;
 use App\Http\Controllers\Api\v1\Back\Audit\CRUD\QuestionController;
+use App\Http\Controllers\Api\v1\Back\Audit\CRUD\SubAnswerController;
+use App\Http\Controllers\Api\v1\Back\Audit\CRUD\SubQuestionController;
+use App\Http\Controllers\Api\v1\Back\Audit\Manager\AuditAssistantController;
+use App\Http\Controllers\Api\v1\Back\Audit\Master\AuditMasterController;
+use App\Http\Controllers\Api\v1\Back\Audit\Master\AuditRecordController;
 use App\Http\Controllers\Api\v1\Back\Bodywork\BodyworkController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCloneController;
 use Illuminate\Support\Facades\Route;
@@ -11,7 +17,6 @@ use App\Http\Controllers\Api\v1\Back\Car\Marker\MarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Option\OptionController;
 use App\Http\Controllers\Api\v1\Back\Car\CarController;
 use App\Http\Controllers\Api\v1\Back\Car\CarCountController;
-use App\Http\Controllers\Api\v1\Back\Car\CarExcelController;
 use App\Http\Controllers\Api\v1\Back\Car\CarImageController;
 use App\Http\Controllers\Api\v1\Back\Car\CarOwnerController;
 use App\Http\Controllers\Api\v1\Back\Car\Collector\CollectorController;
@@ -59,8 +64,8 @@ use App\Http\Controllers\Api\v1\Services\Select\TuningController as SelectTuning
 use App\Http\Controllers\Api\v1\Services\Select\UserSelectController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Integration\PotokBit\PotokBitController;
-use App\Models\Role;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveLisingerController;
+use App\Models\Audit\AuditMaster;
 
 Route::get('test', [HomeController::class, 'test']);
 
@@ -127,11 +132,30 @@ Route::prefix('auth')->namespace('\App\Http\Controllers\Api\v1\Auth')->group(fun
 Route::middleware(['userfromtoken'])->group(function () {
 
     Route::prefix('audits')->group(function(){
-        Route::apiResource('audits', AuditController::class)->except(['edit', 'create']);
-        Route::put('audits/{audit}/restore', [AuditController::class, 'restore']);
+        Route::get('',                              [AuditListController::class, 'index'])->withTrashed();
+        Route::get('count',                         [AuditListController::class, 'count'])->withTrashed();
 
-        Route::apiResource('questions', QuestionController::class)->except(['edit', 'create']);
-        Route::put('questions/{question}/restore', [QuestionController::class, 'restore']);
+        Route::apiResource('record', AuditRecordController::class)->except('edit','create',);
+
+        Route::patch('master/{master}/restore',     [AuditMasterController::class, 'restore'])->withTrashed();
+        Route::get('master/check',                  [AuditMasterController::class, 'check']);
+        Route::patch('/master/{master}/arbitr',     [AuditMasterController::class, 'arbitr']);
+        Route::apiResource('master',                AuditMasterController::class)->except(['edit','create','edit']);
+
+        Route::apiResource('assistant',             AuditAssistantController::class)->except(['edit', 'create', 'delete','edit']);        
+
+        Route::apiResource('audits',                AuditController::class)->except(['edit', 'create']);
+        Route::put('audits/{audit}/restore',        [AuditController::class, 'restore']);
+
+        Route::patch('questions/sort',              [QuestionController::class, 'sort']);
+        Route::apiResource('questions',             QuestionController::class)->except(['edit', 'create']);
+        Route::put('questions/{question}/restore',  [QuestionController::class, 'restore']);
+
+        Route::patch('subquestions/sort',           [SubQuestionController::class, 'sort']);
+        Route::apiResource('subquestions',          SubQuestionController::class)->except(['edit', 'create']);
+
+        Route::patch('subanswers/sort',             [SubAnswerController::class, 'sort']);
+        Route::apiResource('subanswers',            SubAnswerController::class)->except(['edit', 'create']);
     });
 
 
@@ -140,13 +164,6 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::get('motortransmissions',            [App\Http\Controllers\Api\v1\Services\Select\MotorTransmissionSelectController::class, 'index']); //трансмиссии (автомат, вариатор итд)
     Route::get('motordrivers',                  [App\Http\Controllers\Api\v1\Services\Select\MotorDriverSelectController::class, 'index']); //привода (передний задний и тд)
     Route::get('motortypes',                    [App\Http\Controllers\Api\v1\Services\Select\MotorTypeSelectController::class, 'index']); //типы моторов (бензин дизель и тд)
-
-    // Route::get('/redic', function () {
-    //     return response()->json([
-    //         'nameid',
-    //     ]);
-    // });
-
 
 
 

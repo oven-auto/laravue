@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\v1\Back\DiscountCar;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Discount\DiscountListRequest;
+use App\Http\Resources\Worksheet\Reserve\SaleReserveItemCollection;
 use App\Http\Resources\Worksheet\Reserve\SaleReserveItemResource;
 use App\Models\Discount;
 use App\Repositories\Discount\DiscountRepository;
@@ -41,12 +42,8 @@ class DiscountListController extends Controller
     public function index(DiscountListRequest $request)
     {
         $discounts = $this->repo->paginate($request->all());
-
-        return response()->json([
-            'data' => $discounts->map(function ($item) {
-                return new SaleReserveItemResource($item);
-            }),
-        ]);
+        
+        return new SaleReserveItemCollection($discounts);
     }
 
 

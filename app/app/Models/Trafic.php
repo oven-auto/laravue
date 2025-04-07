@@ -144,6 +144,13 @@ class Trafic extends Model implements CommentInterface
 
 
 
+    public function auditmaster()
+    {
+        return $this->hasOne(\App\Models\Audit\AuditMaster::class, 'trafic_id', 'id')->with('audit');
+    }
+
+
+
     public function links()
     {
         return $this->hasMany(\App\Models\TraficLink::class, 'trafic_id', 'id');

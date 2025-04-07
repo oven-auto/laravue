@@ -7,7 +7,9 @@ use App\Http\Requests\Audit\QuestionListRequest;
 use App\Http\Requests\Audit\QuestionRequest;
 use App\Http\Resources\Audit\QuestionCollection;
 use App\Http\Resources\Audit\QuestionEditResource;
+use App\Http\Resources\Default\SuccessResource;
 use App\Repositories\Audit\QuestionRepository;
+use Illuminate\Http\Request;
 
 class QuestionController extends Controller
 {
@@ -154,5 +156,33 @@ class QuestionController extends Controller
         return response()->json([
             'success' => 1,
         ]);
+    }
+
+
+
+    /**
+     * @OA\patch(
+     *      path="/audits/questions/sort",
+     *      operationId="sortAuditQuestion",
+     *      tags={"Аудит стандартов"},
+     *      summary="Помнять сортировку ответов аудита",
+     *      description="Помнять сортировку ответ аудита (questions.first = questionIdfirst, questions.second = questionIdSecond)",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ),
+     * )
+     */
+    public function sort(Request $request)
+    {
+        $validated = $request->validate([
+            'questions' => 'required|array',
+            'questions.first' => 'required',
+            'questions.second' => 'nullable',
+        ]);
+        
+        $this->repo->sort($validated);
+
+        return new SuccessResource(1);
     }
 }

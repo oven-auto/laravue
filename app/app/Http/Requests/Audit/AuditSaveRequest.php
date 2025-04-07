@@ -23,12 +23,28 @@ class AuditSaveRequest extends FormRequest
     {
         return [
             'name'          =>      'required',
-            'appeal_id'     =>      'required',
+            'appeal_id'     =>      'required|exists:appeals,id',
             'complete'      =>      'required',
             'bonus'         =>      'required',
             'malus'         =>      'required',
             'chanels'       =>      'required|array',
             'chanels.*'     =>      'required|numeric',
+        ];
+    }
+
+
+
+    public function messages()
+    {
+        return [
+            'name.required' => 'Поле "Название" не указано.',
+            'appeal_id.required' => 'Поле "Цель обращения" не указано.',
+            'appeal_id.exists' => 'Поле "Цель обращения" не существует.',
+            'complete.required' => 'Поле "Успешный результат" не указано.',
+            'bonus.required' => 'Поле "Бонус" не указано.',
+            'malus.required' => 'Поле "Малус" не указано.',
+            'chanels.required' => 'Поле "Канал трафика" не указано.',
+            'chanels.array' => 'Поле "Канал трафика" долеж иметь тип массив.',
         ];
     }
 }

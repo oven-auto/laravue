@@ -16,9 +16,12 @@ use App\Classes\Vin\Vin;
 use App\Events\DNMVisitEvent;
 use App\Events\ReserveCreateEvent;
 use App\Helpers\String\StringHelper;
+use App\Http\Requests\For1C\ClientFindRequest;
 use App\Jobs\CreateDNMReserveJob;
 use App\Jobs\TestJob;
 use App\Listeners\DNMReserveCreateListener;
+use App\Models\Audit\AuditRecord as AuditAuditRecord;
+use App\Models\AuditRecord;
 use App\Models\Car;
 use App\Models\Client;
 use App\Models\ClientCar;
@@ -593,12 +596,24 @@ class HomeController extends Controller
 
 
 
-    public function test()
+    public function test(Request $request)
     {
+        $type = 'audio/wav';
+        if($request->has('type'))
+            $type= $request->type;
+
+        $record = AuditAuditRecord::findOrFail(1);
+        
+        $fileName = 'audit_record_'.$record->id.'.wav';
+
+        return response($record->file)
+            ->header('Content-Type', $type)
+            ->header('Content-Transfer-Encoding', 'Binary')
+            ->header('Content-disposition', 'attachment; filename="'.$fileName.'"');
         // $client = Client::withCount(['unionsChildren'])->first();
 
         // $clientCar = ClientCar::query()->where('brand_id', 1113)->find(550);
-        
+
         // $dnmClient = new ServicesNewDNMClientService();
 
         // $dnmClient->save($clientCar->client, new Worksheet());

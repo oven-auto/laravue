@@ -68,6 +68,6 @@ Class AuditFilter extends AbstractFilter
 
     public function chanels(Builder $builder, array $val)
     {
-        $builder->where('audit_chanels.chanel_id', $val);
+        $builder->whereIn('audit_chanels.chanel_id', $val);
     }
 }

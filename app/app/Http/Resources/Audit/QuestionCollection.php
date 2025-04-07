@@ -15,8 +15,9 @@ class QuestionCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
+            'count' => $this->count(),
             'data' => $this->collection,
-            'success' => 1
+            'success' => 1,
         ];
     }
 }

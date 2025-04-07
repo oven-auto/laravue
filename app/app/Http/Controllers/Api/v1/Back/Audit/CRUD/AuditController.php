@@ -38,7 +38,7 @@ class AuditController extends Controller
     public function index(AuditListRequest $request)
     {
         $result = $this->repo->getAll($request->validated());
-
+        
         return new AuditCollection($result);
     }
 

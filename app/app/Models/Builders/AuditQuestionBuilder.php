@@ -14,9 +14,9 @@ Class AuditQuestionBuilder extends Builder
         
         $this->addSelect([
             DB::raw('audit_questions.*'),
-            DB::raw('sum(audit_questions.weigth) OVER (PARTITION BY audit_questions.audit_id) as physic_weigth'),
+            DB::raw('sum(audit_questions.weight) OVER (PARTITION BY audit_questions.audit_id) as physic_weight'),
             DB::raw('count(audit_questions.id) OVER (PARTITION BY audit_questions.audit_id) as count_question'),
-            DB::raw('SUM(IF(audit_questions.weigth IS NOT NULL, 1, 0)) OVER (PARTITION BY audit_questions.audit_id) as count_out_weigth'),
+            DB::raw('SUM(IF(audit_questions.weight IS NOT NULL, 0, 1)) OVER (PARTITION BY audit_questions.audit_id) as count_out_weight'),
         ]);
     }
 

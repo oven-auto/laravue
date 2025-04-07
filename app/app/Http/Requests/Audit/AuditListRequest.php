@@ -23,6 +23,18 @@ class AuditListRequest extends FormRequest
     {
         return [
             'trash' => 'sometimes',
+            'chanels' => 'sometimes|array',
+            'appeals' => 'required|array',
+            'ids' => 'sometimes|array',
+        ];
+    }
+
+
+
+    public function messages()
+    {
+        return [
+            'appeals.required' => 'Цель обращения не указана.',
         ];
     }
 }

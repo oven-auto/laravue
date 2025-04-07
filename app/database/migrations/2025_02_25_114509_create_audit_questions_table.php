@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('sort');        
             $table->string('name');            
             $table->text('text');
-            $table->integer('weigth')->nullable();
+            $table->integer('weight')->nullable();
             $table->boolean('is_stoped')->default(0);
             $table->timestamps();
             $table->softDeletes();

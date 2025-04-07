@@ -26,17 +26,22 @@ class NoticeMessageMiddleware
 
       $response = $next($request);
 
-      $content = $response->getData();
+      if(!($response instanceOf \Illuminate\Http\JsonResponse))
+            return $response;
       
-      $success = ($content->success ?? 0) == 1;
-      
-      if($success)
+      if($response)
       {
-        $content->message = Notice::make(subject: $subject, action: $controllerMethod, genus:$genus);
+        $content = $response->getData();
         
-        $response->setData($content);
+        $success = ($content->success ?? 0) == 1;
+        
+        if($success)
+        {
+          $content->message = Notice::make(subject: $subject, action: $controllerMethod, genus:$genus);
+          
+          $response->setData($content);
+        }
       }
-      
       return $response;
     }
 }

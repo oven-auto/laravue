@@ -45,16 +45,7 @@ class TraficSaveResource extends JsonResource
                 'end_at' => $this->end_at ? $this->end_at->format('d.m.Y H:i') : '',
                 'manager_id' => $this->manager->id,
                 'status' => $this->trafic_status_id,
-                'processing' => $this->processing->map(function($item){
-                    return [
-                        'id' => $item->id,
-                        'scenario' => $item->standart->name,
-                        'user' => $item->user->cut_name,
-                        'result' => $item->procent,
-                        'created_at' => !empty($item->created_at) ? $item->created_at->format('d.m.Y (H:i)') : '',
-                        'status' => $item->status_result,
-                    ];
-                }),
+                
                 'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y (H:i)') : '',
                 'showbuttonstatus' => $this->trafic_status_id == 2 ? 1 : 0,
                 'inn' => $this->inn,

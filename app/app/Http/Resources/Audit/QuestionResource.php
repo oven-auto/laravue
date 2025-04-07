@@ -17,22 +17,20 @@ class QuestionResource extends JsonResource
     {
         return [
             'id' => $this->id,
-                'audit_id' => $this->audit_id,
-                'sort' => $this->sort,
-                'name' => $this->name,
-                //'text' => $this->text,
-                //'is_stoped' => $this->is_stoped,
-                //'weight' => $this->wheght,
-                'created_at' => $this->created_at->format('d.m.Y'),
-                'author' => new UserSmallResource($this->author),
-                'deleted_at' => $this->deleted_at,
-                'trash' => $this->deleted_at ? 1 : 0,
-                'weigth' => $this->getWeigth(),
-                // 'answers' => [
-                //     'positive'  => $this->answers->positive,
-                //     'negative'  => $this->answers->negative,
-                //     'neutral'   => $this->answers->neutral,
-                // ],
+            'audit_id' => $this->audit_id,                
+            'name' => $this->name,
+            'text' => $this->text,
+            'is_stoped' => $this->is_stoped,
+            'created_at' => $this->created_at->format('d.m.Y'),
+            'author' => new UserSmallResource($this->author),
+            'deleted_at' => $this->deleted_at,
+            'trash' => $this->deleted_at ? 1 : 0,
+            'weight' => round($this->getWeight(),1),
+            'answers' => [
+                'positive'  => $this->answers->positive,
+                'negative'  => $this->answers->negative,
+                'neutral'   => $this->answers->neutral,
+            ],
         ];
     }
 }

@@ -99,14 +99,16 @@ class TraficFilter extends AbstractFilter
         if(isset($queryParams['is_product']) || isset($queryParams['model_ids']) || isset($queryParams['need_ids']))
             $builder->leftJoin('trafic_needs', 'trafic_needs.trafic_id', 'trafics.id');
         
-        if(isset($queryParams['audit_author_id ']) || isset($queryParams['scenario']) || isset($queryParams['status_audit_id']))
-            $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id', 'trafics.id');
+        //if(isset($queryParams['audit_author_id ']) || isset($queryParams['scenario']) || isset($queryParams['status_audit_id']))
+        //    $builder->leftJoin('trafic_processings', 'trafic_processings.trafic_id', 'trafics.id');
         
         if(isset($queryParams['appeal_ids']))
             $builder->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id');
 
         if(isset($queryParams['section_ids']))
             $builder->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
+
+        //$builder->leftJoin('audit_masters', 'audit_masters.trafic_id', 'trafics.id');
 
         $builder->leftJoin('trafic_statuses', 'trafic_statuses.id', 'trafics.trafic_status_id');
     }
@@ -203,26 +205,21 @@ class TraficFilter extends AbstractFilter
 
     public function auditAuthorId(Builder $builder, $value)
     {
-        $builder->where('trafic_processings.user_id', $value);
+        $builder->where('audit_masters.author_id', $value);
     }
 
 
 
     public function auditScenarioId(Builder $builder, $value)
     {
-        $builder->where('trafic_processings.audit_standart_id', $value);
+        $builder->where('audit_masters.audit_id', $value);
     }
 
 
 
     public function auditStatusId(Builder $builder, $value)
     {
-        if ($value == 1)
-            $builder->where('trafic_processings.status', 1);
-        if ($value == 2)
-            $builder->where('trafic_processings.status', 0);
-        if ($value == 3)
-            $builder->where('trafic_processings.status', NULL);
+        $builder->where('audit_masters.status', $value);
     }
 
 

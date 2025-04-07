@@ -28,10 +28,13 @@ Class AppealRepository
                 $data[] = [
                     'id' => $item->id,
                     'name' => $item->appeal->name,
+                    'appeal_id' => $item->appeal->id,
                 ];
 
         return $data;
     }
+
+
 
     public function getAppealWithProductByCompanyId($company_id)
     {

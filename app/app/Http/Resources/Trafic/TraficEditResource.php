@@ -25,9 +25,7 @@ class TraficEditResource extends JsonResource
             'created_at' => $this->created_at->format('d.m.Y (H:i)'),
             'updated_at' => $this->updated_at->format('d.m.Y (H:i)'),
             'author' => $this->author->cut_name,
-            
-            
-            
+                        
             'zone' => $this->zone->name,
 
             'chanel' => $this->chanel->name,
@@ -46,7 +44,18 @@ class TraficEditResource extends JsonResource
             
             'status' => $this->status,
             'processing_at' => $this->processing_at ? $this->processing_at->format('d.m.Y H:i') : ($this->deleted_at ? $this->deleted_at->format('d.m.Y H:i') : ''),
-            'processing' => $this->processing->count() ? true : false, 
+            //'processing' => $this->processing->count() ? true : false, 
+            
+            
+            //TODO ВЫВОД ДАННЫЙ ОБ АУДИТЕ В ЖУРНАЛ ТРАФИКА
+            //'processing_at' => $this->audit_master ? $this->audit_master->created_at->format('d.m.Y (H:i)') : ($this->deleted_at ? $this->deleted_at->format('d.m.Y H:i') : ''),
+            'processing' => $this->auditmaster ? [
+                'complete' => $this->auditmaster->audit->complete,
+                'point' => $this->auditmaster->point,
+            ] : [],
+            
+            
+
             //COMMENT
             'comment' => $this->comment,
             //CLIENT

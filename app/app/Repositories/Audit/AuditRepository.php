@@ -10,6 +10,21 @@ use Illuminate\Support\Facades\DB;
 
 Class AuditRepository
 {
+    public function paginate(array $data)
+    {
+        $query = Audit::query()->select('audits.*');
+
+        $filter = app()->make(AuditFilter::class, ['queryParams' => $data]);
+
+        $query->filter($filter);
+
+        $audits = $query->simplePaginate(25);
+
+        return $audits;
+    }
+
+
+
     /**
      * Получить список аудитов по шаблону 
      */
@@ -20,7 +35,7 @@ Class AuditRepository
         $filter = app()->make(AuditFilter::class, ['queryParams' => $data]);
         
         $query->filter($filter);
-
+        
         $audits = $query->get();
         
         return $audits;
@@ -78,9 +93,11 @@ Class AuditRepository
     /**
      * Получить аудит по ID
      */
-    public function getById(int $id) : Audit
+    public function getById(int $id, array|null $with = null) : Audit
     {
-        $audit = Audit::with('chanels')->findOrFail($id);
+        $with = $with ?? ['chanels'];
+
+        $audit = Audit::with($with)->findOrFail($id);
 
         return $audit;
     }
