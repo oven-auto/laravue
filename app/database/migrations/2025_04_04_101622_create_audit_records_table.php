@@ -18,8 +18,7 @@ return new class extends Migration
             $table->binary('file');
             $table->timestamps();
         });
-        
-        DB::statement("ALTER TABLE table ADD file LONGBLOB");
+        DB::statement("ALTER TABLE audit_records MODIFY  COLUMN  file LONGBLOB");
     }
 
     /**
