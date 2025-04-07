@@ -19,7 +19,7 @@ return new class extends Migration
             $table->timestamps();
         });
         
-        DB::statement("ALTER TABLE table ADD data LONGBLOB");
+        DB::statement("ALTER TABLE table ADD file LONGBLOB");
     }
 
     /**
