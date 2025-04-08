@@ -228,6 +228,8 @@ Class AuditMasterRepository
     {
         $query = AuditMaster::query();
 
-        //$query
+        $query->addSelect(
+            
+        );
     }
 }

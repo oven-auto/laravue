@@ -11,7 +11,7 @@ class ReserveListController extends Controller
 {
     public function __construct()
     {
-        $this->middleware('carfilter')->only('index');
+        $this->middleware('carfilter')->only(['index', 'count']);
     }
 
 
