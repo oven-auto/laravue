@@ -668,9 +668,20 @@ class CarFilter extends AbstractFilter
             self::ONLY_FREE             => [$this, 'onlyFree'],
             self::PRIORITY_IDS          => [$this, 'priorityIds'],
             self::HAS_PRIORITY          => [$this, 'hasPriority'],
-            self::HAS_STOCK_DATE        => [$this, 'hasStockDate']
+            self::HAS_STOCK_DATE        => [$this, 'hasStockDate'],
+            //self::OFF_DATE              => [$this, 'offDate'],
         ];
     }
+
+
+
+    // public function offDate(Builder $builder, array $date)
+    // {dd(1);
+    //     $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+    //     $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+    //     $builder->whereBetween('car_date_logistics.date_at', [$date_1, $date_2])
+    //         ->where('car_date_logistics.logistic_system_name', 'off_date');
+    // }
 
 
 

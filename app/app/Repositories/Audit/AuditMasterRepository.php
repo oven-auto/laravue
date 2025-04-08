@@ -221,4 +221,13 @@ Class AuditMasterRepository
         
         return $masters;
     }
+
+
+
+    public function count(array $data)
+    {
+        $query = AuditMaster::query();
+
+        //$query
+    }
 }

@@ -551,6 +551,7 @@ class ReserveNewCarFilter extends AbstractFilter
             self::SALE_MANAGERS                     => [$this, 'saleManager'],
             self::EXECUTORS                         => [$this, 'executors'],
             self::TECHNICS                          => [$this, 'technics'],
+            //self::OFF_DATE                          => [$this, 'offDate'],
         ];
     }
 
@@ -1213,11 +1214,21 @@ class ReserveNewCarFilter extends AbstractFilter
 
 
 
+    // public function offDate(Builder $builder, array $date)
+    // {
+    //     $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+    //     $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+    //     $builder->whereBetween('car_date_logistics.date_at', [$date_1, $date_2])
+    //         ->where('car_date_logistics.logistic_system_name', 'off_date');
+    // }
+
+
+
     /**
      * ВСЕ ЛОГИСТИЧЕСКИЕ ДАТЫ
      */
     public function logisticDates(Builder $builder, array $data)
-    {
+    {   
         if(!count($data))
             return;
         

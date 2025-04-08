@@ -15,6 +15,7 @@ class ReserveResource extends JsonResource
     public function toArray($request)
     {   
         return [
+            'off_date' => $this->car->getLogisticDates('off_date'),
             'lising' => $this->getLisingerName(),
             'id' => $this->id,
             'state' => $this->getStatus(),

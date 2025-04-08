@@ -887,7 +887,7 @@ class Car extends Model
     /**
      * GET LOGISTIC DATES
      */
-    public function getLogisticDates(string $key = null, string $format = 'd.m.Y')
+    public function getLogisticDates(string|null $key = null, string $format = 'd.m.Y')
     {
         if ($key) {
             $date = $this->logistic_dates->where('logistic_system_name', $key)->first();
