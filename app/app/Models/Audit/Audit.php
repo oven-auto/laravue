@@ -11,7 +11,7 @@ class Audit extends Model
 {
     use HasFactory, SoftDeletes, Filterable;
 
-    protected $fillable = ['name', 'author_id', 'appeal_id', 'bonus', 'malus', 'complete'];
+    protected $fillable = ['name', 'author_id', 'appeal_id', 'bonus', 'malus', 'complete', 'award'];
 
 
 

@@ -47,11 +47,12 @@ class TraficEditResource extends JsonResource
             //'processing' => $this->processing->count() ? true : false, 
             
             
-            //TODO ВЫВОД ДАННЫЙ ОБ АУДИТЕ В ЖУРНАЛ ТРАФИКА
+           
             //'processing_at' => $this->audit_master ? $this->audit_master->created_at->format('d.m.Y (H:i)') : ($this->deleted_at ? $this->deleted_at->format('d.m.Y H:i') : ''),
             'processing' => $this->auditmaster ? [
                 'complete' => $this->auditmaster->audit->complete,
                 'point' => $this->auditmaster->point,
+                'completed' => $this->auditmaster->completed
             ] : [],
             
             

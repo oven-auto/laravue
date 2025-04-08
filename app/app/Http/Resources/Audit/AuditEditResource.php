@@ -31,7 +31,8 @@ class AuditEditResource extends JsonResource
                 }),
                 'trash' => $this->deleted_at ? 1 : 0,
                 'deleted_at' => $this->deleted_at,
-                'updated_at' => $this->updated_at->format('d.m.Y (H:i)')
+                'updated_at' => $this->updated_at->format('d.m.Y (H:i)'),
+                'award' => $this->award,
             ],
             'success' => 1,
         ];

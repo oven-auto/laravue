@@ -76,6 +76,21 @@ Class AuditMasterRepository
 
 
 
+    public function checkCompleted(AuditMaster $master)
+    {
+        $arr['result'] = json_decode($master->result,1);
+
+        $currentPoint = $this->calcPoint($arr);
+        
+        $complete = $master->audit->complete;
+        
+        $master->completed = $complete < $currentPoint ? true : false;
+      
+        $master->save();
+    }
+
+
+
     public function calcPoint(array $data) : int|float
     {
         $total = 100; //общее кол-во балов
@@ -142,6 +157,8 @@ Class AuditMasterRepository
 
         $audit = AuditMaster::create($data);
 
+        $this->checkCompleted($audit);
+
         $this->tryClose($audit);
 
         return $audit;
@@ -165,6 +182,8 @@ Class AuditMasterRepository
 
         if($audit->isDirty())
             $audit->save();
+
+        $this->checkCompleted($audit);
 
         $this->tryClose($audit);
 

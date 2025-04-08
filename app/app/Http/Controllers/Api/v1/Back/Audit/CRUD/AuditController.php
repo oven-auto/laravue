@@ -50,7 +50,7 @@ class AuditController extends Controller
      *      operationId="storeAuditList",
      *      tags={"Аудит стандартов"},
      *      summary="Создать аудит",
-     *      description="Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array )",
+     *      description="Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array, award = int )",
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('audit_id')->references('id')->on('audits')->onDelete('cascade');
-            $table->integer('sort');        
+            $table->integer('sort')->nullable();        
             $table->string('name');            
             $table->text('text');
             $table->integer('weight')->nullable();
