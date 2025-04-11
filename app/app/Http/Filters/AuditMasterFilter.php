@@ -211,6 +211,9 @@ Class AuditMasterFilter extends AbstractFilter
 
     public function fnManagers(Builder $builder, array $arr)
     {
-        $builder->whereIn('trafics.manager_id', $arr);
+        $builder->where(function($q) use($arr){
+            $q->whereIn('trafics.manager_id', $arr);
+            $q->orWhereIn('audit_masters.author_id', $arr);
+        });
     }
 }

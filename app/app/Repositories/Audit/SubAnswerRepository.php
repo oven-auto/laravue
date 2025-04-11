@@ -72,6 +72,8 @@ Class SubAnswerRepository
     {
         $answer = $this->getById(id: $id);
 
+        SortTree::changeSortOnDelete($answer);
+
         $answer->delete();
 
         return 1;

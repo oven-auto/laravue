@@ -2,11 +2,13 @@
 
 namespace App\Repositories\Audit;
 
+use App\Helpers\Number\NumberHelper;
 use App\Http\Filters\AuditMasterFilter;
 use App\Models\Audit\AuditMaster;
 use App\Models\Audit\AuditQuestion;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 Class AuditMasterRepository
 {
@@ -228,8 +230,31 @@ Class AuditMasterRepository
     {
         $query = AuditMaster::query();
 
+        $filter = app()->make(AuditMasterFilter::class, ['queryParams' => $data]);
+
+        $query->withTrashed();
+
+        $query->filter($filter);
+
         $query->addSelect(
-            
+            DB::raw('IFNULL(sum(if(audit_masters.status = "wait", 1, 0)), 0) as _wait'),
+            DB::raw('IFNULL(sum(if(audit_masters.status = "arbitr", 1, 0)), 0) as _arbitr'),            
+            DB::raw('IFNULL(sum(if(audit_masters.completed = 1 and audit_masters.status = "close", 1, 0)),0) _completed'),
+            DB::raw('sum(if(audit_masters.completed = 1 and audit_masters.status = "close", audit_masters.point, 0)) as _completed_avg'),
+            DB::raw('IFNULL(sum(if(audit_masters.completed = 0 and audit_masters.status = "close", 1, 0)),0) _fail'),
+            DB::raw('sum(if(audit_masters.completed = 0 and audit_masters.status = "close", audit_masters.point, 0)) as _fail_avg'),
+            DB::raw('IFNULL(sum(if(audit_masters.status = "close", 1, 0)),0) as _close'),
+            DB::raw('sum(if(audit_masters.status = "close", audit_masters.point, 0)) as _close_avg'),
         );
+
+        $res = $query->first();
+
+        $res['_completed_avg']  = round(NumberHelper::division($res['_completed_avg'],$res['_completed']) ,2);
+        $res['_fail_avg']       = round(NumberHelper::division($res['_fail_avg'],$res['_fail']) ,2);
+        $res['_close_avg']      = round(NumberHelper::division($res['_close_avg'],$res['_close']) ,2);
+        
+        return $res;
     }
 }
+
+

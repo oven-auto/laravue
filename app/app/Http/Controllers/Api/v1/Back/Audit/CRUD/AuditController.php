@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Audit\CRUD;
 
 use App\Http\Controllers\Controller;
+use App\Http\Middleware\Permissions\Audit\AuditCRUDMiddleware;
 use App\Http\Requests\Audit\AuditListRequest;
 use App\Http\Requests\Audit\AuditSaveRequest;
 use App\Http\Resources\Audit\AuditCollection;

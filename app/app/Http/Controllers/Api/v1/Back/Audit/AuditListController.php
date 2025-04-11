@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api\v1\Back\Audit;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Audit\AuditMasterListCollection;
-use App\Http\Resources\Default\SuccessResource;
 use App\Repositories\Audit\AuditMasterRepository;
 use Illuminate\Http\Request;
 
@@ -68,8 +67,13 @@ class AuditListController extends Controller
      *      ),
      * )
      */
-    public function count()
+    public function count(Request $request)
     {
-        return new SuccessResource([]);
+        $res = $this->repo->count($request->all());
+
+        return response()->json([
+            'data' => $res,
+            'success' => 1,
+        ]);
     }
 }

@@ -65,6 +65,8 @@ use App\Http\Controllers\Api\v1\Services\Select\UserSelectController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Integration\PotokBit\PotokBitController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveLisingerController;
+use App\Http\Middleware\Permissions\Audit\AuditCRUDMiddleware;
+use App\Http\Middleware\Permissions\Audit\AuditMasterMiddleware;
 use App\Models\Audit\AuditMaster;
 
 Route::get('test', [HomeController::class, 'test']);
@@ -136,26 +138,30 @@ Route::middleware(['userfromtoken'])->group(function () {
         Route::get('count',                         [AuditListController::class, 'count'])->withTrashed();
 
         Route::apiResource('record', AuditRecordController::class)->except('edit','create',);
+        
+        Route::middleware(AuditMasterMiddleware::class)->group(function(){
+            Route::patch('master/{master}/restore',     [AuditMasterController::class, 'restore'])->withTrashed();
+            Route::get('master/check',                  [AuditMasterController::class, 'check']);
+            Route::patch('/master/{master}/arbitr',     [AuditMasterController::class, 'arbitr']);
+            Route::apiResource('master',                AuditMasterController::class)->except(['edit','create',]);
+        });        
 
-        Route::patch('master/{master}/restore',     [AuditMasterController::class, 'restore'])->withTrashed();
-        Route::get('master/check',                  [AuditMasterController::class, 'check']);
-        Route::patch('/master/{master}/arbitr',     [AuditMasterController::class, 'arbitr']);
-        Route::apiResource('master',                AuditMasterController::class)->except(['edit','create','edit']);
+        Route::apiResource('assistant',             AuditAssistantController::class)->except(['edit', 'create', 'delete','edit']);
 
-        Route::apiResource('assistant',             AuditAssistantController::class)->except(['edit', 'create', 'delete','edit']);        
+        Route::middleware(AuditCRUDMiddleware::class)->group(function(){
+            Route::apiResource('audits',                AuditController::class)->except(['edit', 'create']);
+            Route::put('audits/{audit}/restore',        [AuditController::class, 'restore']);
 
-        Route::apiResource('audits',                AuditController::class)->except(['edit', 'create']);
-        Route::put('audits/{audit}/restore',        [AuditController::class, 'restore']);
+            Route::patch('questions/sort',              [QuestionController::class, 'sort']);
+            Route::apiResource('questions',             QuestionController::class)->except(['edit', 'create']);
+            Route::put('questions/{question}/restore',  [QuestionController::class, 'restore']);
 
-        Route::patch('questions/sort',              [QuestionController::class, 'sort']);
-        Route::apiResource('questions',             QuestionController::class)->except(['edit', 'create']);
-        Route::put('questions/{question}/restore',  [QuestionController::class, 'restore']);
+            Route::patch('subquestions/sort',           [SubQuestionController::class, 'sort']);
+            Route::apiResource('subquestions',          SubQuestionController::class)->except(['edit', 'create']);
 
-        Route::patch('subquestions/sort',           [SubQuestionController::class, 'sort']);
-        Route::apiResource('subquestions',          SubQuestionController::class)->except(['edit', 'create']);
-
-        Route::patch('subanswers/sort',             [SubAnswerController::class, 'sort']);
-        Route::apiResource('subanswers',            SubAnswerController::class)->except(['edit', 'create']);
+            Route::patch('subanswers/sort',             [SubAnswerController::class, 'sort']);
+            Route::apiResource('subanswers',            SubAnswerController::class)->except(['edit', 'create']);
+        }); 
     });
 
 

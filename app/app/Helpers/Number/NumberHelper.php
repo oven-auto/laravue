@@ -67,4 +67,16 @@ Class NumberHelper
             '<=' => self::strictLessOrEqual($val_1, $val_2),
         };
     }
+
+
+
+    public static function division($val_1, $val_2)
+    {
+        if(is_null($val_1))
+            return 0;
+        if(!$val_2)
+            return 0;
+
+        return $val_1 / $val_2;
+    }
 }
