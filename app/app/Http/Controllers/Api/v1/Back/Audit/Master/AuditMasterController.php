@@ -67,7 +67,6 @@ class AuditMasterController extends Controller
      */
     public function show(int $id)
     {
-        dd(1);
         $audit = $this->repo->getById(id: $id);
         
         return new AuditMasterItemResource($audit);

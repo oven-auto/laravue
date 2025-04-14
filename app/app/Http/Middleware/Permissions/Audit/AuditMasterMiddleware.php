@@ -3,6 +3,7 @@
 namespace App\Http\Middleware\Permissions\Audit;
 
 use App\Models\Audit\AuditMaster;
+use App\Repositories\Audit\AuditMasterRepository;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -10,6 +11,15 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AuditMasterMiddleware
 {
+    public function __construct(
+        private AuditMasterRepository $repo
+    )
+    {
+        
+    }
+
+
+
     public function handle(Request $request, Closure $next): Response
     {
         $userId = auth()->user()->id;
@@ -31,13 +41,13 @@ class AuditMasterMiddleware
                 break; 
 
             case 'show':
-                $audit = AuditMaster::with('trafic')->firstOrFail();
+                $audit = $this->repo->getById($request->master);
                 if($audit->trafic->manager_id == $userId || $userPermissions->contains('slug', 'master_show'))
                     return $next($request);
                 break;
 
             case 'arbitr':
-                $audit = AuditMaster::with('trafic')->firstOrFail();
+                $audit = $this->repo->getById($request->master);
                 if($audit->trafic->manager_id == $userId || $userPermissions->contains('slug', 'master_arbitr'))
                     return $next($request);
                 break;
