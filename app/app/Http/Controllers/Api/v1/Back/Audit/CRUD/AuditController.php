@@ -161,7 +161,17 @@ class AuditController extends Controller
 
 
     /**
-     * Клонировать
+     * @OA\Post(
+     *      path="/audits/audits/{auditId}",
+     *      operationId="cloneAuditList",
+     *      tags={"Аудит стандартов"},
+     *      summary="Клонировать аудит",
+     *      description="Клонировать аудит",
+     *      @OA\Response(
+     *          response=200,
+     *          description="Successful operation",
+     *      ), 
+     * )
      */
     public function clone(int $id)
     {

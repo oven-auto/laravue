@@ -45,6 +45,13 @@ class AuditQuestion extends Model implements AuditSortInterface
 
 
 
+    public function subquestions()
+    {
+        return $this->hasMany(\App\Models\Audit\AuditSubQuestion::class, 'question_id', 'id');
+    }
+
+
+
     public function getWeight()
     {
         return $this->weight ?? ($this->calcweight->weight ?? 0);

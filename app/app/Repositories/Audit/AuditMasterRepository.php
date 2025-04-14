@@ -46,14 +46,7 @@ Class AuditMasterRepository
 
     public function getById(int $id) : AuditMaster
     {   
-        try{
-            $audit = AuditMaster::withTrashed()->findOrFail($id);
-        }
-        catch(Throwable $e)
-        {
-            throw new \Exception('TEST '.$e->getMessage());
-        }
-        return $audit;
+        return AuditMaster::withTrashed()->findOrFail($id);
     }
 
 
@@ -79,7 +72,7 @@ Class AuditMasterRepository
         if(isset($data['audit_id']))
             $query->where('audit_id',  $data['audit_id']);
 
-        $result = $query->get();
+        $result = $query->withTrashed()->get();
 
         return $result;
     }

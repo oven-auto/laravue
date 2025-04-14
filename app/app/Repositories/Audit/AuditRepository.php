@@ -4,6 +4,7 @@ Namespace App\Repositories\Audit;
 
 use App\Http\Filters\AuditFilter;
 use App\Models\Audit\Audit;
+use App\Repositories\Audit\Services\CloneService;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
@@ -137,12 +138,26 @@ Class AuditRepository
 
     public function clone(int $id)
     {
-        $audit = $this->getById(id: $id);
+        $clone = DB::transaction(function() use($id){
+            $audit = $this->getById(id: $id);
 
-        $audit = $audit->replicate();
+            $audit->load(['questions' => function($q){
+                $q->with(['subquestions.answers', 'answers']);
+            }]);
 
-        $audit->push();
+            $clone = $audit->replicate();
 
-        return $audit;
+            $clone->push();
+
+            $clone->chanels()->sync($audit->chanels->pluck('id'));
+
+            $service = new CloneService();
+
+            $service->cloneQuestion(clone: $clone, origin: $audit);
+            
+            return $clone;
+        }, 3);
+        
+        return $clone;
     }
 }

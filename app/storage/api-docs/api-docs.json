@@ -81,7 +81,7 @@
                     "Аудит стандартов"
                 ],
                 "summary": "Создать аудит",
-                "description": "Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array )",
+                "description": "Создать аудит (name = string, appeal_id = int, complete = int, bonus = int, malus = int, chanels = array, award = int )",
                 "operationId": "storeAuditList",
                 "responses": {
                     "200": {
@@ -98,6 +98,19 @@
                 "summary": "Открыть аудит",
                 "description": "Открыть аудит",
                 "operationId": "showAuditList",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Аудит стандартов"
+                ],
+                "summary": "Клонировать аудит",
+                "description": "Клонировать аудит",
+                "operationId": "cloneAuditList",
                 "responses": {
                     "200": {
                         "description": "Successful operation"
