@@ -9,6 +9,7 @@ use App\Models\Audit\AuditQuestion;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Throwable;
 
 Class AuditMasterRepository
 {
@@ -45,7 +46,14 @@ Class AuditMasterRepository
 
     public function getById(int $id) : AuditMaster
     {   
-        return AuditMaster::withTrashed()->findOrFail($id);
+        try{
+            $audit = AuditMaster::withTrashed()->findOrFail($id);
+        }
+        catch(Throwable $e)
+        {
+            throw new \Exception($e->getMessage());
+        }
+        return $audit;
     }
 
 
