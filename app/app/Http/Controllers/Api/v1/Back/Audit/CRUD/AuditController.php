@@ -8,6 +8,7 @@ use App\Http\Requests\Audit\AuditListRequest;
 use App\Http\Requests\Audit\AuditSaveRequest;
 use App\Http\Resources\Audit\AuditCollection;
 use App\Http\Resources\Audit\AuditEditResource;
+use App\Models\Audit\Audit;
 use App\Repositories\Audit\AuditRepository;
 
 class AuditController extends Controller
@@ -155,5 +156,17 @@ class AuditController extends Controller
         return response()->json([
             'success' => 1,
         ]);
+    }
+
+
+
+    /**
+     * Клонировать
+     */
+    public function clone(int $id)
+    {
+        $audit = $this->repo->clone(id: $id);
+
+        return new AuditEditResource($audit);
     }
 }

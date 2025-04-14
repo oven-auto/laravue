@@ -149,6 +149,7 @@ Route::middleware(['userfromtoken'])->group(function () {
         Route::apiResource('assistant',             AuditAssistantController::class)->except(['edit', 'create', 'delete','edit']);
 
         Route::middleware(AuditCRUDMiddleware::class)->group(function(){
+            Route::post('audits/{audit}',               [AuditController::class, 'clone']);
             Route::apiResource('audits',                AuditController::class)->except(['edit', 'create']);
             Route::put('audits/{audit}/restore',        [AuditController::class, 'restore']);
 

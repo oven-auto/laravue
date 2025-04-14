@@ -132,4 +132,17 @@ Class AuditRepository
 
         return $audit;
     }
+
+
+
+    public function clone(int $id)
+    {
+        $audit = $this->getById(id: $id);
+
+        $audit = $audit->replicate();
+
+        $audit->push();
+
+        return $audit;
+    }
 }
