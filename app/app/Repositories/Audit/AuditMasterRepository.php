@@ -51,7 +51,7 @@ Class AuditMasterRepository
         }
         catch(Throwable $e)
         {
-            throw new \Exception($e->getMessage());
+            throw new \Exception('TEST '.$e->getMessage());
         }
         return $audit;
     }
