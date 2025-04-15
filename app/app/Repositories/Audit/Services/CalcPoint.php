@@ -134,6 +134,6 @@ class CalcPoint
 
     public function getTotal()
     {
-        return $this->total-$this->neutral;
+        return round($this->total-$this->neutral,1);
     }
 }
