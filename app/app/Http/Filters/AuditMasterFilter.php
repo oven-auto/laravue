@@ -165,6 +165,16 @@ Class AuditMasterFilter extends AbstractFilter
      * */
     public const MY = 'my';
 
+    /**  @OA\Property(
+     * format="array", 
+     * description="Массив содержащий идентификаторы целей обращения.", 
+     * property="appeals", 
+     * type="array", 
+     * example="[1,2]", 
+     * @OA\Items())
+     * */
+    public const APPEALS = 'appeals';
+
 
 
     public function __construct(array $queryParams)
@@ -194,6 +204,7 @@ Class AuditMasterFilter extends AbstractFilter
             self::TRASHED           => [$this, 'fnTrashed'],
             self::COMPLETED         => [$this, 'fnCompleted'],
             self::MY                => [$this, 'fnMy'],
+            self::APPEALS           => [$this, 'fnAppeals'],
         ];
     }
 
@@ -206,6 +217,13 @@ Class AuditMasterFilter extends AbstractFilter
             ->leftJoin('audits', 'audits.id', 'audit_masters.audit_id')
             ->leftJoin('companies', 'companies.id', 'trafics.company_id')
             ->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
+    }
+
+
+
+    public function fnAppeals(Builder $builder, array $data)
+    {
+        $builder->whereIn('trafics.trafic_appeal_id', $data);
     }
 
 

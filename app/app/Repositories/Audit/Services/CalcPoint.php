@@ -106,28 +106,28 @@ class CalcPoint
 
     public function getPositive()
     {
-        return $this->positive;
+        return round($this->positive,1);
     }
 
 
 
     public function getNegative()
     {
-        return $this->negative;
+        return round($this->negative,1);
     }
 
 
 
     public function getNeutral()
     {
-        return $this->neutral;
+        return round($this->neutral,1);
     }
 
 
 
     public function getResult()
     {
-        return $this->result;
+        return round($this->result,1);
     }
 
 
