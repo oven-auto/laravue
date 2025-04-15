@@ -6,6 +6,7 @@ use App\Repositories\Audit\Interfaces\AuditSortInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\DB;
 
 class AuditQuestion extends Model implements AuditSortInterface
 {
@@ -55,5 +56,28 @@ class AuditQuestion extends Model implements AuditSortInterface
     public function getWeight()
     {
         return $this->weight ?? ($this->calcweight->weight ?? 0);
+    }
+
+
+
+    public static function getTotal(int|AuditQuestion|null $question)
+    {
+        if(!$question)
+            return 0;
+
+        if($question instanceof AuditQuestion)
+            $question = $question->audit_id;
+
+        $total = DB::table('audit_questions')
+            ->select([
+                DB::raw('CAST(SUM(IFNULL(audit_questions.weight, audit_weights.weight)) AS UNSIGNED) as total')
+            ])
+            ->leftJoin('audit_weights', 'audit_weights.audit_id', 'audit_questions.audit_id')
+            ->where('audit_questions.audit_id', $question)
+            ->groupBy('audit_questions.audit_id')
+            ->first()
+            ->total;
+
+        return $total;
     }
 }

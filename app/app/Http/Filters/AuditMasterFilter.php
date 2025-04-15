@@ -2,6 +2,7 @@
 
 namespace App\Http\Filters;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 
 /**
@@ -109,6 +110,63 @@ Class AuditMasterFilter extends AbstractFilter
 
 
 
+     /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты создания от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="create_date", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const CREATE_DATE = 'create_date';
+
+
+
+         /**  @OA\Property(
+     *      format="array", 
+     *      description="Массив содержащий интервал даты изменения от - до, параметр ДО необязателен, 
+     *      отсутствие второго параметра, будет означать, что используется не интервал, 
+     *      соответственно сравнение будет строго по одному параметру", 
+     *      property="update_date", 
+     *      type="array", 
+     *      example="[01.10.2024,22.10.2024]", 
+     *      @OA\Items()
+     * )
+     * */
+    public const UPDATE_DATE = 'update_date';
+
+    /**  @OA\Property(
+     * format="bool", 
+     * description="Удаленные, 1 - да, 0 нет.", 
+     * property="trashed", 
+     * type="bool", 
+     * example="1")
+     * */
+    public const TRASHED = 'trashed';
+
+    /**  @OA\Property(
+     * format="bool", 
+     * description="Наличие успешные, 1 - да, 0 нет.", 
+     * property="completed", 
+     * type="bool", 
+     * example="1")
+     * */
+    public const COMPLETED = 'completed';
+
+    /**  @OA\Property(
+     * format="bool", 
+     * description="Только мои, 1 - да, 0 нет.", 
+     * property="my", 
+     * type="bool", 
+     * example="1")
+     * */
+    public const MY = 'my';
+
+
+
     public function __construct(array $queryParams)
     {
         $queryParams['init'] = 'init';
@@ -131,6 +189,11 @@ Class AuditMasterFilter extends AbstractFilter
             self::STRUCTURES        => [$this, 'fnStructures'],
             self::STATUSES          => [$this, 'fnStatuses'],
             self::CREATE_INTERVAL   => [$this, 'fnCreateInterval'],
+            self::CREATE_DATE       => [$this, 'fnCreateDate'],
+            self::UPDATE_DATE       => [$this, 'fnUpdateDate'],
+            self::TRASHED           => [$this, 'fnTrashed'],
+            self::COMPLETED         => [$this, 'fnCompleted'],
+            self::MY                => [$this, 'fnMy'],
         ];
     }
 
@@ -143,6 +206,65 @@ Class AuditMasterFilter extends AbstractFilter
             ->leftJoin('audits', 'audits.id', 'audit_masters.audit_id')
             ->leftJoin('companies', 'companies.id', 'trafics.company_id')
             ->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
+    }
+
+
+
+    public function fnMy(Builder $builder, bool $val)
+    {
+        $userId = auth()->user()->id;
+
+        match($val){
+            true => $builder->where(function($q) use($userId){
+                        $q->where('audit_masters.author_id', $userId)
+                            ->orWhere('trafics.manager_id', $userId);
+                    }),
+            false => $builder->where(function($q) use($userId){
+                        $q->where('audit_masters.author_id', '<>', $userId)
+                            ->orWhere('trafics.manager_id', '<>', $userId);
+                    }),
+            default => '',
+        };        
+    }
+
+
+
+    public function fnTrashed(Builder $builder, bool $val)
+    {
+        match($val){
+            true => $builder->whereNotNull('audit_masters.deleted_at'),
+            false => $builder->whereNull('audit_masters.deleted_at'),
+            default => '',
+        };
+    }
+
+
+
+    public function fnCompleted(Builder $builder, bool $val)
+    {
+        match($val){
+            true => $builder->whereRaw('audits.complete < audit_masters.point'),
+            false => $builder->whereRaw('audits.complete > audit_masters.point'),
+            default => ''
+        };
+    }
+
+
+
+    public function fnCreateDate(Builder $builder, array $date)
+    {
+        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $builder->whereBetween('audit_masters.created_at', [$date_1, $date_2]);
+    }
+
+
+
+    public function fnUpdateDate(Builder $builder, array $date)
+    {
+        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $builder->whereBetween('audit_masters.updated_at', [$date_1, $date_2]);
     }
 
 
@@ -211,9 +333,6 @@ Class AuditMasterFilter extends AbstractFilter
 
     public function fnManagers(Builder $builder, array $arr)
     {
-        $builder->where(function($q) use($arr){
-            $q->whereIn('trafics.manager_id', $arr);
-            $q->orWhereIn('audit_masters.author_id', $arr);
-        });
+        $builder->whereIn('trafics.manager_id', $arr);
     }
 }

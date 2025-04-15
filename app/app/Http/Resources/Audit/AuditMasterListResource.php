@@ -32,6 +32,8 @@ class AuditMasterListResource extends JsonResource
             'manager' => new UserSmallResource($this->trafic->manager),
             'author' => new UserSmallResource($this->author),
             'point' => $this->point ?? 0,
+            'positive'          => $this->positive ?? 0,
+            'total'             => $this->total ?? 0,
             'status' => $this->status,
             'trash' => $this->isDeleted(),
             'count_response' => $this->getResponseCount(),

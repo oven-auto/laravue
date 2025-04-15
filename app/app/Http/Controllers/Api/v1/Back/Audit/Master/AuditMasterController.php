@@ -141,11 +141,15 @@ class AuditMasterController extends Controller
      */
     public function check(AuditCheckPointRequest $request)
     {
-        $point = $this->repo->calcPoint($request->validated());
+        $calc = $this->repo->calcPoint($request->validated());
 
         return response()->json([
             'data' => [
-                'point' => $point,
+                'positive'  => $calc->getPositive(),
+                'negative'  => $calc->getNegative(),
+                'neutral'   => $calc->getNeutral(),
+                'point'     => $calc->getResult(),
+                'total'     => $calc->getTotal(),
             ],
             'success' => 1,
         ]);
