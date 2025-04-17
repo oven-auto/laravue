@@ -7,6 +7,7 @@ use App\Http\Filters\AuditMasterFilter;
 use App\Models\Audit\Audit;
 use App\Models\Audit\AuditMaster;
 use App\Models\Audit\AuditQuestion;
+use App\Repositories\Audit\DTO\AuditMasterDTO;
 use App\Repositories\Audit\Services\CalcPoint;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -124,8 +125,10 @@ Class AuditMasterRepository
 
 
 
-    public function create(array $data, )
+    public function create(AuditMasterDTO $dto, )
     {
+        $data = $dto->getAll();
+
         $calc = $this->calcPoint($data);
         $data['point'] = $calc->getResult();
         $data['total'] = $calc->getTotal();
@@ -135,7 +138,7 @@ Class AuditMasterRepository
         
         $data['positive_count'] = count($data['result']['positive']);
 
-        $data['result'] = json_encode($data['result']);
+        $data['result'] = json_encode($data['result']); 
 
         $audit = AuditMaster::create($data);
 
@@ -148,8 +151,10 @@ Class AuditMasterRepository
 
 
 
-    public function update(int $id, array $data)
+    public function update(int $id, AuditMasterDTO $dto)
     {   
+        $data = $dto->getAll();
+        
         $audit = $this->getById($id);
         
         $data['author_id'] = $audit->author_id ?? Auth::id();

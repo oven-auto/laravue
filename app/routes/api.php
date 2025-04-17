@@ -146,7 +146,7 @@ Route::middleware(['userfromtoken'])->group(function () {
             Route::apiResource('master',                AuditMasterController::class)->except(['edit','create',]);
         });        
 
-        Route::apiResource('assistant',             AuditAssistantController::class)->except(['edit', 'create', 'delete','edit']);
+        Route::apiResource('assistant',                 AuditAssistantController::class)->except(['edit', 'create', 'delete','edit']);
 
         Route::middleware(AuditCRUDMiddleware::class)->group(function(){
             Route::post('audits/{audit}',               [AuditController::class, 'clone']);

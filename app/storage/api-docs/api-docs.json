@@ -3596,6 +3596,16 @@
                         "enum": [
                             "my"
                         ]
+                    },
+                    "appeals": {
+                        "description": "Массив содержащий идентификаторы целей обращения.",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2]",
+                        "enum": [
+                            "appeals"
+                        ]
                     }
                 },
                 "type": "object"

@@ -18,6 +18,8 @@ class CalcPoint
     private $questions;
     private $total = 0;
 
+
+
     public function __construct( array $arr = [])
     {
         $this->calc($arr);        
@@ -97,9 +99,9 @@ class CalcPoint
 
     private function calcResult()
     {
-        $result = (($this->total-$this->neutral) > 0) ? $this->positive/($this->total-$this->neutral) : 0;
+        $delitel = $this->total-$this->neutral;
 
-        $this->result = round($result*100, 1);
+        $this->result = $delitel ? ($this->positive/$delitel)*100 : 0;
     }
 
 

@@ -10,6 +10,7 @@ use App\Http\Resources\Audit\AuditMasterItemResource;
 use App\Http\Resources\Audit\AuditMasterTraficCollection;
 use App\Http\Resources\Default\SuccessResource;
 use App\Repositories\Audit\AuditMasterRepository;
+use App\Repositories\Audit\DTO\AuditMasterDTO;
 
 class AuditMasterController extends Controller
 {
@@ -90,7 +91,7 @@ class AuditMasterController extends Controller
      */
     public function store(AuditMasterRequest $request)
     {
-        $result = $this->repo->create(data: $request->validated());
+        $result = $this->repo->create(dto: new AuditMasterDTO($request->validated()));
 
         return response()->json([
             'data' => [
@@ -118,7 +119,7 @@ class AuditMasterController extends Controller
      */
     public function update(int $id, AuditMasterRequest $request)
     {
-        $this->repo->update(id: $id, data: $request->validated());
+        $this->repo->update(id: $id, dto: new AuditMasterDTO($request->validated()));
 
         return new SuccessResource([]);
     }
