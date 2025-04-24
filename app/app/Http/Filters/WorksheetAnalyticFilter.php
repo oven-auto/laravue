@@ -52,11 +52,12 @@ Class WorksheetAnalyticFilter extends AbstractFilter
 
     public function init(Builder $builder)
     {
-        $builder->leftJoin('worksheet_actions', function($join) {
-                $join->on('worksheet_actions.worksheet_id','worksheets.id');
-            })
+        $builder
+            ->leftJoin('worksheet_actions', 'worksheet_actions.worksheet_id','worksheets.id')
             ->leftJoin('trafics', 'trafics.id', 'worksheets.trafic_id')
-            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id');
+            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
+            ->leftJoin('tasks', 'tasks.id', 'worksheet_actions.task_id');
+            //->leftJoin('client_types', 'client_types.id', 'trafic_clients.client_type_id');
 
         if(self::$GroupByWorkshhetId)
             $builder->groupBy('worksheets.id');

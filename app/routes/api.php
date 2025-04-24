@@ -31,6 +31,9 @@ use App\Http\Controllers\Api\v1\Back\Car\Option\PriceOptionController;
 use App\Http\Controllers\Api\v1\Back\Car\TradeMarker\TradeMarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Tuning\TuningController;
 use App\Http\Controllers\Api\v1\Back\Client\Car\ClientChangeCarOwner;
+use App\Http\Controllers\Api\v1\Back\Director\OperativeReportController;
+use App\Http\Controllers\Api\v1\Back\Director\SaleFunnelController;
+use App\Http\Controllers\Api\v1\Back\Director\StockStructureController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
 use App\Http\Controllers\Api\v1\Back\Payment\PaymentController as CRUDPaymentController;
@@ -1141,6 +1144,16 @@ Route::middleware(['userfromtoken'])->group(function () {
             Route::get('worksheets',    'WorksheetController');
             Route::get('counter',       'CounterController');
             Route::get('options',       'OptionsController');
+            Route::prefix('reports')->group(function(){
+                Route::get('worked',    [OperativeReportController::class, 'worked']);                
+                Route::get('planned',   [OperativeReportController::class, 'planned']);
+                Route::get('paided',    [OperativeReportController::class, 'paided']);
+                Route::get('withdebit', [OperativeReportController::class, 'withdebit']);
+                Route::get('issued',    [OperativeReportController::class, 'issued']);
+                Route::get('saled',     [OperativeReportController::class, 'saled']);
+            });
+            Route::get('funnel', [SaleFunnelController::class, 'index']);
+            Route::get('stock', [StockStructureController::class, 'index']);
         });
 
 

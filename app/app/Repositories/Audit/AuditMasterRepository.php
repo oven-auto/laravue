@@ -198,7 +198,7 @@ Class AuditMasterRepository
             },
             'author', 
             'trafic' => function($q) {
-                $q->with(['structure', 'salon', 'manager'],);
+                $q->with(['structure', 'salon', 'manager'],)->withTrashed();
             },
             'record' => function($q) {
                 $q->select('id','master_id');
@@ -225,14 +225,20 @@ Class AuditMasterRepository
         $query->filter($filter);
 
         $query->addSelect(
-            DB::raw('IFNULL(sum(if(audit_masters.status = "wait", 1, 0)), 0) as _wait'),
-            DB::raw('IFNULL(sum(if(audit_masters.status = "arbitr", 1, 0)), 0) as _arbitr'),            
-            DB::raw('IFNULL(sum(if(audit_masters.completed = 1 and audit_masters.status = "close", 1, 0)),0) _completed'),
-            DB::raw('sum(if(audit_masters.completed = 1 and audit_masters.status = "close", audit_masters.point, 0)) as _completed_avg'),
-            DB::raw('IFNULL(sum(if(audit_masters.completed = 0 and audit_masters.status = "close", 1, 0)),0) _fail'),
-            DB::raw('sum(if(audit_masters.completed = 0 and audit_masters.status = "close", audit_masters.point, 0)) as _fail_avg'),
-            DB::raw('IFNULL(sum(if(audit_masters.status = "close", 1, 0)),0) as _close'),
-            DB::raw('sum(if(audit_masters.status = "close", audit_masters.point, 0)) as _close_avg'),
+            DB::raw('cast(IFNULL(sum(if(audit_masters.status = "wait", 1, 0)), 0) as integer) as _wait'),
+            DB::raw('cast(IFNULL(sum(if(audit_masters.status = "arbitr", 1, 0)), 0) as integer) as _arbitr'),   
+
+            DB::raw('cast(IFNULL(sum(if(audit_masters.completed = 1 and audit_masters.status = "close", 1, 0)),0) as integer) _completed'),
+            DB::raw('cast(sum(if(audit_masters.completed = 1 and audit_masters.status = "close", audit_masters.point, 0)) as integer) as _completed_avg'),
+            DB::raw('cast(sum(if(audit_masters.completed = 1 and audit_masters.status = "close", audits.bonus, 0)) as integer) as _completed_bonus'),
+
+            DB::raw('cast(IFNULL(sum(if(audit_masters.completed = 0 and audit_masters.status = "close", 1, 0)),0) as integer) _fail'),
+            DB::raw('cast(sum(if(audit_masters.completed = 0 and audit_masters.status = "close", audit_masters.point, 0)) as integer) as _fail_avg'),
+            DB::raw('cast(sum(if(audit_masters.completed = 0 and audit_masters.status = "close", audits.malus,0)) as integer) as _fail_malus'),
+
+            DB::raw('cast(IFNULL(sum(if(audit_masters.status = "close", 1, 0)),0) as integer) as _close'),
+            DB::raw('cast(sum(if(audit_masters.status = "close", audit_masters.point, 0)) as integer) as _close_avg'),
+            DB::raw('cast(sum(if(audit_masters.status = "close", audits.award, 0)) as integer) as _close_award'),
         );
 
         $res = $query->first();

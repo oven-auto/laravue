@@ -495,6 +495,8 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public const HAS_TRADEIN = 'has_tradein';
 
+    public const HAS_DEBIT = 'has_debit';
+
     protected function getCallbacks(): array
     {
         return [
@@ -551,8 +553,26 @@ class ReserveNewCarFilter extends AbstractFilter
             self::SALE_MANAGERS                     => [$this, 'saleManager'],
             self::EXECUTORS                         => [$this, 'executors'],
             self::TECHNICS                          => [$this, 'technics'],
-            //self::OFF_DATE                          => [$this, 'offDate'],
+            self::HAS_DEBIT                         => [$this, 'hasDebit'],
         ];
+    }
+
+
+
+    public function hasDebit(Builder $builder, bool $val)
+    {
+        $query = 'cfp.tuningprice + 
+                    cfp.overprice + 
+                    IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) + 
+                    IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) - 
+                    cfp.giftprice - 
+                    IFNULL(_joinds._dsum, 0) - 
+                    (SELECT sum(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id)';
+        match($val){
+            true => $builder->whereRaw($query.' > 0'),
+            false =>$builder->whereRaw($query.' <= 0'),
+            default => '',
+        };
     }
 
 
@@ -678,44 +698,30 @@ class ReserveNewCarFilter extends AbstractFilter
 
         $builder->leftJoin('car_options', 'car_options.car_id', 'cars.id');
 
-        //if(isset($params['has_devices']))//has_devices
         $builder->leftJoin('car_tunings', 'car_tunings.car_id', 'cars.id');
 
-        //if(isset($params['has_discount']))
         $builder->leftJoin('discounts', function($join){
             $join->on('discounts.worksheet_id', '=', 'worksheets.id')
                 ->on('discounts.modulable_type', '=', DB::raw('"App\\\Models\\\WsmReserveNewCar"'))
                 ->on('discounts.modulable_id', 'wsm_reserve_new_cars.id');
         });
 
-        //if(isset($params['has_ransom']))//has_ransom
         $builder->leftJoin('ransom_cars', 'ransom_cars.car_id', 'cars.id'); 
 
-        //if(isset($params['has_detailing_cost']))//has_detailing_cost
         $builder->leftJoin('car_detailing_costs', 'car_detailing_costs.car_id', 'cars.id');
 
-        //if(isset($params['trade_markers']))//trade_marker
         $builder->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id');
 
-        //if(isset($params['markers']))//markers
         $builder->leftJoin('car_markers', 'car_markers.car_id', 'cars.id');
 
-        //if(isset($params['has_client_pay']))
         $builder->leftJoin('wsm_reserve_payments', 'wsm_reserve_payments.reserve_id', 'wsm_reserve_new_cars.id');
 
-        //if(isset($params['has_issue']))
         $builder->leftJoin('wsm_reserve_issues', 'wsm_reserve_issues.reserve_id', 'wsm_reserve_new_cars.id');
 
-        //if(isset($params['has_sale']) || (isset($params['sale_date'])))
         $builder->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id');
 
-        //if(
-        //    isset($params['has_off']) || //has_off
-        //    isset($params['report_type']) //report_type
-        //)
         $builder->leftJoin('car_owners', 'car_owners.car_id', 'cars.id');
         
-        //if(isset($params['logistic_dates']) && count($params['logistic_dates']))//логистика
         $builder->leftJoin('car_date_logistics', 'car_date_logistics.car_id', 'cars.id');
 
         $builder->leftJoin('dealer_colors', 'dealer_colors.id', 'cars.color_id');
@@ -731,7 +737,13 @@ class ReserveNewCarFilter extends AbstractFilter
         $builder->leftJoin('wsm_reserve_lisings', 'wsm_reserve_lisings.reserve_id', 'wsm_reserve_new_cars.id');
 
         $builder->leftJoin('car_technics', 'car_technics.car_id', 'cars.id');
-    
+        
+        $builder->leftJoin(DB::raw('(
+            SELECT sum(_ds.amount) as _dsum, _d.modulable_id as _dreserve FROM discounts as _d 
+            LEFT JOIN discount_sums as _ds on _ds.discount_id = _d.id group by _d.modulable_id
+            ) as _joinds'), '_joinds._dreserve', 'wsm_reserve_new_cars.id'
+        );
+
         $builder->groupBy('wsm_reserve_new_cars.id');
     }
 

@@ -31,7 +31,7 @@ class BodyWorkSelectController extends Controller
             $query->leftJoin('vehicle_bodies', 'vehicle_bodies.bodywork_id', 'body_works.id')
                 ->where('vehicle_bodies.vehicle_id', $request->vehicle_id);
 
-        $result = $query->get();
+        $result = $query->orderBy('body_works.name')->get();
 
         return response()->json([
             'data' => $result,

@@ -50,13 +50,14 @@ Class TraficAnalyticFilter extends AbstractFilter
     public function init(Builder $builder)
     {
         $builder
-            ->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id')
-            ->leftJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
-            ->leftJoin('trafic_chanels', 'trafic_chanels.id', 'trafics.trafic_chanel_id')
-            ->leftJoin('client_types', 'client_types.id', 'trafic_clients.client_type_id')
-            ->leftJoin('users', 'users.id', 'trafics.author_id')
-            ->leftJoin('users as managers', 'managers.id', 'trafics.manager_id')
-            ->LeftJoin('trafic_statuses', 'trafic_statuses.id', 'trafics.trafic_status_id');
+            ->rightJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id')
+            ->rightJoin('trafic_clients', 'trafic_clients.trafic_id', 'trafics.id')
+            ->rightJoin('trafic_chanels', 'trafic_chanels.id', 'trafics.trafic_chanel_id')
+            ->rightJoin('client_types', 'client_types.id', 'trafic_clients.client_type_id')
+            ->rightJoin('users', 'users.id', 'trafics.author_id')
+            ->rightJoin('users as managers', 'managers.id', 'trafics.manager_id')
+            ->rightJoin('trafic_statuses', 'trafic_statuses.id', 'trafics.trafic_status_id')
+            ->rightJoin('appeals', 'appeals.id', 'trafic_appeals.appeal_id');
     }
 
 

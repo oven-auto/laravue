@@ -340,10 +340,10 @@ class ReserveRepository
             );
      
             
-        $query->leftJoin(DB::raw('(
-                SELECT sum(_ds.amount) as _dsum, _d.modulable_id as _dreserve FROM discounts as _d 
-                LEFT JOIN discount_sums as _ds on _ds.discount_id = _d.id group by _d.modulable_id
-            ) as _joinds'), '_joinds._dreserve', 'wsm_reserve_new_cars.id');
+        // $query->leftJoin(DB::raw('(
+        //         SELECT sum(_ds.amount) as _dsum, _d.modulable_id as _dreserve FROM discounts as _d 
+        //         LEFT JOIN discount_sums as _ds on _ds.discount_id = _d.id group by _d.modulable_id
+        //     ) as _joinds'), '_joinds._dreserve', 'wsm_reserve_new_cars.id');
 
         $filter = app()->make(ReserveNewCarFilter::class, ['queryParams' => ($data)]);
 

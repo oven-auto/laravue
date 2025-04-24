@@ -360,11 +360,6 @@ class WsmReserveNewCar extends Model implements CommentInterface
      */
     public function getReserveReportString()
     {
-        // return match ($this->getReserveReportStatus()) {
-        //     0 => '',
-        //     1 => 'Зеленый рапорт',
-        //     2 => 'Желтый рапорт',
-        // };
         return $this->car->getReportTypeString();
     }
 
@@ -385,17 +380,6 @@ class WsmReserveNewCar extends Model implements CommentInterface
      */
     public function getReserveReportStatus()
     {
-        // if (!$this->car->owner)
-        //     return 0;
-
-        // $clientWorksheet = $this->worksheet->client_id;
-        // $clientCar = $this->car->owner->client_id;
-
-        // if ($clientCar == $clientWorksheet)
-        //     return 1;
-
-        // else
-        //     return 2;
         return $this->car->getReportTypeStatus();
     }
 

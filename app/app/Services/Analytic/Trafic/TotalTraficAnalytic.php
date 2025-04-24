@@ -27,8 +27,7 @@ Class TotalTraficAnalytic extends AbstractTraficAnalytic implements TraficAnalyt
             DB::raw('COUNT(trafics.id) as total'),
             DB::raw('IF(COUNT(trafics.id)>0, (100/COUNT(trafics.id))*COUNT(trafics.id), 0) as percent'),
             DB::raw('1 as type'),
-            DB::raw('1 as border_top'),
-            
+            DB::raw('1 as border_top'),            
         ])->filter($filter);
         
         return  $subQuery;

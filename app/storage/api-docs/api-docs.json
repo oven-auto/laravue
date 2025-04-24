@@ -2598,6 +2598,69 @@
                 }
             }
         },
+        "/director/funnel": {
+            "get": {
+                "tags": [
+                    "Аналитика"
+                ],
+                "summary": "Воронка продаж",
+                "description": "Воронка продаж (intervals = [['01.04.2023', '31.12.2024'],['01.04.2023', '31.12.2024']])",
+                "operationId": "directorfunnel",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/director/trafics": {
+            "get": {
+                "tags": [
+                    "Аналитика"
+                ],
+                "summary": "По трафику",
+                "description": "По трафику",
+                "operationId": "directorTrafic",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DirectorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/director/worksheets": {
+            "get": {
+                "tags": [
+                    "Аналитика"
+                ],
+                "summary": "По рабочим листам",
+                "description": "По рабочим листам",
+                "operationId": "directorWorksheet",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/DirectorRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
         "/discountlist": {
             "get": {
                 "tags": [
@@ -5011,6 +5074,44 @@
                 },
                 "type": "object"
             },
+            "DirectorRequest": {
+                "required": [
+                    "name",
+                    "acronym",
+                    "vehicle"
+                ],
+                "properties": {
+                    "intervals": {
+                        "description": "Интервал",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[01.10.2024,22.10.2024],[01.10.2024,22.10.2024]"
+                    },
+                    "appeal_ids": {
+                        "description": "Цель обращения",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2,3]"
+                    },
+                    "company_ids": {
+                        "description": "Компания",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2,3]"
+                    },
+                    "chanels": {
+                        "description": "Канал",
+                        "type": "array",
+                        "format": "array",
+                        "items": {},
+                        "example": "[1,2,3]"
+                    }
+                },
+                "type": "object"
+            },
             "DiscountListRequest": {
                 "required": [
                     "journal"
@@ -5250,6 +5351,10 @@
         {
             "name": "Клиент",
             "description": "Клиент"
+        },
+        {
+            "name": "Аналитика",
+            "description": "Аналитика"
         },
         {
             "name": "Журнал скидок",
