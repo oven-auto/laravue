@@ -214,6 +214,7 @@ Class AuditMasterFilter extends AbstractFilter
     {
         $builder
             ->leftJoin('trafics', 'trafics.id', 'audit_masters.trafic_id')
+            ->leftJoin('trafic_appeals', 'trafic_appeals.id', 'trafics.trafic_appeal_id')
             ->leftJoin('audits', 'audits.id', 'audit_masters.audit_id')
             ->leftJoin('companies', 'companies.id', 'trafics.company_id')
             ->leftJoin('company_structures', 'company_structures.id', 'trafics.company_structure_id');
@@ -223,7 +224,7 @@ Class AuditMasterFilter extends AbstractFilter
 
     public function fnAppeals(Builder $builder, array $data)
     {
-        $builder->whereIn('trafics.trafic_appeal_id', $data);
+        $builder->whereIn('trafic_appeals.appeal_id', $data);
     }
 
 
