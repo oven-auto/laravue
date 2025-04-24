@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware\Permissions\Trafic;
 
+use App\Models\Trafic;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -26,15 +27,19 @@ class TraficClose
         $userPermission = auth()->user()->role->permissions;
         
         //если супер права
-        if($userPermission->contains('slug', 'trafic_close_alien'))
+        if($userPermission->contains('slug', 'trafic_close_super'))
             return $next($request);
         
-        //Если есть право удалять любой свой
-        if($userPermission->contains('slug', 'trafic_close') && $trafic->manager_id == Auth::id())
+        //Если автор
+        if($userPermission->contains('slug', 'trafic_close_author') && $trafic->author_id == Auth::id())
+            return $next($request);
+
+        //Если манагер
+        if($userPermission->contains('slug', 'trafic_close_manager') && $trafic->manager_id == Auth::id())
             return $next($request);
         
-        //Если есть парво удалять только свой ожидающий
-        if($userPermission->contains('slug', 'trafic_close_waiting_author') && $trafic->isWaiting() && $trafic->author_id = Auth::id())
+        //Если есть право на отдел
+        if (Trafic::checkTrafic('all', $trafic, 'trafic_close_department'))
             return $next($request);
 
         throw new \Exception('Доступ ограничен! Вы не можете упустить/удалить.');

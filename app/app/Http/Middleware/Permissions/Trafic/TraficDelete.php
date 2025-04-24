@@ -27,19 +27,19 @@ class TraficDelete
         $userPermission = auth()->user()->role->permissions;
 
         //если супер права
-        if($userPermission->contains('slug', 'trafic_softdelete_alien'))
+        if($userPermission->contains('slug', 'trafic_delete_super'))
             return $next($request);
         
-        //Если есть право удалять любой свой
-        if($userPermission->contains('slug', 'trafic_softdelete') && $trafic->manager_id == Auth::id())
+        //если манагер
+        if($userPermission->contains('slug', 'trafic_delete_manager') && $trafic->manager_id == Auth::id())
             return $next($request);
         
-        //Если есть парво удалять только свой ожидающий
-        if($userPermission->contains('slug', 'trafic_delete_waiting_author') && $trafic->isWaiting() && $trafic->author_id = Auth::id())
+        //Если автор
+        if($userPermission->contains('slug', 'trafic_delete_author') && $trafic->author_id = Auth::id())
             return $next($request);
         
         //Если есть право на отдел
-        if (Trafic::checkTrafic('all', $trafic, 'trafic_softdelete_appeals'))
+        if (Trafic::checkTrafic('all', $trafic, 'trafic_delete_department'))
             return $next($request);
 
         throw new \Exception('Доступ ограничен! Вы не можете упустить/удалить.');
