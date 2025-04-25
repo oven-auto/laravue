@@ -41,7 +41,7 @@ class AuditMaster extends Model
 
     public function trafic()
     {
-        return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id');
+        return $this->hasOne(\App\Models\Trafic::class, 'id', 'trafic_id')->withTrashed();
     }
 
 
