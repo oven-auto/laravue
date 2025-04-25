@@ -75,7 +75,9 @@ class TraficEditResource extends JsonResource
             'links' =>  $this->links_count,
             'files' => $this->files_count,
 
-            'empty_phone' => $this->client->empty_phone
+            'empty_phone' => $this->client->empty_phone,
+
+            'audit_status' => $this->auditmaster ? $this->auditmaster->status : '',
         ];
     }
 }

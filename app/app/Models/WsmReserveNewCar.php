@@ -34,6 +34,13 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
 
 
+    public function planned_payment()
+    {
+        return $this->hasOne(\App\Models\WSMReservePlannedPayments::class, 'reserve_id', 'id');
+    }
+
+
+
     public function discounts()
     {
         return $this->morphMany(Discount::class, 'modulable')->where('modulable_type', $this::class);

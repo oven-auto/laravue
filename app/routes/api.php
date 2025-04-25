@@ -48,6 +48,7 @@ use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\PaymentReserveCon
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveCommentController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveListController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\DiscountReserveController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\PlannedPaymentController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\TradeInReserveController;
 use App\Http\Controllers\Api\v1\Services\Select\BodyWorkSelectController;
 use App\Http\Controllers\Api\v1\Services\Select\BrandSelectController;
@@ -1022,7 +1023,13 @@ Route::middleware(['userfromtoken'])->group(function () {
              * RESERVE NEW CAR MODEULE
              */
             Route::prefix('reserves')->group(function () {
-                
+                Route::prefix('planned')->group(function(){
+                    Route::get('',          [PlannedPaymentController::class, 'index']);
+                    Route::post('',         [PlannedPaymentController::class, 'store']);
+                    Route::patch('{id}',    [PlannedPaymentController::class, 'update']);
+                    Route::delete('{id}',   [PlannedPaymentController::class, 'destroy']);
+                });
+
                 Route::prefix('lising')->group(function(){
                     Route::post('/', [ReserveLisingerController::class, 'append']);
                     Route::delete('/', [ReserveLisingerController::class, 'detach']);

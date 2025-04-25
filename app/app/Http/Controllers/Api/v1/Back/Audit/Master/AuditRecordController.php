@@ -128,20 +128,26 @@ class AuditRecordController extends Controller
      */
     public function update(int $id, Request $request)
     {
+        $service  = new TraficFileLoad();
+
         $vaildated = $request->validate([
             'master_id' => 'required',
             'file' => 'required|file|mimes:wav',
         ]);
 
+        $tmp = Audio::wavToMp3($service->download($request->master_id, $request->file));
+       
+        $vaildated['file'] = file_get_contents(storage_path('app/public'.$tmp));
+
         $record = AuditRecord::findOrFail($id);
-        
-        $vaildated['file'] = file_get_contents($request->file('file')->path());
         
         $record->fill($vaildated);
 
         if($record->isDirty())
             $record->save();
-      
+        
+        unlink(storage_path('app/public'.$tmp));
+
         return response()->json([
             'data' => [
                 'id' => $record->id,

@@ -2604,7 +2604,7 @@
                     "Аналитика"
                 ],
                 "summary": "Воронка продаж",
-                "description": "Воронка продаж (intervals = [['01.04.2023', '31.12.2024'],['01.04.2023', '31.12.2024']])",
+                "description": "Воронка продаж (salons = [1,2], intervals = [['01.04.2023', '31.12.2024'],['01.04.2023', '31.12.2024']])",
                 "operationId": "directorfunnel",
                 "responses": {
                     "200": {
@@ -2949,6 +2949,62 @@
                         }
                     }
                 },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/modules/reserves/planned": {
+            "get": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Получить планируему дату оплаты резерва (reserve_id => int|required)",
+                "description": "Получить планируему дату оплаты резерва (reserve_id => int|required)",
+                "operationId": "plannedList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Создать планируему дату оплаты резерва (reserve_id => int, dealtype = int, date_at = d.m.Y))",
+                "description": "Создать планируему дату оплаты резерва (reserve_id => int, dealtype = int, date_at = d.m.Y)",
+                "operationId": "plannedStore",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/modules/reserves/planned/{id}": {
+            "delete": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Удалить планируему дату оплаты резерва ",
+                "description": "Удалить планируему дату оплаты резерва",
+                "operationId": "plannedDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Резерв"
+                ],
+                "summary": "Изменить планируему дату оплаты резерва (reserve_id => int, dealtype = int, date_at = d.m.Y))",
+                "description": "Изменить планируему дату оплаты резерва (reserve_id => int, dealtype = int, date_at = d.m.Y)",
+                "operationId": "plannedUpdate",
                 "responses": {
                     "200": {
                         "description": "OK"
