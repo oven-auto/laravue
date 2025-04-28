@@ -10,7 +10,7 @@ class PlannedPaymentRepository
 {
     public function getById(int $id)
     {
-        return WSMReservePlannedPayment::firstOrFail($id);
+        return WSMReservePlannedPayment::findOrFail($id);
     }
 
 
@@ -42,7 +42,7 @@ class PlannedPaymentRepository
     public function update(int $id, array $data)
     {
         $planned = $this->getById($id);
-
+        
         $planned->fill([
             'date_at' => $data['date_at'],
             'reserve_id' => $data['reserve_id'],

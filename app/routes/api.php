@@ -687,6 +687,7 @@ Route::middleware(['userfromtoken'])->group(function () {
             Route::patch('{car}',               [CarController::class, 'update'])->middleware('permission.newstock.edit');
             Route::get('{car}/history',         [CarController::class, 'history'])->middleware('permission.newstock.edit');
             Route::get('{car}/tuning',          [CarController::class, 'tuning'])->middleware('permission.newstock.edit');
+            Route::delete('{car}',          [CarController::class, 'destroy']);
         });
     });
 

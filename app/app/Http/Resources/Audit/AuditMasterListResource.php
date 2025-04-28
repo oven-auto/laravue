@@ -39,6 +39,8 @@ class AuditMasterListResource extends JsonResource
             'count_response' => $this->getResponseCount(),
             'record' => $this->record ? 1 : 0,
             'completed' => $this->completed,
+            'client_id' => $this->trafic->worksheet->client->id,
+            'worksheet_id' => $this->trafic->worksheet->id,
         ];
     }
 }

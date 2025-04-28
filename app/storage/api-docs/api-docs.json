@@ -852,6 +852,30 @@
                     }
                 }
             },
+            "delete": {
+                "tags": [
+                    "Новый автомобиль"
+                ],
+                "summary": "Удалить автомобиль",
+                "description": "Удалить автомобиль",
+                "operationId": "deleteCar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
             "patch": {
                 "tags": [
                     "Новый автомобиль"

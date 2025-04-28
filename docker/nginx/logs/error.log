@@ -1077,3 +1077,4 @@
 2025/04/21 15:42:05 [notice] 1#1: start worker process 28
 2025/04/21 15:42:05 [notice] 1#1: start worker process 29
 2025/04/21 15:42:05 [notice] 1#1: start worker process 30
+2025/04/27 03:00:59 [error] 27#27: *11582 open() "/var/www/public/php-cgi/php-cgi.exe" failed (2: No such file or directory), client: 128.199.105.36, server: _, request: "POST /php-cgi/php-cgi.exe?%add+allow_url_include%3d1+%add+auto_prepend_file%3dphp://input HTTP/1.1", host: "62.182.31.140:8280"

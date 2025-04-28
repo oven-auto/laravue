@@ -843,7 +843,7 @@ class Car extends Model
     /**
      * Сохранить владельца, того на кого списывается автомобиль
      */
-    public function saveOwner(int|\App\Models\Client $client = null)
+    public function saveOwner(int|\App\Models\Client|null $client = null)
     {
         if (!$client)
         {
@@ -1084,6 +1084,13 @@ class Car extends Model
         if ($this->isReserved())
             return $this->reserve->isFixedCost();
         return 0;
+    }
+
+
+
+    public function isFree()
+    {
+        return !$this->isReserved();
     }
 
 
@@ -1430,6 +1437,16 @@ class Car extends Model
     public function isOnStock(): string
     {
         return $this->getLogisticDates('stock_date') ? 1 : 0;
+    }
+
+
+
+    /**
+     * Проверка что заяка
+     */
+    public function isApplication()
+    {
+        return $this->status == 'in_application' ? 1 : 0;
     }
 
 

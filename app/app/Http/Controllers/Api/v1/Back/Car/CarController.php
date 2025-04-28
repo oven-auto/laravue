@@ -8,9 +8,11 @@ use App\Http\Requests\Car\OverPrice\OverPriceRequest;
 use App\Http\Requests\Car\CarCreateRequest;
 use App\Http\Resources\Car\Car\CarItemResource;
 use App\Http\Resources\Car\Car\CarListCollection;
+use App\Http\Resources\Default\SuccessResource;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Repositories\Car\Car\CarRepository;
+use Exception;
 
 class CarController extends Controller
 {
@@ -296,5 +298,44 @@ class CarController extends Controller
             }),
             'success' => 1,
         ]);
+    }
+
+
+
+        /**
+     * @OA\Delete(
+     *      path="/cars/{id}",
+     *      operationId="deleteCar",
+     *      tags={"Новый автомобиль"},
+     *      summary="Удалить автомобиль",
+     *      description="Удалить автомобиль",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Идентификатор автомобиля",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK",
+     *      ),
+     * )
+     */
+    public function destroy(int $id)
+    {
+        $car = Car::find($id);
+
+        if($car->isReserved())
+            throw new Exception('Имеется резерв. Операция не возможна.');
+
+        if(!$car->isApplication())
+            throw new Exception('Автомобиль не является заявкой.  Операция не возможна.');
+
+        $car->delete();
+
+        return new SuccessResource(1);
     }
 }
