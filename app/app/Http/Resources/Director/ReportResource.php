@@ -24,7 +24,7 @@ class ReportResource extends JsonResource
             'vin' => $this->car->vin,
             'price' => $this->getTotalCost(),
             'debit' => $this->getDebt(),
-            'pay_date'  => '',
+            'planned_payment_date'  => $this->planned_payment ? $this->planned_payment->date_at->format('d.m.Y') : '',
             'ransom_date' => $this->car->getRansomDate(),//PTS
             'issued_date' => $this->getIssueDate(),
             'sale_date' => $this->getSaleDate(),

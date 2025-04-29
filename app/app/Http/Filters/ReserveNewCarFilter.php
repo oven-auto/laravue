@@ -497,9 +497,12 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public const HAS_DEBIT = 'has_debit';
 
+    public const HAS_PAID_DATE = 'has_paid_date';
+
     protected function getCallbacks(): array
     {
         return [
+            self::HAS_PAID_DATE                     => [$this, 'hasPaidDate'],
             self::PRIORITY_IDS                      => [$this, 'priorityIds'],
             self::HAS_PRIORITY                      => [$this, 'hasPriority'],
             self::SEARCH                            => [$this, 'search'],
@@ -743,8 +746,21 @@ class ReserveNewCarFilter extends AbstractFilter
             LEFT JOIN discount_sums as _ds on _ds.discount_id = _d.id group by _d.modulable_id
             ) as _joinds'), '_joinds._dreserve', 'wsm_reserve_new_cars.id'
         );
+        
+        $builder->leftJoin('wsm_reserve_planned_payments', 'wsm_reserve_planned_payments.reserve_id', 'wsm_reserve_new_cars.id');
 
         $builder->groupBy('wsm_reserve_new_cars.id');
+    }
+
+
+
+    public function hasPaidDate(Builder $builder, bool $val)
+    {
+        match($val){
+            true => $builder->whereNotNull('wsm_reserve_planned_payments.id'),
+            false => $builder->whereNull('wsm_reserve_planned_payments.id'),
+            default => ''
+        };        
     }
 
 

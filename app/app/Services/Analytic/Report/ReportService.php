@@ -46,7 +46,8 @@ Class ReportService
         $data = [
             'logistic_statuses' => ['in_stock'], //на складе
             'type_statuses' => ['reserved', 'client'], //только клиентские и резерв
-            'has_debit' => 1 //у которых долг > 0
+            'has_debit' => 1, //у которых долг > 0
+            'has_paid_date' => 0
         ];
 
         $filter = app()->make(ReserveNewCarFilter::class, ['queryParams' => $data]);

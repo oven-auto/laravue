@@ -43,11 +43,11 @@ class OperativeReportController extends Controller
 
 
     /**
-     * Полные оплаты
+     * Выдача с долгом
      */
-    public function paided(Request $request)
+    public function withdebit(Request $request)
     {
-        $data = $this->service->getPaidReport($request->all());
+        $data = $this->service->getWithDebitReport($request->all());
 
         return new ReportCollection($data);
     }
@@ -55,11 +55,11 @@ class OperativeReportController extends Controller
 
 
     /**
-     * Выдача с долгом
+     * Полные оплаты
      */
-    public function withdebit(Request $request)
+    public function paided(Request $request)
     {
-        $data = $this->service->getWithDebitReport($request->all());
+        $data = $this->service->getPaidReport($request->all());
 
         return new ReportCollection($data);
     }

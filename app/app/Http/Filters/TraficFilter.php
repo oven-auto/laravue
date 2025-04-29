@@ -178,10 +178,6 @@ class TraficFilter extends AbstractFilter
 
     public function modelIds(Builder $builder, array $value)
     {
-        // $value = array_map(function($item) {
-        //     return 'model'.$item;
-        // }, $value);
-
         $builder->whereIn('trafic_needs.trafic_product_number', $value);
     }
 

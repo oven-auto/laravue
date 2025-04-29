@@ -36,7 +36,7 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
     public function planned_payment()
     {
-        return $this->hasOne(\App\Models\WSMReservePlannedPayments::class, 'reserve_id', 'id');
+        return $this->hasOne(\App\Models\WSMReservePlannedPayment::class, 'reserve_id', 'id');
     }
 
 

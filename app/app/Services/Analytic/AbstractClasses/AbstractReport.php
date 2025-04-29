@@ -11,12 +11,17 @@ abstract class AbstractReport
     public function convertInterval(array $interval)
     {
         $arr = [];
-
+        
         foreach($interval as $item)
         {
-            $date_1 = Carbon::createFromFormat('d.m.Y', $item[0])->format('Y-m-d');
-            $date_2 = isset($item[1]) ? Carbon::createFromFormat('d.m.Y', $item[1])->format('Y-m-d') : $date_1;
-            $arr[] = [$date_1, $date_2];
+            $date_1 = Carbon::createFromFormat('d.m.Y', $item[0])
+                ->setHour(0)
+                ->setMinute(0);
+
+            $date_2 = isset($item[1]) ? Carbon::createFromFormat('d.m.Y', $item[1]) : $date_1;
+            $date_2->setHour(23)->setMinute(59);
+
+            $arr[] = [$date_1->format('Y-m-d H:i'), $date_2->format('Y-m-d H:i')];
         }
         
         return $arr;
