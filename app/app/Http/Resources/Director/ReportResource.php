@@ -24,13 +24,19 @@ class ReportResource extends JsonResource
             'vin' => $this->car->vin,
             'price' => $this->getTotalCost(),
             'debit' => $this->getDebt(),
-            'planned_payment_date'  => $this->planned_payment ? $this->planned_payment->date_at->format('d.m.Y') : '',
-            'ransom_date' => $this->car->getRansomDate(),//PTS
-            'issued_date' => $this->getIssueDate(),
-            'sale_date' => $this->getSaleDate(),
+            
             'collector' => $this->car->collector ? $this->car->collector->collector->name : '',
             'comment' => isset($this->last_comment->id) ? $this->last_comment->text : '',
             'author' => new UserSmallResource($this->worksheet->author),
+
+            'payment_amount'        => $this->payments->first()->amount,
+            'payment_date'          => $this->payments->first()->date_at->format('d.m.Y'),
+            'payment_type'          => $this->payments->first()->payment->name,
+
+            'planned_payment_date'  => $this->planned_payment ? $this->planned_payment->date_at->format('d.m.Y') : '',
+            'ransom_date' => $this->car->getRansomDate(),
+            'issued_date' => $this->getIssueDate(),
+            'sale_date' => $this->getSaleDate(),
         ];
     }
 }

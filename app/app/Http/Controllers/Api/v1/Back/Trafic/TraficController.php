@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\v1\Back\Trafic;
 
+use App\Classes\Telegram\SystemMessage;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Trafic\TraficCreateRequest;
 use Illuminate\Http\Request;
@@ -9,6 +10,8 @@ use App\Models\Trafic;
 use App\Repositories\Trafic\TraficRepository;
 use \App\Http\Resources\Trafic\TraficEditCollection;
 use \App\Http\Resources\Trafic\TraficSaveResource;
+use App\Jobs\TelegramJob;
+use App\Models\TelegramConnection;
 use \App\Services\Comment\Comment;
 
 class TraficController extends Controller
@@ -43,6 +46,8 @@ class TraficController extends Controller
 
     public function store(Trafic $trafic, TraficCreateRequest $request)
     {
+        SystemMessage::send('Вызван метод контролера. Создан трафик.');
+
         $this->repo->save($trafic, $request->all());
 
         return (new TraficSaveResource($trafic))
@@ -64,6 +69,8 @@ class TraficController extends Controller
 
     public function update(Trafic $trafic,  TraficCreateRequest $request)
     {   
+        SystemMessage::send('Вызван метод контролера. Изменить трафик.');
+
         $this->repo->save($trafic, $request->all());
 
         return (new TraficSaveResource($trafic))

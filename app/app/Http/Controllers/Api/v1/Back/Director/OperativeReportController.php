@@ -87,4 +87,16 @@ class OperativeReportController extends Controller
 
         return new ReportCollection($data);
     }
+
+
+
+    /**
+     * Выручка
+     */
+    public function receipt(Request $request)
+    {
+        $data = $this->service->getReceiptReport($request->all());
+        
+        return new ReportCollection($data);
+    }
 }

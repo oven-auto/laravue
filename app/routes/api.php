@@ -32,6 +32,7 @@ use App\Http\Controllers\Api\v1\Back\Car\TradeMarker\TradeMarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Tuning\TuningController;
 use App\Http\Controllers\Api\v1\Back\Client\Car\ClientChangeCarOwner;
 use App\Http\Controllers\Api\v1\Back\Director\OperativeReportController;
+use App\Http\Controllers\Api\v1\Back\Director\RealisationController;
 use App\Http\Controllers\Api\v1\Back\Director\SaleFunnelController;
 use App\Http\Controllers\Api\v1\Back\Director\StockStructureController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
@@ -1159,9 +1160,11 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('withdebit', [OperativeReportController::class, 'withdebit']);
                 Route::get('issued',    [OperativeReportController::class, 'issued']);
                 Route::get('saled',     [OperativeReportController::class, 'saled']);
+                Route::get('receipt',   [OperativeReportController::class, 'receipt']);
             });
-            Route::get('funnel', [SaleFunnelController::class, 'index']);
-            Route::get('stock', [StockStructureController::class, 'index']);
+            Route::get('funnel',        [SaleFunnelController::class, 'index']);
+            Route::get('stock',         [StockStructureController::class, 'index']);
+            Route::get('realisation',   [RealisationController::class, 'index']);
         });
 
 
