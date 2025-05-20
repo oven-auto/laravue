@@ -71,7 +71,7 @@ Class TraficAnalytic extends AbstractReport
             $query
                 ->addSelect([
                     DB::raw('sub_'.$key.'._count as count_'.$key),
-                    DB::raw('IF(sub_'.$key.'._count > 0, ROUND((main._count / sub_'.$key.'._count - 1) * 100,1), 0) as proc_'.$key),
+                    DB::raw('IF(sub_'.$key.'._count > 0, ROUND((main._count / sub_'.$key.'._count - 1) * 100,1), 100) as proc_'.$key),
                 ])
                 ->leftJoinSub($subQ, 'sub_'.$key, function($join) use($key){
                     $join->on('main.name', 'sub_'.$key.'.name');

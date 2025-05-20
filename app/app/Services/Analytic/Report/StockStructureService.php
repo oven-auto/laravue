@@ -33,6 +33,7 @@ Class StockStructureService
             ->leftJoin('marks', 'marks.id', 'cars.mark_id')
             ->leftJoin('brands', 'brands.id', 'cars.brand_id')
             ->leftJoin('car_states', 'car_states.status', 'cars.status')
+            ->whereNull('cars.deleted_at')
             ->groupBy(DB::raw('cars.mark_id with ROLLUP'));  
         
         return $query;

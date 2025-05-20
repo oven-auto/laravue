@@ -319,14 +319,14 @@ class Trafic extends Model implements CommentInterface
 
     public function manager()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'manager_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'manager_id')->withDefault()->withTrashed();
     }
 
 
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id' , 'author_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id' , 'author_id')->withDefault()->withTrashed();
     }
 
 

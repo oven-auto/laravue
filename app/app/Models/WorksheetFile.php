@@ -18,15 +18,21 @@ class WorksheetFile extends Model implements CommentInterface
         return WorksheetActionComment::create($data);
     }
 
+
+
     public function author()
     {
         return $this->hasOne(User::class, 'id', 'author_id')->withDefault();
     }
 
+
+
     public function worksheet()
     {
         return $this->hasOne(\App\Models\Worksheet::class, 'id', 'worksheet_id')->withDefault();
     }
+
+
 
     public function getFile()
     {
@@ -34,6 +40,8 @@ class WorksheetFile extends Model implements CommentInterface
             return asset('storage'.$this->file) . '?' . date('dmyhm');
     }
 
+
+    
     public function getNameAttribute()
     {
 

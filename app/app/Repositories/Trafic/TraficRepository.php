@@ -172,7 +172,7 @@ class TraficRepository
             ->groupBy('trafics.id');
        
         $result = $query->simplePaginate($paginate);
-
+                
         return $result;
     }
 

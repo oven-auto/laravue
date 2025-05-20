@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('wsm_reserve_planned_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('type_id')->references('id')->on('payments')->onDelete('cascade');
+            $table->foreignId('type_id')->references('id')->on('deal_types')->onDelete('cascade');
             $table->timestamp('date_at');
             $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreignId('reserve_id')->references('id')->on('wsm_reserve_new_cars')->onDelete('cascade');

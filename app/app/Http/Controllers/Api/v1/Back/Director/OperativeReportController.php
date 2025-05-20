@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1\Back\Director;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Director\ReceiptCollection;
 use App\Http\Resources\Director\ReportCollection;
 use App\Services\Analytic\Report\ReportService;
 use Illuminate\Http\Request;
@@ -97,6 +98,6 @@ class OperativeReportController extends Controller
     {
         $data = $this->service->getReceiptReport($request->all());
         
-        return new ReportCollection($data);
+        return new ReceiptCollection($data);
     }
 }

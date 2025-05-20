@@ -2733,6 +2733,93 @@
                 }
             }
         },
+        "/targets": {
+            "get": {
+                "tags": [
+                    "Цели"
+                ],
+                "summary": "Журнал целей",
+                "description": "Журнал целей",
+                "operationId": "getTargetList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Цели"
+                ],
+                "summary": "Добавить цель",
+                "description": "Добавить цель",
+                "operationId": "storeTarget",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TargetCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/targets/{id}": {
+            "get": {
+                "tags": [
+                    "Цели"
+                ],
+                "summary": "Открыть цель",
+                "description": "Открыть цель",
+                "operationId": "showTarget",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "Цели"
+                ],
+                "summary": "Удалить цель",
+                "description": "Удалить цель",
+                "operationId": "deleteTarget",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Цели"
+                ],
+                "summary": "Изменить цель",
+                "description": "Изменить цель",
+                "operationId": "updateTarget",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/TargetCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/trafic/files/{traficId}}": {
             "get": {
                 "tags": [
@@ -3388,6 +3475,21 @@
                 "summary": "Список залогодателей (держатель залога)",
                 "description": "Список залогодателей (держатель залога)",
                 "operationId": "getCarCollectors",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/dealtypes": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов сделки для плана оплаты",
+                "description": "Список типов сделки для плана оплаты",
+                "operationId": "getDealTypeSelect",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -5312,6 +5414,36 @@
                 },
                 "type": "object"
             },
+            "TargetCreateRequest": {
+                "required": [
+                    "journal"
+                ],
+                "properties": {
+                    "brand_id": {
+                        "description": "Бренд",
+                        "type": "integer",
+                        "format": "integer",
+                        "example": "5"
+                    },
+                    "date_at": {
+                        "description": "Дата (месяц год)",
+                        "type": "string",
+                        "format": "03.2025"
+                    },
+                    "amount": {
+                        "description": "Количество",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "marks": {
+                        "description": "Модели [[id : 1, amount : 100], ...]",
+                        "type": "object",
+                        "format": "array",
+                        "example": "[[id : 1, amount : 100], [id : 1, amount : 100]]"
+                    }
+                },
+                "type": "object"
+            },
             "LisingerCreateRequest": {
                 "required": [
                     "reserve_id",
@@ -5439,6 +5571,10 @@
         {
             "name": "Журнал скидок",
             "description": "Журнал скидок"
+        },
+        {
+            "name": "Цели",
+            "description": "Цели"
         },
         {
             "name": "Трафик",

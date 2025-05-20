@@ -48,6 +48,8 @@ class AuthService
         ];
     }
 
+
+
     public function logout($data)
     {
         $headers = getallheaders();
@@ -68,6 +70,8 @@ class AuthService
             ]);
         }
     }
+
+
 
     public function register($data = [])
     {
@@ -90,6 +94,8 @@ class AuthService
 
         return $user;
     }
+
+
 
     public function update(User $user, $data = [])
     {
@@ -117,6 +123,8 @@ class AuthService
         return $user;
     }
 
+
+
     public function check($data = [])
     {
         return response()->json([
@@ -125,6 +133,8 @@ class AuthService
         ]);
     }
 
+
+    
     private function saveStructures(User $user, array $structures)
     {
         if ($structures) {

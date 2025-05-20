@@ -29,6 +29,6 @@ class CarOwner extends Model
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withTrashed();
     }
 }

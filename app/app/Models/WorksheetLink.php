@@ -12,15 +12,21 @@ class WorksheetLink extends Model implements CommentInterface
 
     protected $guarded = [];
 
+
+    
     public function writeComment(array $data)
     {
         return WorksheetActionComment::create($data);
     }
 
+
+
     public function worksheet()
     {
         return $this->hasOne(\App\Models\Worksheet::class, 'id', 'worksheet_id')->withDefault();
     }
+
+
 
     public function author()
     {

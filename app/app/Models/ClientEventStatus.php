@@ -135,7 +135,7 @@ class ClientEventStatus extends Model implements CommentInterface
 
     public function completer()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault()->withTrashed();
     }
 
 

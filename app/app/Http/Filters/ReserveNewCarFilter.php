@@ -564,13 +564,14 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public function hasDebit(Builder $builder, bool $val)
     {
-        $query = 'cfp.tuningprice + 
-                    cfp.overprice + 
+        //TODO Дополнить скрипт на проверку суммы оплаты, и проверять на пустоту
+        $query = '  IFNULL(cfp.tuningprice, 0) + 
+                    IFNULL(cfp.overprice, 0) + 
                     IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) + 
                     IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) - 
-                    cfp.giftprice - 
+                    IFNULL(cfp.giftprice, 0) - 
                     IFNULL(_joinds._dsum, 0) - 
-                    (SELECT sum(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id)';
+                    IFNULL((SELECT sum(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id), 0)';
         match($val){
             true => $builder->whereRaw($query.' > 0'),
             false =>$builder->whereRaw($query.' <= 0'),

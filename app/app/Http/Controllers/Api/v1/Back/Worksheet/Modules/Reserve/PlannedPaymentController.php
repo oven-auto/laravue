@@ -84,7 +84,7 @@ class PlannedPaymentController extends Controller
     public function update(int $id, PlannedPaymentCreateRequest $request)
     {
         $planned = $this->repo->update($id, $request->validated());
-
+        
         return new PlannedPaymentResource($planned);
     }
 

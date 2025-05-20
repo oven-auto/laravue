@@ -34,4 +34,16 @@ Class UserRepository
 
         return $data;
     }
+
+
+
+    public function getAll(array $data)
+    {
+        $query = User::select('users.*')->with('role')->orderBy('lastname');
+
+        // if($data['input'] && $request->get('input')!='') {
+        //     $query->where('lastname', 'LIKE', "%$request->input%");
+        //     $query->leftJoin('roles', 'roles.id', 'users.role_id')->orWhere('roles.name', 'LIKE',  "%$request->input%");
+        // }
+    }
 }

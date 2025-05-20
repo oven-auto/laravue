@@ -44,10 +44,14 @@ class PlannedPaymentRepository
         $planned = $this->getById($id);
         
         $planned->fill([
+            'author_id' => Auth::id(),
             'date_at' => $data['date_at'],
             'reserve_id' => $data['reserve_id'],
             'type_id' => $data['dealtype'],
         ]);
+
+        if($planned->isDirty())
+            $planned->save();
 
         return $planned;
     }

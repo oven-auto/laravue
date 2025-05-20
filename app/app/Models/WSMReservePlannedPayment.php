@@ -21,13 +21,13 @@ class WSMReservePlannedPayment extends Model
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withTrashed();
     }
 
 
 
     public function deal_type()
     {
-        return $this->hasOne(\App\Models\Payment::class, 'id', 'type_id');
+        return $this->hasOne(\App\Models\DealType::class, 'id', 'type_id');
     }
 }

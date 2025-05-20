@@ -127,7 +127,7 @@ class Worksheet extends Model
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault()->withTrashed();
     }
 
 
@@ -176,7 +176,7 @@ class Worksheet extends Model
 
     public function inspector()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'inspector_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'inspector_id')->withDefault()->withTrashed();
     }
 
 

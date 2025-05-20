@@ -19,6 +19,6 @@ class CarTechnic extends Model
 
     public function user()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'technic_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'technic_id')->withDefault()->withTrashed();
     }
 }

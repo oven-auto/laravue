@@ -38,6 +38,7 @@ use App\Http\Controllers\Api\v1\Back\Director\StockStructureController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
 use App\Http\Controllers\Api\v1\Back\Payment\PaymentController as CRUDPaymentController;
+use App\Http\Controllers\Api\v1\Back\TargetModel\TargetModelController;
 use App\Http\Controllers\Api\v1\Back\TaskList\OverdueCountController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\CommentListController;
@@ -70,6 +71,7 @@ use App\Http\Controllers\Api\v1\Services\Select\UserSelectController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Integration\PotokBit\PotokBitController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveLisingerController;
+use App\Http\Controllers\Api\v1\Services\Select\DealTypeController;
 use App\Http\Middleware\Permissions\Audit\AuditCRUDMiddleware;
 use App\Http\Middleware\Permissions\Audit\AuditMasterMiddleware;
 use App\Models\Audit\AuditMaster;
@@ -182,10 +184,13 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::prefix('services')->group(function () {
         Route::prefix('html')->group(function () { //МАРШРУТЫ ПОЛУЧЕНИЯ СПИСКОВ ДЛЯ HTML
             Route::prefix('select')->group(function () {
-                Route::get('salepriorities', [SalePriorityController::class, 'index']);
+
+                Route::get('dealtypes',          [DealTypeController::class, 'index']);
+
+                Route::get('salepriorities',     [SalePriorityController::class, 'index']);
 
                 //all form owner
-                Route::get('formowners',            [FormOwnerController::class, 'index']);
+                Route::get('formowners',         [FormOwnerController::class, 'index']);
 
                 //Все бренды
                 Route::get('brands',             [BrandSelectController::class, 'all']); 
@@ -1217,5 +1222,13 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::prefix('complectationlist')->group(function(){
         Route::get('/',         [ComplectationListController::class, 'index']);
         Route::get('/count',    [ComplectationListController::class, 'count']);
-    });    
+    });  
+    
+    
+
+    Route::prefix('')->group(function(){
+        Route::get('targets/count', [TargetModelController::class, 'count']);
+
+        Route::apiResource('targets', TargetModelController::class)->except(['edit', 'create']);        
+    });
 });

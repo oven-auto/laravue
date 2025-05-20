@@ -18,10 +18,14 @@ class WSMRedemptionCar extends Model implements CommentInterface
 
     protected $table = 'wsm_redemption_cars';
 
+
+    
     public function writeComment(array $data)
     {
         return WSMRedemptionComment::create($data);
     }
+
+
 
     public function lastAuthor()
     {
@@ -121,7 +125,7 @@ class WSMRedemptionCar extends Model implements CommentInterface
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault()->withTrashed();
     }
 
 

@@ -48,7 +48,7 @@ class TraficProcessing extends Model implements CommentInterface
 
     public function user()
     {
-        return $this->hasOne(\App\Models\User::class, 'id' ,'user_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id' ,'user_id')->withDefault()->withTrashed();
     }
 
     public function trafic()

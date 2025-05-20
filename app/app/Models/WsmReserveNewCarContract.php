@@ -119,7 +119,7 @@ class WsmReserveNewCarContract extends Model implements CommentInterface
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id');
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withTrashed();
     }
 
 
@@ -133,14 +133,14 @@ class WsmReserveNewCarContract extends Model implements CommentInterface
 
     public function pdkp_decorator()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'pdkp_decorator_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'pdkp_decorator_id')->withDefault()->withTrashed();
     }
 
 
 
     public function dkp_decorator()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'dkp_decorator_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'dkp_decorator_id')->withDefault()->withTrashed();
     }
 
 

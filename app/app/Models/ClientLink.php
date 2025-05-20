@@ -19,6 +19,6 @@ class ClientLink extends Model implements CommentInterface
 
     public function author()
     {
-        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault();
+        return $this->hasOne(\App\Models\User::class, 'id', 'author_id')->withDefault()->withTrashed();
     }
 }
