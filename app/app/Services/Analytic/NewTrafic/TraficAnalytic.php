@@ -70,8 +70,15 @@ Class TraficAnalytic extends AbstractReport
         foreach($subQ as $key => $subQ)
             $query
                 ->addSelect([
-                    DB::raw('sub_'.$key.'._count as count_'.$key),
-                    DB::raw('IF(sub_'.$key.'._count > 0, ROUND((main._count / sub_'.$key.'._count - 1) * 100,1), 100) as proc_'.$key),
+                    DB::raw("IFNULL(sub_{$key}._count, 0) as count_$key"),
+                    DB::raw("
+                        CASE 
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count = 0 THEN 0
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count <> 0 THEN ROUND((main._count / sub_{$key}._count - 1) * 100,1)
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count <> 0 THEN -100
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count = 0 THEN 100
+                        END as proc_{$key}
+                    ")
                 ])
                 ->leftJoinSub($subQ, 'sub_'.$key, function($join) use($key){
                     $join->on('main.name', 'sub_'.$key.'.name');
@@ -79,7 +86,7 @@ Class TraficAnalytic extends AbstractReport
 
         return $query;
     }
-
+   
 
 
     /**
@@ -90,7 +97,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE("Удаленные за период") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"deleted" as type')
             ])
             ->onlyTrashed()
@@ -110,7 +117,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE("Все обращения за период") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"total" as type')
             ])
             ->withTrashed()
@@ -130,7 +137,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE("Целевой трафик") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"target_total" as type')
             ])
             ->onlyTarget()
@@ -150,7 +157,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE(appeals.name, "Итого по цели по цели обращения") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"appeal" as type')
             ])
             ->filter($this->filter)
@@ -172,7 +179,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE(trafic_chanels.name, "Итого по каналам") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"chanel" as type')
             ])
             ->filter($this->filter)
@@ -195,7 +202,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE(client_types.name, "Итого по типам клиента") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"client_type" as type')
             ])
             ->filter($this->filter)
@@ -215,7 +222,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE(concat(users.name, " ", users.lastname), "Итого по авторам") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"author" as type')
             ])
             ->filter($this->filter)
@@ -236,7 +243,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE(concat(managers.name, " ", managers.lastname), "Итого по исполнителям") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"manager" as type')
             ])
             ->filter($this->filter)
@@ -257,7 +264,7 @@ Class TraficAnalytic extends AbstractReport
         $query = Trafic::query()
             ->select([
                 DB::raw('COALESCE(trafic_statuses.description, "Итого по исполнителям") as name'),
-                DB::raw('count(trafics.id) as _count'),
+                DB::raw('IFNULL(count(trafics.id), 0) as _count'),
                 DB::raw('"status" as type')
             ])
             ->filter($this->filter)

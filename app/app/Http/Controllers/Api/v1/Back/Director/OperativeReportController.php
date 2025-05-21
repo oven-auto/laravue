@@ -61,7 +61,7 @@ class OperativeReportController extends Controller
     public function paided(Request $request)
     {
         $data = $this->service->getPaidReport($request->all());
-
+        
         return new ReportCollection($data);
     }
 

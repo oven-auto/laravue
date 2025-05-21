@@ -10,8 +10,6 @@ use App\Models\Trafic;
 use App\Repositories\Trafic\TraficRepository;
 use \App\Http\Resources\Trafic\TraficEditCollection;
 use \App\Http\Resources\Trafic\TraficSaveResource;
-use App\Jobs\TelegramJob;
-use App\Models\TelegramConnection;
 use \App\Services\Comment\Comment;
 
 class TraficController extends Controller

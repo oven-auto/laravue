@@ -572,6 +572,7 @@ class ReserveNewCarFilter extends AbstractFilter
                     IFNULL(cfp.giftprice, 0) - 
                     IFNULL(_joinds._dsum, 0) - 
                     IFNULL((SELECT sum(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id), 0)';
+
         match($val){
             true => $builder->whereRaw($query.' > 0'),
             false =>$builder->whereRaw($query.' <= 0'),

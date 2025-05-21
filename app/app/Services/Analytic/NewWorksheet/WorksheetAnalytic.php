@@ -68,8 +68,16 @@ Class WorksheetAnalytic extends AbstractReport
         foreach($subQ as $key => $subQ)
             $query
                 ->addSelect([
-                    DB::raw('sub_'.$key.'._count as count_'.$key),
-                    DB::raw('IF(sub_'.$key.'._count > 0, ROUND((main._count / sub_'.$key.'._count - 1) * 100,1), 0) as proc_'.$key),
+
+                    DB::raw("IFNULL(sub_{$key}._count, 0) as count_$key"),
+                    DB::raw("
+                        CASE 
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count = 0 THEN 0
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count <> 0 THEN ROUND((main._count / sub_{$key}._count - 1) * 100,1)
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count <> 0 THEN -100
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count = 0 THEN 100
+                        END as proc_{$key}
+                    "),
                 ])
                 ->leftJoinSub($subQ, 'sub_'.$key, function($join) use($key){
                     $join->on('main.name', 'sub_'.$key.'.name');
