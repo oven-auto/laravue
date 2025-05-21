@@ -134,7 +134,7 @@ class Worksheet extends Model
 
     public function executors()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'worksheet_executors', 'worksheet_id');
+        return $this->belongsToMany(\App\Models\User::class, 'worksheet_executors', 'worksheet_id')->withTrashed();
     }
 
 
@@ -217,7 +217,7 @@ class Worksheet extends Model
 
     public function reporters()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'worksheet_reporters', 'worksheet_id');
+        return $this->belongsToMany(\App\Models\User::class, 'worksheet_reporters', 'worksheet_id')->withTrashed();
     }
 
 

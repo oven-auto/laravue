@@ -79,6 +79,7 @@ class ClientEvent extends Model
     public function executors()
     {
         return $this->belongsToMany(\App\Models\User::class, 'client_event_executors', 'event_id', 'executor_id', 'id')
+            ->withTrashed()
             ->using(ClientEventExecutor::class)
             ->withPivot(['event_id', 'executor_id']);
     }

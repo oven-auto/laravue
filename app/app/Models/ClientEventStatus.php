@@ -227,6 +227,7 @@ class ClientEventStatus extends Model implements CommentInterface
 
     public function executors()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'client_event_status_executors', 'client_event_status_id', 'user_id', 'id');
+        return $this->belongsToMany(\App\Models\User::class, 'client_event_status_executors', 'client_event_status_id', 'user_id', 'id')
+            ->withTrashed();
     }
 }

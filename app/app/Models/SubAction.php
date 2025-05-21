@@ -81,12 +81,12 @@ class SubAction extends Model implements CommentInterface
 
     public function executors()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'sub_action_executors', 'sub_action_id');
+        return $this->belongsToMany(\App\Models\User::class, 'sub_action_executors', 'sub_action_id')->withTrashed();
     }
 
     public function reporters()
     {
-        return $this->belongsToMany(\App\Models\User::class, 'sub_action_reports', 'sub_action_id');
+        return $this->belongsToMany(\App\Models\User::class, 'sub_action_reports', 'sub_action_id')->withTrashed();
     }
 
     public function comments()
