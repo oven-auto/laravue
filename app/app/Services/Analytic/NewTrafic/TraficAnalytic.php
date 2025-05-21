@@ -49,7 +49,7 @@ Class TraficAnalytic extends AbstractReport
 
         foreach($arr as $item)
             $query->unionAll($item);
-
+        
         $res = $query->get()->groupBy('type');
 
         return $res;

@@ -72,7 +72,7 @@ class TraficController extends Controller
         $intervals = $request->only('intervals')['intervals'];
         
         $res = $service->handle($intervals, $data,);
-
+        
         return response()->json([
             'data' => [
                 'total'         => $res['total']        ?? [],
