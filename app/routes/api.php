@@ -365,10 +365,7 @@ Route::middleware(['userfromtoken'])->group(function () {
 
         //пометить трафик как удаленный
         Route::delete('/{trafic}', 'TraficController@delete')
-            ->middleware([
-                'permission.trafic.delete'
-
-            ]);
+            ->middleware(['permission.trafic.delete']);
 
         Route::prefix('links')->group(function () {
             Route::get('/', 'TraficLinkController@index');

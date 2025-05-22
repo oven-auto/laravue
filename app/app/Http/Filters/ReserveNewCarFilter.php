@@ -566,12 +566,20 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         //TODO Дополнить скрипт на проверку суммы оплаты, и проверять на пустоту
         $query = '  IFNULL(cfp.tuningprice, 0) + 
+                    
                     IFNULL(cfp.overprice, 0) + 
+                    
                     IF(cp.price IS NOT NULL, cp.price, cfp.complectationprice) + 
+                    
                     IF(joinOptionPrice.sum_option IS NOT NULL, joinOptionPrice.sum_option, cfp.optionprice) - 
+                    
                     IFNULL(cfp.giftprice, 0) - 
+
                     IFNULL(_joinds._dsum, 0) - 
-                    IFNULL((SELECT sum(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id), 0)';
+
+                    IFNULL((SELECT SUM(used_cars.purchase_price) FROM used_cars WHERE used_cars.id = wsm_reserve_trade_ins.used_car_id), 0) - 
+                    
+                    IFNULL((SELECT SUM(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id), 0)';
 
         match($val){
             true => $builder->whereRaw($query.' > 0'),
@@ -580,7 +588,7 @@ class ReserveNewCarFilter extends AbstractFilter
         };
     }
 
-
+    
 
     public function executors(Builder $builder, array $array)
     {
@@ -738,6 +746,8 @@ class ReserveNewCarFilter extends AbstractFilter
         $builder->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id');
 
         $builder->leftJoin('wsm_reserve_trade_ins', 'wsm_reserve_trade_ins.reserve_id', 'wsm_reserve_new_cars.id');
+
+        //$builder->leftJoin('used_cars', 'used_cars.id', 'wsm_reserve_trade_ins.used_car_id');
         
         $builder->leftJoin('wsm_reserve_lisings', 'wsm_reserve_lisings.reserve_id', 'wsm_reserve_new_cars.id');
 

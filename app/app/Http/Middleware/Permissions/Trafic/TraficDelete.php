@@ -19,7 +19,7 @@ class TraficDelete
     public function handle(Request $request, Closure $next)
     {  
         $trafic = $request->trafic;
-
+       
         //Если статус 3 (принят) то ошибка
         if($trafic->isWorking())
             throw new \Exception('Трафик принят, его нельзя упустить/удалить.');
@@ -35,7 +35,7 @@ class TraficDelete
             return $next($request);
         
         //Если автор
-        if($userPermission->contains('slug', 'trafic_delete_author') && $trafic->author_id = Auth::id())
+        if($userPermission->contains('slug', 'trafic_delete_author') && $trafic->author_id == Auth::id())
             return $next($request);
         
         //Если есть право на отдел
