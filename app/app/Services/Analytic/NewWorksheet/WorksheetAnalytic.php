@@ -60,7 +60,7 @@ Class WorksheetAnalytic extends AbstractReport
         $query = DB::table(array_shift($subQ), 'main')
             ->select([
                 DB::raw('main.name'),
-                DB::raw('100 as proc_main'),              
+                DB::raw('IF(main._count = 0, 0, 100) as proc_main'),              
                 DB::raw('main.type'),
                 DB::raw('main._count as count_main'),
             ]);
@@ -74,8 +74,8 @@ Class WorksheetAnalytic extends AbstractReport
                         CASE 
                             WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count = 0 THEN 0
                             WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count <> 0 THEN ROUND((main._count / sub_{$key}._count - 1) * 100,1)
-                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count <> 0 THEN -100
-                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count = 0 THEN 100
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count <> 0 THEN 100
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count = 0 THEN -100
                         END as proc_{$key}
                     "),
                 ])

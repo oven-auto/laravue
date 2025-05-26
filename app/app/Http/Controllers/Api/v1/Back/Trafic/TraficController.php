@@ -14,21 +14,13 @@ use \App\Services\Comment\Comment;
 
 class TraficController extends Controller
 {
-    public $repo;
-
-    private const NOTICES = [
-        'open'   => 'Трафик открыт',
-        'create' => 'Трафик создан',
-        'update' => 'Трафик изменен',
-        'close' =>  'Трафик упущен',
-        'delete' => 'Трафик удален'
-    ];
-
-
-
-    public function __construct(TraficRepository $repo)
+    public function __construct(
+        public TraficRepository $repo,
+        public $subject = 'Трафик',
+        public $genus = 'male',
+    )
     {
-        $this->repo = $repo;
+        $this->middleware('notice.message')->only(['store', 'update', 'delete', 'close']);
     }
 
 
@@ -48,8 +40,7 @@ class TraficController extends Controller
 
         $this->repo->save($trafic, $request->all());
 
-        return (new TraficSaveResource($trafic))
-            ->additional([ 'message' => self::NOTICES['create'],]);
+        return (new TraficSaveResource($trafic));
     }
 
 
@@ -59,8 +50,7 @@ class TraficController extends Controller
         if (!$trafic->isMy())
             Comment::add($trafic, 'show');
         
-        return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::NOTICES['open']]);
+        return (new TraficSaveResource($trafic));
     }
 
 
@@ -71,8 +61,7 @@ class TraficController extends Controller
 
         $this->repo->save($trafic, $request->all());
 
-        return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::NOTICES['update'],]);
+        return (new TraficSaveResource($trafic));
     }
 
 
@@ -81,8 +70,7 @@ class TraficController extends Controller
     {
         $this->repo->close($trafic);
 
-        return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::NOTICES['close']]);
+        return (new TraficSaveResource($trafic));
     }
 
 
@@ -91,7 +79,6 @@ class TraficController extends Controller
     {
         $this->repo->delete($trafic);
 
-        return (new TraficSaveResource($trafic))
-            ->additional(['message' => self::NOTICES['delete']]);
+        return (new TraficSaveResource($trafic));
     }
 }

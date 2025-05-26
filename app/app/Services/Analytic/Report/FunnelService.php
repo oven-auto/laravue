@@ -30,22 +30,6 @@ Class FunnelService extends AbstractReport
 
     public function format($result)
     {
-        $main = $result->where('type', 'trafic')->first();
-
-        $result->each(function($item) use($main){
-            if($item->type != 'trafic')
-            {
-                $arr = Arr::except((array) $item, ['type', 'name']);
-                foreach($arr as $key => $param)
-                {
-                    $item->$key = [
-                        'count' => $param,
-                        'percent' => $main->$key ? round($param/$main->$key*100,1) : 100,
-                    ];
-                }
-            }
-        });
-
         return $result;
     }
 
@@ -86,12 +70,21 @@ Class FunnelService extends AbstractReport
                 DB::raw('main.type'),
                 DB::raw('main.name'),
                 DB::raw('main._count as count_main'),
+                DB::raw('IF(main._count = 0, 0, 100) as proc_main'), 
             ]);
       
         foreach($subQ as $key => $subQ)
             $query
                 ->addSelect([
                     DB::raw('sub_'.$key.'._count as count_'.$key),
+                    DB::raw("
+                        CASE 
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count = 0 THEN 0
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count <> 0 THEN ROUND((main._count / sub_{$key}._count - 1) * 100,1)
+                            WHEN IFNULL(sub_{$key}._count, 0) = 0 AND main._count <> 0 THEN 100
+                            WHEN IFNULL(sub_{$key}._count, 0) <> 0 AND main._count = 0 THEN -100
+                        END as proc_{$key}
+                    "),
                 ])
                 ->leftJoinSub($subQ, 'sub_'.$key, function($join) use($key){
                     $join->on('main.type', 'sub_'.$key.'.type');

@@ -9,11 +9,13 @@ use Illuminate\Http\Request;
 
 class UsedCarController extends Controller
 {
-    private $repo;
-
-    public function __construct(UsedCarRepository $repo)
+    public function __construct(
+        private UsedCarRepository $repo,
+        public $subject = 'Автомобиль',
+        public $genus = 'male',
+    )
     {
-        $this->repo = $repo;
+        
     }
 
 
@@ -25,6 +27,50 @@ class UsedCarController extends Controller
         return response()->json([
             'data' => UsedCarItemResource::collection($cars),
             'success' => 1,
+        ]);
+    }
+
+
+
+    public function show(int $id)
+    {
+        $car = $this->repo->getById($id);
+
+        return response()->json([
+            'data' => $car,
+            'success' => 1,
+        ]);
+    }
+
+
+
+    public function store(Request $request)
+    {
+        response()->json([
+            'message' => 'На данный момент авто добавляется только из оценки',
+            'success' => 1
+        ]);
+    }
+
+
+
+    public function update(int $id, Request $request)
+    {
+        $car = $this->repo->update($id, $request->all());
+
+        response()->json([
+            'data' => $car,
+            'success' => 1,
+        ]);
+    }
+
+
+
+    public function delete(int $id)
+    {
+        response()->json([
+            'message' => 'Пока не знаю как удалять авто, тк сделка оформлена в оценке',
+            'success' => 1
         ]);
     }
 }

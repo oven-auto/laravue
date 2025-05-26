@@ -853,6 +853,7 @@ Route::middleware(['userfromtoken'])->group(function () {
      **************************************************************************************/
     Route::prefix('usedcars')->group(function () {
         Route::get('', [UsedCarController::class, 'index']);
+        Route::get('{id}', [UsedCarController::class, 'show']);
     });
 
 
