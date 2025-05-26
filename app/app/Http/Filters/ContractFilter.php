@@ -306,6 +306,8 @@ class ContractFilter extends AbstractFilter
         ]);
 
         $builder->whereNotNull('cars.id');
+
+        $builder->whereNotNull('wsm_reserve_new_cars.id');
     }
 
 
