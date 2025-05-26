@@ -47,7 +47,7 @@ class ContractListResource extends JsonResource
             ],
             'sale_at' => '',
 
-            'state' => $this->reserve->car->getStatusCarForDiscountList(),
+            //'state' => $this->reserve->car->getStatusCarForDiscountList(),
         ];
     }
 }
