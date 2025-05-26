@@ -72,7 +72,7 @@ class WsmReserveNewCar extends Model implements CommentInterface
 
     public function car()
     {
-        return $this->hasOne(\App\Models\Car::class, 'id', 'car_id');
+        return $this->hasOne(\App\Models\Car::class, 'id', 'car_id')->withTrashed();
     }
 
 
