@@ -304,6 +304,8 @@ class ContractFilter extends AbstractFilter
             '_payments.amount as payamount',
             '_tradins.price as usedprice',
         ]);
+
+        $builder->whereNotNull('cars.id');
     }
 
 

@@ -21,10 +21,10 @@ class ContractListResource extends JsonResource
                 'status' => $this->reserve->worksheet->status->name,
             ],
             'car' => [
-                // 'id' => $this->reserve->car->id,
-                // 'vin' => $this->reserve->car->vin,
-                // 'brand' => $this->reserve->car->brand->name,
-                // 'mark' => $this->reserve->car->mark->name,
+                'id' => $this->reserve->car->id,
+                'vin' => $this->reserve->car->vin,
+                'brand' => $this->reserve->car->brand->name,
+                'mark' => $this->reserve->car->mark->name,
             ],
             'client' => [
                 'id' => $this->reserve->worksheet->client->id,
@@ -47,7 +47,7 @@ class ContractListResource extends JsonResource
             ],
             'sale_at' => '',
 
-            //'state' => $this->reserve->car->getStatusCarForDiscountList(),
+            'state' => $this->reserve->car->getStatusCarForDiscountList(),
         ];
     }
 }
