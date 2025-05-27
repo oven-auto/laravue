@@ -19,7 +19,7 @@ class ReportResource extends JsonResource
             'priority' => isset($this->car->priority->sale_priority->id) ? $this->car->priority->sale_priority->id : 0,
             'car_id' => $this->car->id,
             'worksheet_id' => $this->worksheet_id,
-            'client' => $this->worksheet->client->lastname.' '.$this->worksheet->client->firstname.' '.$this->worksheet->client->fathername,
+            'client' => $this->worksheet->client->full_name,
             'model' => $this->car->mark->name,
             'vin' => $this->car->vin,
             'price' => $this->getTotalCost(),

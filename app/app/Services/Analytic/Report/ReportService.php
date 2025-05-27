@@ -222,6 +222,9 @@ Class ReportService
             DateHelper::createFromString($intervals[0])->setHour(0)->setMinute(0)->setSecond(0), 
             DateHelper::createFromString($intervals[1] ?? $intervals[0])->setHour(23)->setMinute(59)->setSecond(59)
         ])
+            ->leftJoin('wsm_reserve_new_cars', 'wsm_reserve_new_cars.id', 'wsm_reserve_payments.reserve_id')
+            ->leftJoin('cars', 'cars.id', 'wsm_reserve_new_cars.car_id')
+            ->whereNotNull('cars.id')
             ->groupBy('wsm_reserve_payments.id')
             ->get();
          

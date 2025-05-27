@@ -19,7 +19,7 @@ class ReceiptResource extends JsonResource
             'priority' => isset($this->reserve->car->priority->sale_priority->id) ? $this->reserve->car->priority->sale_priority->id : 0,
             'car_id' => $this->reserve->car->id,
             'worksheet_id' => $this->reserve->worksheet_id,
-            'client' => $this->reserve->worksheet->client->lastname.' '.$this->reserve->worksheet->client->firstname.' '.$this->reserve->worksheet->client->fathername,
+            'client' => $this->reserve->worksheet->client->full_name,
             'model' => $this->reserve->car->mark->name,
             'vin' => $this->reserve->car->vin,
             'price' => $this->reserve->getTotalCost(),

@@ -39,12 +39,16 @@ class Client extends Model implements PersonInterface, CommentInterface
 
     public function getFullNameAttribute()
     {
-        $mas[] = $this->lastname;
-        $mas[] = $this->firstname;
-        $mas[] = $this->fathername;
-        $mas[] = $this->company_name;
-        $result = trim(implode(' ', $mas));
-        return $result;
+        if($this->isPerson())
+        {
+            $mas[] = $this->lastname;
+            $mas[] = $this->firstname;
+            $mas[] = $this->fathername;
+            $result = trim(implode(' ', $mas));
+            return $result;
+        }           
+        
+        return $this->company_name;
     }
 
 

@@ -38,7 +38,7 @@ class WsmReservePayment extends Model implements CommentInterface
 
     public function reserve()
     {
-        return $this->hasOne(\App\Models\WsmReserveNewCar::class, 'id', 'reserve_id');
+        return $this->hasOne(\App\Models\WsmReserveNewCar::class, 'id', 'reserve_id')->withTrashed();
     }
 
 
