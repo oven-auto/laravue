@@ -1211,7 +1211,7 @@ class ReserveNewCarFilter extends AbstractFilter
     public function saleDate(Builder $builder, array $date)
     {
         $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
-
+        
         $builder->whereBetween('wsm_reserve_sales.date_at', $dates);
     }
 
