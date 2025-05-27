@@ -37,7 +37,7 @@ Class StockStructureService
             ->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id')
 
             ->whereNull('cars.deleted_at')
-            ->whereIn('car_status_types.status', ['free','reserved'])
+            ->whereIn('car_status_types.status', ['free','reserved','client'])
             ->where('car_trade_markers.trade_marker_id', 1)
 
             ->groupBy(DB::raw('cars.mark_id with ROLLUP'));  
