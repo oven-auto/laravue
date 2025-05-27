@@ -24,7 +24,9 @@ Class FunnelService extends AbstractReport
         'queryContract',
         'querySale',
         'queryReport',
-        'queryClosedContract'
+        'queryClosedContract',
+        'queryClosedReserve',
+        'queryExecutedReserve'
     ];
 
 
@@ -154,7 +156,53 @@ Class FunnelService extends AbstractReport
                 DB::raw('"Резервы" as name'),
             ])
             ->leftJoin('worksheets', 'worksheets.id', 'wsm_reserve_new_cars.worksheet_id')
+            ->whereBetween('wsm_reserve_new_cars.created_at', $intervals);
+
+        if($data['company_id'])
+            $query->whereIn('worksheets.company_id', $data['company_id']);
+
+        return $query;
+    }
+
+
+
+    /**
+     * РЕЗЕРВЫ
+     */
+    private function queryClosedReserve(array $intervals, array $data)
+    {
+        $query = DB::table('wsm_reserve_new_cars')->select([
+                DB::raw('count(wsm_reserve_new_cars.id) as _count'),
+                DB::raw('"closed_reserve" as type'),
+                DB::raw('"Резервы(только удалено)" as name'),
+            ])
+            ->leftJoin('worksheets', 'worksheets.id', 'wsm_reserve_new_cars.worksheet_id')
             ->whereBetween('wsm_reserve_new_cars.created_at', $intervals)
+            ->whereNotNull('wsm_reserve_new_cars.deleted_at');
+
+        if($data['company_id'])
+            $query->whereIn('worksheets.company_id', $data['company_id']);
+
+        return $query;
+    }
+
+
+
+        /**
+     * РЕЗЕРВЫ
+     */
+    private function queryExecutedReserve(array $intervals, array $data)
+    {
+        $query = DB::table('wsm_reserve_new_cars')->select([
+                DB::raw('count(wsm_reserve_new_cars.id) as _count'),
+                DB::raw('"executed_reserve" as type'),
+                DB::raw('"Резервы(только продано)" as name'),
+            ])
+            ->leftJoin('worksheets', 'worksheets.id', 'wsm_reserve_new_cars.worksheet_id')
+            ->leftJoin('wsm_reserve_sales', 'wsm_reserve_sales.reserve_id', 'wsm_reserve_new_cars.id')
+
+            ->whereBetween('wsm_reserve_new_cars.created_at', $intervals)
+            ->whereNotNull('wsm_reserve_sales.id')
             ->whereNull('wsm_reserve_new_cars.deleted_at');
 
         if($data['company_id'])
@@ -195,7 +243,7 @@ Class FunnelService extends AbstractReport
         $query = DB::table('wsm_reserve_new_car_contracts')->select([
                 DB::raw('count(wsm_reserve_new_car_contracts.id) as _count'),
                 DB::raw('"closed_contract" as type'),
-                DB::raw('"Контракты" as name'),
+                DB::raw('"Контракты(только расторженые)" as name'),
             ])
             ->leftJoin('wsm_reserve_new_cars', 'wsm_reserve_new_cars.id', 'wsm_reserve_new_car_contracts.reserve_id')
             ->leftJoin('worksheets', 'worksheets.id', 'wsm_reserve_new_cars.worksheet_id')
