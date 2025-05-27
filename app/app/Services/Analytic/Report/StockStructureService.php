@@ -33,7 +33,13 @@ Class StockStructureService
             ->leftJoin('marks', 'marks.id', 'cars.mark_id')
             ->leftJoin('brands', 'brands.id', 'cars.brand_id')
             ->leftJoin('car_states', 'car_states.status', 'cars.status')
+            ->leftJoin('car_status_types', 'car_status_types.car_id', 'cars.id')
+            ->leftJoin('car_trade_markers', 'car_trade_markers.car_id', 'cars.id')
+
             ->whereNull('cars.deleted_at')
+            ->whereIn('car_status_types.status', ['free','reserved'])
+            ->where('car_trade_markers.trade_marker_id', 1)
+
             ->groupBy(DB::raw('cars.mark_id with ROLLUP'));  
         
         return $query;
