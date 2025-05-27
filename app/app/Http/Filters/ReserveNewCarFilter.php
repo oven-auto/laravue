@@ -2,6 +2,7 @@
 
 namespace App\Http\Filters;
 
+use App\Helpers\Date\DateHelper;
 use App\Models\CarState;
 use App\Models\CarStatusType;
 use Carbon\Carbon;
@@ -1099,9 +1100,11 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function reserveDate(Builder $builder, array $date)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
-        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-        $builder->whereBetween('wsm_reserve_new_cars.created_at', [$date_1, $date_2]);
+        // $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+        // $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
+
+        $builder->whereBetween('wsm_reserve_new_cars.created_at', $dates);
     }
 
 
@@ -1140,9 +1143,11 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function dkpDate(Builder $builder, array $date)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
-        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-        $builder->whereBetween('contract.dkp_offer_at', [$date_1, $date_2]);
+        // $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+        // $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
+
+        $builder->whereBetween('contract.dkp_offer_at', $dates);
     }
 
 
@@ -1152,9 +1157,11 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function pdkpDate(Builder $builder, array $date)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
-        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-        $builder->whereBetween('contract.pdkp_offer_at', [$date_1, $date_2]);
+        // $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
+        // $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
+        $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
+
+        $builder->whereBetween('contract.pdkp_offer_at', $dates);
     }
 
 
@@ -1203,9 +1210,9 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function saleDate(Builder $builder, array $date)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
-        $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-        $builder->whereBetween('wsm_reserve_sales.date_at', [$date_1, $date_2]);
+        $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
+
+        $builder->whereBetween('wsm_reserve_sales.date_at', $dates);
     }
 
 
@@ -1275,10 +1282,12 @@ class ReserveNewCarFilter extends AbstractFilter
         $builder->where(function($dateQuery) use($data){
             foreach($data as $key => $dateInterval)
                 $dateQuery->orWhere(function($builderOrderDate) use ($key, $dateInterval){
-                    $date_1 = Carbon::createFromFormat('d.m.Y', $dateInterval[0])->format('Y-m-d');
-                    $date_2 = isset($dateInterval[1]) ? Carbon::createFromFormat('d.m.Y', $dateInterval[1])->format('Y-m-d') : $date_1;
+                    //$date_1 = Carbon::createFromFormat('d.m.Y', $dateInterval[0])->format('Y-m-d');
+                    //$date_2 = isset($dateInterval[1]) ? Carbon::createFromFormat('d.m.Y', $dateInterval[1])->format('Y-m-d') : $date_1;
+                    $dates = DateHelper::setDateToCarbon($dateInterval, 'd.m.Y');
+
                     $builderOrderDate->where('car_date_logistics.logistic_system_name', $key)
-                        ->whereBetween('car_date_logistics.date_at', [$date_1, $date_2]);
+                        ->whereBetween('car_date_logistics.date_at', $dates);
                 });
         });
     }

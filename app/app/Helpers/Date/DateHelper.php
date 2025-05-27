@@ -84,6 +84,18 @@ class DateHelper
             return  1;
         return 0;
     }
+
+
+
+    public static function setDateToCarbon(array $dates, $inFormat = 'd.m.Y')
+    {
+        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0]);
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1]) : $date_1;
+        $date_1->setHour(0)->setMinute(0)->setSecond(0);
+        $date_2->setHour(23)->setMinute(59)->setSecond(59);
+
+        return [$date_1, $date_2];
+    }
 }
 
 

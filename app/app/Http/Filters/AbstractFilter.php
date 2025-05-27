@@ -11,6 +11,8 @@ abstract class AbstractFilter implements FilterInterface
 {
     /** @var array */
     private $queryParams = [];
+    
+    abstract protected function getCallbacks(): array;
 
     /**
      * AbstractFilter constructor.
@@ -22,7 +24,7 @@ abstract class AbstractFilter implements FilterInterface
         $this->queryParams = $queryParams;
     }
 
-    abstract protected function getCallbacks(): array;
+    
 
     public function apply(Builder $builder)
     {
@@ -35,29 +37,21 @@ abstract class AbstractFilter implements FilterInterface
         }
     }
 
-    /**
-     * @param Builder $builder
-     */
+   
+    
     protected function before(Builder $builder)
     {
     }
 
-    /**
-     * @param string $key
-     * @param mixed|null $default
-     *
-     * @return mixed|null
-     */
+   
+    
     protected function getQueryParam(string $key, $default = null)
     {
         return $this->queryParams[$key] ?? $default;
     }
 
-    /**
-     * @param string[] $keys
-     *
-     * @return AbstractFilter
-     */
+   
+    
     protected function removeQueryParam(string ...$keys)
     {
         foreach ($keys as $key) {
@@ -67,16 +61,21 @@ abstract class AbstractFilter implements FilterInterface
         return $this;
     }
 
+
+
     protected function formatDate($value, $format = 'Y-m-d')
     {
         $date = new Carbon($value);
+        
         return $date->format($format);
     }
+
+
 
     protected function checkJoin(Builder $builder, $table)
     {
         $res = collect($builder->getQuery()->joins)->pluck('table')->contains($table);
-        //dd($builder->getQuery()->joins);
+        
         return $res;
     }
 }

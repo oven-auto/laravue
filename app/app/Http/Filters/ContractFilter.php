@@ -474,8 +474,10 @@ class ContractFilter extends AbstractFilter
      */
     public function create(Builder $builder, array $dates)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0]);
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1]) : $date_1;
+        $date_1->setHour(0)->setMinute(0)->setSecond(0);
+        $date_2->setHour(23)->setMinute(59)->setSecond(59);
         $builder->whereBetween('wsm_reserve_new_car_contracts.created_at', [$date_1, $date_2]);
     }
 
@@ -486,8 +488,10 @@ class ContractFilter extends AbstractFilter
      */
     public function dkp(Builder $builder, array $dates)
     {  
-        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0]);
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1]) : $date_1;
+        $date_1->setHour(0)->setMinute(0)->setSecond(0);
+        $date_2->setHour(23)->setMinute(59)->setSecond(59);
         $builder->whereBetween('wsm_reserve_new_car_contracts.dkp_offer_at', [$date_1, $date_2]);
     }
 
@@ -498,8 +502,10 @@ class ContractFilter extends AbstractFilter
      */
     public function pdkp(Builder $builder, array $dates)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0]);
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1]) : $date_1;
+        $date_1->setHour(0)->setMinute(0)->setSecond(0);
+        $date_2->setHour(23)->setMinute(59)->setSecond(59);
         $builder->whereBetween('wsm_reserve_new_car_contracts.pdkp_offer_at', [$date_1, $date_2]);
     }
 
@@ -510,8 +516,10 @@ class ContractFilter extends AbstractFilter
      */
     public function sale(Builder $builder, array $dates)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0]);
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1]) : $date_1;
+        $date_1->setHour(0)->setMinute(0)->setSecond(0);
+        $date_2->setHour(23)->setMinute(59)->setSecond(59);
         $builder->whereBetween('wsm_reserve_sales.date_at', [$date_1, $date_2]);
     }
 
@@ -522,8 +530,10 @@ class ContractFilter extends AbstractFilter
      */
     public function close(Builder $builder, array $dates)
     {
-        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0])->format('Y-m-d');
-        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1])->format('Y-m-d') : $date_1;
+        $date_1 = Carbon::createFromFormat('d.m.Y', $dates[0]);
+        $date_2 = isset($dates[1]) ? Carbon::createFromFormat('d.m.Y', $dates[1]) : $date_1;
+        $date_1->setHour(0)->setMinute(0)->setSecond(0);
+        $date_2->setHour(23)->setMinute(59)->setSecond(59);
         $builder->whereBetween('wsm_reserve_new_car_contracts.dkp_closed_at', [$date_1, $date_2]);
     }
 

@@ -153,7 +153,8 @@ Class FunnelService extends AbstractReport
                 DB::raw('"Резервы" as name'),
             ])
             ->leftJoin('worksheets', 'worksheets.id', 'wsm_reserve_new_cars.worksheet_id')
-            ->whereBetween('wsm_reserve_new_cars.created_at', $intervals);
+            ->whereBetween('wsm_reserve_new_cars.created_at', $intervals)
+            ->whereNull('wsm_reserve_new_cars.deleted_at');
 
         if($data['company_id'])
             $query->whereIn('worksheets.company_id', $data['company_id']);

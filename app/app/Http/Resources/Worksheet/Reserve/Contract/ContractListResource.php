@@ -25,6 +25,7 @@ class ContractListResource extends JsonResource
                 'vin' => $this->reserve->car->vin,
                 'brand' => $this->reserve->car->brand->name,
                 'mark' => $this->reserve->car->mark->name,
+                'trashed' => $this->reserve->car->deleted_at ? 1 : 0
             ],
             'client' => [
                 'id' => $this->reserve->worksheet->client->id,
