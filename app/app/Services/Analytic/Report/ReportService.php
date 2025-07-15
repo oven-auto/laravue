@@ -25,17 +25,17 @@ Class ReportService
                 'car' => function($q){
                     $q->with([
                         'mark',
-                        'complectation.current_price',
-                        'options.current_price',
-                        'collector',
-                        'priority.sale_priority',
-                        'logistic_dates',
+                        // 'complectation.current_price',
+                        // 'options.current_price',
+                        // 'collector',
+                        // 'priority.sale_priority',
+                        // 'logistic_dates',
                     ]);
                 },
-                'payments',
-                'sale',
-                'last_comment',
-                'lisinger',
+                // 'payments',
+                // 'sale',
+                // 'last_comment',
+                // 'lisinger',
             ]);
 
         return $query;
@@ -205,17 +205,17 @@ Class ReportService
                         'car' => function($qC){
                             $qC->with([
                                 'mark',
-                                'complectation.current_price',
-                                'options.current_price',
-                                'collector',
-                                'priority.sale_priority',
-                                'logistic_dates',
+                                //'complectation.current_price',
+                                //'options.current_price',
+                                //'collector',
+                                //'priority.sale_priority',
+                                //'logistic_dates',
                             ]);
                         },
-                        'payments',
-                        'sale',
-                        'last_comment',
-                        'lisinger',
+                        //'payments',
+                        //'sale',
+                        //'last_comment',
+                        //'lisinger',
                     ]);
                 },
             ]);         
