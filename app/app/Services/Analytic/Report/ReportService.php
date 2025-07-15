@@ -32,7 +32,7 @@ Class ReportService
                         'logistic_dates',
                     ]);
                 },
-                //'payments',
+                'payments',
                 //'sale',
                 //'last_comment',
                 //'lisinger',
