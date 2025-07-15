@@ -38,7 +38,7 @@ class ReceiptResource extends JsonResource
             'issued_date' => $this->reserve->getIssueDate(),
             'sale_date' => $this->reserve->getSaleDate(),
             'lisinger' => $this->reserve->lisinger_name,
-            'stock_date' => $this->car->getLogisticDateByKey('stock_date') ?? ''
+            'stock_date' => $this->reserve->car->getLogisticDateByKey('stock_date') ?? ''
         ];
     }
 }
