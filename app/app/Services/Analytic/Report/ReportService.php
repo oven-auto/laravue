@@ -26,9 +26,9 @@ Class ReportService
                     $q->with([
                         'mark',
                         //'complectation.current_price',
-                        'options.current_price',
+                        //'options.current_price',
                         'collector',
-                        'priority.sale_priority',
+                        //'priority.sale_priority',
                         //'logistic_dates',
                     ]);
                 },
