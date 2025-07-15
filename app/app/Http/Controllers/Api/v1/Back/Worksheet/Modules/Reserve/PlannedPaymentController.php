@@ -34,14 +34,19 @@ class PlannedPaymentController extends Controller
      * )
      */
     public function index(Request $request)
-    {
+    {   
         $validated = $request->validate([
             'reserve_id' => 'required',
         ]);
 
         $planned = $this->repo->getByReserve($validated['reserve_id']);
-
-        return new PlannedPaymentResource($planned);
+        
+        if($planned)
+            return new PlannedPaymentResource($planned);
+        return response()->json([
+            'data' => [],
+            'success' => 1,
+        ]);
     }
 
 

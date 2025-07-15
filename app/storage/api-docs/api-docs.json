@@ -1033,6 +1033,32 @@
                 }
             }
         },
+        "cars/restore/{id}": {
+            "patch": {
+                "tags": [
+                    "Востановить автомобиль"
+                ],
+                "summary": "Востановить автомобиль",
+                "description": "Востановить автомобиль",
+                "operationId": "restoreCar",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор автомобиля",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/cars/count": {
             "get": {
                 "tags": [
@@ -2733,6 +2759,158 @@
                 }
             }
         },
+        "/finservices/categories": {
+            "get": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Категории список",
+                "description": "Категории список",
+                "operationId": "getfinservicescategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Создать Категории список",
+                "description": "Создать Категории список",
+                "operationId": "storefinservicescategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/finservices/categories/{id}": {
+            "get": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Открыть Категории список",
+                "description": "Открыть Категории список",
+                "operationId": "showfinservicescategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Изменить Категории список",
+                "description": "Изменить Категории список",
+                "operationId": "updatefinservicescategories",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/finservices": {
+            "get": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Список",
+                "description": "Вернет список (module_id ?, category_id ?)",
+                "operationId": "getfinservices",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Создать ",
+                "description": "Создать ",
+                "operationId": "createfinservices",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/finservices/{id}": {
+            "get": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Открыть ",
+                "description": "Вернет ",
+                "operationId": "showfinservices",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор кузова",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "Финансовые сервисы"
+                ],
+                "summary": "Изменить ",
+                "description": "Изменить ",
+                "operationId": "updatefinservices",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Идентификатор кузова",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/targets": {
             "get": {
                 "tags": [
@@ -3043,6 +3221,141 @@
                 }
             }
         },
+        "/worksheet/modules/credits": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Список для рабочего листа (worksheet_id = int) ",
+                "description": "Список для рабочего листа ",
+                "operationId": "creditList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Создать",
+                "description": "Создать",
+                "operationId": "creditPost",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreditCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/modules/credits/{id}": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Открыть",
+                "description": "Открыть",
+                "operationId": "creditShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Удалить",
+                "description": "Удалить",
+                "operationId": "creditDelete",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Изменить",
+                "description": "Изменить",
+                "operationId": "creditPatch",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/CreditCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/creditlist": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Журнал ",
+                "description": "Журнал ",
+                "operationId": "wcreditJournal",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/creditlist/count": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Кредит"
+                ],
+                "summary": "Журнал (кол-во) ",
+                "description": "Журнал (кол-во) ",
+                "operationId": "creditCount",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/contracts": {
             "get": {
                 "tags": [
@@ -3265,6 +3578,141 @@
                 }
             }
         },
+        "/servicelist": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Журнал ",
+                "description": "Журнал ",
+                "operationId": "worksheetServiceJournal",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/servicelist/count": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Журнал (кол-во) ",
+                "description": "Журнал (кол-во) ",
+                "operationId": "worksheetServiceCount",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/ServiceListRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/modules/services": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Список для рабочего листа (worksheet_id = int) ",
+                "description": "Список для рабочего листа ",
+                "operationId": "worksheetServiceList",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Создать ",
+                "description": "Создать ",
+                "operationId": "worksheetServiceCreate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorksheetServiceCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/worksheet/modules/services/{id}": {
+            "get": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Открыть ",
+                "description": "Открыть ",
+                "operationId": "worksheetServiceShow",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Удалить тест",
+                "description": "Удалить тест",
+                "operationId": "worksheetServiceDestroy",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "МОДУЛЬ РЛ: Финансовые сервисы"
+                ],
+                "summary": "Изменить ",
+                "description": "Изменить ",
+                "operationId": "worksheetServiceUpdate",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/WorksheetServiceCreateRequest"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
         "/worksheets": {
             "get": {
                 "tags": [
@@ -3445,6 +3893,21 @@
                 "summary": "Список типов рапорта",
                 "description": "Список типов рапорта",
                 "operationId": "getCarSReportTypes",
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/services/html/select/cartypes": {
+            "get": {
+                "tags": [
+                    "Списки"
+                ],
+                "summary": "Список типов авто для финуслуг",
+                "description": "Список типов авто для финуслуг",
+                "operationId": "getCarSTypes",
                 "responses": {
                     "200": {
                         "description": "OK"
@@ -4396,6 +4859,14 @@
                         "format": "bool",
                         "enum": [
                             "has_priority"
+                        ]
+                    },
+                    "trashed": {
+                        "description": "Удаленные 1 - только, 0 - не удаленные",
+                        "type": "boolean",
+                        "format": "bool",
+                        "enum": [
+                            "trashed"
                         ]
                     }
                 },
@@ -5414,6 +5885,73 @@
                 },
                 "type": "object"
             },
+            "ServiceCreateRequest": {
+                "required": [
+                    "name",
+                    "category",
+                    "provider"
+                ],
+                "properties": {
+                    "name": {
+                        "description": "Название",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "category": {
+                        "description": "Категоря",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "provider": {
+                        "description": "Поставщик",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "cost": {
+                        "description": "стоимость",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "company_award": {
+                        "description": "премия компании",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "design_award": {
+                        "description": "премия за оформление",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "sale_award": {
+                        "description": "премия за продажу",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "duration": {
+                        "description": "Напоминание",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "manager": {
+                        "description": "Ответственный",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "applicability": {
+                        "description": "Применяемость",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2,
+                                3
+                            ]
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "TargetCreateRequest": {
                 "required": [
                     "journal"
@@ -5444,6 +5982,129 @@
                 },
                 "type": "object"
             },
+            "CreditCreateRequest": {
+                "properties": {
+                    "worksheet": {
+                        "description": "ID рабочего листа",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "debtor": {
+                        "description": "ID заемщика",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "tactic": {
+                        "description": "ID тактики расчета",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "creditor": {
+                        "description": "ID кредитора",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "status": {
+                        "description": "ID статуса заявки",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "author": {
+                        "description": "ID автора заявки",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "close": {
+                        "description": "расторжение",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "period": {
+                        "description": "Срок",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "cost": {
+                        "description": "Стоимость",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "first_pay": {
+                        "description": "ПВ",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "month_pay": {
+                        "description": "Месячный платеж",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "simple": {
+                        "description": "Упрощнный растет",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "approximates": {
+                        "description": "Наполнение (примерное) те сервисы (именно сервисы, а не модули РЛ), которые возможно добавятся (api/finservices)",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "register_at": {
+                        "description": "Дата оформления",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "decorator": {
+                        "description": "Оформитель",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "award": {
+                        "description": "Награда",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "award_complete": {
+                        "description": "Начисление награды",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "deduction": {
+                        "description": "удержание",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "services": {
+                        "description": "Модули финансовых услуг (те финуслуги что есть в рл)",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "car": {
+                        "description": "Машина",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": {
+                                "id": "2",
+                                "type": "new"
+                            }
+                        }
+                    }
+                },
+                "type": "object"
+            },
             "LisingerCreateRequest": {
                 "required": [
                     "reserve_id",
@@ -5459,6 +6120,171 @@
                         "description": "Client ID",
                         "type": "integer",
                         "format": "integer"
+                    }
+                },
+                "type": "object"
+            },
+            "ServiceListRequest": {
+                "properties": {
+                    "ids": {
+                        "description": "ID",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "search": {
+                        "description": "Поиск",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "car_type": {
+                        "description": "Тип авто",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "manager": {
+                        "description": "ID Продавец",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "decorator": {
+                        "description": "ID Оформитель",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                1,
+                                2
+                            ]
+                        }
+                    },
+                    "sale_interval": {
+                        "description": "Интервал продажи",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": [
+                                "12.12.2025",
+                                "11.11.2026"
+                            ]
+                        }
+                    },
+                    "category": {
+                        "description": "Категория",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "service": {
+                        "description": "ID Финуслуги",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "sort": {
+                        "description": "Сортировка",
+                        "type": "string",
+                        "format": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "WorksheetServiceCreateRequest": {
+                "properties": {
+                    "car": {
+                        "description": "Машина",
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                            "example": {
+                                "id": "2",
+                                "type": "new"
+                            }
+                        }
+                    },
+                    "service": {
+                        "description": "ID финансовой услуги",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "provider": {
+                        "description": "ID провайдера",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "cost": {
+                        "description": "Стоимость",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "payment": {
+                        "description": "ID тип оплаты",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "worksheet": {
+                        "description": "ID РЛ",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "simple": {
+                        "description": "Упрощнный растет",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "close": {
+                        "description": "Расторжение",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "number": {
+                        "description": "Номр договора",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "begin_at": {
+                        "description": "Дата начала",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "register_at": {
+                        "description": "Дата оформления",
+                        "type": "string",
+                        "format": "string"
+                    },
+                    "decorator": {
+                        "description": "ID оформителя",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "manager": {
+                        "description": "ID продовца",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "award": {
+                        "description": "Премия",
+                        "type": "integer",
+                        "format": "integer"
+                    },
+                    "award_complete": {
+                        "description": "Зачисление премии",
+                        "type": "boolean",
+                        "format": "boolean"
+                    },
+                    "deduction": {
+                        "description": "Удержание",
+                        "type": "boolean",
+                        "format": "boolean"
                     }
                 },
                 "type": "object"
@@ -5495,6 +6321,10 @@
         {
             "name": "Новый автомобиль",
             "description": "Новый автомобиль"
+        },
+        {
+            "name": "Востановить автомобиль",
+            "description": "Востановить автомобиль"
         },
         {
             "name": "Экспорт",
@@ -5573,12 +6403,20 @@
             "description": "Журнал скидок"
         },
         {
+            "name": "Финансовые сервисы",
+            "description": "Финансовые сервисы"
+        },
+        {
             "name": "Цели",
             "description": "Цели"
         },
         {
             "name": "Трафик",
             "description": "Трафик"
+        },
+        {
+            "name": "МОДУЛЬ РЛ: Кредит",
+            "description": "МОДУЛЬ РЛ: Кредит"
         },
         {
             "name": "Контракты",
@@ -5591,6 +6429,10 @@
         {
             "name": "Резерв нового автомобиля",
             "description": "Резерв нового автомобиля"
+        },
+        {
+            "name": "МОДУЛЬ РЛ: Финансовые сервисы",
+            "description": "МОДУЛЬ РЛ: Финансовые сервисы"
         },
         {
             "name": "Рабочий лист",

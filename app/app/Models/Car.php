@@ -11,8 +11,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Traits\Filterable;
+use App\Models\Worksheet\Service\WSMServiceCar;
 use App\Services\Car\CarLogisticStateService;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
@@ -92,6 +94,13 @@ class Car extends Model
 
 
     /* RELATIONS */
+
+
+
+    public function service(): MorphOne
+    {
+        return $this->morphOne(WSMServiceCar::class, 'carable');
+    }
 
 
 

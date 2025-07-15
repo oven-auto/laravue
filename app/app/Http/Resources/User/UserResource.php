@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Helpers\String\StringHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -19,8 +20,9 @@ class UserResource extends JsonResource
             'firstname' => $this->name,
             'email' => $this->email,
             'lastname' => $this->lastname,
-            'phone' => \StrHelp::phoneMask($this->phone),
-            'role' => $this->role->name
+            'phone' => StringHelper::phoneMask($this->phone),
+            'role' => $this->role->name,
+            'trash' => $this->deleted_at ? 1 : 0,
         ];
     }
 }

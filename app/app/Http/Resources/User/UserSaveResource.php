@@ -16,6 +16,7 @@ class UserSaveResource extends JsonResource
     {
         return [
             'data' => [
+                'trash' => $this->deleted_at ? 1 : 0,
                 'id' => $this->id,
                 'firstname' => $this->name,
                 'email' => $this->email,

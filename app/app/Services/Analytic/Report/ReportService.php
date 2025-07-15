@@ -35,6 +35,7 @@ Class ReportService
                 'payments',
                 'sale',
                 'last_comment',
+                'lisinger',
             ]);
 
         return $query;
@@ -214,6 +215,7 @@ Class ReportService
                         'payments',
                         'sale',
                         'last_comment',
+                        'lisinger',
                     ]);
                 },
             ]);         

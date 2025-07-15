@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use App\Models\Traits\Filterable;
+use App\Models\Worksheet\Service\WSMServiceCar;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 class UsedCar extends Model
 {
@@ -16,6 +18,15 @@ class UsedCar extends Model
     /**
      * RELATIONS
      */
+
+
+
+    public function service(): MorphOne
+    {
+        return $this->morphOne(WSMServiceCar::class, 'carable');
+    }
+
+
 
     public function brand()
     {

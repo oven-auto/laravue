@@ -117,5 +117,6 @@ class Kernel extends HttpKernel
         'permission.complectation.restore'   => \App\Http\Middleware\Permissions\Car\Complectation\ComplectationAccessRestoreMiddleware::class,
         'potokbit'                          => \App\Http\Middleware\PotokBitMiddlewareLog::class,
         'carfilter'                         => \App\Http\Middleware\Car\CarFilterMiddleware::class,
+        'blockroute'                        => \App\Http\Middleware\System\AdminWorkMiddleware::class,
     ];
 }

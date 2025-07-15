@@ -31,6 +31,8 @@ use App\Http\Controllers\Api\v1\Back\Car\Option\PriceOptionController;
 use App\Http\Controllers\Api\v1\Back\Car\TradeMarker\TradeMarkerController;
 use App\Http\Controllers\Api\v1\Back\Car\Tuning\TuningController;
 use App\Http\Controllers\Api\v1\Back\Client\Car\ClientChangeCarOwner;
+use App\Http\Controllers\Api\v1\Back\Credit\StatusController;
+use App\Http\Controllers\Api\v1\Back\Credit\TacticController;
 use App\Http\Controllers\Api\v1\Back\Director\OperativeReportController;
 use App\Http\Controllers\Api\v1\Back\Director\RealisationController;
 use App\Http\Controllers\Api\v1\Back\Director\SaleFunnelController;
@@ -38,10 +40,14 @@ use App\Http\Controllers\Api\v1\Back\Director\StockStructureController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountCarController;
 use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
 use App\Http\Controllers\Api\v1\Back\Payment\PaymentController as CRUDPaymentController;
+use App\Http\Controllers\Api\v1\Back\Service\ServiceCategoryController;
+use App\Http\Controllers\Api\v1\Back\Service\ServiceController;
 use App\Http\Controllers\Api\v1\Back\TargetModel\TargetModelController;
 use App\Http\Controllers\Api\v1\Back\TaskList\OverdueCountController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\CommentListController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Credit\CreditController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Credit\CreditListController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveNewCarController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\RedemptionController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ContractController;
@@ -71,6 +77,8 @@ use App\Http\Controllers\Api\v1\Services\Select\UserSelectController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Integration\PotokBit\PotokBitController;
 use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Reserve\ReserveLisingerController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Service\ServiceListController;
+use App\Http\Controllers\Api\v1\Back\Worksheet\Modules\Service\ServiceWorksheetController;
 use App\Http\Controllers\Api\v1\Services\Select\DealTypeController;
 use App\Http\Middleware\Permissions\Audit\AuditCRUDMiddleware;
 use App\Http\Middleware\Permissions\Audit\AuditMasterMiddleware;
@@ -184,6 +192,7 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::prefix('services')->group(function () {
         Route::prefix('html')->group(function () { //МАРШРУТЫ ПОЛУЧЕНИЯ СПИСКОВ ДЛЯ HTML
             Route::prefix('select')->group(function () {
+                Route::get('cartypes',           [CarBuisnesStatusController::class, 'type']);
 
                 Route::get('dealtypes',          [DealTypeController::class, 'index']);
 
@@ -240,7 +249,7 @@ Route::middleware(['userfromtoken'])->group(function () {
                 Route::get('vehicletypes',       [BodyWorkSelectController::class, 'vehicletypes']);
                 
                 //список пользователей
-                Route::get('users',              [UserSelectController::class, 'index']); 
+                Route::get('users',              [UserSelectController::class, 'index'])->withTrashed(); 
                 
                 //Список залогодателей (держатель залога)
                 Route::get('collectors', [SelectCollectorController::class, 'index']);
@@ -276,7 +285,7 @@ Route::middleware(['userfromtoken'])->group(function () {
 
     Route::prefix('listing')->middleware(['corsing', 'userfromtoken'])->namespace('\App\Http\Controllers\Api\v1\Listing')->group(function () {
         Route::get('vehicletypes', 'VehicleTypeController');
-        Route::get('users', 'UserController@index');
+        Route::get('users', 'UserController@index')->withTrashed();
         Route::get('zones', 'ZoneController@index');
         Route::get('chanels', 'ChanelController@index');
         Route::get('structures', 'StructureController');
@@ -330,7 +339,7 @@ Route::middleware(['userfromtoken'])->group(function () {
     Route::middleware(['corsing', 'userfromtoken'])->group(function () {
         //middleware сделан в контролере
         Route::resource('users', '\App\Http\Controllers\Api\v1\Back\User\UserController')
-            ->except(['edit', 'create']);
+            ->except(['edit', 'create'])->withTrashed();
         //middleware сделан в контролере
         Route::resource('roles', '\App\Http\Controllers\Api\v1\Back\User\RoleController')
             ->except(['edit', 'create']);
@@ -487,7 +496,7 @@ Route::middleware(['userfromtoken'])->group(function () {
 
 
 
-    Route::prefix('cars')->middleware(['corsing', 'userfromtoken'])->group(function () {
+    Route::prefix('cars')->middleware(['corsing', 'userfromtoken',])->group(function () {
 
         Route::get('/clone/{car}', [CarCloneController::class, 'clone']);
 
@@ -686,11 +695,12 @@ Route::middleware(['userfromtoken'])->group(function () {
         Route::prefix('')->group(function () {
             Route::get('',                      [CarController::class, 'index'])->middleware('permission.newstock.list');
             Route::post('',                     [CarController::class, 'store'])->middleware('permission.newstock.store');
-            Route::get('{car}',                 [CarController::class, 'show'])->middleware('permission.newstock.show');
+            Route::get('{car}',                 [CarController::class, 'show'])->middleware('permission.newstock.show')->withTrashed();
             Route::patch('{car}',               [CarController::class, 'update'])->middleware('permission.newstock.edit');
             Route::get('{car}/history',         [CarController::class, 'history'])->middleware('permission.newstock.edit');
             Route::get('{car}/tuning',          [CarController::class, 'tuning'])->middleware('permission.newstock.edit');
-            Route::delete('{car}',          [CarController::class, 'destroy']);
+            Route::delete('{car}',              [CarController::class, 'destroy']);
+            Route::patch('restore/{car}',       [CarController::class, 'restore']);
         });
     });
 
@@ -1080,6 +1090,34 @@ Route::middleware(['userfromtoken'])->group(function () {
                     Route::delete('{reserve}',  [TradeInReserveController::class, 'detach']);
                 });
             });
+
+
+
+            /**
+             * СЕРВИСЫ
+             */
+            //TODO МАРШРУТЫ МОДУЛЯ ДОБАВЛЕНИЯ ПРОДУКТОВ В РЛ
+            Route::prefix('services')->group(function() {
+                Route::get('',          [ServiceWorksheetController::class, 'index']);
+                Route::post('',         [ServiceWorksheetController::class, 'store']);
+                Route::get('{id}',      [ServiceWorksheetController::class, 'show']);
+                Route::patch('{id}',    [ServiceWorksheetController::class, 'update']);
+                Route::delete('{id}',   [ServiceWorksheetController::class, 'destroy']);
+            });
+
+
+
+            /**
+             * КРЕДИТЫ
+             */
+            //TODO МАРШРУТЫ ДОБАВЛЕНИЯ КРЕДИТОВ В РЛ
+            Route::prefix('credits')->group(function(){
+                Route::get('',          [CreditController::class, 'index']);
+                Route::post('',         [CreditController::class, 'store']);
+                Route::get('{id}',      [CreditController::class, 'show']);
+                Route::patch('{id}',    [CreditController::class, 'update']);
+                Route::delete('{id}',   [CreditController::class, 'destroy']);
+            });
         });
 
 
@@ -1228,5 +1266,36 @@ Route::middleware(['userfromtoken'])->group(function () {
         Route::get('targets/count', [TargetModelController::class, 'count']);
 
         Route::apiResource('targets', TargetModelController::class)->except(['edit', 'create']);        
+    });
+
+
+
+    //TODO МАРШРУТЫ СОЗДАНИЯ ПРОДКУТОВ
+    Route::prefix('finservices')->group(function(){
+        Route::get('payments',  [\App\Http\Controllers\Api\v1\Back\Service\PaymentController::class, 'index']);
+        Route::get('tactics',   [TacticController::class, 'index']);
+        Route::get('statuses',  [StatusController::class, 'index']);
+
+        Route::apiResource('categories', ServiceCategoryController::class)->except(['delete', 'edit']);
+        Route::get('/', [ServiceController::class, 'index']);
+        Route::post('', [ServiceController::class, 'store']);
+        Route::patch('{id}', [ServiceController::class, 'update']);
+        Route::get('{id}', [ServiceController::class, 'show']);
+    });
+
+
+
+    //TODO МАРШРУТЫ ДЛЯ СПИСКА ФИНУСЛУГ 
+    Route::prefix('servicelist')->group(function() {
+        Route::get('',      [ServiceListController::class, 'index']);
+        Route::get('count', [ServiceListController::class, 'count']);
+    });
+
+
+
+    //TODO МАРШРУТЫ ДЛЯ СПИСКА КРЕДИТОВ 
+    Route::prefix('creditlist')->group(function() {
+        Route::get('',      [CreditListController::class, 'index']);
+        Route::get('count', [CreditListController::class, 'count']);
     });
 });

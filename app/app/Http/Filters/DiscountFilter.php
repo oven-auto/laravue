@@ -21,6 +21,7 @@ Class DiscountFilter extends AbstractFilter
     public const IS_REPARATION = 'isreparation';
     public const SALE_INTERVAL = 'sale_interval';
     public const FACT_INTERVAL = 'fact_interval';
+    public const HAS_SALE   = 'has_sale';
 
 
 
@@ -75,6 +76,17 @@ Class DiscountFilter extends AbstractFilter
             self::SALE_INTERVAL     => [$this, 'sale_interval'],
             self::FACT_INTERVAL     => [$this, 'fact_interval'],
         ];
+    }
+
+
+
+    public function hasSale(Builder $builder, bool $val)
+    {
+        match($val) {
+            true => $builder->whereNotNull('wsm_reserve_sales.id'),
+            false => $builder->whereNull('wsm_reserve_sales.id'),
+            default => ''
+        };
     }
 
 

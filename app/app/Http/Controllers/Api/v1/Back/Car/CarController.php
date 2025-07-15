@@ -12,6 +12,7 @@ use App\Http\Resources\Default\SuccessResource;
 use Illuminate\Http\Request;
 use App\Models\Car;
 use App\Repositories\Car\Car\CarRepository;
+use App\Repositories\Car\Car\DTO\LogisticDateDTO;
 use Exception;
 
 class CarController extends Controller
@@ -326,16 +327,68 @@ class CarController extends Controller
      */
     public function destroy(int $id)
     {
-        $car = Car::find($id);
+        $car = Car::findOrFail($id);
 
         if($car->isReserved())
             throw new Exception('Имеется резерв. Операция не возможна.');
 
         if(!$car->isApplication())
             throw new Exception('Автомобиль не является заявкой.  Операция не возможна.');
+        
+        $data['deleted_date'] = now()->format('d.m.Y');
 
+        $car->saveLogisticDates(new LogisticDateDTO($data ?? []));
+
+        $car->load('logistic_dates');
+
+        $this->repo->setCarStatus($car);
+        
         $car->delete();
 
         return new SuccessResource(1);
+    }
+
+
+
+    /**
+     * @OA\Patch(
+     *      path="cars/restore/{id}",
+     *      operationId="restoreCar",
+     *      tags={"Востановить автомобиль"},
+     *      summary="Востановить автомобиль",
+     *      description="Востановить автомобиль",
+     *      @OA\Parameter(
+     *          name="id",
+     *          description="Идентификатор автомобиля",
+     *          required=true,
+     *          in="path",
+     *          @OA\Schema(
+     *              type="integer"
+     *          )
+     *      ),
+     *      @OA\Response(
+     *          response=200,
+     *          description="OK",
+     *      ),
+     * )
+     */
+    public function restore(int $id)
+    {
+        $car = car::onlyTrashed()->findOrFail($id);
+
+        $car->restore();
+
+        $data['application_date'] = $car->created_at->format('d.m.Y');
+
+        $car->saveLogisticDates(new LogisticDateDTO($data));
+
+        $car->load('logistic_dates');
+
+        $this->repo->setCarStatus($car);
+
+        return response()->json([
+            'message' => 'Пометка об удалении снята.',
+            'success' => 1,
+        ]);
     }
 }

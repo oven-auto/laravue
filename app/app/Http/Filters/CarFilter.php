@@ -615,6 +615,16 @@ class CarFilter extends AbstractFilter
 
     public const INPUT = 'input';
 
+    /**
+     * @OA\Property(
+     *  format="bool", 
+     *  description="Удаленные 1 - только, 0 - не удаленные", 
+     *  property="trashed", 
+     *  type="bool"
+     * )
+     */
+    public const TRASHED = 'trashed';
+
 
 
     protected function getCallbacks(): array
@@ -670,18 +680,19 @@ class CarFilter extends AbstractFilter
             self::HAS_PRIORITY          => [$this, 'hasPriority'],
             self::HAS_STOCK_DATE        => [$this, 'hasStockDate'],
             //self::OFF_DATE              => [$this, 'offDate'],
+            self::TRASHED               => [$this, 'trashed'],
         ];
     }
 
 
 
-    // public function offDate(Builder $builder, array $date)
-    // {dd(1);
-    //     $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
-    //     $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-    //     $builder->whereBetween('car_date_logistics.date_at', [$date_1, $date_2])
-    //         ->where('car_date_logistics.logistic_system_name', 'off_date');
-    // }
+    public function trashed(Builder $builder, bool $val)
+    {
+        match($val){
+            true => $builder->onlyTrashed(),
+            default => ''
+        };
+    }
 
 
 

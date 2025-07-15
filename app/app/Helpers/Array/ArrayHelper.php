@@ -18,4 +18,26 @@ Class ArrayHelper
 
         return $result;
     }
+
+
+
+    public static function isAllNull(array $data) : bool
+    {
+        $result = array_filter($data, function($item) {
+            return is_null($item) ? 0 : 1;
+        });
+
+        return count($result) ? 0 : 1;
+    }
+
+
+
+    public static function getOnlyNotNullable(array $data)
+    {
+        $result = array_filter($data, function($item) {
+            return is_null($item) ? 0 : 1;
+        });
+
+        return $result;
+    }
 }
