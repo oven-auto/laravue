@@ -25,8 +25,8 @@ Class ReportService
                 'car' => function($q){
                     $q->with([
                         'mark',
-                        //'complectation.current_price',
-                        //'options.current_price',
+                        'complectation.current_price',
+                        'options.current_price',
                         'collector',
                         'priority.sale_priority',
                         'logistic_dates',
@@ -34,8 +34,8 @@ Class ReportService
                 },
                 'payments',
                 'sale',
-                //'last_comment',
-                //'lisinger',
+                'last_comment',
+                'lisinger',
             ]);
 
         return $query;
