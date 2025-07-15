@@ -33,7 +33,7 @@ Class ReportService
                     ]);
                 },
                 'payments',
-                //'sale',
+                'sale',
                 //'last_comment',
                 //'lisinger',
             ]);
