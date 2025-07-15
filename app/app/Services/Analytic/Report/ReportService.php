@@ -16,22 +16,22 @@ Class ReportService
                 'wsm_reserve_new_cars.*'
             )            
             ->with([
-                'worksheet' => function($q){
-                    $q->with([
-                        'client',
-                        'author'
-                    ]);
-                }, 
-                'car' => function($q){
-                    $q->with([
-                        'mark',
-                        // 'complectation.current_price',
-                        // 'options.current_price',
-                        // 'collector',
-                        // 'priority.sale_priority',
-                        // 'logistic_dates',
-                    ]);
-                },
+                // 'worksheet' => function($q){
+                //     $q->with([
+                //         'client',
+                //         'author'
+                //     ]);
+                // }, 
+                // 'car' => function($q){
+                //     $q->with([
+                //         'mark',
+                //         'complectation.current_price',
+                //         'options.current_price',
+                //         'collector',
+                //         'priority.sale_priority',
+                //         'logistic_dates',
+                //     ]);
+                // },
                 // 'payments',
                 // 'sale',
                 // 'last_comment',
@@ -196,22 +196,22 @@ Class ReportService
                 'payment', 
                 'reserve' => function($q){
                     $q->with([
-                        'worksheet' => function($qW){
-                            $qW->with([
-                                    'client',
-                                    'author'
-                                ]);
-                        }, 
-                        'car' => function($qC){
-                            $qC->with([
-                                'mark',
-                                //'complectation.current_price',
-                                //'options.current_price',
-                                //'collector',
-                                //'priority.sale_priority',
-                                //'logistic_dates',
-                            ]);
-                        },
+                        // 'worksheet' => function($qW){
+                        //     $qW->with([
+                        //             'client',
+                        //             'author'
+                        //         ]);
+                        // }, 
+                        // 'car' => function($qC){
+                        //     $qC->with([
+                        //         'mark',
+                        //         'complectation.current_price',
+                        //         'options.current_price',
+                        //         'collector',
+                        //         'priority.sale_priority',
+                        //         'logistic_dates',
+                        //     ]);
+                        // },
                         //'payments',
                         //'sale',
                         //'last_comment',
