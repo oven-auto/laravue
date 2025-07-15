@@ -29,7 +29,7 @@ Class ReportService
                         //'options.current_price',
                         'collector',
                         'priority.sale_priority',
-                        //'logistic_dates',
+                        'logistic_dates',
                     ]);
                 },
                 //'payments',
