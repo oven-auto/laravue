@@ -108,7 +108,7 @@ class Complectation extends Model
      */
     public function last_history()
     {
-        return $this->hasOne(\App\Models\ComplectationHistory::class, 'complectation_id', 'id')->orderBy('id', 'DESC');
+        return $this->hasOne(\App\Models\ComplectationHistory::class, 'complectation_id', 'id')->orderBy('id', 'DESC')->withDefault();
     }
 
 
