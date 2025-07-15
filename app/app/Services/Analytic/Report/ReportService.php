@@ -13,7 +13,7 @@ Class ReportService
     public function setQuery()
     {
         $query = WsmReserveNewCar::select( 
-                'wsm_reserve_new_cars.*',
+                'wsm_reserve_new_cars.*'
             )            
             ->with([
                 'worksheet' => function($q){
@@ -25,11 +25,11 @@ Class ReportService
                 'car' => function($q){
                     $q->with([
                         'mark',
-                        'complectation.current_price',
+                        //'complectation.current_price',
                         'options.current_price',
                         'collector',
                         'priority.sale_priority',
-                        'logistic_dates',
+                        //'logistic_dates',
                     ]);
                 },
                 'payments',

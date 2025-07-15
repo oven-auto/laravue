@@ -37,7 +37,8 @@ class ReportResource extends JsonResource
             'ransom_date' => $this->car->getRansomDate(),
             'issued_date' => $this->getIssueDate(),
             'sale_date' => $this->getSaleDate(),
-            'lisinger' => $this->lisinger_name
+            'lisinger' => $this->lisinger_name,
+            'stock_date' => $this->car->getLogisticDateByKey('stock_date') ?? ''
         ];
     }
 }
