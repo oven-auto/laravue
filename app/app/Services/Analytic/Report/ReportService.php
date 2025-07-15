@@ -25,11 +25,11 @@ Class ReportService
                 'car' => function($q){
                     $q->with([
                         'mark',
-                        //'complectation.current_price',
-                        //'options.current_price',
+                        'complectation.current_price',
+                        'options.current_price',
                         'collector',
-                        //'priority.sale_priority',
-                        //'logistic_dates',
+                        'priority.sale_priority',
+                        'logistic_dates',
                     ]);
                 },
                 'payments',
