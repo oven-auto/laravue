@@ -37,7 +37,7 @@ class ComplectationItemResource extends JsonResource
                 ] : '',
                 'last_editor' => [
                     'author' => $this->last_history->author->cut_name,
-                    'date' => $this->last_history->created_at->format('d.m.Y (H:i)'),
+                    'date' => $this->last_history->created_at ? $this->last_history->created_at->format('d.m.Y (H:i)') : '',
                 ],
                 'file' => [
                     'url' => $this->file ? WebUrl::make_link($this->file->file) : '',
