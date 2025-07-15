@@ -32,10 +32,10 @@ Class ReportService
                         //'logistic_dates',
                     ]);
                 },
-                'payments',
-                'sale',
-                'last_comment',
-                'lisinger',
+                //'payments',
+                //'sale',
+                //'last_comment',
+                //'lisinger',
             ]);
 
         return $query;
