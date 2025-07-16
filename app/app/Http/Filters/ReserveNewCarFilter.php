@@ -565,7 +565,6 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public function hasDebit(Builder $builder, bool $val)
     {
-        //TODO Дополнить скрипт на проверку суммы оплаты, и проверять на пустоту
         $query = '  IFNULL(cfp.tuningprice, 0) + 
                     
                     IFNULL(cfp.overprice, 0) + 
@@ -580,69 +579,75 @@ class ReserveNewCarFilter extends AbstractFilter
 
                     IFNULL((SELECT SUM(used_cars.purchase_price) FROM used_cars WHERE used_cars.id = wsm_reserve_trade_ins.used_car_id), 0) - 
                     
-                    IFNULL((SELECT SUM(amount) FROM wsm_reserve_payments where wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id), 0)';
+                    IFNULL((SELECT SUM(amount) FROM wsm_reserve_payments WHERE wsm_reserve_payments.reserve_id = wsm_reserve_new_cars.id), 0)';
 
         match($val){
-            true => $builder->whereRaw($query.' > 0'),
-            false =>$builder->whereRaw($query.' <= 0'),
+            true => $builder->WHERERaw($query.' > 0'),
+            false =>$builder->WHERERaw($query.' <= 0'),
             default => '',
         };
+
+        $builder->addSelect([
+            DB::raw('('.$query.') as sss'),
+            DB::raw('joinOptionPrice.sum_option as ppp'),
+            DB::raw('cfp.optionprice as ooo')
+        ]);
     }
 
     
 
     public function executors(Builder $builder, array $array)
     {
-        $builder->whereIn('worksheet_executors.user_id', $array);
+        $builder->WHEREIn('worksheet_executors.user_id', $array);
     }
 
 
 
     public function wsAuthors(Builder $builder, array $arr)
     {
-        $builder->whereIn('worksheets.author_id', $arr);
+        $builder->WHEREIn('worksheets.author_id', $arr);
     }
 
 
 
     public function reserveAuthors(Builder $builder, array $arr)
     {
-        $builder->whereIn('wsm_reserve_new_cars.author_id', $arr);
+        $builder->WHEREIn('wsm_reserve_new_cars.author_id', $arr);
     }
 
 
 
     public function dkpDecorators(Builder $builder, array $arr)
     {
-        $builder->whereIn('contract.dkp_decorator_id', $arr);
+        $builder->WHEREIn('contract.dkp_decorator_id', $arr);
     }
 
 
 
     public function pdkpDecorators(Builder $builder, array $arr)
     {
-        $builder->whereIn('contract.pdkp_decorator_id', $arr);
+        $builder->WHEREIn('contract.pdkp_decorator_id', $arr);
     }
 
 
 
     public function issueManagers(Builder $builder, array $arr)
     {
-        $builder->whereIn('wsm_reserve_issues.decorator_id', $arr);
+        $builder->WHEREIn('wsm_reserve_issues.decorator_id', $arr);
     }
 
 
 
     public function saleManager(Builder $builder, array $arr)
     {
-        $builder->whereIn('wsm_reserve_sales.decorator_id', $arr);
+        $builder->WHEREIn('wsm_reserve_sales.decorator_id', $arr);
     }
 
 
 
     public function technics(Builder $builder, array $arr)
     {
-        $builder->whereIn('car_technics.technic_id', $arr);
+        $builder->WHEREIn('car_technics.technic_id', $arr);
     }
 
 
@@ -682,13 +687,25 @@ class ReserveNewCarFilter extends AbstractFilter
             ->leftJoin('wsm_reserve_complectation_prices as wrcp','wrcp.contract_id', 'contract.id')//сохраненая в контракте цена
             ->leftJoin('complectation_prices as cp', 'cp.id', 'wrcp.complectation_price_id')//цены комплектации
             ->leftJoin('wsm_reserve_option_prices as wrop', 'wrop.contract_id', 'contract.id')//сохраненные в контракте опции
-            ->leftJoin(DB::raw('(SELECT sum(option_prices.price) as sum_option, wsm_reserve_new_cars.car_id from option_prices 
-                left join wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
-                left join wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
-                left join wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
-                where wsm_reserve_new_cars.car_id is not null and wsm_reserve_new_cars.deleted_at is not null
-                GROUP  BY  wsm_reserve_new_cars.car_id) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
+            
+            ->leftJoin(DB::raw('(
+                SELECT 
+                    sum(option_prices.price) as sum_option, 
+                    wsm_reserve_new_cars.car_id 
+                FROM option_prices 
+                LEFT JOIN 
+                    wsm_reserve_option_prices on wsm_reserve_option_prices.option_price_id = option_prices.id 
+                LEFT JOIN 
+                    wsm_reserve_new_car_contracts on wsm_reserve_new_car_contracts.id = wsm_reserve_option_prices.contract_id 
+                LEFT JOIN 
+                    wsm_reserve_new_cars on wsm_reserve_new_cars.id = wsm_reserve_new_car_contracts.reserve_id 
+                WHERE 
+                    wsm_reserve_new_cars.car_id is not null and 
+                    wsm_reserve_new_cars.deleted_at is null
+                GROUP  BY  wsm_reserve_new_cars.car_id
+                ) as joinOptionPrice'), 'joinOptionPrice.car_id', 'cars.id'
             )
+
             ->addSelect([
                 'joinOptionPrice.sum_option as _sum_option',
                 'cp.price                   as _cp_price', 
@@ -770,8 +787,8 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasPaidDate(Builder $builder, bool $val)
     {
         match($val){
-            true => $builder->whereNotNull('wsm_reserve_planned_payments.id'),
-            false => $builder->whereNull('wsm_reserve_planned_payments.id'),
+            true => $builder->WHERENotNull('wsm_reserve_planned_payments.id'),
+            false => $builder->WHERENull('wsm_reserve_planned_payments.id'),
             default => ''
         };        
     }
@@ -781,8 +798,8 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasPriority(Builder $builder, bool $val)
     {
         match($val){
-            true => $builder->whereNotNull('car_sale_priorities.priority_id'),
-            false => $builder->whereNull('car_sale_priorities.priority_id'),
+            true => $builder->WHERENotNull('car_sale_priorities.priority_id'),
+            false => $builder->WHERENull('car_sale_priorities.priority_id'),
             default => null,
         };
     }
@@ -791,7 +808,7 @@ class ReserveNewCarFilter extends AbstractFilter
 
     public function priorityIds(Builder $builder, array $arr)
     {
-        $builder->whereIn('car_sale_priorities.priority_id', $arr);
+        $builder->WHEREIn('car_sale_priorities.priority_id', $arr);
     }
 
 
@@ -799,9 +816,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function has_tradein(Builder $builder, $val)
     {
         if($val)
-            $builder->whereNotNull('wsm_reserve_trade_ins.reserve_id');
+            $builder->WHERENotNull('wsm_reserve_trade_ins.reserve_id');
         else
-            $builder->whereNull('wsm_reserve_trade_ins.reserve_id');
+            $builder->WHERENull('wsm_reserve_trade_ins.reserve_id');
     }   
 
 
@@ -810,7 +827,7 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         if(count($power) == 1)
             $power[] = $power[0];
-        $builder->whereBetween('motors.power', $power);
+        $builder->WHEREBetween('motors.power', $power);
     }
 
 
@@ -821,7 +838,7 @@ class ReserveNewCarFilter extends AbstractFilter
 
         $result = array_intersect($arr, CarStatusType::VALUES);
 
-        $builder->whereIn('car_status_types.status', $result);
+        $builder->WHEREIn('car_status_types.status', $result);
     }
 
 
@@ -852,7 +869,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function ids(Builder $builder, array $array)
     {
-        $builder->whereIn('wsm_reserve_new_cars.id', $array);
+        $builder->WHEREIn('wsm_reserve_new_cars.id', $array);
     }
 
 
@@ -885,7 +902,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function brand(Builder $builder, array $value)
     {
-        $builder->whereIn('cars.brand_id', $value);
+        $builder->WHEREIn('cars.brand_id', $value);
     }
 
 
@@ -895,7 +912,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function mark(Builder $builder, array $value)
     {
-        $builder->whereIn('cars.mark_id', $value);
+        $builder->WHEREIn('cars.mark_id', $value);
     }
 
 
@@ -905,7 +922,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function year(Builder $builder, int $value)
     {
-        $builder->where('cars.year', $value);
+        $builder->WHERE('cars.year', $value);
     }
 
 
@@ -915,7 +932,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function bodyWork(Builder $builder, array $value)
     {
-        $builder->whereIn('complectations.body_work_id', $value);
+        $builder->WHEREIn('complectations.body_work_id', $value);
     }
 
 
@@ -925,7 +942,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function transmission(Builder $builder, array $value)
     {
-        $builder->whereIn('motors.motor_transmission_id', $value);
+        $builder->WHEREIn('motors.motor_transmission_id', $value);
     }
 
 
@@ -935,7 +952,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function drivers(Builder $builder, array $value)
     {
-        $builder->whereIn('motors.motor_driver_id', $value);
+        $builder->WHEREIn('motors.motor_driver_id', $value);
     }
 
 
@@ -945,7 +962,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function motorTypes(Builder $builder, array $types)
     {
-        $builder->whereIn('motors.motor_type_id', $types);
+        $builder->WHEREIn('motors.motor_type_id', $types);
     }
 
 
@@ -956,9 +973,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasOptions(Builder $builder, bool $options)
     {
         if($options)
-            $builder->whereNotNull('car_options.car_id');
+            $builder->WHERENotNull('car_options.car_id');
         else
-            $builder->whereNull('car_options.car_id');
+            $builder->WHERENull('car_options.car_id');
     }
 
 
@@ -969,11 +986,11 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasOverPrice(Builder $builder, bool $value)
     {
         if($value)
-            $builder->where('overprice.price', '>', 0);
+            $builder->WHERE('overprice.price', '>', 0);
         else
-            $builder->where(function($query) {
-                $query->whereNull('overprice.price')
-                    ->orWhere('overprice.price', 0);
+            $builder->WHERE(function($query) {
+                $query->WHERENull('overprice.price')
+                    ->orWHERE('overprice.price', 0);
             });
     }
 
@@ -985,9 +1002,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasTuning(Builder $builder, bool $value)
     {
         if($value)
-            $builder->whereNotNull('tuning.price');
+            $builder->WHERENotNull('tuning.price');
         else
-            $builder->whereNull('tuning.price');
+            $builder->WHERENull('tuning.price');
     }
 
 
@@ -998,9 +1015,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasDevices(Builder $builder, bool $device)
     {
         if($device)
-            $builder->whereNotNull('car_tunings.car_id');
+            $builder->WHERENotNull('car_tunings.car_id');
         else
-            $builder->whereNull('car_tunings.car_id');
+            $builder->WHERENull('car_tunings.car_id');
     }
 
 
@@ -1011,9 +1028,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasGift(Builder $builder, bool $value)
     {
         if($value)
-            $builder->whereNotNull('gift.price');
+            $builder->WHERENotNull('gift.price');
         else
-            $builder->whereNull('gift.price');
+            $builder->WHERENull('gift.price');
     }
 
 
@@ -1024,9 +1041,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasDiscount(Builder $builder, bool $value)
     {
         if($value)
-            $builder->whereNotNull('discounts.id');
+            $builder->WHERENotNull('discounts.id');
         else
-            $builder->whereNull('discounts.id');
+            $builder->WHERENull('discounts.id');
     }
 
 
@@ -1037,9 +1054,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasRansom(Builder $builder, bool $purchase)
     {
         if($purchase)
-            $builder->whereNotNull('ransom_cars.car_id');
+            $builder->WHERENotNull('ransom_cars.car_id');
         else
-            $builder->whereNull('ransom_cars.car_id');
+            $builder->WHERENull('ransom_cars.car_id');
     }
 
 
@@ -1050,9 +1067,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasDetailingCost(Builder $builder, bool $value)
     {
         if($value)
-            $builder->whereNotNull('car_detailing_costs.id');
+            $builder->WHERENotNull('car_detailing_costs.id');
         else
-            $builder->whereNull('car_detailing_costs.id');
+            $builder->WHERENull('car_detailing_costs.id');
     }
 
 
@@ -1066,7 +1083,7 @@ class ReserveNewCarFilter extends AbstractFilter
 
         $arr = array_intersect($baseState, $value);
 
-        $builder->whereIn('cars.status', $arr);
+        $builder->WHEREIn('cars.status', $arr);
     }
 
 
@@ -1078,7 +1095,7 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         if(is_string($value))
             $value = [$value];
-        $builder->whereIn('car_trade_markers.trade_marker_id', $value);
+        $builder->WHEREIn('car_trade_markers.trade_marker_id', $value);
     }
 
 
@@ -1090,7 +1107,7 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         if(is_string($value))
             $value = [$value];
-        $builder->whereIn('car_markers.marker_id', $value);
+        $builder->WHEREIn('car_markers.marker_id', $value);
     }
 
 
@@ -1104,7 +1121,7 @@ class ReserveNewCarFilter extends AbstractFilter
         // $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
         $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
 
-        $builder->whereBetween('wsm_reserve_new_cars.created_at', $dates);
+        $builder->WHEREBetween('wsm_reserve_new_cars.created_at', $dates);
     }
 
 
@@ -1115,9 +1132,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasContract(Builder $builder, bool $val)
     {
         if($val)
-            $builder->whereNotNull('contract.id');
+            $builder->WHERENotNull('contract.id');
         else
-            $builder->whereNull('contract.id');
+            $builder->WHERENull('contract.id');
     }
 
 
@@ -1129,7 +1146,7 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
         $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-        $builder->whereRaw(
+        $builder->WHERERaw(
             'IF(contract.pdkp_offer_at IS NOT NULL,'. 
             'contract.pdkp_offer_at BETWEEN "'.$date_1.'" and "'.$date_2.'",'.
             'contract.dkp_offer_at BETWEEN "'.$date_1.'" and "'.$date_2.'")'
@@ -1147,7 +1164,7 @@ class ReserveNewCarFilter extends AbstractFilter
         // $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
         $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
 
-        $builder->whereBetween('contract.dkp_offer_at', $dates);
+        $builder->WHEREBetween('contract.dkp_offer_at', $dates);
     }
 
 
@@ -1161,7 +1178,7 @@ class ReserveNewCarFilter extends AbstractFilter
         // $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
         $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
 
-        $builder->whereBetween('contract.pdkp_offer_at', $dates);
+        $builder->WHEREBetween('contract.pdkp_offer_at', $dates);
     }
 
 
@@ -1172,9 +1189,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasClientPay(Builder $builder, bool $val)
     {
         if($val)
-            $builder->whereNotNull('wsm_reserve_payments.id');
+            $builder->WHERENotNull('wsm_reserve_payments.id');
         else
-            $builder->whereNull('wsm_reserve_payments.id');
+            $builder->WHERENull('wsm_reserve_payments.id');
     }
 
 
@@ -1185,9 +1202,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasIssue(Builder $builder, bool $val)
     {
         if($val)
-            $builder->whereNotNull('wsm_reserve_issues.id');
+            $builder->WHERENotNull('wsm_reserve_issues.id');
         else
-            $builder->whereNull('wsm_reserve_issues.id');
+            $builder->WHERENull('wsm_reserve_issues.id');
     }
 
 
@@ -1198,9 +1215,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasSale(Builder $builder, bool $val)
     {
         if($val)
-            $builder->whereNotNull('wsm_reserve_sales.id');
+            $builder->WHERENotNull('wsm_reserve_sales.id');
         else
-            $builder->whereNull('wsm_reserve_sales.id');
+            $builder->WHERENull('wsm_reserve_sales.id');
     }
 
 
@@ -1212,7 +1229,7 @@ class ReserveNewCarFilter extends AbstractFilter
     {
         $dates = DateHelper::setDateToCarbon($date, 'd.m.Y');
         
-        $builder->whereBetween('wsm_reserve_sales.date_at', $dates);
+        $builder->WHEREBetween('wsm_reserve_sales.date_at', $dates);
     }
 
 
@@ -1223,9 +1240,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasOff(Builder $builder, bool $value)
     {
         if($value)
-            $builder->whereNotNull('car_owners.id');
+            $builder->WHERENotNull('car_owners.id');
         else
-            $builder->whereNull('car_owners.id');
+            $builder->WHERENull('car_owners.id');
     }
 
 
@@ -1235,21 +1252,21 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function reportType(Builder $builder, array $reportTypes)
     {
-        $builder->where(function($query) use($reportTypes) {
-                $query->where(function($reportQuery) use($reportTypes){
+        $builder->WHERE(function($query) use($reportTypes) {
+                $query->WHERE(function($reportQuery) use($reportTypes){
                     foreach($reportTypes as $index => $type)
                         switch($type){
                             case '1':
-                                $reportQuery->where(function($green) {
-                                    $green->where('worksheets.client_id', DB::raw('car_owners.client_id'))
-                                        ->whereNotNull('car_owners.client_id');
+                                $reportQuery->WHERE(function($green) {
+                                    $green->WHERE('worksheets.client_id', DB::raw('car_owners.client_id'))
+                                        ->WHERENotNull('car_owners.client_id');
                                 });
                                 break;
                             case '2':
-                                $reportQuery->where(function($yellow) {
-                                    $yellow->where('worksheets.client_id', '<>', DB::raw('car_owners.client_id'))
-                                        ->orWhereNull('worksheets.client_id')
-                                        ->whereNotNull('car_owners.client_id');
+                                $reportQuery->WHERE(function($yellow) {
+                                    $yellow->WHERE('worksheets.client_id', '<>', DB::raw('car_owners.client_id'))
+                                        ->orWHERENull('worksheets.client_id')
+                                        ->WHERENotNull('car_owners.client_id');
                                 });
                                 break;
                             default:
@@ -1265,8 +1282,8 @@ class ReserveNewCarFilter extends AbstractFilter
     // {
     //     $date_1 = Carbon::createFromFormat('d.m.Y', $date[0])->format('Y-m-d');
     //     $date_2 = isset($date[1]) ? Carbon::createFromFormat('d.m.Y', $date[1])->format('Y-m-d') : $date_1;
-    //     $builder->whereBetween('car_date_logistics.date_at', [$date_1, $date_2])
-    //         ->where('car_date_logistics.logistic_system_name', 'off_date');
+    //     $builder->WHEREBetween('car_date_logistics.date_at', [$date_1, $date_2])
+    //         ->WHERE('car_date_logistics.logistic_system_name', 'off_date');
     // }
 
 
@@ -1279,15 +1296,15 @@ class ReserveNewCarFilter extends AbstractFilter
         if(!count($data))
             return;
         
-        $builder->where(function($dateQuery) use($data){
+        $builder->WHERE(function($dateQuery) use($data){
             foreach($data as $key => $dateInterval)
-                $dateQuery->orWhere(function($builderOrderDate) use ($key, $dateInterval){
+                $dateQuery->orWHERE(function($builderOrderDate) use ($key, $dateInterval){
                     //$date_1 = Carbon::createFromFormat('d.m.Y', $dateInterval[0])->format('Y-m-d');
                     //$date_2 = isset($dateInterval[1]) ? Carbon::createFromFormat('d.m.Y', $dateInterval[1])->format('Y-m-d') : $date_1;
                     $dates = DateHelper::setDateToCarbon($dateInterval, 'd.m.Y');
 
-                    $builderOrderDate->where('car_date_logistics.logistic_system_name', $key)
-                        ->whereBetween('car_date_logistics.date_at', $dates);
+                    $builderOrderDate->WHERE('car_date_logistics.logistic_system_name', $key)
+                        ->WHEREBetween('car_date_logistics.date_at', $dates);
                 });
         });
     }
@@ -1300,9 +1317,9 @@ class ReserveNewCarFilter extends AbstractFilter
     public function hasPlan(Builder $builder, bool $value)
     {
         if($value)
-            $builder->where('cars.disable_off', 0);
+            $builder->WHERE('cars.disable_off', 0);
         else   
-            $builder->where('cars.disable_off', 1); 
+            $builder->WHERE('cars.disable_off', 1); 
     }
 
 
@@ -1312,7 +1329,7 @@ class ReserveNewCarFilter extends AbstractFilter
      */
     public function colors(Builder $builder, array $colors)
     {
-        $builder->whereIn('dealer_colors.base_id', $colors);
+        $builder->WHEREIn('dealer_colors.base_id', $colors);
     }
 
 
@@ -1325,25 +1342,25 @@ class ReserveNewCarFilter extends AbstractFilter
 
         switch($column){
             case 'client':
-                $builder->where(function($subQ) use ($val){
-                    $subQ->where('clients.lastname', 'LIKE', '%'.$val.'%');
-                    $subQ->orWhere('clients.company_name', 'LIKE', '%'.$val.'%');
+                $builder->WHERE(function($subQ) use ($val){
+                    $subQ->WHERE('clients.lastname', 'LIKE', '%'.$val.'%');
+                    $subQ->orWHERE('clients.company_name', 'LIKE', '%'.$val.'%');
                 });
                 break;
             case 'id':
-                $builder->where('cars.id', $val);
+                $builder->WHERE('cars.id', $val);
                 break;
             case 'vin':
-                $builder->where('cars.vin', 'LIKE', '%' . $val . '%');
+                $builder->WHERE('cars.vin', 'LIKE', '%' . $val . '%');
                 break;
             case 'order':
-                $builder->where('car_orders.order_number', 'LIKE', '%' . $val . '%');
+                $builder->WHERE('car_orders.order_number', 'LIKE', '%' . $val . '%');
                 break;
             default:
-                $builder->where(function ($query) use ($val) {
-                    $query->where('cars.vin',                   'LIKE', '%' . $val . '%')
-                        ->orWhere('cars.id',                    'LIKE', '%' . $val . '%')
-                        ->orWhere('car_orders.order_number',    'LIKE', '%' . $val . '%');
+                $builder->WHERE(function ($query) use ($val) {
+                    $query->WHERE('cars.vin',                   'LIKE', '%' . $val . '%')
+                        ->orWHERE('cars.id',                    'LIKE', '%' . $val . '%')
+                        ->orWHERE('car_orders.order_number',    'LIKE', '%' . $val . '%');
                 });
                 break;
         }

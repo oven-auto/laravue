@@ -110,7 +110,7 @@ Class ReportService
         $query->filter($filter);
 
         $sales = $query->get();
-        
+        dd($sales);
         return $sales;
     }
 
