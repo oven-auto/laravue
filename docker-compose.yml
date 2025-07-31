@@ -47,7 +47,7 @@ services:
       #- "DB_HOST=192.168.1.98"
       - "REDIS_PORT=6379"
       - "REDIS_HOST=redis"
-      - "POST_MAX_SIZE = 20M"
+      - "POST_MAX_SIZE=20M"
     tty: true
 
 

@@ -38,7 +38,7 @@ class OrderTypeController extends Controller
      */
     public function index(Request $request)
     {
-        $orderTypes = $this->repo->get($request->validated());
+        $orderTypes = $this->repo->get($request->all());
 
         return new OrderTypeCollection($orderTypes);
     }
