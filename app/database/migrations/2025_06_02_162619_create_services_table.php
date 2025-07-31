@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->references('id')->on('service_categories')->onDelete('cascade');
             $table->foreignId('author_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreignId('provider_id')->references('id')->on('clients')->onDelete('cascade');
+            //$table->foreignId('provider_id')->references('id')->on('clients')->onDelete('cascade');
             $table->string('name', 500);
             $table->timestamps();
         });

@@ -34,7 +34,12 @@ class DnmGetMark extends Command
         $dnm = DNM::init();
 
         $models = $dnm->getModels();
-
+        
+        foreach($models as $item)
+            $markNames[] = $item['name'];
+        dump($markNames);
+        $res = file_put_contents('/home/it/www/laravue/marks.txt', implode(PHP_EOL, $markNames));
+        
         foreach($models as $item)
         {
             if($item['name'] == 'Niva')
@@ -45,6 +50,7 @@ class DnmGetMark extends Command
             $marks = Mark::select('name','id')->where('brand_id', 1113)->where('name', 'like', '%'.$item['name'].'%')->get();
           
             $marks->each(function($myMark) use($item){
+                
                 if($myMark->id)
                     DnmModel::updateOrcreate(
                         ['mark_id' => $myMark->id,],

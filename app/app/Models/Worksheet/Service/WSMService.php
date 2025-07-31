@@ -3,6 +3,7 @@
 namespace App\Models\Worksheet\Service;
 
 use App\Models\Traits\Filterable;
+use App\Services\Worksheet\Service\Actuality\ActualityService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -114,6 +115,13 @@ class WSMService extends Model
     public function getStatusAttribure()
     {
 
+    }
+
+
+
+    public function getActualityAttribute()
+    {
+        return ActualityService::init($this)->check();
     }
 
 

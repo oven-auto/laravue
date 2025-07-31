@@ -22,7 +22,7 @@ class ServiceCreateRequest extends FormRequest
     /**
      * @OA\Property(format="string",    description="Название",     property="name",        type="string"),
      * @OA\Property(format="integer",   description="Категоря",     property="category",    type="integer"),
-     * @OA\Property(format="integer",   description="Поставщик",     property="provider",   type="integer"),
+     * @OA\Property(description="Поставщик",     property="provider",    type="array", @OA\Items(type="integer", example={"new"})),),
      * 
      * @OA\Property(format="integer",   description="стоимость",     property="cost",   type="integer"),
      * @OA\Property(format="integer",   description="премия компании",     property="company_award",   type="integer"),
@@ -38,8 +38,8 @@ class ServiceCreateRequest extends FormRequest
         return [
             'category'          => 'required',
             'name'              => 'required|string',
-            'provider'          => 'required',
-            'cost'              => 'required|min:0',
+            'providers'         => 'required|array',
+            //'cost'              => 'required|min:0',
             'company_award'     => 'nullable',
             'design_award'      => 'nullable',
             'sale_award'        => 'nullable',

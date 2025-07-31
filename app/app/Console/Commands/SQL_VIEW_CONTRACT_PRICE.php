@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class SQL_VIEW_CONTRACT_PRICE extends Command
 {
@@ -63,8 +64,10 @@ class SQL_VIEW_CONTRACT_PRICE extends Command
                     on comprice.complectation_id = cars.complectation_id
 
                 WHERE contract.dkp_offer_at >= comprice.begin_at
-
+                
                 GROUP by contract.id
+
+                ORDER BY comprice.id DESC
             ) as cc on cc.reserve_contract_id = contract.id
 
             LEFT JOIN complectation_prices on complectation_prices.id = cc.complectation_price_id
@@ -74,6 +77,6 @@ class SQL_VIEW_CONTRACT_PRICE extends Command
 
         ";
 
-        \DB::statement($query);
+        DB::statement($query);
     }
 }

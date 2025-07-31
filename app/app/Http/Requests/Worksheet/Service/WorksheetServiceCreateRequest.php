@@ -134,7 +134,7 @@ class WorksheetServiceCreateRequest extends FormRequest
             'car.type'          => 'string|required|in:new,client,used',
             'car.id'            => 'required|numeric',
             'service'           => 'required',
-            'provider'          => 'required',
+            'provider'          => 'sometimes|nullable',
             'cost'              => 'sometimes',
             'payment'           => 'required',
             'worksheet'         => 'required',

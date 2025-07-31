@@ -19,12 +19,10 @@ return new class extends Migration
                     w_ser.id as wsm_service_id,
                     CASE
                         WHEN 
-                            w_ser.close = false AND 
                             w_ser.simple = false AND 
                             w_con.register_at = false
                             THEN 'work'
                         WHEN
-                            w_ser.close = false AND 
                             w_ser.simple = false AND 
                             w_con.register_at = true
                             THEN 'issue'
@@ -32,9 +30,6 @@ return new class extends Migration
                             w_ser.simple = true AND 
                             w_con.register_at = false
                             THEN 'miss'
-                        WHEN
-                            w_ser.close = true
-                            THEN 'close'
                         ELSE 
                             'work'
                     END as state

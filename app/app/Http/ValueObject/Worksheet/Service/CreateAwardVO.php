@@ -15,10 +15,10 @@ Class CreateAwardVO
 
 
     public static function fromArray(array $data)
-    {
+    {  
         return new self(
             sum                : $data['award'] ?? null,       
-            completed          : $data['award_complete'] ?? null,
+            completed          : ($data['award_complete'] ?? null) ? ($data['award_complete'] ?? null) : null,
         );
     }
 }

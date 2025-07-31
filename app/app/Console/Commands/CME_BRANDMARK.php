@@ -64,14 +64,15 @@ class CME_BRANDMARK extends Command
         $brands = Brand::get();
 
         foreach ($response['brands'] as $key => $item) {
+           
             if (!$brands->contains('uid', $item['id'])) {
-                Brand::create([
-                    'uid' => $item['id'],
-                    'name' => $item['text'],
-                    'slug' => Str::slug($item['text'])
-                ]);
+               Brand::create([
+                   'uid' => $item['id'],
+                   'name' => $item['text'],
+                   'slug' => Str::slug($item['text'])
+               ]);
 
-                $appendedCount++;
+               $appendedCount++;
             }
 
             $responseModel = $this->makeResponse(self::URL_MODEL, ['brand' => $item['id']]);
@@ -88,6 +89,9 @@ class CME_BRANDMARK extends Command
             fwrite($file, json_encode($responseModel['models']));
 
             foreach ($responseModel['models'] as $itemModel)
+            	if($brand->uid == 87)
+                    
+		    	
                 if (!$models->contains('uid', $itemModel['id'])) {
                     Mark::create([
                         'uid' => $itemModel['id'],
@@ -97,7 +101,7 @@ class CME_BRANDMARK extends Command
                         'brand_uid' => $brand->uid,
                         'status' => 0
                     ]);
-
+              
                     $appendedMarkCount++;
                 }
 

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use app\Models\Interfaces\CarableInterface;
 use App\Models\Traits\Filterable;
 use App\Models\Worksheet\Service\WSMServiceCar;
 use Illuminate\Database\Eloquent\Builder;
@@ -9,7 +10,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
-class UsedCar extends Model
+class UsedCar extends Model implements CarableInterface
 {
     use HasFactory, Filterable;
 

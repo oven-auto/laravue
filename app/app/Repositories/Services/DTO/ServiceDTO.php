@@ -9,8 +9,8 @@ Class ServiceDTO
     public function __construct(
         public readonly int $category_id,
         public readonly string $name,
-        public readonly int $provider_id,
-        public readonly int $cost,
+        public readonly array $providers,
+        //public readonly int $cost,
         public readonly int $company_award,
         public readonly int $design_award,
         public readonly int $sale_award,
@@ -29,8 +29,8 @@ Class ServiceDTO
         return new self(
             category_id     : $data['category'],
             name            : $data['name'],
-            provider_id     : $data['provider'],
-            cost            : $data['cost'] ?? 0,
+            providers       : $data['providers'] ?? [],
+            //cost            : $data['cost'] ?? 0,
             company_award   : $data['company_award'] ?? 0,
             design_award    : $data['design_award'] ?? 0,
             sale_award      : $data['sale_award'] ?? 0,

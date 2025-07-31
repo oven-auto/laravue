@@ -24,7 +24,7 @@ class ServiceCategoryController extends Controller
      *      operationId="getfinservicescategories",
      *      tags={"Финансовые сервисы"},
      *      summary="Категории список",
-     *      description="Категории список",
+     *      description="Категории список []",
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation",

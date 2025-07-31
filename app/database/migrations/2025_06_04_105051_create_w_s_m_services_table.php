@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('worksheet_id')->references('id')->on('worksheets')->onDelete('cascade');
             $table->foreignId('service_id')->references('id')->on('services')->onDelete('cascade');
-            $table->foreignId('provider_id')->references('id')->on('clients')->onDelete('cascade');
+            $table->foreignId('provider_id')->nullable()->references('id')->on('clients')->onDelete('cascade');
             $table->foreignId('payment_id')->references('id')->on('service_payments')->onDelete('cascade');
             $table->integer('cost')->default(0);
             $table->boolean('simple')->default(false);

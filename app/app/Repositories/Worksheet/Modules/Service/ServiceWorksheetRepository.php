@@ -58,8 +58,12 @@ Class ServiceWorksheetRepository
 
         $query->filter($filter);
 
-        $res = DB::table($query)->first();
-
+        $res = DB::table($query)->select(
+            DB::raw('COUNT(_count) as _count'),
+            DB::raw('SUM(_cost) as _cost'),
+            DB::raw('SUM(_award) as _award'),
+        )->first();
+        
         return $res;
     }
 
@@ -129,6 +133,8 @@ Class ServiceWorksheetRepository
             if(!ArrayHelper::isAllNull((array) $dto->car))
                 $this->createCar($service, $dto);
 
+            //$service->refresh();
+
             $service->load(['award', 'contract', 'deduction', 'provider', 'author', 'payment']);
 
             return $service;
@@ -141,11 +147,11 @@ Class ServiceWorksheetRepository
 
     public function update(int $id, CreateServiceDTO $dto)
     {
-        $service = $this->getById($id);
+        $result = DB::transaction(function() use($dto, $id) {
+            $service = $this->getById($id);
 
-        $result = DB::transaction(function() use($dto, $service) {
             $service->fill(array_merge((array) $dto->service, ['author_id' => Auth::id()]))->save();
-
+           
             if(!ArrayHelper::isAllNull((array) $dto->award))
                 $this->createAward($service, $dto);
             else

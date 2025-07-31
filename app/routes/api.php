@@ -42,6 +42,7 @@ use App\Http\Controllers\Api\v1\Back\DiscountCar\DiscountListController;
 use App\Http\Controllers\Api\v1\Back\Payment\PaymentController as CRUDPaymentController;
 use App\Http\Controllers\Api\v1\Back\Service\ServiceCategoryController;
 use App\Http\Controllers\Api\v1\Back\Service\ServiceController;
+use App\Http\Controllers\Api\v1\Back\Service\ServiceProviderController;
 use App\Http\Controllers\Api\v1\Back\TargetModel\TargetModelController;
 use App\Http\Controllers\Api\v1\Back\TaskList\OverdueCountController;
 use App\Http\Controllers\Api\v1\Back\UsedCar\UsedCarController;
@@ -1275,8 +1276,10 @@ Route::middleware(['userfromtoken'])->group(function () {
         Route::get('payments',  [\App\Http\Controllers\Api\v1\Back\Service\PaymentController::class, 'index']);
         Route::get('tactics',   [TacticController::class, 'index']);
         Route::get('statuses',  [StatusController::class, 'index']);
+        Route::get('providers', [ServiceProviderController::class, 'index']);
 
         Route::apiResource('categories', ServiceCategoryController::class)->except(['delete', 'edit']);
+
         Route::get('/', [ServiceController::class, 'index']);
         Route::post('', [ServiceController::class, 'store']);
         Route::patch('{id}', [ServiceController::class, 'update']);

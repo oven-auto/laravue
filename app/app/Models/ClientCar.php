@@ -2,11 +2,12 @@
 
 namespace App\Models;
 
+use app\Models\Interfaces\CarableInterface;
 use App\Models\Interfaces\CommentInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ClientCar extends Model implements CommentInterface
+class ClientCar extends Model implements CommentInterface, CarableInterface
 {
     use HasFactory;
 
@@ -78,6 +79,13 @@ class ClientCar extends Model implements CommentInterface
 
 
     public function drive()
+    {
+        return $this->hasOne(\App\Models\MotorDriver::class,'id', 'motor_driver_id')->withDefault();
+    }
+
+
+
+    public function driver()
     {
         return $this->hasOne(\App\Models\MotorDriver::class,'id', 'motor_driver_id')->withDefault();
     }

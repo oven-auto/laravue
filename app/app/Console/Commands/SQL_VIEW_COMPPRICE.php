@@ -3,7 +3,7 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use DB;
+use Illuminate\Support\Facades\DB;
 
 class SQL_VIEW_COMPPRICE extends Command
 {
@@ -38,7 +38,8 @@ class SQL_VIEW_COMPPRICE extends Command
      */
     public function handle()
     {
-        $query = "CREATE OR REPLACE VIEW complectation_current_prices AS
+        $query = "
+            CREATE OR REPLACE VIEW complectation_current_prices AS
             SELECT cp.id, cp.price, cp.complectation_id, cp.begin_at
             FROM complectation_prices as cp
             WHERE cp.id = (
@@ -55,7 +56,7 @@ class SQL_VIEW_COMPPRICE extends Command
         echo ('2) price - собственно текущая актуальная по сегодняшней дате цена, ' . "\r\n");
         echo ('3) complectation_id - идентификатор опции из таблицы options' . "\r\n");
 
-        \DB::statement($query);
+        DB::statement($query);
 
         echo ('Закончил работу с ComplectationCurrentPrice' . "\r\n" . "\r\n");
     }

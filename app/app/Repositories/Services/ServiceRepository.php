@@ -21,6 +21,8 @@ Class ServiceRepository
         if(isset($data['category_id']))
             $query->where('services.category_id', $data['category_id']);
 
+        $query->groupBy('services.id');
+
         $result = $query->get();
 
         return $result;
@@ -105,13 +107,25 @@ Class ServiceRepository
 
 
 
+    public function saveProviders(Service $service, ServiceDTO $dto)
+    {
+        $service->providers()->sync($dto->providers);
+
+        return 1;
+    }
+
+
+
     public function saveOver(Service $service, ServiceDTO $dto) : bool
     {
-        $result = (
-            $this->saveApplicability($service, $dto) ||
-            $this->saveCalculation($service, $dto) ||
-            $this->saveProlongation($service, $dto)
-        );
+        $result = true;
+
+        $this->saveApplicability($service, $dto);
+        $this->saveCalculation($service, $dto);
+        $this->saveProlongation($service, $dto);
+        $this->saveProviders($service, $dto);
+        
+        $service->load(['providers']);
 
         return $result;
     }
@@ -127,7 +141,7 @@ Class ServiceRepository
 
             return $service;
         }, 1);
-
+        
         return $result;
     }
 

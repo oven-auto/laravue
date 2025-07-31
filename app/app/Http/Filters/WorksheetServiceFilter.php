@@ -61,6 +61,8 @@ Class WorksheetServiceFilter extends AbstractFilter
             ->leftJoin('worksheets', 'worksheets.id', 'wsm_services.worksheet_id')
             ->leftJoin('clients', 'clients.id', 'worksheets.client_id')
             ->leftJoin('client_phones', 'client_phones.client_id', 'clients.id');
+        
+        $builder->groupBy('wsm_services.id');
     }
 
 

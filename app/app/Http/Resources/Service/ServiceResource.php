@@ -16,7 +16,7 @@ class ServiceResource extends JsonResource
             'id'                => $this->id,
             'category'          => new ServiceCategoryResource($this->category),
             'author'            => new UserSmallResource($this->author),
-            'provider'          => new ClientResource($this->provider),
+            'providers'         => ClientResource::collection($this->providers),
             'updated_at'        => $this->updated_at->format('d.m.Y'),
             'applicability'     => $this->applicabilities,
             'name'              => $this->name,

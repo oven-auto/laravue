@@ -12,7 +12,6 @@ class Service extends Model
     protected $fillable = [
         'category_id',
         'author_id',
-        'provider_id',
         'name'
     ];
 
@@ -59,8 +58,8 @@ class Service extends Model
 
 
 
-    public function provider()
+    public function providers()
     {
-        return $this->hasOne(\App\Models\Client::class, 'id', 'provider_id');
+        return $this->belongsToMany(\App\Models\Client::class, 'service_providers', 'service_id', 'provider_id', 'id');
     }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Helpers\Number\NumberHelper;
 use App\Helpers\String\StringHelper;
+use App\Models\Interfaces\CarableInterface;
 use App\Models\Traits\CarPaginatable;
 use App\Repositories\Car\Car\DTO\LogisticDateDTO;
 use DateTime;
@@ -15,7 +16,6 @@ use App\Models\Worksheet\Service\WSMServiceCar;
 use App\Services\Car\CarLogisticStateService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -80,7 +80,7 @@ use Illuminate\Support\Facades\Auth;
 
 
 
-class Car extends Model
+class Car extends Model implements CarableInterface
 {
     use HasFactory, SoftDeletes, Filterable, CarPaginatable;
 
@@ -530,7 +530,7 @@ class Car extends Model
     /**
      * сохранить Держатель залога
      */
-    public function saveCollector(int $collector_id = null)
+    public function saveCollector(int|null $collector_id = null)
     {
         if(!$collector_id)
         {
@@ -552,7 +552,7 @@ class Car extends Model
     /**
      * SAVE ORDER TYPE
      */
-    public function saveOrderType(int $orderTypeId = null)
+    public function saveOrderType(int|null $orderTypeId = null)
     {
         if(!$orderTypeId)
         {
