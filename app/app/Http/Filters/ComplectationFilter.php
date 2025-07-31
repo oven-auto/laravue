@@ -253,9 +253,12 @@ class ComplectationFilter extends AbstractFilter
     /**
      * Показать только те комплектации определенной модели
      */
-    public function markId(Builder $builder, string $value) : void
+    public function markId(Builder $builder, string|array $value) : void
     {
-        $builder->whereIn('marks.id',  $value);
+        if(is_array($value))
+            $builder->whereIn('marks.id',  $value);
+        else
+            $builder->where('marks.id',  $value);
     }
 
 
