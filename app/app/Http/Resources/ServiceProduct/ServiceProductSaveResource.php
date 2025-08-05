@@ -22,7 +22,9 @@ class ServiceProductSaveResource extends JsonResource
                 'price' => $this->price,
                 'duration' => $this->duration,
                 'group_id' => $this->group_id,
-                'appeal_id' => $this->appeal_id
+                'appeals' => $this->appeals->map(function($item){
+                    return ['id' => $item->id, 'name' => $item->name];
+                })
             ],
             'success' => 1
         ];

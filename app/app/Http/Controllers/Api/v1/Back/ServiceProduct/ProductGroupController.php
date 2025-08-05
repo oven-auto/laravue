@@ -3,83 +3,70 @@
 namespace App\Http\Controllers\Api\v1\Back\ServiceProduct;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Models\ProductGroup;
 use App\Http\Resources\ServiceProduct\GroupCollection;
 use App\Http\Resources\ServiceProduct\GroupSaveResource;
 use App\Http\Requests\ServiceProduct\ProductGroupCreate;
+use App\Repositories\ServiceProduct\ProductGroupRepository;
 
 class ProductGroupController extends Controller
 {
-    public function __construct()
+    public function __construct(
+        private ProductGroupRepository $repo,
+        public $subject = 'Группа услуг',
+        public $genus = 'female',
+    )
     {
         $this->middleware('permission.developer:product_group_list')->only('index');
         $this->middleware('permission.developer:product_group_edit')->only('update');
         $this->middleware('permission.developer:product_group_delete')->only('delete');
         $this->middleware('permission.developer:product_group_show')->only('show');
         $this->middleware('permission.developer:product_group_add')->only('store');
+
+        $this->middleware('notice.message')->only(['store', 'update', 'destroy',]);
     }
 
-    /**
-     * Список групп продуктов.
-     *
-     * @return GroupCollection
-     */
+  
+    
     public function index() : GroupCollection
     {
-        $group = ProductGroup::orderBy('sort')->get();
-        return new GroupCollection($group);
+        $groups = $this->repo->get();
+
+        return new GroupCollection($groups);
     }
 
-    /**
-     * Создать группу продукта.
-     *
-     * @param  ProductGroupCreate  $request
-     * @return GroupSaveResource
-     */
-    public function store(ProductGroup $productgroup, ProductGroupCreate $request) : GroupSaveResource
+    
+    
+    public function store(ProductGroupCreate $request) : GroupSaveResource
     {
-        $data = $request->input();
-        $productgroup->fill($data)->save();
-        return (new GroupSaveResource($productgroup))->additional(['message' => 'Группа добавлена']);
+        $group = $this->repo->create($request->all());
+
+        return new GroupSaveResource($group);
     }
 
-    /**
-     * Открыть группу продукта.
-     *
-     * @param  ProductGroup $productgroup
-     * @return GroupSaveResource
-     */
-    public function show(ProductGroup $productgroup) : GroupSaveResource
+    
+    
+    public function show(int $id) : GroupSaveResource
     {
-        return new GroupSaveResource($productgroup);
+        $group = $this->repo->getById($id);
+
+        return new GroupSaveResource($group);
     }
 
-    /**
-     * Изменить группу продукта.
-     *
-     * @param  ProductGroupCreate  $request
-     * @param  ProductGroup $productgroup
-     * @return GroupSaveResource
-     */
-    public function update(ProductGroup $productgroup, ProductGroupCreate $request) : GroupSaveResource
+   
+    
+    public function update(int $id, ProductGroupCreate $request) : GroupSaveResource
     {
-        $data = $request->input();
-        $productgroup->fill($data)->save();
-        return (new GroupSaveResource($productgroup))->additional(['message' => 'Группа изменена']);
+        $group = $this->repo->update($id, $request->all());
+
+        return new GroupSaveResource($group);
     }
 
-    /**
-     * Удалить группу продукта.
-     *
-     * @param  ProductGroup $productgroup
-     * @return GroupSaveResource
-     */
-    public function destroy(ProductGroup $productgroup) : GroupSaveResource
+    
+    
+    public function destroy(int $id) : GroupSaveResource
     {
-        $group = $productgroup->toArray();
-        $productgroup->delete();
-        return (new GroupSaveResource((object) $group))
-            ->additional(['message' => 'Группа '.$group['name'].' удалена']);
+        $group = $this->repo->delete($id);
+
+        return new GroupSaveResource($group);
     }
 }

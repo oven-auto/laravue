@@ -2,12 +2,13 @@
 
 namespace App\Models;
 
+use App\Models\Traits\Filterable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class ServiceProduct extends Model
 {
-    use HasFactory;
+    use HasFactory, Filterable;
 
     protected $guarded = [];
 
@@ -18,8 +19,17 @@ class ServiceProduct extends Model
         return $this->hasOne(\App\Models\Appeal::class,'id','appeal_id')->withDefault();
     }
 
+
+
     public function group()
     {
         return $this->hasOne(\App\Models\ProductGroup::class,'id', 'group_id')->withDefault();
+    }
+
+
+
+    public function appeals()
+    {
+        return $this->belongsToMany(\App\Models\Appeal::class, 'service_product_appeals', 'service_product_id', 'appeal_id',  'id', 'id');
     }
 }

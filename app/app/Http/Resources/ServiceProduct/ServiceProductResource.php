@@ -21,7 +21,9 @@ class ServiceProductResource extends JsonResource
             'price' => $this->price !== null ? $this->price : '',
             'duration' => $this->duration,
             'group' => $this->group->name,
-            'appeal' => $this->appeal->name
+            'appeals' => $this->appeals->map(function($item){
+                return ['id' => $item->id, 'name' => $item->name];
+            })
         ];
     }
 }

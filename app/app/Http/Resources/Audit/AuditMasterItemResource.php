@@ -31,6 +31,8 @@ class AuditMasterItemResource extends JsonResource
                 'updated_at'        => $this->updated_at->format('d.m.Y (H:i)'),
                 'trash'             => $this->isDeleted(),
                 'status'            => $this->status,
+                'client_id'         => $this->trafic->worksheet->client->id,
+                'worksheet_id'      => $this->trafic->worksheet->id,
             ],
             'success' => 1,
         ];

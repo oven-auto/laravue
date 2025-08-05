@@ -78,6 +78,10 @@ Class StockStructureService
     {
         $res = $this->getData($data);
 
+        $res->each(function($item){
+            $item->total-= $item->in_application;
+        });
+
         $total = $res->firstWhere('mark_id', 'total');
 
         $res = $this->calculate($total, $res)->groupBy('brand');

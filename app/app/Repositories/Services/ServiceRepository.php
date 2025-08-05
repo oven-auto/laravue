@@ -4,6 +4,7 @@ namespace App\Repositories\Services;
 
 use App\Models\Service;
 use App\Repositories\Services\DTO\ServiceDTO;
+use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -108,7 +109,7 @@ Class ServiceRepository
 
 
     public function saveProviders(Service $service, ServiceDTO $dto)
-    {
+    {  
         $service->providers()->sync($dto->providers);
 
         return 1;
@@ -148,10 +149,10 @@ Class ServiceRepository
 
 
     public function update(int $id, ServiceDTO $dto)
-    {
-        $service = $this->getById($id);
+    {          
+        $result = DB::transaction(function() use ($id, $dto){
+            $service = $this->getById($id);
 
-        $result = DB::transaction(function() use ($service, $dto){
             $service->fill(array_merge($dto->mainData(), ['author_id' => Auth::id()]));            
 
             $dirty = $this->saveOver($service, $dto);

@@ -43,13 +43,14 @@ class SQL_VIEW_TRAFIC_PRODUCT extends Command
                     service_products.id as uid,
                     'App\\Models\\ServiceProduct' as model,
                     name,
-                    appeal_id,
+                    service_product_appeals.appeal_id as appeal_id,
                     company_id,
                     duration,
                     price,
                     description,
                     group_id
                 FROM service_products
+                LEFT JOIN service_product_appeals on service_product_appeals.service_product_id = service_products.id
 
                 UNION SELECT 
                     concat('mark', m.id) as number,
